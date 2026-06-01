@@ -289,11 +289,12 @@ describe('buildCompAggregationMatchFilter', () => {
     })
   })
 
-  it('adds a patch-scoped game_version regex when a patch is known', () => {
+  it('converts the TFT patch label to a LoL game_version regex when a patch is known', () => {
+    // TFT 17.2 = LoL 16.9, so the raw game_version filter targets "16.9".
     assert.deepEqual(buildCompAggregationMatchFilter('17.2'), {
       'info.tft_game_type': 'pairs',
       tftSetNumber: CURRENT_SET,
-      'info.game_version': { $regex: '\\b17\\.2\\.' },
+      'info.game_version': { $regex: '\\b16\\.9\\.' },
     })
   })
 })

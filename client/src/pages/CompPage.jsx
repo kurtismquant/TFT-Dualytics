@@ -12,13 +12,16 @@ import styles from "./CompPage.module.css";
 export default function CompPage() {
   const { t } = useTranslation();
   const [compSearch, setCompSearch] = useState('');
+  const [selectedPatch, setSelectedPatch] = useState(null);
   const { data: champions } = useChampions();
   const { data: items } = useItems();
   const { data: traits } = useTraits();
-  const { data: compsData, isLoading, isError } = useTopComps({ limit: 0 });
+  const { data: compsData, isLoading, isError } = useTopComps({ limit: 0, patch: selectedPatch });
 
   const comps = useMemo(() => compsData?.comps || [], [compsData?.comps]);
   const matchCount = compsData?.matchCount ?? 0;
+  const patches = compsData?.patches || [];
+  const patchHelpId = 'comp-patch-help';
   const filteredComps = useMemo(
     () => filterComps(comps, champions || [], traits || [], compSearch),
     [comps, champions, traits, compSearch]
@@ -27,12 +30,25 @@ export default function CompPage() {
   return (
     <div className={styles.page}>
       <h1 className={styles.title}>{t('comp.pageTitle')}</h1>
-      <CompSearchBar
-        value={compSearch}
-        onChange={setCompSearch}
-        resultCount={filteredComps.length}
-        totalCount={comps.length}
-      />
+      <p id={patchHelpId} className="sr-only">{t('comp.patchHelp')}</p>
+      <div className={styles.controls}>
+        <select
+          className={styles.select}
+          value={compsData?.patch || selectedPatch || ''}
+          onChange={event => setSelectedPatch(event.target.value)}
+          aria-label={t('comp.patchLabel')}
+          aria-describedby={patchHelpId}
+        >
+          {patches.length === 0 && <option value="">{t('comp.noPatch')}</option>}
+          {patches.map(option => <option key={option} value={option}>{option}</option>)}
+        </select>
+        <CompSearchBar
+          value={compSearch}
+          onChange={setCompSearch}
+          resultCount={filteredComps.length}
+          totalCount={comps.length}
+        />
+      </div>
 
       {isLoading && (
         <p className={styles.subtitle} role="status" aria-live="polite">{t('comp.loading')}</p>

@@ -59,6 +59,9 @@
   },
   "comp": {
     "pageTitle": "TFT Double Up",
+    "patchLabel": "Patch",
+    "patchHelp": "Choose the patch to display comps for.",
+    "noPatch": "No Patch",
     "loading": "Loading top compositions...",
     "error": "Could not load comps. Is the server running?",
     "empty": "No comp data yet — look up some Double Up matches to populate the database.",

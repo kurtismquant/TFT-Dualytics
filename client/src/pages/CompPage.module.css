@@ -19,6 +19,41 @@
   margin-bottom: 1.5rem;
 }
 
+/* ── Controls row: patch dropdown + search ──────────────── */
+.controls {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+}
+
+/* Search bar fills the remaining width next to the patch dropdown. */
+.controls > :last-child {
+  flex: 1;
+  min-width: 0;
+}
+
+.select {
+  min-height: 44px;
+  min-width: 92px;
+  padding: 0 34px 0 12px;
+  border: 1px solid var(--bg-border-muted);
+  background: var(--bg-card);
+  color: var(--text-primary);
+  font-size: 0.76rem;
+  outline: none;
+  appearance: none;
+  background-image: var(--select-caret-down);
+  background-position: right 12px center;
+  background-size: 12px 8px;
+  background-repeat: no-repeat;
+  cursor: pointer;
+}
+
+.select:focus {
+  background-image: var(--select-caret-up);
+}
+
 .subtitle {
   color: var(--text-secondary);
   font-family: "D-DIN", Arial, Verdana, sans-serif;
@@ -98,6 +133,12 @@
 @media (max-width: 760px) {
   .page {
     padding: 1.5rem 1rem 2rem;
+  }
+  .controls {
+    flex-wrap: wrap;
+  }
+  .select {
+    flex: 1;
   }
   .title {
     font-size: 2rem;

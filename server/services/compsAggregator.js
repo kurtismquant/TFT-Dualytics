@@ -1,7 +1,9 @@
 import { getMatchesCollection } from '../db/mongo.js'
-import { replaceAggregatedComps } from '../db/aggregatedCompsRepo.js'
+import { replaceAggregatedComps, getAggregatedComps, selectTopComps } from '../db/aggregatedCompsRepo.js'
 import { deduplicateUnits, hadUnitDoubling } from './unitUtils.js'
-import { CURRENT_SET } from '../constants/game.js'
+// Comps share the Stats patch logic so both pages label and filter patches the
+// same way: game_version carries the LoL number (16.x), shown to users as TFT (17.x).
+import { buildStatsMatchFilter, getAvailablePatches } from './statsAggregator.js'
 
 const TOP_PARTNERS_LIMIT = 3
 const COMP_MERGE_SHARED_UNITS = 6
@@ -440,26 +442,18 @@ export function aggregateComps(matches, { maxComps = null } = {}) {
   return results
 }
 
-// Pulls the major.minor patch (e.g. "17.2") off the most recent Double Up match.
-// Riot's game_version looks like "Version 17.2.614.1234 (...)" — we want "17.2".
-async function getLatestPatch(matches) {
-  const latest = await matches.findOne(
-    { 'info.tft_game_type': 'pairs', tftSetNumber: CURRENT_SET },
-    { sort: { gameDatetime: -1 }, projection: { _id: 0, 'info.game_version': 1 } }
-  )
-  const version = latest?.info?.game_version
-  if (!version) return null
-  const match = version.match(/(\d+)\.(\d+)/)
-  return match ? `${match[1]}.${match[2]}` : null
+// Builds the Mongo filter for a comp aggregation read. `patch` is the TFT label
+// (e.g. "17.2"); buildStatsMatchFilter converts it back to the LoL game_version
+// regex (16.x) used in the raw Riot field.
+export function buildCompAggregationMatchFilter(patch = null) {
+  return buildStatsMatchFilter(patch)
 }
 
-export function buildCompAggregationMatchFilter(patch = null) {
-  const filter = { 'info.tft_game_type': 'pairs', tftSetNumber: CURRENT_SET }
-  if (patch) {
-    const escaped = patch.replace(/\./g, '\\.')
-    filter['info.game_version'] = { $regex: `\\b${escaped}\\.` }
-  }
-  return filter
+// Loads patch-filtered Double Up match docs in the raw Riot shape for aggregation.
+async function loadPatchMatches(matches, patch) {
+  return matches
+    .find(buildCompAggregationMatchFilter(patch), { projection: { _id: 0, info: 1, gameDatetime: 1 } })
+    .toArray()
 }
 
 export async function runCompAggregation() {
@@ -469,13 +463,76 @@ export async function runCompAggregation() {
     return
   }
 
-  const patch = await getLatestPatch(matches)
-  const filter = buildCompAggregationMatchFilter(patch)
-  const docs = await matches
-    .find(filter, { projection: { _id: 0, info: 1, gameDatetime: 1 } })
-    .toArray()
+  // Default to the newest patch with data, expressed as a TFT label (17.x).
+  const patch = (await getAvailablePatches())[0] ?? null
+  const docs = await loadPatchMatches(matches, patch)
 
   const comps = aggregateComps(docs)
   await replaceAggregatedComps(comps, docs.length)
   console.log(`Comp aggregation: ${comps.length} comps from ${docs.length} Double Up matches on patch ${patch ?? 'unknown'}`)
+}
+
+const DEMAND_COOLDOWN_MS = 60 * 60 * 1000 // 1 hour
+
+// Older patches aren't in the stored (current-patch) collection, so aggregate
+// them on demand and cache the full result per patch. Limit is applied at read
+// time so changing it never forces a re-aggregation.
+const patchCache = new Map() // tftPatch -> { comps, matchCount, computedAt }
+let lastCurrentRefresh = 0
+
+async function refreshCurrentIfStale() {
+  const now = Date.now()
+  if (now - lastCurrentRefresh < DEMAND_COOLDOWN_MS) return
+  lastCurrentRefresh = now // set before await to prevent concurrent triggers
+  await runCompAggregation()
+}
+
+async function getOnDemandPatchComps(matches, patch, limit) {
+  const now = Date.now()
+  let entry = patchCache.get(patch)
+  if (!entry || now - entry.computedAt >= DEMAND_COOLDOWN_MS) {
+    const docs = await loadPatchMatches(matches, patch)
+    entry = { comps: aggregateComps(docs), matchCount: docs.length, computedAt: now }
+    patchCache.set(patch, entry)
+  }
+  return {
+    comps: selectTopComps(entry.comps, entry.matchCount, limit),
+    matchCount: entry.matchCount,
+    lastUpdated: new Date(entry.computedAt).toISOString(),
+  }
+}
+
+function latestCompTimestamp(comps) {
+  const max = comps.reduce((acc, c) => {
+    const t = c.lastUpdated ? new Date(c.lastUpdated).getTime() : 0
+    return t > acc ? t : acc
+  }, 0)
+  return max ? new Date(max).toISOString() : null
+}
+
+// Single entry point for the /api/comps route. Resolves the available patches,
+// picks the selected one (mirrors Stats), and returns its comps — from the
+// stored collection for the current patch, or on-demand for older patches.
+export async function getComps({ patch = null, limit = 20 } = {}) {
+  const matches = getMatchesCollection()
+  if (!matches) {
+    return { comps: [], matchCount: 0, patches: [], patch: null, lastUpdated: null }
+  }
+
+  const patches = await getAvailablePatches()
+  const currentPatch = patches[0] ?? null
+  const selectedPatch = patch && patches.includes(patch) ? patch : currentPatch
+
+  if (!selectedPatch) {
+    return { comps: [], matchCount: 0, patches, patch: null, lastUpdated: null }
+  }
+
+  if (selectedPatch === currentPatch) {
+    await refreshCurrentIfStale()
+    const { comps, matchCount } = await getAggregatedComps(limit)
+    return { comps, matchCount, patches, patch: selectedPatch, lastUpdated: latestCompTimestamp(comps) }
+  }
+
+  const result = await getOnDemandPatchComps(matches, selectedPatch, limit)
+  return { ...result, patches, patch: selectedPatch }
 }

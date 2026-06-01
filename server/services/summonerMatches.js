@@ -25,6 +25,10 @@ import { CURRENT_SET as DEFAULT_CURRENT_SET } from '../constants/game.js'
 const USER_PRIORITY = 10
 const CURRENT_SET = Number(process.env.CURRENT_SET || DEFAULT_CURRENT_SET)
 const SET_RELEASE = Number(process.env.CURRENT_SET_RELEASE_TIMESTAMP)
+// Rank snapshots are not stored per-set, so clip them to the current set's
+// release. This prevents a previous-set snapshot (before the soft MMR reset)
+// from forming a huge artificial LP delta with the first current-set snapshot.
+const SET_RELEASE_MS = Number.isFinite(SET_RELEASE) ? SET_RELEASE * 1000 : null
 const IDS_PAGE_SIZE = 100
 const MAX_PAGES = 50
 const SYNC_STATUS_TTL = 10 * 60 * 1000
@@ -132,7 +136,7 @@ async function buildStoredPlayerResponse(dbPlayer, gameName, tagLine) {
     .sort((a, b) => b.date - a.date)
 
   const rankInfo = rankInfoFromPlayer(dbPlayer)
-  const rankSnapshots = await findRankSnapshots(dbPlayer.puuid).catch(() => [])
+  const rankSnapshots = await findRankSnapshots(dbPlayer.puuid, { sinceMs: SET_RELEASE_MS }).catch(() => [])
 
   return {
     summoner: {
@@ -364,7 +368,7 @@ export async function getPlayerMatches(gameName, tagLine, region, signal, syncJo
     .filter(Boolean)
     .sort((a, b) => b.date - a.date)
 
-  const rankSnapshots = await findRankSnapshots(puuid).catch(() => [])
+  const rankSnapshots = await findRankSnapshots(puuid, { sinceMs: SET_RELEASE_MS }).catch(() => [])
 
   return {
     summoner: { gameName: resolvedGameName, tagLine: resolvedTagLine, puuid },
