@@ -196,7 +196,6 @@ const DESTINATIONS = [
   { key: 'comps', to: ROUTES.comps, sigil: 'comps' },
   { key: 'builder', to: ROUTES.builder, sigil: 'hex' },
   { key: 'stats', to: ROUTES.stats, sigil: 'stats' },
-  { key: 'about', to: ROUTES.about, sigil: 'about' },
 ]
 
 const formatCount = (value) => {

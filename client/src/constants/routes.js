@@ -4,7 +4,6 @@ export const ROUTES = {
   stats: '/stats',
   builder: '/builder',
   leaderboard: '/leaderboard',
-  about: '/about',
   termsOfService: '/terms-of-service',
   privacyPolicy: '/privacy-policy',
   summoner: '/summoner/:region/:gameName/:tagLine',

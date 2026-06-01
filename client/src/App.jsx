@@ -7,7 +7,6 @@ import CompBuilderPage from "./pages/CompBuilderPage.jsx";
 import LeaderboardPage from "./pages/LeaderboardPage.jsx";
 import MatchHistoryPage from "./pages/MatchHistoryPage.jsx";
 import StatsPage from "./pages/StatsPage.jsx";
-import AboutPage from "./pages/AboutPage.jsx";
 import TermsOfService from "./pages/TermsOfService.jsx";
 import PrivacyPolicy from "./pages/PrivacyPolicy.jsx";
 import styles from "./App.module.css";
@@ -43,7 +42,6 @@ export default function App() {
   const mobileMenuRef = useRef(null);
   const { t } = useTranslation();
   const location = useLocation();
-  const isAboutPage = location.pathname === ROUTES.about;
   const isHomePage = location.pathname === ROUTES.home;
 
   useEffect(() => {
@@ -72,7 +70,7 @@ export default function App() {
       <a className={styles.skipLink} href="#main-content">
         {t("nav.skipToMain")}
       </a>
-      <nav className={`${styles.nav} ${isAboutPage ? styles.navGlass : ""}`}>
+      <nav className={styles.nav}>
         <button
           ref={hamburgerRef}
           type="button"
@@ -144,16 +142,6 @@ export default function App() {
             {t("nav.leaderboard")}
           </NavLink>
 
-          <NavLink
-            to={ROUTES.about}
-            className={({ isActive }) =>
-              isActive ? styles.activeLink : styles.link
-            }
-            onClick={() => setMenuOpen(false)}
-          >
-            {t("nav.about")}
-          </NavLink>
-
           <button
             type="button"
             className={styles.gearBtnDrawer}
@@ -197,7 +185,6 @@ export default function App() {
           <Route path={ROUTES.stats} element={<StatsPage />} />
           <Route path={ROUTES.builder} element={<CompBuilderPage />} />
           <Route path={ROUTES.leaderboard} element={<LeaderboardPage />} />
-          <Route path={ROUTES.about} element={<AboutPage />} />
           <Route path={ROUTES.termsOfService} element={<TermsOfService />} />
           <Route path={ROUTES.privacyPolicy} element={<PrivacyPolicy />} />
           <Route

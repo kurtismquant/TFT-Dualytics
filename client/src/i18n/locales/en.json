@@ -4,7 +4,6 @@
     "stats": "Stats",
     "teamBuilder": "Team Builder",
     "leaderboard": "Leaderboard",
-    "about": "About",
     "skipToMain": "Skip to main content",
     "openMenu": "Open menu",
     "closeMenu": "Close menu"
@@ -36,9 +35,6 @@
     "statsTitle": "Stats",
     "statsEyebrow": "PATCH TABLES",
     "statsBody": "Unit, item, and trait performance from stored Double Up games by patch.",
-    "aboutTitle": "About",
-    "aboutEyebrow": "OPEN-SOURCE",
-    "aboutBody": "How DUlytics ingests games, computes placements, and what we do with your Riot ID.",
     "statTopComps": "TOP COMPS",
     "statGamesAnalyzed": "GAMES ANALYZED",
     "statUnits": "UNITS",
@@ -267,16 +263,6 @@
     "2": "2nd",
     "3": "3rd",
     "4": "4th"
-  },
-  "about": {
-    "card1Eyebrow": "01 — The Player",
-    "card1Title": "Challenger-Grade Insights",
-    "card1Subtitle": "Built by a Challenger Double Up player",
-    "card1Body": "Dualytics is built from firsthand Double Up experience, not generic ladder assumptions. The goal is to surface the partner synergies, augment handoffs, comp pairings, and late-game decisions that actually matter in duo queue.",
-    "card2Eyebrow": "02 — Under the Hood",
-    "card2Title": "Built Like a Competitive Tool",
-    "card2Subtitle": "Live data, focused analysis, and fast iteration",
-    "card2Body": "Dualytics is a full-stack analytics project built to make Double Up easier to study. It combines Riot match data, MongoDB storage, custom filtering, and a clean frontend so players can explore comps, teammate patterns, and partner synergy without digging through raw match history."
   },
   "tos": {
     "title": "Terms of Service",

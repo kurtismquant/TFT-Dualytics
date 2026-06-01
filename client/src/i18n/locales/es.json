@@ -4,7 +4,6 @@
     "stats": "Estadísticas",
     "teamBuilder": "Constructor",
     "leaderboard": "Clasificación",
-    "about": "Acerca de",
     "skipToMain": "Saltar al contenido principal",
     "openMenu": "Abrir menú",
     "closeMenu": "Cerrar menú"
@@ -36,9 +35,6 @@
     "statsTitle": "Estadísticas",
     "statsEyebrow": "TABLAS DE PARCHE",
     "statsBody": "Rendimiento de unidades, objetos y rasgos de las partidas de Double Up por parche.",
-    "aboutTitle": "Acerca de",
-    "aboutEyebrow": "CÓDIGO ABIERTO",
-    "aboutBody": "Cómo DUlytics procesa las partidas, calcula posiciones y qué hacemos con tu Riot ID.",
     "statTopComps": "MEJORES COMPS",
     "statGamesAnalyzed": "PARTIDAS ANALIZADAS",
     "statUnits": "UNIDADES",
@@ -267,16 +263,6 @@
     "2": "2°",
     "3": "3°",
     "4": "4°"
-  },
-  "about": {
-    "card1Eyebrow": "01 — El Jugador",
-    "card1Title": "Análisis de Nivel Challenger",
-    "card1Subtitle": "Creado por un jugador Challenger de Double Up",
-    "card1Body": "Dualytics está construido desde la experiencia directa en Double Up, no desde suposiciones genéricas. El objetivo es mostrar las sinergias entre compañeros, los traspasos de aumentos, las combinaciones de comps y las decisiones de final de partida que realmente importan en duo.",
-    "card2Eyebrow": "02 — Bajo el Capó",
-    "card2Title": "Construido Como una Herramienta Competitiva",
-    "card2Subtitle": "Datos en vivo, análisis enfocado e iteración rápida",
-    "card2Body": "Dualytics es un proyecto de análisis full-stack creado para facilitar el estudio de Double Up. Combina datos de partidas de Riot, almacenamiento en MongoDB, filtrado personalizado y un frontend limpio para que los jugadores exploren comps, patrones de compañeros y sinergia sin revisar el historial de partidas en bruto."
   },
   "tos": {
     "title": "Términos de Servicio",

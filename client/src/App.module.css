@@ -51,19 +51,6 @@
   border-bottom: none;
 }
 
-/* About page only — float the nav over the full-screen Ahri sequence
-   with a glassmorphism backdrop so it stays legible. */
-.navGlass {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  background: var(--bg-nav-glass);
-  backdrop-filter: blur(16px) saturate(140%);
-  -webkit-backdrop-filter: blur(16px) saturate(140%);
-  border-bottom: 1px solid var(--bg-border-muted);
-}
-
 /* ── Logo — D-DIN-Bold wordmark ────────────────────────── */
 .logo {
   font-family: 'D-DIN-Bold', 'D-DIN', Arial, Verdana, sans-serif;
