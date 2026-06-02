@@ -21,6 +21,7 @@ import {
   findRankSnapshots,
   recordRankSnapshotIfChanged,
 } from '../db/rankSnapshotsRepo.js'
+import { extractPatch, patchToNum } from './statsAggregator.js'
 import { CURRENT_SET as DEFAULT_CURRENT_SET } from '../constants/game.js'
 
 const USER_PRIORITY = 10
@@ -35,6 +36,10 @@ const MAX_PAGES = 50
 const SYNC_STATUS_TTL = 10 * 60 * 1000
 const SYNC_RESTART_DELAY = 60 * 1000
 const MATCH_SYNC_OVERLAP_SECONDS = 24 * 60 * 60
+// Safe slack subtracted from a patch's earliest-seen game when lower-bounding the
+// match-id listing for current-patch ingestion. The sentinel early-stop is the
+// exact cutoff, so this only needs to avoid clipping genuine early-patch games.
+const PATCH_START_BUFFER_SEC = 6 * 60 * 60
 
 const VALID_TAG_LINE = /^[a-zA-Z0-9]{2,5}$/
 const syncJobs = new Map()
@@ -229,8 +234,12 @@ async function fetchRankInfo(puuid, region, signal) {
   }
 }
 
-export async function getPlayerMatches(gameName, tagLine, region, signal, syncJob = null) {
+export async function getPlayerMatches(gameName, tagLine, region, signal, syncJob = null, options = {}) {
   validateRiotId(gameName, tagLine)
+  // When options.currentPatch is set (daemon ingestion), restrict to current-patch
+  // games: lower-bound the id listing by the patch start and stop the detail loop
+  // at the first older-patch game. Default (web lookups) keeps full current-set behavior.
+  const currentPatch = options.currentPatch ?? null
   touchSync(syncJob, {
     phase: 'resolving',
     message: 'RESOLVING STORED PLAYER PROFILE',
@@ -277,9 +286,14 @@ export async function getPlayerMatches(gameName, tagLine, region, signal, syncJo
   // Partial newest-first writes do not advance this value, so the next sync
   // rechecks the unfinished window and cannot skip older unprocessed matches.
   const syncedThroughMs = dbPlayer?.matchHistorySyncedThrough ?? null
-  const startTimeSec = syncedThroughMs
+  let startTimeSec = syncedThroughMs
     ? Math.max(SET_RELEASE, Math.floor(syncedThroughMs / 1000) - MATCH_SYNC_OVERLAP_SECONDS)
     : SET_RELEASE
+  // Current-patch lower bound: never list older than the patch start (minus slack).
+  // max() with the cursor means a caught-up player still lists only new games.
+  if (currentPatch?.startMs) {
+    startTimeSec = Math.max(startTimeSec, Math.floor(currentPatch.startMs / 1000) - PATCH_START_BUFFER_SEC)
+  }
 
   // 3. Paginate all match IDs since start time (up to MAX_PAGES * IDS_PAGE_SIZE)
   const allIds = await paginateMatchIds(puuid, massRegion, startTimeSec, signal, syncJob)
@@ -295,8 +309,13 @@ export async function getPlayerMatches(gameName, tagLine, region, signal, syncJo
     processedNewMatches: 0,
   })
 
-  // 5. Fetch details for new matches only, upsert to MongoDB
+  // 5. Fetch details for new matches only, upsert to MongoDB.
+  // newIds is newest-first, so for current-patch ingestion we raise a recency
+  // threshold to the newest patch this player has played (>= the DB's current
+  // patch — this is what lets a just-dropped patch self-heal) and stop at the
+  // first game older than it.
   let processedNewMatches = 0
+  let patchThreshold = currentPatch?.patchNum ?? null
   for (const matchId of newIds) {
     if (signal?.aborted) break
     let detail
@@ -310,6 +329,17 @@ export async function getPlayerMatches(gameName, tagLine, region, signal, syncJo
       if (err?.name === 'AbortError' || err?.code === 'ERR_CANCELED') throw err
       console.error('[getPlayerMatches] failed to fetch match', matchId, err?.message)
       throw err
+    }
+
+    // Sentinel early-stop: once targeting the current patch, store the first
+    // older-patch game as a stub (so it dedups and is never re-fetched) and stop.
+    if (currentPatch) {
+      const pNum = patchToNum(extractPatch(detail.info?.game_version))
+      if (pNum == null || (patchThreshold != null && pNum < patchThreshold)) {
+        await upsertMatch(buildMatchStub(detail)).catch(() => {})
+        break
+      }
+      if (patchThreshold == null || pNum > patchThreshold) patchThreshold = pNum
     }
 
     const isDoubleUp = detail.info?.tft_game_type === 'pairs'

@@ -7,6 +7,7 @@ import { getLeaderboard } from '../db/leaderboardRepo.js'
 import { getIngestionState, saveIngestionState } from '../db/ingestionStateRepo.js'
 import { runLeaderboardAggregation } from '../services/leaderboardAggregator.js'
 import { getPlayerMatches } from '../services/summonerMatches.js'
+import { getCurrentPatchWindow } from '../services/statsAggregator.js'
 import { runCompAggregation } from '../services/compsAggregator.js'
 import { getPlatformRegion, getRateLimitStats, getTotalRequestCount } from '../services/riotApi.js'
 
@@ -17,7 +18,8 @@ import { getPlatformRegion, getRateLimitStats, getTotalRequestCount } from '../s
 // its own rate-limiter, so the two must not hit Riot at once.
 //
 //   Run:    npm run ingest -- [--region na1] [--top 50] [--stale-hours 24]
-//                              [--idle-seconds 60] [--no-aggregate]
+//                              [--idle-seconds 60] [--no-aggregate] [--all-patches]
+//   By default only current-patch games are ingested; --all-patches backfills the whole set.
 //   Pause:  npm run ingest:pause     (from another terminal)
 //   Resume: npm run ingest:resume
 //   Stop:   Ctrl-C (graceful — resumes where it left off on next start)
@@ -44,6 +46,7 @@ function parseArgs() {
     staleHours: parseInt(get('--stale-hours', '24'), 10),
     idleSeconds: parseInt(get('--idle-seconds', '60'), 10),
     noAggregate: args.includes('--no-aggregate'),
+    currentPatchOnly: !args.includes('--all-patches'),
   }
 }
 
@@ -99,10 +102,10 @@ async function ensureSeeds(platform, opts) {
 // Sync one player. Returns 'ok' | 'error' | 'aborted'. An abort (pause/stop) is
 // safe: stored matches are kept and the per-player cursor only advances on full
 // completion, so a later retry just re-lists and skips already-known matches.
-async function syncSeed(seed, platform) {
+async function syncSeed(seed, platform, patchWindow) {
   currentController = new AbortController()
   try {
-    await getPlayerMatches(seed.gameName, seed.tagLine, platform, currentController.signal)
+    await getPlayerMatches(seed.gameName, seed.tagLine, platform, currentController.signal, null, { currentPatch: patchWindow })
     return 'ok'
   } catch (err) {
     if (err?.name === 'AbortError' || err?.code === 'ERR_CANCELED') return 'aborted'
@@ -150,12 +153,20 @@ async function main() {
     }
     if (pointerIndex >= seeds.length) pointerIndex = 0
 
+    // Resolve the current-patch window once per cycle (reflects patch transitions).
+    // null window (no data yet, or --all-patches) → full-set ingest.
+    let patchWindow = null
+    if (opts.currentPatchOnly) {
+      patchWindow = await getCurrentPatchWindow().catch(() => null)
+      console.log(`[ingest] targeting patch ${patchWindow?.patch ?? '(none yet — full ingest to bootstrap)'}`)
+    }
+
     while (pointerIndex < seeds.length && !stopping) {
       await waitWhilePaused()
       if (stopping) break
 
       const seed = seeds[pointerIndex]
-      const result = await syncSeed(seed, platform)
+      const result = await syncSeed(seed, platform, patchWindow)
       if (result === 'aborted') {
         // Paused or stopping — do not advance; the loop retries this seed on resume.
         continue

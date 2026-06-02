@@ -22,6 +22,36 @@ export function extractPatch(gameVersion) {
   return `${CURRENT_SET}.${tftMinor}`
 }
 
+// Converts a TFT patch label (e.g. "17.4") to a comparable integer (1704) so patch
+// recency can be compared numerically. Returns null for null/non-current-set labels.
+export function patchToNum(label) {
+  const m = String(label || '').match(/^(\d+)\.(\d+)$/)
+  if (!m) return null
+  return parseInt(m[1], 10) * 100 + parseInt(m[2], 10)
+}
+
+// Resolves the current patch and an approximate start time, for daemon ingestion
+// that targets only current-patch games. "Current patch" is the newest patch present
+// in stored matches (getAvailablePatches is sorted newest-first). startMs is the
+// earliest current-patch game seen — used only as a safe lower bound for match-id
+// listing; the daemon's sentinel early-stop defines the exact cutoff. Returns
+// all-null when no data exists yet (caller then falls back to a full ingest).
+export async function getCurrentPatchWindow() {
+  const patch = (await getAvailablePatches())[0] ?? null
+  if (!patch) return { patch: null, patchNum: null, startMs: null }
+  const matches = getMatchesCollection()
+  let startMs = null
+  if (matches) {
+    const oldest = await matches
+      .find(buildStatsMatchFilter(patch), { projection: { _id: 0, gameDatetime: 1 } })
+      .sort({ gameDatetime: 1 })
+      .limit(1)
+      .next()
+    startMs = oldest?.gameDatetime ?? null
+  }
+  return { patch, patchNum: patchToNum(patch), startMs }
+}
+
 // Converts a TFT patch label (e.g. "17.2") back to the LoL version used in game_version
 // (e.g. "16.9") so DB queries can match the raw Riot field.
 function lolPatchFromTft(tftPatch) {
