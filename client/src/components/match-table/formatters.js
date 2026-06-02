@@ -25,13 +25,8 @@ export function getTeamPlacement(match) {
   return null
 }
 
-export function resolveUnits(units, champions, items) {
-  return (units || []).map(u => ({
-    ...u,
-    champion: champions?.find(c => c.id === u.id) || { id: u.id, name: u.id, cost: 1, iconUrl: '', traits: [] },
-    resolvedItems: (u.items || []).map(itemId => items?.find(i => i.id === itemId || i.id === String(itemId)) || null),
-  }))
-}
+// Shared unit resolver — single implementation lives in utils/resolveUnits.js.
+export { resolveUnits } from '../../utils/resolveUnits.js'
 
 export function calcBoardCost(units, champions) {
   return (units || []).reduce((sum, u) => {

@@ -1,9 +1,3 @@
-export function resolveUnits(units, champions, items) {
-  return (units || []).map(u => ({
-    ...u,
-    champion: champions?.find(c => c.id === u.id) || { id: u.id, name: u.id, cost: 1, iconUrl: '', traits: [] },
-    resolvedItems: (u.items || []).map(itemApiName =>
-      items?.find(i => i.apiName === itemApiName || i.id === itemApiName) || null
-    ),
-  }))
-}
+// Re-export of the shared resolver (client/src/utils/resolveUnits.js).
+// Kept here so existing comp-row imports stay stable.
+export { resolveUnits } from '../../utils/resolveUnits.js'

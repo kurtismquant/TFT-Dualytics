@@ -1,4 +1,5 @@
 import { deduplicateUnits, hadUnitDoubling } from './unitUtils.js'
+import { toTeamPlacement } from './teamPlacement.js'
 
 export function normalizeUnits(units) {
   return deduplicateUnits(units || []).map(unit => ({
@@ -37,7 +38,7 @@ export function shapeParticipant(participant) {
     gameName: participant.riotIdGameName ?? null,
     tagLine: participant.riotIdTagline ?? null,
     placement: participant.placement,
-    teamPlacement: Math.ceil(participant.placement / 2),
+    teamPlacement: toTeamPlacement(participant.placement),
     level: participant.level,
     lastRound: participant.last_round,
     totalDamageToPlayers: participant.total_damage_to_players,
@@ -70,7 +71,7 @@ export function normalizeMatch(match, puuid, currentSet) {
     matchId: match.metadata?.match_id,
     date: info.game_datetime,
     placement: participant.placement,
-    teamPlacement: Math.ceil(participant.placement / 2),
+    teamPlacement: toTeamPlacement(participant.placement),
     level: participant.level,
     lastRound: participant.last_round,
     totalDamageToPlayers: participant.total_damage_to_players,

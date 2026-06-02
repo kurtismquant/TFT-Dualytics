@@ -1,18 +1,17 @@
 import { getMatchesCollection } from '../db/mongo.js'
 import { replaceAggregatedComps, getAggregatedComps, selectTopComps } from '../db/aggregatedCompsRepo.js'
 import { deduplicateUnits, hadUnitDoubling } from './unitUtils.js'
+import { toTeamPlacement as teamPlacement } from './teamPlacement.js'
 // Comps share the Stats patch logic so both pages label and filter patches the
 // same way: game_version carries the LoL number (16.x), shown to users as TFT (17.x).
-import { buildStatsMatchFilter, getAvailablePatches } from './statsAggregator.js'
+// Patch math comes from the shared patchFilters module; patch *discovery* (a DB
+// query) still lives in statsAggregator.
+import { buildStatsMatchFilter } from './patchFilters.js'
+import { getAvailablePatches } from './statsAggregator.js'
 
 const TOP_PARTNERS_LIMIT = 3
 const COMP_MERGE_SHARED_UNITS = 6
 const THIEVES_GLOVES = 'TFT_Item_ThievesGloves'
-
-// Riot returns Double Up placements on a 1-8 scale (one rank per player).
-// Convert to the 1-4 team-placement scale (Math.ceil(p/2)) since Double Up
-// is 4 teams of 2 — partners always share a team rank.
-const teamPlacement = p => Math.ceil(p / 2)
 
 function buildCompFingerprint(unitIds) {
   return unitIds.slice().sort().join('|')

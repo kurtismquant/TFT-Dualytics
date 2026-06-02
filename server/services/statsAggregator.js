@@ -1,34 +1,14 @@
 import { getMatchesCollection } from '../db/mongo.js'
-import { CURRENT_SET, LOL_SEASON, SET_LAUNCH_LOL_MINOR } from '../constants/game.js'
 import { deduplicateUnits } from './unitUtils.js'
+import { toTeamPlacement } from './teamPlacement.js'
+// Pure patch math lives in patchFilters.js (shared with the Comps aggregator).
+// Re-exported here so existing importers of statsAggregator keep working.
+import { extractPatch, patchToNum, buildStatsMatchFilter } from './patchFilters.js'
+
+export { extractPatch, patchToNum, buildStatsMatchFilter }
 
 const VALID_TYPES = new Set(['units', 'items', 'traits'])
 const MAX_POPULAR = 5
-
-// Converts a raw Riot game_version string (e.g. "Version 16.9.614.1234") to the
-// TFT patch label users see in the client (e.g. "17.2").
-// TFT and LoL share the same two-week release cadence but use different version
-// numbering: LoL uses the season number (16.x) while TFT labels patches within
-// a set sequentially (17.1, 17.2, …).
-export function extractPatch(gameVersion) {
-  if (!gameVersion) return null
-  const m = String(gameVersion).match(/(\d+)\.(\d+)/)
-  if (!m) return null
-  const lolMajor = parseInt(m[1], 10)
-  const lolMinor = parseInt(m[2], 10)
-  if (lolMajor !== LOL_SEASON) return null
-  const tftMinor = lolMinor - SET_LAUNCH_LOL_MINOR + 1
-  if (tftMinor < 1) return null
-  return `${CURRENT_SET}.${tftMinor}`
-}
-
-// Converts a TFT patch label (e.g. "17.4") to a comparable integer (1704) so patch
-// recency can be compared numerically. Returns null for null/non-current-set labels.
-export function patchToNum(label) {
-  const m = String(label || '').match(/^(\d+)\.(\d+)$/)
-  if (!m) return null
-  return parseInt(m[1], 10) * 100 + parseInt(m[2], 10)
-}
 
 // Resolves the current patch and an approximate start time, for daemon ingestion
 // that targets only current-patch games. "Current patch" is the newest patch present
@@ -50,27 +30,6 @@ export async function getCurrentPatchWindow() {
     startMs = oldest?.gameDatetime ?? null
   }
   return { patch, patchNum: patchToNum(patch), startMs }
-}
-
-// Converts a TFT patch label (e.g. "17.2") back to the LoL version used in game_version
-// (e.g. "16.9") so DB queries can match the raw Riot field.
-function lolPatchFromTft(tftPatch) {
-  const m = String(tftPatch || '').match(/^(\d+)\.(\d+)$/)
-  if (!m) return null
-  const tftMinor = parseInt(m[2], 10)
-  return `${LOL_SEASON}.${tftMinor + SET_LAUNCH_LOL_MINOR - 1}`
-}
-
-export function buildStatsMatchFilter(tftPatch = null) {
-  const filter = { 'info.tft_game_type': 'pairs', tftSetNumber: CURRENT_SET }
-  if (tftPatch) {
-    const lolPatch = lolPatchFromTft(tftPatch)
-    if (lolPatch) {
-      const escaped = lolPatch.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-      filter['info.game_version'] = { $regex: `\\b${escaped}\\.` }
-    }
-  }
-  return filter
 }
 
 function makeEntry(id) {
@@ -96,7 +55,7 @@ function ensureEntry(stats, id) {
 
 function record(entry, placement) {
   entry.count += 1
-  entry.placementTotal += Math.ceil(placement / 2)
+  entry.placementTotal += toTeamPlacement(placement)
   if (placement <= 2) entry.wins += 1
 }
 
