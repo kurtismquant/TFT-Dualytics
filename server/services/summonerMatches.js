@@ -15,6 +15,7 @@ import {
   getLatestMatchTimestamp,
   upsertMatch,
   buildMatchDocument,
+  buildMatchStub,
 } from '../db/matchRepo.js'
 import {
   findRankSnapshots,
@@ -313,22 +314,23 @@ export async function getPlayerMatches(gameName, tagLine, region, signal, syncJo
 
     const isDoubleUp = detail.info?.tft_game_type === 'pairs'
 
-    const matchDoc = buildMatchDocument(detail)
+    // Only Double Up matches are aggregated or shown in history. Store non-pairs
+    // as a tiny stub so they dedup in filterKnownMatchIds (never re-fetched) without
+    // keeping the full ~40KB payload.
+    const matchDoc = isDoubleUp ? buildMatchDocument(detail) : buildMatchStub(detail)
     try {
       const { inserted } = await upsertMatch(matchDoc)
-      if (inserted) {
+      if (inserted && isDoubleUp) {
         const allPuuids = (detail.info?.participants ?? []).map(p => p.puuid).filter(Boolean)
         for (const pPuuid of allPuuids) {
           addMatchIdsToPlayer(pPuuid, [matchId]).catch(() => {})
         }
-        if (isDoubleUp) {
-          const self = detail.info?.participants?.find(p => p.puuid === puuid)
-          const partner = detail.info?.participants?.find(
-            p => p.puuid !== puuid && p.partner_group_id === self?.partner_group_id
-          )
-          if (partner?.puuid) {
-            upsertPartner(puuid, partner.puuid, new Date(detail.info.game_datetime)).catch(() => {})
-          }
+        const self = detail.info?.participants?.find(p => p.puuid === puuid)
+        const partner = detail.info?.participants?.find(
+          p => p.puuid !== puuid && p.partner_group_id === self?.partner_group_id
+        )
+        if (partner?.puuid) {
+          upsertPartner(puuid, partner.puuid, new Date(detail.info.game_datetime)).catch(() => {})
         }
       }
     } catch (err) {

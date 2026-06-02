@@ -37,8 +37,10 @@ export async function createIndexes() {
   await matches.createIndex({ 'participants.puuid': 1, gameDatetime: -1 })
   // Speeds up the comp-aggregation scan over recent Double Up matches.
   await matches.createIndex({ 'info.tft_game_type': 1, gameDatetime: -1 })
-  // Optional 90-day TTL — uncomment to auto-expire old match documents:
-  // await matches.createIndex({ gameDatetime: 1 }, { expireAfterSeconds: 7776000 })
+  // TTL: auto-expire matches older than MATCH_TTL_DAYS (default 90) to cap storage.
+  // Indexes gameDate (a real Date); gameDatetime stays a number for range queries.
+  const matchTtlDays = Number(process.env.MATCH_TTL_DAYS || 90)
+  await matches.createIndex({ gameDate: 1 }, { expireAfterSeconds: matchTtlDays * 86400 })
 
   await aggregatedComps.createIndex({ fingerprint: 1 }, { unique: true })
   await aggregatedComps.createIndex({ playCount: -1 })

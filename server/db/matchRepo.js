@@ -97,6 +97,9 @@ export function buildMatchDocument(rawMatch) {
   return {
     matchId,
     gameDatetime: info.game_datetime ?? 0,
+    // Date copy of gameDatetime purely so a TTL index can auto-expire old matches.
+    // gameDatetime stays a number — TTL only works on a BSON Date field.
+    gameDate: info.game_datetime ? new Date(info.game_datetime) : new Date(),
     gameLength: info.game_length ?? 0,
     queueId: info.queue_id ?? 0,
     tftSetNumber: info.tft_set_number ?? 0,
@@ -106,5 +109,22 @@ export function buildMatchDocument(rawMatch) {
     metadata,
     // Flat participants array for the compound multikey index query
     participants,
+  }
+}
+
+// Minimal record for a non–Double Up match: just enough to dedup it in
+// filterKnownMatchIds so it is never re-fetched, without storing the ~40KB
+// payload. Has no `info`/`participants`, so it never surfaces in match history
+// (normalizeMatch filters on info.tft_game_type) or comp/stats aggregation.
+export function buildMatchStub(rawMatch) {
+  const info = rawMatch?.info ?? {}
+  const metadata = rawMatch?.metadata ?? {}
+  const matchId = metadata.match_id ?? rawMatch.matchId
+  return {
+    matchId,
+    gameDatetime: info.game_datetime ?? 0,
+    gameDate: info.game_datetime ? new Date(info.game_datetime) : new Date(),
+    gameType: info.tft_game_type ?? 'unknown',
+    stub: true,
   }
 }
