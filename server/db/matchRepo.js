@@ -63,52 +63,70 @@ export async function upsertMatch(matchDoc) {
   }
 }
 
-// Build the document shape expected by the DB from a raw Riot API response.
-// Keeps info + metadata intact so the comp aggregator can use the doc directly.
-// Also extracts a flat participants array for the compound multikey index.
+// Build the trimmed document shape stored in the DB from a raw Riot API response.
+// We keep only the fields the consumers actually read — compsAggregator,
+// statsAggregator, and matchNormalizers all read info.participants[].<raw_field>
+// directly, so raw snake_case names are preserved inside info. Everything else
+// (augments, companion, missions, gold_left, players_eliminated, time_eliminated,
+// metadata beyond match_id, and the formerly-duplicated flat participant payload)
+// is dropped — that cuts each doc by ~56%. See estimate in scripts/trim-matches.js.
+//
+// Safe to call on an already-stored (trimmed) doc too — the migration relies on this,
+// so it must remain idempotent: re-reading already-trimmed fields yields the same shape.
 export function buildMatchDocument(rawMatch) {
   const info = rawMatch?.info ?? {}
   const metadata = rawMatch?.metadata ?? {}
   const matchId = metadata.match_id ?? rawMatch.matchId
 
-  const participants = (info.participants ?? []).map(p => ({
+  const trimmedParticipants = (info.participants ?? []).map(p => ({
     puuid: p.puuid,
     placement: p.placement,
     level: p.level,
-    goldLeft: p.gold_left ?? 0,
-    totalDamageToPlayers: p.total_damage_to_players ?? 0,
-    partnerGroupId: p.partner_group_id ?? null,
-    win: p.placement != null && p.placement <= 2,
+    last_round: p.last_round,
+    total_damage_to_players: p.total_damage_to_players,
+    partner_group_id: p.partner_group_id ?? null,
+    riotIdGameName: p.riotIdGameName ?? null,
+    riotIdTagline: p.riotIdTagline ?? null,
+    units: (p.units ?? []).map(u => ({
+      character_id: u.character_id,
+      tier: u.tier,
+      itemNames: u.itemNames ?? [],
+    })),
     traits: (p.traits ?? []).map(t => ({
       name: t.name,
-      numUnits: t.num_units,
+      num_units: t.num_units,
+      tier_current: t.tier_current,
       style: t.style,
-      tierCurrent: t.tier_current,
-      tierTotal: t.tier_total,
-    })),
-    units: (p.units ?? []).map(u => ({
-      characterId: u.character_id,
-      rarity: u.rarity ?? 0,
-      tier: u.tier,
-      items: u.itemNames ?? [],
     })),
   }))
 
+  // Fall back to the input's top-level fields so this works on a raw Riot match
+  // OR an already-stored doc (queue_id / game_length live only on raw info, which
+  // the trimmed shape drops — the fallback keeps the function idempotent).
+  const gameDatetime = info.game_datetime ?? rawMatch.gameDatetime ?? 0
   return {
     matchId,
-    gameDatetime: info.game_datetime ?? 0,
+    gameDatetime,
     // Date copy of gameDatetime purely so a TTL index can auto-expire old matches.
     // gameDatetime stays a number — TTL only works on a BSON Date field.
-    gameDate: info.game_datetime ? new Date(info.game_datetime) : new Date(),
-    gameLength: info.game_length ?? 0,
-    queueId: info.queue_id ?? 0,
-    tftSetNumber: info.tft_set_number ?? 0,
-    gameVersion: info.game_version ?? '',
-    // Preserve raw Riot shape so computeComps / isDoubleUpAndRecent work unchanged
-    info,
-    metadata,
-    // Flat participants array for the compound multikey index query
-    participants,
+    gameDate: gameDatetime ? new Date(gameDatetime) : (rawMatch.gameDate ?? new Date()),
+    gameLength: info.game_length ?? rawMatch.gameLength ?? 0,
+    queueId: info.queue_id ?? rawMatch.queueId ?? 0,
+    tftSetNumber: info.tft_set_number ?? rawMatch.tftSetNumber ?? 0,
+    gameVersion: info.game_version ?? rawMatch.gameVersion ?? '',
+    // Trimmed raw shape — only the fields read by the aggregators / normalizer.
+    info: {
+      tft_game_type: info.tft_game_type,
+      tft_set_number: info.tft_set_number,
+      game_datetime: info.game_datetime,
+      game_version: info.game_version,
+      participants: trimmedParticipants,
+    },
+    // normalizeMatch reads metadata.match_id; nothing else in metadata is used.
+    metadata: { match_id: matchId },
+    // Flat participants array carries only puuid — the sole field used by the
+    // { 'participants.puuid': 1, gameDatetime: -1 } multikey index.
+    participants: (info.participants ?? []).map(p => ({ puuid: p.puuid })),
   }
 }
 
