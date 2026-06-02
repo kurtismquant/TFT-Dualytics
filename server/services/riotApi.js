@@ -13,12 +13,20 @@ const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms))
 
 // Rolling request log for rate-limit visibility (last 60 seconds)
 const requestLog = []
+// Cumulative count of every Riot request issued this process — lets long-running
+// jobs (e.g. the ingestion daemon) report exact calls consumed per run.
+let totalRequests = 0
 
 function logRequest() {
   const now = Date.now()
+  totalRequests += 1
   requestLog.push(now)
   const cutoff = now - 60_000
   while (requestLog.length && requestLog[0] < cutoff) requestLog.shift()
+}
+
+export function getTotalRequestCount() {
+  return totalRequests
 }
 
 export function getRateLimitStats() {

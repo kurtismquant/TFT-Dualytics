@@ -5,6 +5,7 @@ import LandingSearch from '../components/LandingSearchBar.jsx'
 import { useChampions } from '../hooks/useChampions.js'
 import { useTopComps } from '../hooks/useTopComps.js'
 import { useStats } from '../hooks/useStats.js'
+import { useLeaderboard } from '../hooks/useLeaderboard.js'
 import BookmarkStrip from '../components/BookmarkStrip.jsx'
 import { CURRENT_SET } from '../constants/game.js'
 import { ROUTES } from '../constants/routes.js'
@@ -196,6 +197,7 @@ const DESTINATIONS = [
   { key: 'comps', to: ROUTES.comps, sigil: 'comps' },
   { key: 'builder', to: ROUTES.builder, sigil: 'hex' },
   { key: 'stats', to: ROUTES.stats, sigil: 'stats' },
+  { key: 'leaderboard', to: ROUTES.leaderboard, sigil: 'ladder' },
 ]
 
 const formatCount = (value) => {
@@ -234,6 +236,16 @@ function Sigil({ kind, bright }) {
       <rect x="4" y="10" width="3" height="7" stroke={c}/>
       <rect x="10" y="6" width="3" height="11" stroke={c}/>
       <rect x="16" y="3" width="3" height="14" stroke={c}/>
+    </svg>
+  )
+
+  if (kind === 'ladder') return (
+    <svg width={s} height={s} viewBox="0 0 22 22" fill="none" aria-hidden="true" focusable="false">
+      <line x1="1" y1="20" x2="21" y2="20" stroke={c}/>
+      <polygon points="11,1 12.4,4 15.6,4 13,6 14,9 11,7.2 8,9 9,6 6.4,4 9.6,4" stroke={c}/>
+      <rect x="2" y="12" width="5" height="8" stroke={c}/>
+      <rect x="8.5" y="9" width="5" height="11" stroke={c}/>
+      <rect x="15" y="15" width="5" height="5" stroke={c}/>
     </svg>
   )
 
@@ -285,6 +297,7 @@ function DestinationGrid() {
   const { data: champions } = useChampions()
   const { data: compsData } = useTopComps()
   const { data: statsData } = useStats({ type: 'units' })
+  const { data: leaderboardData } = useLeaderboard('na')
 
   const comps = compsData?.comps || []
   const destinations = DESTINATIONS.map((destination) => {
@@ -315,6 +328,13 @@ function DestinationGrid() {
         ...base,
         stat: stat(statsData?.rows?.length ?? 0, t('landing.statUnitsTracked')),
         stat2: stat(statsData?.matchCount ?? 0, t('landing.statPatchGames')),
+      }
+    }
+
+    if (destination.key === 'leaderboard') {
+      return {
+        ...base,
+        stat: stat(leaderboardData?.entries?.length ?? 0, t('landing.statRankedPlayers')),
       }
     }
 

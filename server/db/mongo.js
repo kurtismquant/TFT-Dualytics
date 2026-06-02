@@ -18,6 +18,7 @@ export const getMatchesCollection = () => db?.collection('matches') ?? null
 export const getAggregatedCompsCollection = () => db?.collection('aggregated_comps') ?? null
 export const getLeaderboardsCollection = () => db?.collection('leaderboards') ?? null
 export const getRankSnapshotsCollection = () => db?.collection('rank_snapshots') ?? null
+export const getIngestionStateCollection = () => db?.collection('ingestion_state') ?? null
 
 export async function createIndexes() {
   const players = getPlayersCollection()

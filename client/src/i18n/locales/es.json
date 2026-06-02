@@ -35,12 +35,16 @@
     "statsTitle": "Estadísticas",
     "statsEyebrow": "TABLAS DE PARCHE",
     "statsBody": "Rendimiento de unidades, objetos y rasgos de las partidas de Double Up por parche.",
+    "leaderboardTitle": "Clasificación",
+    "leaderboardEyebrow": "ESCALERA",
+    "leaderboardBody": "Los mejores jugadores de Double Up por LP en cada región. Mira quién está subiendo.",
     "statTopComps": "MEJORES COMPS",
     "statGamesAnalyzed": "PARTIDAS ANALIZADAS",
     "statUnits": "UNIDADES",
     "statTraits": "RASGOS",
     "statUnitsTracked": "UNIDADES RASTREADAS",
-    "statPatchGames": "PARTIDAS DEL PARCHE"
+    "statPatchGames": "PARTIDAS DEL PARCHE",
+    "statRankedPlayers": "JUGADORES CLASIFICADOS"
   },
   "search": {
     "placeholder": "NombreJuego#{{tag}}",

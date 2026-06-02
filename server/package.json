@@ -6,7 +6,10 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "test": "node --test"
+    "test": "node --test",
+    "ingest": "node scripts/ingest.js",
+    "ingest:pause": "node scripts/ingest-control.js pause",
+    "ingest:resume": "node scripts/ingest-control.js resume"
   },
   "keywords": [],
   "author": "",

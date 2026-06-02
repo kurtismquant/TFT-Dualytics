@@ -35,12 +35,16 @@
     "statsTitle": "Stats",
     "statsEyebrow": "PATCH TABLES",
     "statsBody": "Unit, item, and trait performance from stored Double Up games by patch.",
+    "leaderboardTitle": "Leaderboard",
+    "leaderboardEyebrow": "LADDER",
+    "leaderboardBody": "Top-ranked Double Up players by LP across every region. See who is climbing.",
     "statTopComps": "TOP COMPS",
     "statGamesAnalyzed": "GAMES ANALYZED",
     "statUnits": "UNITS",
     "statTraits": "TRAITS",
     "statUnitsTracked": "UNITS TRACKED",
-    "statPatchGames": "PATCH GAMES"
+    "statPatchGames": "PATCH GAMES",
+    "statRankedPlayers": "RANKED PLAYERS"
   },
   "search": {
     "placeholder": "GameName#{{tag}}",
