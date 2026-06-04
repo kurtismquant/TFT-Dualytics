@@ -482,6 +482,28 @@
   margin-top: 2px;
 }
 
+/* Placeholder shown in place of a stat number while its data is still loading
+   (cold start, no persisted cache). Sized to match .statVal so the card layout
+   doesn't shift when the real number arrives. */
+.statSkeleton {
+  display: block;
+  width: 48px;
+  height: 22px;
+  border-radius: 2px;
+  background: var(--bg-row-even);
+  border: 1px solid var(--bg-border-muted);
+  animation: statSkeletonPulse 1.2s ease-in-out infinite;
+}
+
+@keyframes statSkeletonPulse {
+  0%, 100% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 0.9;
+  }
+}
+
 @keyframes mascotFloatA {
   0%, 100% {
     transform: translate3d(0, 0, 0);
@@ -611,7 +633,8 @@
   .dangoMotionFast,
   .dangoMotionSlow,
   .destCard,
-  .destCard::before {
+  .destCard::before,
+  .statSkeleton {
     animation: none;
     transition: none;
   }

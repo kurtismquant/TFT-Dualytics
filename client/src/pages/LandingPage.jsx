@@ -271,10 +271,10 @@ const formatCount = (value) => {
   return value.toLocaleString()
 }
 
-const stat = (value, label) => {
-  const formatted = formatCount(value)
-  return formatted ? { v: formatted, l: label } : null
-}
+// Returns { v, l } where v is the formatted number or null when not yet
+// available. DestCard decides whether a null value renders a skeleton (still
+// loading) or is dropped (genuine zero / no data).
+const stat = (value, label) => ({ v: formatCount(value), l: label })
 
 function Sigil({ kind, bright }) {
   const c = bright ? 'var(--text-primary)' : 'var(--text-muted)'
@@ -324,9 +324,11 @@ function Sigil({ kind, bright }) {
   )
 }
 
-function DestCard({ to, title, eyebrow, body, stat: primaryStat, stat2, sigil }) {
+function DestCard({ to, title, eyebrow, body, stat: primaryStat, stat2, sigil, loading }) {
   const [hover, setHover] = useState(false)
-  const stats = [primaryStat, stat2].filter(Boolean)
+  // Show a stat once it has a value, or while its query is still loading
+  // (skeleton). Drop it only when there's no value and nothing is pending.
+  const stats = [primaryStat, stat2].filter((s) => s && (s.v != null || loading))
 
   return (
     <Link
@@ -348,7 +350,11 @@ function DestCard({ to, title, eyebrow, body, stat: primaryStat, stat2, sigil })
         <div className={styles.destStats}>
           {stats.map(({ v, l }) => (
             <div key={l}>
-              <span className={styles.statVal}>{v}</span>
+              {v != null ? (
+                <span className={styles.statVal}>{v}</span>
+              ) : (
+                <span className={styles.statSkeleton} aria-hidden="true" />
+              )}
               <span className={styles.statLabel}>{l}</span>
             </div>
           ))}
@@ -360,10 +366,10 @@ function DestCard({ to, title, eyebrow, body, stat: primaryStat, stat2, sigil })
 
 function DestinationGrid() {
   const { t } = useTranslation()
-  const { data: champions } = useChampions()
-  const { data: compsData } = useTopComps()
-  const { data: statsData } = useStats({ type: 'units' })
-  const { data: leaderboardData } = useLeaderboard('na')
+  const { data: champions, isPending: championsPending } = useChampions()
+  const { data: compsData, isPending: compsPending } = useTopComps()
+  const { data: statsData, isPending: statsPending } = useStats({ type: 'units' })
+  const { data: leaderboardData, isPending: leaderboardPending } = useLeaderboard('na')
 
   const comps = compsData?.comps || []
   const destinations = DESTINATIONS.map((destination) => {
@@ -377,6 +383,7 @@ function DestinationGrid() {
     if (destination.key === 'comps') {
       return {
         ...base,
+        loading: compsPending,
         stat: stat(comps.length, t('landing.statTopComps')),
         stat2: stat(compsData?.matchCount ?? 0, t('landing.statGamesAnalyzed')),
       }
@@ -385,6 +392,7 @@ function DestinationGrid() {
     if (destination.key === 'builder') {
       return {
         ...base,
+        loading: championsPending,
         stat: stat(champions?.length ?? 0, t('landing.statUnits')),
       }
     }
@@ -392,6 +400,7 @@ function DestinationGrid() {
     if (destination.key === 'stats') {
       return {
         ...base,
+        loading: statsPending,
         stat: stat(statsData?.rows?.length ?? 0, t('landing.statUnitsTracked')),
         stat2: stat(statsData?.matchCount ?? 0, t('landing.statPatchGames')),
       }
@@ -400,6 +409,7 @@ function DestinationGrid() {
     if (destination.key === 'leaderboard') {
       return {
         ...base,
+        loading: leaderboardPending,
         stat: stat(leaderboardData?.entries?.length ?? 0, t('landing.statRankedPlayers')),
       }
     }
