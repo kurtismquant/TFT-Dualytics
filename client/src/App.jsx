@@ -123,16 +123,6 @@ export default function App() {
           </NavLink>
 
           <NavLink
-            to={ROUTES.builder}
-            className={({ isActive }) =>
-              isActive ? styles.activeLink : styles.link
-            }
-            onClick={() => setMenuOpen(false)}
-          >
-            {t("nav.teamBuilder")}
-          </NavLink>
-
-          <NavLink
             to={ROUTES.leaderboard}
             className={({ isActive }) =>
               isActive ? styles.activeLink : styles.link
@@ -140,6 +130,16 @@ export default function App() {
             onClick={() => setMenuOpen(false)}
           >
             {t("nav.leaderboard")}
+          </NavLink>
+
+          <NavLink
+            to={ROUTES.builder}
+            className={({ isActive }) =>
+              isActive ? styles.activeLink : styles.link
+            }
+            onClick={() => setMenuOpen(false)}
+          >
+            {t("nav.teamBuilder")}
           </NavLink>
 
           <button

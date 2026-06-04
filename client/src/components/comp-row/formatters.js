@@ -2,12 +2,12 @@ export function placementBucket(avgPlacement) {
   return Math.max(1, Math.min(4, Math.round(avgPlacement)))
 }
 
-export function formatGames(playCount) {
-  return `${playCount} ${playCount === 1 ? 'game' : 'games'}`
+export function formatGames(playCount, t) {
+  return t('comp.timesPlayed', { count: playCount })
 }
 
-export function formatPairings(pairCount) {
-  return `${pairCount} ${pairCount === 1 ? 'game' : 'games'}`
+export function formatPairings(pairCount, t) {
+  return t('comp.timesPlayed', { count: pairCount })
 }
 
 export function formatWinRate(winRate) {

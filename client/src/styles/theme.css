@@ -99,7 +99,7 @@
 
   /* ── Chart tokens (read by JS via getComputedStyle) ── */
   --chart-axis-color:    rgba(240, 240, 250, 0.45);
-  --chart-grid-color:    rgba(240, 240, 250, 0.07);
+  --chart-grid-color:    rgba(240, 240, 250, 0.16);
   --chart-tooltip-bg:    #0a0a0a;
   --chart-tooltip-text:  #f0f0fa;
   --chart-tooltip-border: rgba(240, 240, 250, 0.15);
@@ -204,7 +204,7 @@
 
   /* ── Chart tokens ── */
   --chart-axis-color:    rgba(10, 10, 20, 0.45);
-  --chart-grid-color:    rgba(10, 10, 20, 0.08);
+  --chart-grid-color:    rgba(10, 10, 20, 0.18);
   --chart-tooltip-bg:    #ffffff;
   --chart-tooltip-text:  rgba(10, 10, 20, 1);
   --chart-tooltip-border: rgba(10, 10, 20, 0.15);

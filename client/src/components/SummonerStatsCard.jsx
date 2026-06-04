@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import {
   BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
 } from 'recharts'
@@ -38,6 +38,7 @@ function computeStats(matches, champions) {
 export default function SummonerStatsCard({ matches, resolvedChampions }) {
   const { theme } = useSettings()
   const { t } = useTranslation()
+  const [activeBar, setActiveBar] = useState(null)
 
   const STAT_DEFS = [
     ['gamesPlayed', t('statsCard.gamesPlayed')],
@@ -114,15 +115,28 @@ export default function SummonerStatsCard({ matches, resolvedChampions }) {
               <XAxis dataKey="label" tick={AXIS_STYLE} axisLine={false} tickLine={false} />
               <YAxis allowDecimals={false} tick={AXIS_STYLE} axisLine={false} tickLine={false} width={24} />
               <Tooltip
-                cursor={{ fill: 'rgba(240,240,250,0.04)' }}
+                cursor={false}
                 contentStyle={TOOLTIP_STYLE}
                 labelStyle={{ color: tooltipText, textTransform: 'uppercase' }}
                 itemStyle={{ color: tooltipText }}
                 formatter={v => [v, t('statsCard.games')]}
               />
-              <Bar dataKey="count" radius={[2, 2, 0, 0]}>
+              <Bar
+                dataKey="count"
+                radius={[2, 2, 0, 0]}
+                onMouseEnter={(_, i) => setActiveBar(i)}
+                onMouseLeave={() => setActiveBar(null)}
+              >
                 {barData.map((_, i) => (
-                  <Cell key={i} fill={PLACEMENT_COLORS[i]} fillOpacity={0.85} />
+                  <Cell
+                    key={i}
+                    fill={PLACEMENT_COLORS[i]}
+                    fillOpacity={activeBar === i ? 1 : 0.85}
+                    style={{
+                      filter: activeBar === i ? 'brightness(1.15)' : 'none',
+                      transition: 'filter 0.15s ease, fill-opacity 0.15s ease',
+                    }}
+                  />
                 ))}
               </Bar>
             </BarChart>

@@ -79,7 +79,9 @@
     "noMatch": "Ninguna composición coincide con ese criterio.",
     "expandCompDetails": "Expandir detalles de la comp",
     "collapseCompDetails": "Contraer detalles de la comp",
-    "topTeammateComps": "Mejores comps de compañero"
+    "topTeammateComps": "Mejores comps de compañero",
+    "timesPlayed_one": "jugada {{count}} vez",
+    "timesPlayed_other": "jugada {{count}} veces"
   },
   "stats": {
     "eyebrow": "Estadísticas de Parche Double Up",

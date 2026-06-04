@@ -79,7 +79,9 @@
     "noMatch": "No compositions match that signal.",
     "expandCompDetails": "Expand comp details",
     "collapseCompDetails": "Collapse comp details",
-    "topTeammateComps": "Top Teammate Comps"
+    "topTeammateComps": "Top Teammate Comps",
+    "timesPlayed_one": "{{count}} time played",
+    "timesPlayed_other": "{{count}} times played"
   },
   "stats": {
     "eyebrow": "Double Up Patch Stats",

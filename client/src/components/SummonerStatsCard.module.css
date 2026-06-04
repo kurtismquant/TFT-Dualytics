@@ -61,6 +61,19 @@
   gap: 8px;
 }
 
+/* Recharts marks its surface and bar segments focusable; clicking them paints
+   a focus outline rectangle. Suppress it without affecting hover behavior. */
+.chartWrap :focus,
+.chartWrap :focus-visible {
+  outline: none;
+}
+
+.chartWrap svg .recharts-bar-rectangle,
+.chartWrap svg .recharts-surface,
+.chartWrap svg .recharts-rectangle {
+  outline: none;
+}
+
 .chartHeader {
   display: flex;
   align-items: baseline;

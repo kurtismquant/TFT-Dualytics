@@ -12,84 +12,6 @@ import { ROUTES } from '../constants/routes.js'
 import styles from './LandingPage.module.css'
 
 
-function Starfield() {
-  const canvasRef = useRef(null)
-
-  useEffect(() => {
-    const canvas = canvasRef.current
-    if (!canvas) return undefined
-
-    const ctx = canvas.getContext('2d')
-    const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)')
-    let raf, w, h, stars
-
-    const resize = () => {
-      w = canvas.width = canvas.offsetWidth
-      h = canvas.height = canvas.offsetHeight
-      const count = Math.floor((w * h) / 9000)
-      stars = Array.from({ length: count }, () => ({
-        x: Math.random() * w,
-        y: Math.random() * h,
-        z: Math.random() * 0.7 + 0.3,
-        s: Math.random() * 1.2 + 0.2,
-        tw: Math.random() * Math.PI * 2,
-      }))
-    }
-
-    resize()
-    window.addEventListener('resize', resize)
-
-    const drawStars = () => {
-      ctx.clearRect(0, 0, w, h)
-      for (const s of stars) {
-        const a = 0.25 + 0.45 * s.z
-        ctx.fillStyle = `rgba(250,250,255,${a})`
-        ctx.fillRect(s.x, s.y, s.s, s.s)
-      }
-    }
-
-    if (reducedMotion?.matches) {
-      window.removeEventListener('resize', resize)
-      const handleStaticResize = () => {
-        resize()
-        drawStars()
-      }
-      window.addEventListener('resize', handleStaticResize)
-      drawStars()
-      return () => {
-        window.removeEventListener('resize', handleStaticResize)
-      }
-    }
-
-    let t0 = performance.now()
-
-    const tick = () => {
-      const now = performance.now()
-      const dt = (now - t0) / 1000
-      t0 = now
-      ctx.clearRect(0, 0, w, h)
-      for (const s of stars) {
-        s.x -= dt * 4 * s.z
-        s.tw += dt * 1.5
-        if (s.x < -2) s.x = w + 2
-        const a = 0.25 + 0.45 * s.z * (0.6 + 0.4 * Math.sin(s.tw))
-        ctx.fillStyle = `rgba(250,250,255,${a})`
-        ctx.fillRect(s.x, s.y, s.s, s.s)
-      }
-
-      raf = requestAnimationFrame(tick)
-    }
-
-    tick()
-    return () => {
-      cancelAnimationFrame(raf)
-      window.removeEventListener('resize', resize)
-    }
-  }, [])
-
-  return <canvas ref={canvasRef} className={styles.fixed} style={{ zIndex: 0 }} />
-}
-
 function HeroSign() {
   const signOuterRef = useRef(null)
   const size = 150
@@ -183,21 +105,85 @@ function HeroSign() {
   )
 }
 
+// Types out an array of strings one character at a time, line by line.
+// Returns the partially-typed text per line, which line is currently active,
+// and whether the whole sequence has finished (used to drop the caret).
+function useTypewriter(segments, { speed = 34, startDelay = 300, lineDelay = 400 } = {}) {
+  // Stable dependency: re-run only when the actual text changes (e.g. language switch).
+  const key = segments.join('\n')
+  const [typed, setTyped] = useState(() => segments.map(() => ''))
+  const [activeLine, setActiveLine] = useState(0)
+  const [done, setDone] = useState(false)
+
+  useEffect(() => {
+    const lines = key.split('\n')
+    const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)')
+    if (reducedMotion?.matches) {
+      setTyped(lines)
+      setActiveLine(lines.length - 1)
+      setDone(true)
+      return undefined
+    }
+
+    setTyped(lines.map(() => ''))
+    setActiveLine(0)
+    setDone(false)
+
+    let timeoutId
+    let line = 0
+    let char = 0
+
+    const typeNext = () => {
+      if (line >= lines.length) {
+        setDone(true)
+        return
+      }
+      const current = lines[line]
+      if (char <= current.length) {
+        setTyped((prev) => {
+          const next = [...prev]
+          next[line] = current.slice(0, char)
+          return next
+        })
+        char += 1
+        timeoutId = setTimeout(typeNext, speed)
+      } else {
+        line += 1
+        char = 0
+        setActiveLine(line)
+        timeoutId = setTimeout(typeNext, lineDelay)
+      }
+    }
+
+    timeoutId = setTimeout(typeNext, startDelay)
+    return () => clearTimeout(timeoutId)
+  }, [key])
+
+  return { typed, activeLine, done }
+}
+
 function Tagline() {
   const { t } = useTranslation()
+  const body = t('landing.taglineBody')
+  // Eyebrow renders statically; only the body line uses the typewriter effect.
+  const { typed, done } = useTypewriter([body])
+
   return (
     <div className={styles.tagline}>
       <div className={styles.taglineEyebrow}>{t('landing.taglineEyebrow', { set: CURRENT_SET })}</div>
-      <div className={styles.taglineBody}>{t('landing.taglineBody')}</div>
+      <div className={styles.taglineBody}>
+        {typed[0]}
+        {!done && <span className={styles.caret} aria-hidden="true" />}
+      </div>
     </div>
   )
 }
 
 const DESTINATIONS = [
   { key: 'comps', to: ROUTES.comps, sigil: 'comps' },
-  { key: 'builder', to: ROUTES.builder, sigil: 'hex' },
   { key: 'stats', to: ROUTES.stats, sigil: 'stats' },
   { key: 'leaderboard', to: ROUTES.leaderboard, sigil: 'ladder' },
+  { key: 'builder', to: ROUTES.builder, sigil: 'hex' },
 ]
 
 const formatCount = (value) => {
@@ -354,7 +340,6 @@ export default function LandingPage() {
   const [region, setRegion] = useState('na')
   return (
     <div className={styles.page}>
-      <Starfield />
       <div className={styles.scanline} />
       <div className={styles.main}>
         <HeroSign />
