@@ -83,8 +83,8 @@
   text-shadow: 0 0 26px var(--accent-gold-glow);
 }
 
-/* L-shaped corner brackets — the sign has no rectangle border; these four
-   solid-gold brackets frame it instead. */
+/* L-shaped corner brackets — the sign has no rectangle border; these two
+   solid-gold brackets (top-left + bottom-right) frame it instead. */
 .tick {
   position: absolute;
   width: 30px;
@@ -95,20 +95,6 @@
   top: 0;
   left: 0;
   border-top: 3px solid var(--accent-gold);
-  border-left: 3px solid var(--accent-gold);
-}
-
-.tickTR {
-  top: 0;
-  right: 0;
-  border-top: 3px solid var(--accent-gold);
-  border-right: 3px solid var(--accent-gold);
-}
-
-.tickBL {
-  bottom: 0;
-  left: 0;
-  border-bottom: 3px solid var(--accent-gold);
   border-left: 3px solid var(--accent-gold);
 }
 

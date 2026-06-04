@@ -93,8 +93,6 @@ function HeroSign() {
 
         <div className={styles.sign}>
           <div className={styles.tick + ' ' + styles.tickTL} />
-          <div className={styles.tick + ' ' + styles.tickTR} />
-          <div className={styles.tick + ' ' + styles.tickBL} />
           <div className={styles.tick + ' ' + styles.tickBR} />
           <KineticWordmark />
         </div>

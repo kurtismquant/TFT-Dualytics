@@ -45,16 +45,27 @@
   z-index: 100;
   display: flex;
   align-items: center;
+  /* space-around distributes the gap around the three sections (logo · links ·
+     gear) so they're pulled in from the edges instead of jammed against them. */
+  justify-content: space-around;
   padding: 0 2rem;
   height: 64px;
   background: transparent;
   border-bottom: none;
+  /* Cap + center so the sections pull inward toward the content on wide
+     screens instead of hugging the viewport edges. width:100% is required —
+     without it the auto cross-axis margins inside .app's column flex shrink
+     the nav to its content width, leaving space-around with no gap to spread.
+     Below 1250px the mobile layout takes over. */
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
 }
 
 /* ── Logo — D-DIN-Bold wordmark ────────────────────────── */
 .logo {
   font-family: 'Bebas Neue', 'D-DIN-Bold', 'D-DIN', Arial, Verdana, sans-serif;
-  font-size: 0.81rem;
+  font-size: 1.25rem;
   font-weight: 700;
   color: var(--text-primary);
   text-transform: uppercase;
@@ -67,15 +78,10 @@
 .logoLink {
   text-decoration: none;
   display: inline-block;
-  transition: opacity 0.2s ease;
-  position: absolute;
-  left: 2rem;
-  top: 50%;
-  transform: translateY(-50%);
-}
-
-.logoLink:hover {
-  opacity: 0.8;
+  /* Real flex section (left). Sits before the links via order so it can't
+     overlap them — DOM order is links → logo → navRight. */
+  order: 0;
+  flex-shrink: 0;
 }
 
 .duGold {
@@ -91,18 +97,18 @@
 
 /* ── Nav links container ────────────────────────────────── */
 .links {
-  flex: 1;
   display: flex;
   justify-content: center;
-  gap: 2rem;
+  gap: 2.4rem;
+  order: 1;
 }
 
 /* ── Inactive nav link — D-DIN 13px weight 700 ────────── */
 .link {
   color: var(--text-link-hover);
   font-family: 'Bebas Neue', 'D-DIN-Bold', 'D-DIN', Arial, Verdana, sans-serif;
-  font-weight: 700;
-  font-size: 1.22rem;
+  font-weight: 500;
+  font-size: 1.2rem;
   line-height: 0.94;
   letter-spacing: 1.17px;
   text-transform: uppercase;
@@ -145,8 +151,8 @@
 .activeLink {
   color: var(--text-link-hover);
   font-family: 'Bebas Neue', 'D-DIN-Bold', 'D-DIN', Arial, Verdana, sans-serif;
-  font-weight: 700;
-  font-size: 1.22rem;
+  font-weight: 500;
+  font-size: 1.2rem;
   line-height: 0.94;
   letter-spacing: 1.17px;
   text-transform: uppercase;
@@ -168,13 +174,11 @@
 
 /* ── Nav right — gear + search, right-anchored ──────────── */
 .navRight {
-  position: absolute;
-  right: 2rem;
-  top: 50%;
-  transform: translateY(-50%);
   display: flex;
   align-items: center;
   gap: 12px;
+  order: 2;
+  flex-shrink: 0;
 }
 
 /* ── Gear settings button (drawer variant — mobile only) ── */
@@ -190,16 +194,17 @@
   min-width: 40px;
   min-height: 40px;
   background: transparent;
-  border: 1px solid var(--bg-border-muted);
-  color: var(--text-secondary);
+  border: 1px solid var(--bg-border-bright);
+  color: var(--text-primary);
   cursor: pointer;
-  transition: border-color var(--t-fast), color var(--t-fast);
+  transition: border-color var(--t-fast), color var(--t-fast), background var(--t-fast);
   flex-shrink: 0;
 }
 
 .gearBtn:hover {
   border-color: var(--bg-border-bright);
   color: var(--text-primary);
+  background: var(--landing-card-hover, rgba(255, 255, 255, 0.06));
 }
 
 /* ── Hamburger — hidden on desktop ─────────────────────── */
