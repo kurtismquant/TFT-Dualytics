@@ -47,24 +47,35 @@
   z-index: 2;
   width: 720px;
   height: 220px;
-  background: var(--bg-hero-sign);
-  border: 2px solid var(--accent-gold);
-  box-shadow:
-    0 0 0 1px var(--bg-base),
-    0 0 0 4px var(--accent-gold-glow),
-    0 0 40px var(--accent-gold-glow);
+  background: transparent;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .signWordmark {
+  position: relative;
   font-family: "Rajdhani", "Bebas Neue", "D-DIN-Bold", Arial, sans-serif;
   font-size: 96px;
   font-weight: 700;
   line-height: 0.9;
-  letter-spacing: 6px;
+  letter-spacing: 0;
   color: var(--text-hero-sign);
+}
+
+/* Row of per-character cells. Fixed-width cells keep the wordmark from
+   reflowing while glyphs scramble (proportional Rajdhani would otherwise
+   jitter), and give the decode a terminal-grid feel. */
+.signChars {
+  position: relative;
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.signChar {
+  display: inline-block;
+  width: 0.56em;
+  text-align: center;
 }
 
 .signDu {
@@ -72,38 +83,40 @@
   text-shadow: 0 0 26px var(--accent-gold-glow);
 }
 
+/* L-shaped corner brackets — the sign has no rectangle border; these four
+   solid-gold brackets frame it instead. */
 .tick {
   position: absolute;
-  width: 12px;
-  height: 12px;
+  width: 30px;
+  height: 30px;
 }
 
 .tickTL {
-  top: -1px;
-  left: -1px;
-  border-top: 1px solid var(--accent-gold);
-  border-left: 1px solid var(--accent-gold);
+  top: 0;
+  left: 0;
+  border-top: 3px solid var(--accent-gold);
+  border-left: 3px solid var(--accent-gold);
 }
 
 .tickTR {
-  top: -1px;
-  right: -1px;
-  border-top: 1px solid var(--accent-gold);
-  border-right: 1px solid var(--accent-gold);
+  top: 0;
+  right: 0;
+  border-top: 3px solid var(--accent-gold);
+  border-right: 3px solid var(--accent-gold);
 }
 
 .tickBL {
-  bottom: -1px;
-  left: -1px;
-  border-bottom: 1px solid var(--accent-gold);
-  border-left: 1px solid var(--accent-gold);
+  bottom: 0;
+  left: 0;
+  border-bottom: 3px solid var(--accent-gold);
+  border-left: 3px solid var(--accent-gold);
 }
 
 .tickBR {
-  bottom: -1px;
-  right: -1px;
-  border-bottom: 1px solid var(--accent-gold);
-  border-right: 1px solid var(--accent-gold);
+  bottom: 0;
+  right: 0;
+  border-bottom: 3px solid var(--accent-gold);
+  border-right: 3px solid var(--accent-gold);
 }
 
 .dangoTR,

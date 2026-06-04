@@ -96,9 +96,7 @@ function HeroSign() {
           <div className={styles.tick + ' ' + styles.tickTR} />
           <div className={styles.tick + ' ' + styles.tickBL} />
           <div className={styles.tick + ' ' + styles.tickBR} />
-          <h1 className={styles.signWordmark}>
-            <span className={styles.signDu}>DU</span>ALYTICS
-          </h1>
+          <KineticWordmark />
         </div>
       </div>
     </div>
@@ -160,6 +158,90 @@ function useTypewriter(segments, { speed = 34, startDelay = 300, lineDelay = 400
   }, [key])
 
   return { typed, activeLine, done }
+}
+
+const WORDMARK = 'DUALYTICS'
+// Aerospace/HUD-flavored glyph pool the wordmark scrambles through (no katakana).
+// Widest glyphs (M W # %) are omitted so they don't overflow the snug decode cells.
+const DECODE_GLYPHS = 'ABCDEFGHIJKLNOPQRSTUVXYZ0123456789/<>'
+
+// Scrambles `text` on mount and resolves it left→right into the final string.
+// Unresolved positions cycle a random glyph every `tickMs`; one more position
+// locks in every `revealEvery` ms. Returns the current display string + done flag.
+// Mirrors useTypewriter's reduced-motion handling: shows the final text instantly.
+function useDecodeText(text, { tickMs = 50, revealEvery = 100, startDelay = 150 } = {}) {
+  const [display, setDisplay] = useState(text)
+  const [done, setDone] = useState(false)
+
+  useEffect(() => {
+    const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)')
+    if (reducedMotion?.matches) {
+      setDisplay(text)
+      setDone(true)
+      return undefined
+    }
+
+    const randomGlyph = () => DECODE_GLYPHS[Math.floor(Math.random() * DECODE_GLYPHS.length)]
+    const lockEvery = Math.max(1, Math.round(revealEvery / tickMs))
+
+    setDisplay(text.split('').map((c) => (c === ' ' ? ' ' : randomGlyph())).join(''))
+    setDone(false)
+
+    let revealed = 0
+    let tick = 0
+    let intervalId
+
+    const run = () => {
+      intervalId = setInterval(() => {
+        tick += 1
+        if (tick % lockEvery === 0) revealed += 1
+
+        if (revealed >= text.length) {
+          setDisplay(text)
+          setDone(true)
+          clearInterval(intervalId)
+          return
+        }
+
+        let out = ''
+        for (let i = 0; i < text.length; i += 1) {
+          out += i < revealed || text[i] === ' ' ? text[i] : randomGlyph()
+        }
+        setDisplay(out)
+      }, tickMs)
+    }
+
+    const startId = setTimeout(run, startDelay)
+
+    return () => {
+      clearTimeout(startId)
+      clearInterval(intervalId)
+    }
+  }, [text, tickMs, revealEvery, startDelay])
+
+  return { display, done }
+}
+
+// The DUALYTICS hero logo: decodes in on load. The h1 keeps a stable accessible
+// name while the per-character spans (which briefly show scrambled glyphs) are
+// hidden from screen readers.
+function KineticWordmark() {
+  const { display } = useDecodeText(WORDMARK)
+
+  return (
+    <h1 className={styles.signWordmark} aria-label={WORDMARK}>
+      <span className={styles.signChars} aria-hidden="true">
+        {display.split('').map((char, i) => (
+          <span
+            key={i}
+            className={i < 2 ? `${styles.signChar} ${styles.signDu}` : styles.signChar}
+          >
+            {char}
+          </span>
+        ))}
+      </span>
+    </h1>
+  )
 }
 
 function Tagline() {

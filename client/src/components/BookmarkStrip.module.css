@@ -58,13 +58,16 @@
   text-transform: uppercase;
   text-decoration: none;
   cursor: pointer;
-  transition: border-color 150ms ease, background 150ms ease;
+  transition: border-color 150ms ease, background 150ms ease,
+    box-shadow 150ms ease, transform 150ms ease;
   white-space: nowrap;
 }
 
 .chip:hover {
-  border-color: var(--focus-border);
-  background: var(--bg-hover);
+  border-color: var(--bg-border);
+  background: var(--bg-elevated);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+  transform: translateY(-1px);
 }
 
 .chipRegion {
@@ -95,12 +98,15 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  transition: border-color 150ms ease, background 150ms ease;
+  transition: border-color 150ms ease, background 150ms ease,
+    box-shadow 150ms ease, transform 150ms ease;
 }
 
 .editBtn:hover {
-  border-color: var(--focus-border);
-  background: var(--bg-hover);
+  border-color: var(--bg-border);
+  background: var(--bg-elevated);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+  transform: translateY(-1px);
 }
 
 @media (max-width: 760px) {
