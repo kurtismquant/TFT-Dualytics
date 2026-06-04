@@ -42,7 +42,7 @@
   padding: 8px 12px;
   background: transparent;
   border-bottom: 1px solid var(--bg-border-muted);
-  font-family: "D-DIN-Bold", "D-DIN", Arial, Verdana, sans-serif;
+  font-family: "Bebas Neue", "D-DIN-Bold", "D-DIN", Arial, Verdana, sans-serif;
   font-size: 0.75rem;
   font-weight: 700;
   flex-wrap: wrap;
@@ -108,7 +108,7 @@
 }
 
 .traitCount {
-  font-family: "D-DIN-Bold", "D-DIN", Arial, Verdana, sans-serif;
+  font-family: "Bebas Neue", "D-DIN-Bold", "D-DIN", Arial, Verdana, sans-serif;
   font-weight: 700;
 }
 
@@ -232,7 +232,7 @@
 .expandedHeader {
   margin: 0;
   padding: 10px 12px;
-  font-family: "D-DIN-Bold", "D-DIN", Arial, Verdana, sans-serif;
+  font-family: "Bebas Neue", "D-DIN-Bold", "D-DIN", Arial, Verdana, sans-serif;
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 1.17px;
@@ -276,7 +276,7 @@
 }
 
 .partnerPlacement {
-  font-family: "D-DIN-Bold", "D-DIN", Arial, Verdana, sans-serif;
+  font-family: "Bebas Neue", "D-DIN-Bold", "D-DIN", Arial, Verdana, sans-serif;
   font-size: 0.81rem;
   font-weight: 700;
   letter-spacing: 0.06em;

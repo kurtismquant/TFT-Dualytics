@@ -10,7 +10,7 @@
 }
 
 .title {
-  font-family: 'D-DIN-Bold', 'Barlow Condensed', sans-serif;
+  font-family: 'Bebas Neue', 'D-DIN-Bold', 'Barlow Condensed', sans-serif;
   font-size: 3rem;
   font-weight: 700;
   line-height: 1;
@@ -37,7 +37,7 @@
   border-right: 1px solid var(--bg-border-muted);
   color: var(--text-secondary);
   border-radius: 0;
-  font-family: 'D-DIN-Bold', 'Barlow Condensed', sans-serif;
+  font-family: 'Bebas Neue', 'D-DIN-Bold', 'Barlow Condensed', sans-serif;
   font-size: 0.81rem;
   font-weight: 700;
   line-height: 0.94;
@@ -73,7 +73,7 @@
 
 .th {
   padding: 12px 10px;
-  font-family: 'D-DIN-Bold', 'Barlow Condensed', sans-serif;
+  font-family: 'Bebas Neue', 'D-DIN-Bold', 'Barlow Condensed', sans-serif;
   font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 1.17px;
@@ -152,13 +152,13 @@
 .tdRank {
   text-align: center;
   color: var(--text-muted);
-  font-family: 'D-DIN-Bold', 'Barlow Condensed', sans-serif;
+  font-family: 'Bebas Neue', 'D-DIN-Bold', 'Barlow Condensed', sans-serif;
   font-weight: 700;
   font-size: 0.81rem;
 }
 
 .playerName {
-  font-family: 'D-DIN-Bold', 'Barlow Condensed', sans-serif;
+  font-family: 'Bebas Neue', 'D-DIN-Bold', 'Barlow Condensed', sans-serif;
   font-weight: 700;
   font-size: 0.81rem;
   color: var(--text-primary);
@@ -191,7 +191,7 @@
 }
 
 .tierLabel {
-  font-family: 'D-DIN-Bold', 'Barlow Condensed', sans-serif;
+  font-family: 'Bebas Neue', 'D-DIN-Bold', 'Barlow Condensed', sans-serif;
   font-weight: 700;
   font-size: 0.81rem;
   letter-spacing: 0.06em;
@@ -213,7 +213,7 @@
 
 .tdRate {
   text-align: right;
-  font-family: 'D-DIN-Bold', 'Barlow Condensed', sans-serif;
+  font-family: 'Bebas Neue', 'D-DIN-Bold', 'Barlow Condensed', sans-serif;
   font-weight: 700;
   font-size: 0.81rem;
   color: var(--text-secondary);
@@ -257,7 +257,7 @@
   background: var(--ghost-surface);
   border: 1px solid var(--ghost-border);
   color: var(--text-primary);
-  font-family: 'D-DIN-Bold', 'Barlow Condensed', sans-serif;
+  font-family: 'Bebas Neue', 'D-DIN-Bold', 'Barlow Condensed', sans-serif;
   font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 1px;
@@ -281,7 +281,7 @@
   background: transparent;
   border: 1px solid var(--bg-border-muted);
   color: var(--text-muted);
-  font-family: 'D-DIN-Bold', 'Barlow Condensed', sans-serif;
+  font-family: 'Bebas Neue', 'D-DIN-Bold', 'Barlow Condensed', sans-serif;
   font-size: 0.75rem;
   font-weight: 700;
   cursor: pointer;
@@ -298,7 +298,7 @@
   padding: 60px 20px;
   text-align: center;
   color: var(--text-muted);
-  font-family: 'D-DIN-Bold', 'Barlow Condensed', sans-serif;
+  font-family: 'Bebas Neue', 'D-DIN-Bold', 'Barlow Condensed', sans-serif;
   font-size: 0.81rem;
   letter-spacing: 1.17px;
   text-transform: uppercase;

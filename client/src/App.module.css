@@ -23,7 +23,7 @@
   background: var(--bg-card);
   border: 1px solid var(--focus-border);
   color: var(--text-primary);
-  font-family: "D-DIN-Bold", "D-DIN", Arial, sans-serif;
+  font-family: "Bebas Neue", "D-DIN-Bold", "D-DIN", Arial, sans-serif;
   font-size: 0.75rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -53,7 +53,7 @@
 
 /* ── Logo — D-DIN-Bold wordmark ────────────────────────── */
 .logo {
-  font-family: 'D-DIN-Bold', 'D-DIN', Arial, Verdana, sans-serif;
+  font-family: 'Bebas Neue', 'D-DIN-Bold', 'D-DIN', Arial, Verdana, sans-serif;
   font-size: 0.81rem;
   font-weight: 700;
   color: var(--text-primary);
@@ -99,21 +99,34 @@
 
 /* ── Inactive nav link — D-DIN 13px weight 700 ────────── */
 .link {
-  color: var(--text-primary);
-  font-family: 'D-DIN-Bold', 'D-DIN', Arial, Verdana, sans-serif;
+  color: var(--text-link-hover);
+  font-family: 'Bebas Neue', 'D-DIN-Bold', 'D-DIN', Arial, Verdana, sans-serif;
   font-weight: 700;
-  font-size: 0.81rem;
+  font-size: 1.22rem;
   line-height: 0.94;
   letter-spacing: 1.17px;
   text-transform: uppercase;
   padding: 0px 0;
-  transition: opacity var(--t-fast);
-  opacity: 0.7;
+  position: relative;
 }
 
-.link:hover {
-  opacity: 1;
-  color: var(--text-link-hover);
+/* Center-out underline that expands left and right on hover */
+.link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -8px;
+  height: 2px;
+  background: var(--text-link-hover);
+  box-shadow: 0 0 8px var(--focus-glow);
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform var(--t-fast);
+}
+
+.link:hover::after {
+  transform: scaleX(1);
 }
 
 .link:focus-visible,
@@ -130,10 +143,10 @@
 
 /* ── Active nav link — same type, full opacity ──────── */
 .activeLink {
-  color: var(--text-primary);
-  font-family: 'D-DIN-Bold', 'D-DIN', Arial, Verdana, sans-serif;
+  color: var(--text-link-hover);
+  font-family: 'Bebas Neue', 'D-DIN-Bold', 'D-DIN', Arial, Verdana, sans-serif;
   font-weight: 700;
-  font-size: 0.81rem;
+  font-size: 1.22rem;
   line-height: 0.94;
   letter-spacing: 1.17px;
   text-transform: uppercase;
@@ -149,7 +162,7 @@
   right: 0;
   bottom: -8px;
   height: 2px;
-  background: var(--text-primary);
+  background: var(--text-link-hover);
   box-shadow: 0 0 8px var(--focus-glow);
 }
 
@@ -317,13 +330,14 @@
 
   .link,
   .activeLink {
-    font-size: 0.94rem;
+    font-size: 1.41rem;
     min-height: 44px;
     padding: 12px 0;
     display: inline-flex;
     align-items: center;
   }
 
+  .link::after,
   .activeLink::after {
     bottom: 0;
   }

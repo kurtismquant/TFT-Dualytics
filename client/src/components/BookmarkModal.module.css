@@ -31,7 +31,7 @@
 }
 
 .title {
-  font-family: "D-DIN-Bold", "D-DIN", Arial, sans-serif;
+  font-family: "Bebas Neue", "D-DIN-Bold", "D-DIN", Arial, sans-serif;
   font-size: 0.95rem;
   font-weight: 700;
   letter-spacing: 0.16em;
@@ -132,7 +132,7 @@
   background: transparent;
   border: 1px solid var(--bg-border-bright);
   color: var(--text-primary);
-  font-family: "D-DIN-Bold", "D-DIN", Arial, sans-serif;
+  font-family: "Bebas Neue", "D-DIN-Bold", "D-DIN", Arial, sans-serif;
   font-size: 0.78rem;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -217,7 +217,7 @@
 }
 
 .sectionHeader {
-  font-family: "D-DIN-Bold", "D-DIN", Arial, sans-serif;
+  font-family: "Bebas Neue", "D-DIN-Bold", "D-DIN", Arial, sans-serif;
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.18em;

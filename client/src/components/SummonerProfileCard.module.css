@@ -25,7 +25,7 @@
 }
 
 .name {
-  font-family: "D-DIN-Bold", "D-DIN", Arial, sans-serif;
+  font-family: "Bebas Neue", "D-DIN-Bold", "D-DIN", Arial, sans-serif;
   font-size: 20px;
   font-weight: 700;
   color: var(--text-primary);
@@ -46,7 +46,7 @@
   border: 1px solid var(--ghost-border);
   color: var(--text-primary);
   cursor: pointer;
-  font-family: "D-DIN-Bold", "D-DIN", Arial, sans-serif;
+  font-family: "Bebas Neue", "D-DIN-Bold", "D-DIN", Arial, sans-serif;
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 1.17px;
@@ -101,7 +101,7 @@
 }
 
 .tierLabel {
-  font-family: "D-DIN-Bold", "D-DIN", Arial, sans-serif;
+  font-family: "Bebas Neue", "D-DIN-Bold", "D-DIN", Arial, sans-serif;
   font-size: 14px;
   font-weight: 700;
   color: var(--text-primary);
@@ -122,7 +122,7 @@
 }
 
 .rankPosition {
-  font-family: "D-DIN-Bold", "D-DIN", Arial, sans-serif;
+  font-family: "Bebas Neue", "D-DIN-Bold", "D-DIN", Arial, sans-serif;
   font-size: 13px;
   font-weight: 700;
   color: var(--text-secondary);
@@ -150,7 +150,7 @@
   background: transparent;
   border: 1px solid var(--bg-border);
   color: var(--text-primary);
-  font-family: "D-DIN-Bold", "D-DIN", Arial, sans-serif;
+  font-family: "Bebas Neue", "D-DIN-Bold", "D-DIN", Arial, sans-serif;
   font-size: 0.72rem;
   letter-spacing: 0.14em;
   text-transform: uppercase;

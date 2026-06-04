@@ -59,7 +59,7 @@
 }
 
 .signWordmark {
-  font-family: "D-DIN-Bold", "Barlow Condensed", Arial, sans-serif;
+  font-family: "Rajdhani", "Bebas Neue", "D-DIN-Bold", Arial, sans-serif;
   font-size: 96px;
   font-weight: 700;
   line-height: 0.9;
@@ -155,8 +155,8 @@
 }
 
 .taglineEyebrow {
-  font-family: "D-DIN-Bold", "Barlow Condensed", Arial, sans-serif;
-  font-size: 0.81rem;
+  font-family: "Bebas Neue", "D-DIN-Bold", "Barlow Condensed", Arial, sans-serif;
+  font-size: 1.6rem;
   font-weight: 700;
   letter-spacing: 1.17px;
   line-height: 0.94;
@@ -422,7 +422,7 @@
 }
 
 .destEyebrow {
-  font-family: "D-DIN-Bold", "Barlow Condensed", Arial, sans-serif;
+  font-family: "Bebas Neue", "D-DIN-Bold", "Barlow Condensed", Arial, sans-serif;
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 1.4px;
@@ -431,7 +431,7 @@
 }
 
 .destTitle {
-  font-family: "D-DIN-Bold", "Barlow Condensed", Arial, sans-serif;
+  font-family: "Bebas Neue", "D-DIN-Bold", "Barlow Condensed", Arial, sans-serif;
   font-size: 32px;
   font-weight: 700;
   line-height: 0.94;
@@ -464,7 +464,7 @@
 }
 
 .statVal {
-  font-family: "D-DIN-Bold", "Barlow Condensed", Arial, sans-serif;
+  font-family: "Bebas Neue", "D-DIN-Bold", "Barlow Condensed", Arial, sans-serif;
   font-size: 22px;
   font-weight: 700;
   color: var(--text-primary);

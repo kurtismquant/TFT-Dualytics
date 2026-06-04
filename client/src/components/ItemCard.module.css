@@ -8,7 +8,7 @@
 
 .name {
   display: block;
-  font-family: 'D-DIN-Bold', 'D-DIN', Arial, sans-serif;
+  font-family: 'Bebas Neue', 'D-DIN-Bold', 'D-DIN', Arial, sans-serif;
   font-size: 0.85rem;
   font-weight: 700;
   letter-spacing: 1.17px;
@@ -33,7 +33,7 @@
 }
 
 .statValue {
-  font-family: 'D-DIN-Bold', 'D-DIN', Arial, sans-serif;
+  font-family: 'Bebas Neue', 'D-DIN-Bold', 'D-DIN', Arial, sans-serif;
   font-size: 0.78rem;
   font-weight: 700;
   letter-spacing: 0.8px;
@@ -92,7 +92,7 @@
 }
 
 .glossaryTerm {
-  font-family: 'D-DIN-Bold', 'D-DIN', Arial, sans-serif;
+  font-family: 'Bebas Neue', 'D-DIN-Bold', 'D-DIN', Arial, sans-serif;
   font-size: 0.65rem;
   font-weight: 700;
   letter-spacing: 1px;

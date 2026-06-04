@@ -13,7 +13,7 @@
 }
 
 .sectionTitle {
-  font-family: "D-DIN-Bold", "D-DIN", Arial, Verdana, sans-serif;
+  font-family: "Bebas Neue", "D-DIN-Bold", "D-DIN", Arial, Verdana, sans-serif;
   font-size: 0.81rem;
   font-weight: 700;
   line-height: 0.94;
@@ -101,7 +101,7 @@
   background: transparent;
   border-top: 1px solid var(--bg-border);
   border-bottom: 1px solid var(--bg-border-muted);
-  font-family: "D-DIN-Bold", "D-DIN", Arial, Verdana, sans-serif;
+  font-family: "Bebas Neue", "D-DIN-Bold", "D-DIN", Arial, Verdana, sans-serif;
   font-size: 0.75rem;
   font-weight: 700;
   flex-wrap: wrap;
@@ -115,7 +115,7 @@
 }
 
 .modeLabel {
-  font-family: "D-DIN-Bold", "D-DIN", Arial, Verdana, sans-serif;
+  font-family: "Bebas Neue", "D-DIN-Bold", "D-DIN", Arial, Verdana, sans-serif;
   font-weight: 700;
   font-size: 0.81rem;
   line-height: 0.94;
@@ -160,7 +160,7 @@
 
 /* Partners badge — ghost pill */
 .partnerTag {
-  font-family: "D-DIN-Bold", "D-DIN", Arial, Verdana, sans-serif;
+  font-family: "Bebas Neue", "D-DIN-Bold", "D-DIN", Arial, Verdana, sans-serif;
   font-size: 0.63rem;
   font-weight: 700;
   line-height: 0.94;
@@ -204,7 +204,7 @@
 }
 
 .traitCount {
-  font-family: "D-DIN-Bold", "D-DIN", Arial, Verdana, sans-serif;
+  font-family: "Bebas Neue", "D-DIN-Bold", "D-DIN", Arial, Verdana, sans-serif;
   font-weight: 700;
 }
 
@@ -327,7 +327,7 @@
   padding: 4px 6px;
   border-radius: 0;
   border: none;
-  font-family: "D-DIN-Bold", "D-DIN", Arial, Verdana, sans-serif;
+  font-family: "Bebas Neue", "D-DIN-Bold", "D-DIN", Arial, Verdana, sans-serif;
   font-weight: 700;
   font-size: 1rem;
   line-height: 1;
@@ -418,7 +418,7 @@
 }
 
 .splitName {
-  font-family: "D-DIN-Bold", "D-DIN", Arial, Verdana, sans-serif;
+  font-family: "Bebas Neue", "D-DIN-Bold", "D-DIN", Arial, Verdana, sans-serif;
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -540,7 +540,7 @@
 }
 
 .participantPlacement {
-  font-family: "D-DIN-Bold", "D-DIN", Arial, Verdana, sans-serif;
+  font-family: "Bebas Neue", "D-DIN-Bold", "D-DIN", Arial, Verdana, sans-serif;
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.06em;
@@ -562,7 +562,7 @@
 }
 
 .participantName {
-  font-family: "D-DIN-Bold", "D-DIN", Arial, Verdana, sans-serif;
+  font-family: "Bebas Neue", "D-DIN-Bold", "D-DIN", Arial, Verdana, sans-serif;
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.08em;

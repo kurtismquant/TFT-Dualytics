@@ -35,8 +35,9 @@ What makes SpaceX distinctive is its radical minimalism: no shadows, no borders 
 ## 3. Typography Rules
 
 ### Font Families
-- **Display**: `D-DIN-Bold` — bold industrial geometric
+- **Display**: `Bebas Neue` — tall condensed all-caps; falls back to `D-DIN-Bold`
 - **Body / UI**: `D-DIN`, fallbacks: `Arial, Verdana`
+- **Accent**: `Rajdhani` 700 — used only for the DUALYTICS landing-page wordmark
 
 ### Hierarchy
 

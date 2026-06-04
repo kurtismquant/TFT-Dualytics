@@ -6,7 +6,7 @@
 
 /* ── Hero title — D-DIN-Bold 48px uppercase ─────────────── */
 .title {
-  font-family: "D-DIN-Bold", "D-DIN", Arial, Verdana, sans-serif;
+  font-family: "Bebas Neue", "D-DIN-Bold", "D-DIN", Arial, Verdana, sans-serif;
   font-size: 3rem;
   font-weight: 700;
   line-height: 1;
@@ -33,7 +33,7 @@
 }
 
 .sectionTitle {
-  font-family: "D-DIN-Bold", "D-DIN", Arial, Verdana, sans-serif;
+  font-family: "Bebas Neue", "D-DIN-Bold", "D-DIN", Arial, Verdana, sans-serif;
   font-size: 0.81rem;
   font-weight: 700;
   line-height: 0.94;
