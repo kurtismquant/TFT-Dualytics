@@ -39,7 +39,8 @@
 }
 
 .select:focus {
-  border-color: var(--focus-border);
+  outline: none;
+  border-color: var(--search-focus-border);
   background-image: var(--select-caret-up);
 }
 
@@ -54,10 +55,9 @@
 }
 
 .input:focus {
-  border-color: var(--focus-border);
-  box-shadow:
-    0 0 0 1px var(--focus-ring),
-    0 0 12px var(--focus-glow);
+  outline: none;
+  border-color: var(--search-focus-border);
+  box-shadow: 0 0 10px var(--search-focus-glow);
 }
 
 .btn {

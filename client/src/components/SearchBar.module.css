@@ -40,8 +40,9 @@
 
 .input:focus,
 .select:focus {
-  border-color: var(--focus-border);
-  box-shadow: 0 0 0 2px var(--focus-ring);
+  outline: none;
+  border-color: var(--search-focus-border);
+  box-shadow: 0 0 10px var(--search-focus-glow);
 }
 
 .input::placeholder {

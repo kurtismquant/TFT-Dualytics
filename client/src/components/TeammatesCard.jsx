@@ -63,7 +63,11 @@ export default function TeammatesCard({ matches, selectedPuuid, onSelect }) {
         <div className={styles.titleWrapper}>
           <span className={styles.title}>{t('teammates.title')}</span>
           {showTip && (
-            <div className={styles.tip} role="status">
+            <div
+              className={styles.tip}
+              role="status"
+              onClick={() => setTipDismissed(true)}
+            >
               <span className={styles.tipText}>{t('teammates.tip')}</span>
               <button
                 type="button"
@@ -91,6 +95,7 @@ export default function TeammatesCard({ matches, selectedPuuid, onSelect }) {
       </div>
 
       <div className={styles.tableWrap}>
+        <div className={styles.tableScroll}>
         <table className={styles.table}>
         <thead>
           <tr className={styles.headRow}>
@@ -133,6 +138,7 @@ export default function TeammatesCard({ matches, selectedPuuid, onSelect }) {
           })}
         </tbody>
         </table>
+        </div>
       </div>
     </div>
   )

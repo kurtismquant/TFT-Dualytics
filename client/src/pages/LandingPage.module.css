@@ -231,6 +231,8 @@
 }
 
 .searchSelect:focus {
+  outline: none;
+  border-color: var(--search-focus-border);
   background-image: var(--select-caret-up);
 }
 
@@ -240,15 +242,6 @@
   min-width: 0;
 }
 
-.searchInputWrap::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border: 1px solid transparent;
-  pointer-events: none;
-  opacity: 0;
-}
-
 .searchInput {
   composes: searchField;
   width: 100%;
@@ -256,16 +249,10 @@
 }
 
 .searchInput:focus {
-  border-color: var(--focus-border);
+  outline: none;
+  border-color: var(--search-focus-border);
   background-color: var(--bg-input-focus);
-  box-shadow:
-    0 0 0 1px var(--focus-ring),
-    0 0 18px var(--focus-glow);
-}
-
-.searchInputWrap:focus-within::after {
-  opacity: 1;
-  animation: searchGlowPulse 2.1s ease-in-out infinite;
+  box-shadow: 0 0 12px var(--search-focus-glow);
 }
 
 .searchBtn {
@@ -493,24 +480,6 @@
   }
 }
 
-@keyframes searchGlowPulse {
-  0%, 100% {
-    border-color: var(--bg-border);
-    box-shadow:
-      0 0 0 1px var(--focus-ring),
-      0 0 12px var(--focus-glow),
-      0 0 26px var(--focus-glow);
-  }
-
-  50% {
-    border-color: var(--focus-border);
-    box-shadow:
-      0 0 0 1px var(--focus-ring),
-      0 0 18px var(--focus-glow),
-      0 0 36px var(--focus-glow);
-  }
-}
-
 @keyframes cardEntrance {
   from {
     opacity: 0;
@@ -618,7 +587,6 @@
   .dangoMotionFast,
   .dangoMotionSlow,
   .destCard,
-  .searchInputWrap::after,
   .destCard::before {
     animation: none;
     transition: none;
@@ -634,7 +602,6 @@
     transform: none;
   }
 
-  .searchInputWrap:focus-within::after,
   .destCard:hover::before,
   .destCard:focus-visible::before {
     opacity: 1;

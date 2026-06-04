@@ -43,6 +43,43 @@
   position: relative;
 }
 
+/* ── Vertical scroll — show header + exactly 5 rows, scroll the rest ──
+   Header (.th: 10px text + 8px pad-bottom + 1px border ≈ 21px) plus
+   5 rows (.td: ~15.6px text + 20px pad + 1px border ≈ 36.6px each ≈ 183px)
+   lands at ~204px — a clean cut at the bottom of row 5, no partial 6th
+   row peeking through. max-height collapses naturally when there are ≤5 rows. */
+.tableScroll {
+  max-height: 204px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) transparent;
+}
+
+.tableScroll::-webkit-scrollbar {
+  width: 4px;
+}
+
+.tableScroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.tableScroll::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+}
+
+.tableScroll::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-hover);
+}
+
+/* Sticky header — opaque page-surface bg so rows don't bleed through.
+   The card is transparent, so it sits on --bg-base (the page surface). */
+.tableScroll thead {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: var(--bg-base);
+}
+
 /* ── Dismissible tip — inline next to title with downward arrow ── */
 .tip {
   display: flex;
@@ -56,6 +93,7 @@
   white-space: nowrap;
   box-shadow: 0 2px 8px rgba(206, 206, 206, 0.3);
   position: relative;
+  cursor: pointer;
 }
 
 /* Speech-bubble tail pointing DOWN from the tip */
@@ -239,6 +277,12 @@
   }
 
   .tableWrap {
+    overflow-x: auto;
+  }
+
+  /* Let the vertical scroll container also scroll horizontally so the
+     min-width table stays reachable on narrow screens. */
+  .tableScroll {
     overflow-x: auto;
   }
 
