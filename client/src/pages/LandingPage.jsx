@@ -70,23 +70,41 @@ const scrambleText = (text) =>
 const prefersReducedMotion = () =>
   !!window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches
 
-// Scrambles `text` on mount and resolves it left→right into the final string.
-// Unresolved positions cycle a random glyph every `tickMs`; one more position
-// locks in every `revealEvery` ms. Returns the current display string + done flag.
-// Honors prefers-reduced-motion by showing the final text instantly.
-function useDecodeText(text, { tickMs = 50, revealEvery = 100, startDelay = 150 } = {}) {
+// Returns the non-space character positions of `text` in a random order — the
+// order the decode locks them in (Fisher-Yates shuffle).
+const shuffledPositions = (text) => {
+  const order = []
+  for (let i = 0; i < text.length; i += 1) {
+    if (text[i] !== ' ') order.push(i)
+  }
+  for (let i = order.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[order[i], order[j]] = [order[j], order[i]]
+  }
+  return order
+}
+
+// Scrambles `text` on mount, then resolves it into the final string by locking
+// one position at a time in a random order (a "jitter" decode rather than a
+// strict left→right reveal). Unlocked positions keep cycling a random glyph
+// every `tickMs`; one more locks in every `lockMs`. Returns the current display
+// string + done flag. Honors prefers-reduced-motion by showing the text instantly.
+function useDecodeText(text, { tickMs = 40, lockMs = 40, startDelay = 120 } = {}) {
   // Seed state to the correct first frame so the effect never has to set state
   // synchronously on mount (which the lint rules flag as a cascading render):
   // reduced motion seeds the final text and "done"; otherwise we seed a
-  // fully-scrambled frame that the interval resolves left->right.
+  // fully-scrambled frame that the interval resolves.
   const [display, setDisplay] = useState(() => (prefersReducedMotion() ? text : scrambleText(text)))
   const [done, setDone] = useState(prefersReducedMotion)
 
   useEffect(() => {
     if (prefersReducedMotion()) return undefined
 
-    const lockEvery = Math.max(1, Math.round(revealEvery / tickMs))
+    const lockEvery = Math.max(1, Math.round(lockMs / tickMs))
 
+    // Random order in which positions snap to their final glyph.
+    const order = shuffledPositions(text)
+    const locked = new Set()
     let revealed = 0
     let tick = 0
     let intervalId
@@ -99,9 +117,12 @@ function useDecodeText(text, { tickMs = 50, revealEvery = 100, startDelay = 150 
 
       intervalId = setInterval(() => {
         tick += 1
-        if (tick % lockEvery === 0) revealed += 1
+        if (tick % lockEvery === 0 && revealed < order.length) {
+          locked.add(order[revealed])
+          revealed += 1
+        }
 
-        if (revealed >= text.length) {
+        if (revealed >= order.length) {
           setDisplay(text)
           setDone(true)
           clearInterval(intervalId)
@@ -110,7 +131,7 @@ function useDecodeText(text, { tickMs = 50, revealEvery = 100, startDelay = 150 
 
         let out = ''
         for (let i = 0; i < text.length; i += 1) {
-          out += i < revealed || text[i] === ' ' ? text[i] : randomGlyph()
+          out += locked.has(i) || text[i] === ' ' ? text[i] : randomGlyph()
         }
         setDisplay(out)
       }, tickMs)
@@ -122,7 +143,7 @@ function useDecodeText(text, { tickMs = 50, revealEvery = 100, startDelay = 150 
       clearTimeout(startId)
       clearInterval(intervalId)
     }
-  }, [text, tickMs, revealEvery, startDelay])
+  }, [text, tickMs, lockMs, startDelay])
 
   return { display, done }
 }
@@ -131,11 +152,16 @@ function useDecodeText(text, { tickMs = 50, revealEvery = 100, startDelay = 150 
 // name while the per-character spans (which briefly show scrambled glyphs) are
 // hidden from screen readers.
 function KineticWordmark() {
-  const { display } = useDecodeText(WORDMARK)
+  const { display, done } = useDecodeText(WORDMARK)
 
   return (
     <h1 className={styles.signWordmark} aria-label={WORDMARK}>
-      <span className={styles.signChars} aria-hidden="true">
+      {/* Fixed-width cells keep the scramble from reflowing; once decoded we drop
+          to natural widths so letters (esp. the narrow "I") space evenly. */}
+      <span
+        className={done ? `${styles.signChars} ${styles.signCharsDone}` : styles.signChars}
+        aria-hidden="true"
+      >
         {display.split('').map((char, i) => (
           <span
             key={i}
@@ -321,7 +347,6 @@ function DestinationGrid() {
       return {
         ...base,
         stat: stat(comps.length, LANDING_SEED.topComps, t('landing.statTopComps')),
-        stat2: stat(compsData?.matchCount, LANDING_SEED.gamesAnalyzed, t('landing.statGamesAnalyzed')),
       }
     }
 
@@ -335,8 +360,7 @@ function DestinationGrid() {
     if (destination.key === 'stats') {
       return {
         ...base,
-        stat: stat(statsData?.rows?.length, LANDING_SEED.unitsTracked, t('landing.statUnitsTracked')),
-        stat2: stat(statsData?.matchCount, LANDING_SEED.patchGames, t('landing.statPatchGames')),
+        stat: stat(statsData?.matchCount, LANDING_SEED.patchGames, t('landing.statPatchGames')),
       }
     }
 
@@ -368,7 +392,11 @@ export default function LandingPage() {
         <HeroSign />
         <Tagline />
         <LandingSearch region={region} setRegion={setRegion} />
-        <BookmarkStrip activeRegion={region} />
+        {/* Reveal sequence on load: bookmark strip (0ms), then card rows
+            (50ms / 100ms) — see fadeIn usage in LandingPage.module.css. */}
+        <div className={styles.bookmarkReveal}>
+          <BookmarkStrip activeRegion={region} />
+        </div>
         <DestinationGrid />
       </div>
     </div>

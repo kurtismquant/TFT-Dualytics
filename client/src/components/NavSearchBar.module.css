@@ -22,7 +22,8 @@
   min-height: 38px;
   transition:
     border-color 180ms ease,
-    box-shadow 220ms ease;
+    box-shadow 220ms ease,
+    background-color 220ms ease;
 }
 
 .select {
@@ -57,7 +58,8 @@
 .input:focus {
   outline: none;
   border-color: var(--search-focus-border);
-  box-shadow: 0 0 10px var(--search-focus-glow);
+  background-color: var(--bg-input-focus);
+  box-shadow: 0 0 12px var(--search-focus-glow);
 }
 
 .btn {

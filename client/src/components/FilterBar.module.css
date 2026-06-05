@@ -33,12 +33,14 @@
   letter-spacing: 1.17px;
   text-transform: uppercase;
   outline: none;
-  transition: background var(--t-fast), border-color var(--t-fast);
+  transition: background-color var(--t-fast), border-color var(--t-fast), box-shadow var(--t-fast);
 }
 
 .search:focus {
-  border-color: var(--focus-border);
-  background: var(--bg-hover);
+  outline: none;
+  border-color: var(--search-focus-border);
+  background-color: var(--bg-input-focus);
+  box-shadow: 0 0 12px var(--search-focus-glow);
 }
 
 .search::placeholder {

@@ -1,10 +1,9 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import RiotIdCandidates from './RiotIdCandidates.jsx'
 import {
   REGIONS,
-  REGION_DEFAULT_TAG,
   parseRiotId,
   resolveRiotIdCandidates,
   summonerPath,
@@ -22,6 +21,7 @@ export default function LandingSearchBar({ defaultRegion = 'na', defaultName = '
   const [candidates, setCandidates] = useState([])
   const [isResolving, setIsResolving] = useState(false)
   const [iconHover, setIconHover] = useState(false)
+  const inputRef = useRef(null)
   const errorId = 'landing-search-error'
   const statusId = 'landing-search-status'
   const candidateId = 'landing-search-candidates'
@@ -34,6 +34,12 @@ export default function LandingSearchBar({ defaultRegion = 'na', defaultName = '
     statusText ? statusId : null,
     candidates.length ? `${candidateId}-status` : null,
   ].filter(Boolean).join(' ')
+
+  // Focus the search input on load so visitors can type immediately.
+  // preventScroll keeps the viewport at the top so the hero stays in view.
+  useEffect(() => {
+    inputRef.current?.focus({ preventScroll: true })
+  }, [])
 
   const navigateToId = (id) => {
     navigate(summonerPath(region, id))
@@ -102,8 +108,9 @@ export default function LandingSearchBar({ defaultRegion = 'na', defaultName = '
 
         <div className={styles.searchInputWrap}>
           <input
+            ref={inputRef}
             type="text"
-            placeholder={`GameName#${REGION_DEFAULT_TAG[region] || 'TAG'}`}
+            placeholder="Search Player#Tag"
             value={name}
             onChange={e => { setName(e.target.value); setError(''); setCandidates([]) }}
             onKeyDown={handleInputKeyDown}

@@ -87,7 +87,7 @@
   font-size: 0.85rem;
   outline: none;
   min-height: 44px;
-  transition: border-color 180ms ease, box-shadow 220ms ease;
+  transition: border-color 180ms ease, box-shadow 220ms ease, background-color 220ms ease;
 }
 
 .select {
@@ -113,17 +113,14 @@
   padding: 0 12px;
 }
 
+/* The white glow is the focus indicator for all focus states (mouse + keyboard);
+   no separate gold :focus-visible ring. */
 .input:focus,
 .select:focus {
-  border-color: var(--focus-border);
-  box-shadow: 0 0 0 1px var(--focus-ring);
-}
-
-.input:focus-visible,
-.select:focus-visible {
-  outline: 2px solid var(--focus-border);
-  outline-offset: 3px;
-  box-shadow: 0 0 0 4px var(--focus-ring);
+  outline: none;
+  border-color: var(--search-focus-border);
+  background-color: var(--bg-input-focus);
+  box-shadow: 0 0 12px var(--search-focus-glow);
 }
 
 .addBtn {

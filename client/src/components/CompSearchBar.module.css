@@ -25,12 +25,17 @@
   outline: none;
   transition:
     border-color var(--t-fast),
-    background var(--t-fast);
+    background-color var(--t-fast),
+    box-shadow var(--t-fast);
 }
 
+/* outline:none suppresses the global gold focus-visible ring; the white glow
+   below is the visible focus indicator instead. */
 .input:focus {
-  border-color: var(--text-primary);
-  background: var(--bg-hover);
+  outline: none;
+  border-color: var(--search-focus-border);
+  background-color: var(--bg-input-focus);
+  box-shadow: 0 0 12px var(--search-focus-glow);
 }
 
 .input::placeholder {

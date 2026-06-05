@@ -59,6 +59,10 @@
   color: var(--text-primary);
   font-size: 0.76rem;
   outline: none;
+  transition:
+    border-color 180ms ease,
+    box-shadow 220ms ease,
+    background-color 220ms ease;
 }
 
 .select {
@@ -86,7 +90,10 @@
 
 .select:focus,
 .search:focus {
-  border-color: var(--bg-border-bright);
+  outline: none;
+  border-color: var(--search-focus-border);
+  background-color: var(--bg-input-focus);
+  box-shadow: 0 0 12px var(--search-focus-glow);
 }
 
 .costFilters {

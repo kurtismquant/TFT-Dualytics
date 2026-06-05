@@ -38,7 +38,7 @@
   min-width: 92px;
   padding: 0 34px 0 12px;
   border: 1px solid var(--bg-border-muted);
-  background: var(--bg-card);
+  background-color: var(--bg-card);
   color: var(--text-primary);
   font-size: 0.76rem;
   outline: none;
@@ -48,9 +48,19 @@
   background-size: 12px 8px;
   background-repeat: no-repeat;
   cursor: pointer;
+  transition:
+    border-color 180ms ease,
+    box-shadow 220ms ease,
+    background-color 220ms ease;
 }
 
+/* Match the search bar's active styling; outline:none drops the global gold
+   focus-visible ring in favor of the white glow. */
 .select:focus {
+  outline: none;
+  border-color: var(--search-focus-border);
+  background-color: var(--bg-input-focus);
+  box-shadow: 0 0 12px var(--search-focus-glow);
   background-image: var(--select-caret-up);
 }
 

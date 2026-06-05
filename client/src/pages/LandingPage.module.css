@@ -74,6 +74,18 @@
   text-align: center;
 }
 
+/* After the decode finishes, drop the uniform grid: fixed cells make narrow
+   glyphs (notably "I") look over-spaced. Natural widths + a small row
+   letter-spacing give even, consistent gaps. Width is tuned so this resting
+   state is close to the grid width, keeping the settle subtle. */
+.signCharsDone {
+  letter-spacing: 0.06em;
+}
+
+.signCharsDone .signChar {
+  width: auto;
+}
+
 .signDu {
   color: var(--accent-gold);
   text-shadow: 0 0 26px var(--accent-gold-glow);
@@ -287,6 +299,13 @@
   text-align: center;
 }
 
+/* First in the on-load reveal sequence: fades in immediately (0ms), before the
+   card rows. Same fade/speed as the cards for a cohesive cascade. */
+.bookmarkReveal {
+  opacity: 0;
+  animation: fadeIn 500ms linear forwards;
+}
+
 .destGrid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -311,9 +330,10 @@
   cursor: pointer;
   min-height: 168px;
   background: transparent;
+  /* Part of the on-load reveal: fades in (linear, same speed as the bookmark
+     strip). Row stagger is set via animation-delay on the grid children. */
   opacity: 0;
-  transform: translate3d(0, 20px, 0);
-  animation: cardEntrance 700ms cubic-bezier(0.18, 0.9, 0.24, 1) forwards;
+  animation: fadeIn 500ms linear forwards;
 }
 
 .destCard::before,
@@ -351,20 +371,16 @@
   transition: opacity 180ms ease;
 }
 
-.destGrid > :nth-child(1) {
-  animation-delay: 0ms;
-}
-
+/* Reveal by row after the bookmark strip (0ms): the top row (cards 1-2) starts
+   at 50ms, the bottom row (cards 3-4) at 100ms. Same fade speed throughout. */
+.destGrid > :nth-child(1),
 .destGrid > :nth-child(2) {
-  animation-delay: 100ms;
+  animation-delay: 50ms;
 }
 
-.destGrid > :nth-child(3) {
-  animation-delay: 200ms;
-}
-
+.destGrid > :nth-child(3),
 .destGrid > :nth-child(4) {
-  animation-delay: 300ms;
+  animation-delay: 100ms;
 }
 
 .destCard:hover {
@@ -482,15 +498,14 @@
   }
 }
 
-@keyframes cardEntrance {
+/* Shared on-load fade for the bookmark strip and destination cards. */
+@keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translate3d(0, 20px, 0);
   }
 
   to {
     opacity: 1;
-    transform: translate3d(0, 0, 0);
   }
 }
 
@@ -589,6 +604,7 @@
   .dangoMotionFast,
   .dangoMotionSlow,
   .tagline,
+  .bookmarkReveal,
   .destCard,
   .destCard::before {
     animation: none;
@@ -600,6 +616,7 @@
     transform: none;
   }
 
+  .bookmarkReveal,
   .destCard {
     opacity: 1;
     transform: none;
