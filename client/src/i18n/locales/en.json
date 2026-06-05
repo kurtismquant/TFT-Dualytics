@@ -249,7 +249,7 @@
     "editAriaLabel": "Edit bookmarks",
     "modalTitle": "Edit Bookmarks",
     "close": "Close",
-    "placeholder": "GameName#TAG",
+    "placeholder": "Search Player#Tag",
     "addError": "Enter a valid Riot ID like GameName#TAG",
     "notFound": "Player not found in this region",
     "searching": "Searching…",

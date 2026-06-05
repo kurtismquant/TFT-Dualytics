@@ -6,9 +6,11 @@ import { buildSummonerPath } from '../constants/routes.js'
 import BookmarkModal from './BookmarkModal.jsx'
 import styles from './BookmarkStrip.module.css'
 
-function BookmarkIcon({ size = 16 }) {
+function BookmarkIcon() {
+  // Sized via .icon CSS so it matches the edit icon's height (14px); the viewBox
+  // keeps the bookmark's natural aspect ratio.
   return (
-    <svg width={size * 0.875} height={size} viewBox="0 0 14 16" fill="none" className={styles.icon} aria-hidden="true" focusable="false">
+    <svg viewBox="0 0 14 16" fill="none" className={styles.icon} aria-hidden="true" focusable="false">
       <path d="M2 1h10v14l-5-3.5L2 15V1z" stroke="currentColor" strokeWidth="1.4" fill="none" />
     </svg>
   )

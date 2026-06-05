@@ -249,7 +249,7 @@
     "editAriaLabel": "Editar favoritos",
     "modalTitle": "Editar Favoritos",
     "close": "Cerrar",
-    "placeholder": "NombreJuego#TAG",
+    "placeholder": "Buscar jugador#Tag",
     "addError": "Ingresa un Riot ID válido como NombreJuego#TAG",
     "notFound": "Jugador no encontrado en esta región",
     "searching": "Buscando…",

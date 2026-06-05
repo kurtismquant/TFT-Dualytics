@@ -1,4 +1,5 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { useTranslation } from 'react-i18next'
 import { apiGet } from '../api/client.js'
 import { useBookmarkStore } from '../store/bookmarkStore.js'
@@ -47,6 +48,16 @@ export default function BookmarkModal({ defaultRegion = 'na', onClose }) {
     initialFocusRef: inputRef,
     onEscape: onClose,
   })
+
+  // Lock background scroll while the modal is open; the component only mounts
+  // when open, so cleanup on unmount restores the page's previous scroll state.
+  useEffect(() => {
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.body.style.overflow = previousOverflow
+    }
+  }, [])
 
   const handleOverlayClick = (e) => {
     if (e.target === e.currentTarget) onClose()
@@ -97,7 +108,7 @@ export default function BookmarkModal({ defaultRegion = 'na', onClose }) {
     }
   }
 
-  return (
+  return createPortal(
     <div className={styles.overlay} onClick={handleOverlayClick} role="presentation">
       <div
         ref={panelRef}
@@ -216,6 +227,7 @@ export default function BookmarkModal({ defaultRegion = 'na', onClose }) {
           </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   )
 }

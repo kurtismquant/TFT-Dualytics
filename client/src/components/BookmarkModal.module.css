@@ -2,6 +2,8 @@
   position: fixed;
   inset: 0;
   background: var(--bg-overlay-strong);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   z-index: 1000;
   display: flex;
   align-items: center;
@@ -20,6 +22,7 @@
   display: flex;
   flex-direction: column;
   color: var(--text-primary);
+  animation: panelIn 180ms ease forwards;
 }
 
 .header {
@@ -79,7 +82,7 @@
 }
 
 .field {
-  background-color: var(--bg-base);
+  background-color: var(--bg-card);
   border: 1px solid var(--bg-border-bright);
   color: var(--text-primary);
   border-radius: 0;
@@ -300,6 +303,24 @@
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
+}
+
+@keyframes panelIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .overlay,
+  .panel {
+    animation: none;
+  }
 }
 
 @media (max-width: 560px) {
