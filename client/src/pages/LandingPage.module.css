@@ -36,10 +36,6 @@
 
 .signOuter {
   position: relative;
-  --parallax-x: 0px;
-  --parallax-y: 0px;
-  --parallax-invert-x: 0px;
-  --parallax-invert-y: 0px;
 }
 
 .sign {
@@ -151,6 +147,16 @@
   flex-direction: column;
   align-items: center;
   gap: 14px;
+  opacity: 0;
+  transform: translate3d(0, 10px, 0);
+  animation: taglineFade 600ms ease 220ms forwards;
+}
+
+@keyframes taglineFade {
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
 }
 
 .taglineEyebrow {
@@ -175,34 +181,6 @@
   max-width: 800px;
   /* Reserve a line so the empty pre-typed state doesn't shift layout. */
   min-height: 1.2em;
-}
-
-/* Typewriter caret: blinks while typing, removed once the sequence finishes. */
-.caret {
-  display: inline-block;
-  width: 2px;
-  height: 1em;
-  margin-left: 3px;
-  background: currentColor;
-  vertical-align: text-bottom;
-  animation: caretBlink 1s steps(1, end) infinite;
-}
-
-@keyframes caretBlink {
-  0%,
-  49% {
-    opacity: 1;
-  }
-  50%,
-  100% {
-    opacity: 0;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .caret {
-    display: none;
-  }
 }
 
 .searchForm {
@@ -482,28 +460,6 @@
   margin-top: 2px;
 }
 
-/* Placeholder shown in place of a stat number while its data is still loading
-   (cold start, no persisted cache). Sized to match .statVal so the card layout
-   doesn't shift when the real number arrives. */
-.statSkeleton {
-  display: block;
-  width: 48px;
-  height: 22px;
-  border-radius: 2px;
-  background: var(--bg-row-even);
-  border: 1px solid var(--bg-border-muted);
-  animation: statSkeletonPulse 1.2s ease-in-out infinite;
-}
-
-@keyframes statSkeletonPulse {
-  0%, 100% {
-    opacity: 0.45;
-  }
-  50% {
-    opacity: 0.9;
-  }
-}
-
 @keyframes mascotFloatA {
   0%, 100% {
     transform: translate3d(0, 0, 0);
@@ -632,11 +588,16 @@
   .dangoBL,
   .dangoMotionFast,
   .dangoMotionSlow,
+  .tagline,
   .destCard,
-  .destCard::before,
-  .statSkeleton {
+  .destCard::before {
     animation: none;
     transition: none;
+  }
+
+  .tagline {
+    opacity: 1;
+    transform: none;
   }
 
   .destCard {

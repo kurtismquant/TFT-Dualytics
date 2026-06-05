@@ -9,60 +9,17 @@ import { useLeaderboard } from '../hooks/useLeaderboard.js'
 import BookmarkStrip from '../components/BookmarkStrip.jsx'
 import { CURRENT_SET } from '../constants/game.js'
 import { ROUTES } from '../constants/routes.js'
+import { LANDING_SEED } from '../constants/landingSeed.js'
 import styles from './LandingPage.module.css'
 
 
 function HeroSign() {
-  const signOuterRef = useRef(null)
   const size = 150
   const outside = size * 0.5
 
-  useEffect(() => {
-    const node = signOuterRef.current
-    if (!node) return
-
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)')
-    if (reducedMotion.matches) return
-
-    let raf = 0
-
-    const updateParallax = (clientX, clientY) => {
-      const offsetX = ((clientX / window.innerWidth) - 0.5) * 10
-      const offsetY = ((clientY / window.innerHeight) - 0.5) * 10
-
-      cancelAnimationFrame(raf)
-      raf = requestAnimationFrame(() => {
-        node.style.setProperty('--parallax-x', `${offsetX.toFixed(2)}px`)
-        node.style.setProperty('--parallax-y', `${offsetY.toFixed(2)}px`)
-        node.style.setProperty('--parallax-invert-x', `${(-offsetX).toFixed(2)}px`)
-        node.style.setProperty('--parallax-invert-y', `${(-offsetY).toFixed(2)}px`)
-      })
-    }
-
-    const handlePointerMove = (event) => {
-      updateParallax(event.clientX, event.clientY)
-    }
-
-    const resetParallax = () => {
-      node.style.setProperty('--parallax-x', '0px')
-      node.style.setProperty('--parallax-y', '0px')
-      node.style.setProperty('--parallax-invert-x', '0px')
-      node.style.setProperty('--parallax-invert-y', '0px')
-    }
-
-    window.addEventListener('pointermove', handlePointerMove)
-    window.addEventListener('blur', resetParallax)
-
-    return () => {
-      cancelAnimationFrame(raf)
-      window.removeEventListener('pointermove', handlePointerMove)
-      window.removeEventListener('blur', resetParallax)
-    }
-  }, [])
-
   return (
     <div className={styles.heroWrap}>
-      <div ref={signOuterRef} className={styles.signOuter}>
+      <div className={styles.signOuter}>
         {/* Top-right dango: rotate 45° so head points up-right */}
         <div
           className={styles.dangoTR}
@@ -101,95 +58,45 @@ function HeroSign() {
   )
 }
 
-// Types out an array of strings one character at a time, line by line.
-// Returns the partially-typed text per line, which line is currently active,
-// and whether the whole sequence has finished (used to drop the caret).
-function useTypewriter(segments, { speed = 34, startDelay = 300, lineDelay = 400 } = {}) {
-  // Stable dependency: re-run only when the actual text changes (e.g. language switch).
-  const key = segments.join('\n')
-  const [typed, setTyped] = useState(() => segments.map(() => ''))
-  const [activeLine, setActiveLine] = useState(0)
-  const [done, setDone] = useState(false)
-
-  useEffect(() => {
-    const lines = key.split('\n')
-    const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)')
-    if (reducedMotion?.matches) {
-      setTyped(lines)
-      setActiveLine(lines.length - 1)
-      setDone(true)
-      return undefined
-    }
-
-    setTyped(lines.map(() => ''))
-    setActiveLine(0)
-    setDone(false)
-
-    let timeoutId
-    let line = 0
-    let char = 0
-
-    const typeNext = () => {
-      if (line >= lines.length) {
-        setDone(true)
-        return
-      }
-      const current = lines[line]
-      if (char <= current.length) {
-        setTyped((prev) => {
-          const next = [...prev]
-          next[line] = current.slice(0, char)
-          return next
-        })
-        char += 1
-        timeoutId = setTimeout(typeNext, speed)
-      } else {
-        line += 1
-        char = 0
-        setActiveLine(line)
-        timeoutId = setTimeout(typeNext, lineDelay)
-      }
-    }
-
-    timeoutId = setTimeout(typeNext, startDelay)
-    return () => clearTimeout(timeoutId)
-  }, [key])
-
-  return { typed, activeLine, done }
-}
-
 const WORDMARK = 'DUALYTICS'
 // Aerospace/HUD-flavored glyph pool the wordmark scrambles through (no katakana).
 // Widest glyphs (M W # %) are omitted so they don't overflow the snug decode cells.
 const DECODE_GLYPHS = 'ABCDEFGHIJKLNOPQRSTUVXYZ0123456789/<>'
 
+const randomGlyph = () => DECODE_GLYPHS[Math.floor(Math.random() * DECODE_GLYPHS.length)]
+// Replaces every non-space character with a random glyph (the fully-scrambled frame).
+const scrambleText = (text) =>
+  text.split('').map((c) => (c === ' ' ? ' ' : randomGlyph())).join('')
+const prefersReducedMotion = () =>
+  !!window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches
+
 // Scrambles `text` on mount and resolves it left→right into the final string.
 // Unresolved positions cycle a random glyph every `tickMs`; one more position
 // locks in every `revealEvery` ms. Returns the current display string + done flag.
-// Mirrors useTypewriter's reduced-motion handling: shows the final text instantly.
+// Honors prefers-reduced-motion by showing the final text instantly.
 function useDecodeText(text, { tickMs = 50, revealEvery = 100, startDelay = 150 } = {}) {
-  const [display, setDisplay] = useState(text)
-  const [done, setDone] = useState(false)
+  // Seed state to the correct first frame so the effect never has to set state
+  // synchronously on mount (which the lint rules flag as a cascading render):
+  // reduced motion seeds the final text and "done"; otherwise we seed a
+  // fully-scrambled frame that the interval resolves left->right.
+  const [display, setDisplay] = useState(() => (prefersReducedMotion() ? text : scrambleText(text)))
+  const [done, setDone] = useState(prefersReducedMotion)
 
   useEffect(() => {
-    const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)')
-    if (reducedMotion?.matches) {
-      setDisplay(text)
-      setDone(true)
-      return undefined
-    }
+    if (prefersReducedMotion()) return undefined
 
-    const randomGlyph = () => DECODE_GLYPHS[Math.floor(Math.random() * DECODE_GLYPHS.length)]
     const lockEvery = Math.max(1, Math.round(revealEvery / tickMs))
-
-    setDisplay(text.split('').map((c) => (c === ' ' ? ' ' : randomGlyph())).join(''))
-    setDone(false)
 
     let revealed = 0
     let tick = 0
     let intervalId
 
     const run = () => {
+      // Re-seed inside the timer callback (not the effect body) so a text change
+      // restarts the decode cleanly without a synchronous in-effect setState.
+      setDisplay(scrambleText(text))
+      setDone(false)
+
       intervalId = setInterval(() => {
         tick += 1
         if (tick % lockEvery === 0) revealed += 1
@@ -244,17 +151,13 @@ function KineticWordmark() {
 
 function Tagline() {
   const { t } = useTranslation()
-  const body = t('landing.taglineBody')
-  // Eyebrow renders statically; only the body line uses the typewriter effect.
-  const { typed, done } = useTypewriter([body])
 
+  // The tagline is the value proposition, so it renders immediately and simply
+  // fades up — no per-character typing that would delay reading it.
   return (
     <div className={styles.tagline}>
       <div className={styles.taglineEyebrow}>{t('landing.taglineEyebrow', { set: CURRENT_SET })}</div>
-      <div className={styles.taglineBody}>
-        {typed[0]}
-        {!done && <span className={styles.caret} aria-hidden="true" />}
-      </div>
+      <div className={styles.taglineBody}>{t('landing.taglineBody')}</div>
     </div>
   )
 }
@@ -266,15 +169,55 @@ const DESTINATIONS = [
   { key: 'builder', to: ROUTES.builder, sigil: 'hex' },
 ]
 
-const formatCount = (value) => {
-  if (!Number.isFinite(value) || value <= 0) return null
-  return value.toLocaleString()
+// Builds a stat descriptor for a card. `value` is the live number (may be
+// undefined/0 before data arrives); `seed` is the baked-in fallback so the card
+// never renders blank on a cold first visit. The live value replaces the seed
+// once it loads, and StatValue animates the difference.
+const stat = (value, seed, label) => ({
+  value: Number.isFinite(value) && value > 0 ? value : seed,
+  label,
+})
+
+// Animates a number from its previously-shown value to `target` (easeOutCubic).
+// First render shows `target` instantly with no animation, so a persisted/cached
+// number appears immediately; only later changes (seed -> live) animate. Honors
+// prefers-reduced-motion by snapping straight to the value.
+function useCountUp(target, duration = 700) {
+  const [display, setDisplay] = useState(target)
+  const fromRef = useRef(target)
+
+  useEffect(() => {
+    const reduced = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches
+    const from = fromRef.current
+    if (reduced || from === target) {
+      fromRef.current = target
+      setDisplay(target)
+      return undefined
+    }
+
+    let raf = 0
+    const start = performance.now()
+    const step = (now) => {
+      const t = Math.min(1, (now - start) / duration)
+      const eased = 1 - Math.pow(1 - t, 3)
+      setDisplay(Math.round(from + (target - from) * eased))
+      if (t < 1) {
+        raf = requestAnimationFrame(step)
+      } else {
+        fromRef.current = target
+      }
+    }
+    raf = requestAnimationFrame(step)
+    return () => cancelAnimationFrame(raf)
+  }, [target, duration])
+
+  return display
 }
 
-// Returns { v, l } where v is the formatted number or null when not yet
-// available. DestCard decides whether a null value renders a skeleton (still
-// loading) or is dropped (genuine zero / no data).
-const stat = (value, label) => ({ v: formatCount(value), l: label })
+function StatValue({ value }) {
+  const display = useCountUp(value)
+  return <span className={styles.statVal}>{display.toLocaleString()}</span>
+}
 
 function Sigil({ kind, bright }) {
   const c = bright ? 'var(--text-primary)' : 'var(--text-muted)'
@@ -324,11 +267,9 @@ function Sigil({ kind, bright }) {
   )
 }
 
-function DestCard({ to, title, eyebrow, body, stat: primaryStat, stat2, sigil, loading }) {
+function DestCard({ to, title, eyebrow, body, stat: primaryStat, stat2, sigil }) {
   const [hover, setHover] = useState(false)
-  // Show a stat once it has a value, or while its query is still loading
-  // (skeleton). Drop it only when there's no value and nothing is pending.
-  const stats = [primaryStat, stat2].filter((s) => s && (s.v != null || loading))
+  const stats = [primaryStat, stat2].filter(Boolean)
 
   return (
     <Link
@@ -348,14 +289,10 @@ function DestCard({ to, title, eyebrow, body, stat: primaryStat, stat2, sigil, l
       <div className={styles.destBody}>{body}</div>
       {stats.length > 0 && (
         <div className={styles.destStats}>
-          {stats.map(({ v, l }) => (
-            <div key={l}>
-              {v != null ? (
-                <span className={styles.statVal}>{v}</span>
-              ) : (
-                <span className={styles.statSkeleton} aria-hidden="true" />
-              )}
-              <span className={styles.statLabel}>{l}</span>
+          {stats.map(({ value, label }) => (
+            <div key={label}>
+              <StatValue value={value} />
+              <span className={styles.statLabel}>{label}</span>
             </div>
           ))}
         </div>
@@ -366,10 +303,10 @@ function DestCard({ to, title, eyebrow, body, stat: primaryStat, stat2, sigil, l
 
 function DestinationGrid() {
   const { t } = useTranslation()
-  const { data: champions, isPending: championsPending } = useChampions()
-  const { data: compsData, isPending: compsPending } = useTopComps()
-  const { data: statsData, isPending: statsPending } = useStats({ type: 'units' })
-  const { data: leaderboardData, isPending: leaderboardPending } = useLeaderboard('na')
+  const { data: champions } = useChampions()
+  const { data: compsData } = useTopComps()
+  const { data: statsData } = useStats({ type: 'units' })
+  const { data: leaderboardData } = useLeaderboard('na')
 
   const comps = compsData?.comps || []
   const destinations = DESTINATIONS.map((destination) => {
@@ -383,34 +320,30 @@ function DestinationGrid() {
     if (destination.key === 'comps') {
       return {
         ...base,
-        loading: compsPending,
-        stat: stat(comps.length, t('landing.statTopComps')),
-        stat2: stat(compsData?.matchCount ?? 0, t('landing.statGamesAnalyzed')),
+        stat: stat(comps.length, LANDING_SEED.topComps, t('landing.statTopComps')),
+        stat2: stat(compsData?.matchCount, LANDING_SEED.gamesAnalyzed, t('landing.statGamesAnalyzed')),
       }
     }
 
     if (destination.key === 'builder') {
       return {
         ...base,
-        loading: championsPending,
-        stat: stat(champions?.length ?? 0, t('landing.statUnits')),
+        stat: stat(champions?.length, LANDING_SEED.units, t('landing.statUnits')),
       }
     }
 
     if (destination.key === 'stats') {
       return {
         ...base,
-        loading: statsPending,
-        stat: stat(statsData?.rows?.length ?? 0, t('landing.statUnitsTracked')),
-        stat2: stat(statsData?.matchCount ?? 0, t('landing.statPatchGames')),
+        stat: stat(statsData?.rows?.length, LANDING_SEED.unitsTracked, t('landing.statUnitsTracked')),
+        stat2: stat(statsData?.matchCount, LANDING_SEED.patchGames, t('landing.statPatchGames')),
       }
     }
 
     if (destination.key === 'leaderboard') {
       return {
         ...base,
-        loading: leaderboardPending,
-        stat: stat(leaderboardData?.entries?.length ?? 0, t('landing.statRankedPlayers')),
+        stat: stat(leaderboardData?.entries?.length, LANDING_SEED.rankedPlayers, t('landing.statRankedPlayers')),
       }
     }
 

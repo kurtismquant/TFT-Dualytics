@@ -10,6 +10,15 @@ export { extractPatch, patchToNum, buildStatsMatchFilter }
 const VALID_TYPES = new Set(['units', 'items', 'traits'])
 const MAX_POPULAR = 5
 
+// Both getStats and getAvailablePatches scan every current-patch match doc, which
+// is expensive and runs on every /api/stats and /api/comps request (the landing
+// page alone fires several). The underlying data only changes when the ingest
+// daemon writes new matches, so a short in-memory TTL makes repeat calls instant
+// without meaningfully staling the numbers.
+const CACHE_TTL_MS = 60 * 1000
+let patchesCache = null // { at, value }
+const statsCache = new Map() // `${type}|${patch}` -> { at, value }
+
 // Resolves the current patch and an approximate start time, for daemon ingestion
 // that targets only current-patch games. "Current patch" is the newest patch present
 // in stored matches (getAvailablePatches is sorted newest-first). startMs is the
@@ -176,6 +185,10 @@ export async function getAvailablePatches() {
   const matches = getMatchesCollection()
   if (!matches) return []
 
+  if (patchesCache && Date.now() - patchesCache.at < CACHE_TTL_MS) {
+    return patchesCache.value
+  }
+
   const docs = await matches
     .find(buildStatsMatchFilter(), { projection: { _id: 0, 'info.game_version': 1, gameDatetime: 1 } })
     .sort({ gameDatetime: -1 })
@@ -189,6 +202,7 @@ export async function getAvailablePatches() {
     seen.add(patch)
     patches.push(patch)
   }
+  patchesCache = { at: Date.now(), value: patches }
   return patches
 }
 
@@ -203,6 +217,12 @@ export async function getStats({ type = 'units', patch = null } = {}) {
     throw err
   }
 
+  const cacheKey = `${type}|${patch ?? ''}`
+  const cached = statsCache.get(cacheKey)
+  if (cached && Date.now() - cached.at < CACHE_TTL_MS) {
+    return cached.value
+  }
+
   const patches = await getAvailablePatches()
   const selectedPatch = patch && patches.includes(patch) ? patch : patches[0] ?? null
   const docs = await matches
@@ -210,10 +230,12 @@ export async function getStats({ type = 'units', patch = null } = {}) {
     .toArray()
   const stats = aggregateStats(docs, type)
 
-  return {
+  const value = {
     type,
     patch: selectedPatch,
     patches,
     ...stats,
   }
+  statsCache.set(cacheKey, { at: Date.now(), value })
+  return value
 }
