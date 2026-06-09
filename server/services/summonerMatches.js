@@ -179,7 +179,7 @@ export async function getStoredPlayerMatches(gameName, tagLine) {
 
 // Paginate Riot's match-ids endpoint to collect all match IDs since startTimeSec.
 // Stops when a page returns fewer than IDS_PAGE_SIZE results (last page reached).
-async function paginateMatchIds(puuid, massRegion, startTimeSec, signal, syncJob = null) {
+async function paginateMatchIds(puuid, massRegion, startTimeSec, signal, syncJob = null, priority = USER_PRIORITY) {
   const allIds = []
   for (let page = 0; page < MAX_PAGES; page++) {
     touchSync(syncJob, {
@@ -191,7 +191,7 @@ async function paginateMatchIds(puuid, massRegion, startTimeSec, signal, syncJob
     const url = `https://${massRegion}.api.riotgames.com/tft/match/v1/matches/by-puuid/${puuid}/ids?startTime=${startTimeSec}&start=${start}&count=${IDS_PAGE_SIZE}`
     let ids
     try {
-      ids = await riotRequest(url, USER_PRIORITY, signal)
+      ids = await riotRequest(url, priority, signal)
     } catch (err) {
       if (err?.name === 'AbortError' || err?.code === 'ERR_CANCELED') throw err
       console.error('[paginateMatchIds] failed while fetching match ids', err?.message)
@@ -232,12 +232,12 @@ async function storeMatchDetail(detail, matchId, puuid) {
   }
 }
 
-async function fetchRankInfo(puuid, region, signal) {
+async function fetchRankInfo(puuid, region, signal, priority = USER_PRIORITY) {
   try {
     const platform = getPlatformRegion(region)
     const entries = await riotRequest(
       `https://${platform}.api.riotgames.com/tft/league/v1/by-puuid/${puuid}`,
-      USER_PRIORITY,
+      priority,
       signal
     )
     const list = Array.isArray(entries) ? entries : (entries ? [entries] : [])
@@ -273,6 +273,9 @@ export async function getPlayerMatches(gameName, tagLine, region, signal, syncJo
   // games: lower-bound the id listing by the patch start and stop the detail loop
   // at the first older-patch game. Default (web lookups) keeps full current-set behavior.
   const currentPatch = options.currentPatch ?? null
+  // Background callers (cron/daemon) must pass a lower priority so queued user
+  // lookups always jump ahead of them in the shared rate-limit queue.
+  const priority = options.priority ?? USER_PRIORITY
   touchSync(syncJob, {
     phase: 'resolving',
     message: 'RESOLVING STORED PLAYER PROFILE',
@@ -296,7 +299,7 @@ export async function getPlayerMatches(gameName, tagLine, region, signal, syncJo
     const encTag = encodeURIComponent(tagLine.trim())
     const account = await riotRequest(
       `https://${massRegion}.api.riotgames.com/riot/account/v1/accounts/by-riot-id/${encGame}/${encTag}`,
-      USER_PRIORITY,
+      priority,
       signal
     )
     puuid = account.puuid
@@ -329,7 +332,7 @@ export async function getPlayerMatches(gameName, tagLine, region, signal, syncJo
   }
 
   // 3. Paginate all match IDs since start time (up to MAX_PAGES * IDS_PAGE_SIZE)
-  const allIds = await paginateMatchIds(puuid, massRegion, startTimeSec, signal, syncJob)
+  const allIds = await paginateMatchIds(puuid, massRegion, startTimeSec, signal, syncJob, priority)
 
   // 4. Filter out match IDs already in the database (safety net for edge cases)
   const knownInDb = await filterKnownMatchIds(allIds).catch(() => new Set())
@@ -347,17 +350,20 @@ export async function getPlayerMatches(gameName, tagLine, region, signal, syncJo
   const detailUrl = (matchId) =>
     `https://${massRegion}.api.riotgames.com/tft/match/v1/matches/${matchId}`
 
-  if (currentPatch) {
-    // Current-patch ingestion must stay sequential: newIds is newest-first, and
-    // we raise a recency threshold to the newest patch this player has played
-    // (>= the DB's current patch — this is what lets a just-dropped patch
-    // self-heal) and stop at the first game older than it.
-    let patchThreshold = currentPatch.patchNum ?? null
+  if (currentPatch || priority < USER_PRIORITY) {
+    // Sequential path. Current-patch ingestion needs it because newIds is
+    // newest-first and we raise a recency threshold to the newest patch this
+    // player has played (>= the DB's current patch — this is what lets a
+    // just-dropped patch self-heal), stopping at the first older game.
+    // Background syncs need it because bulk-enqueueing a whole backlog would
+    // flood the shared queue, stalling user lookups that arrive later
+    // (p-queue is FIFO within a priority) and distorting their ETAs.
+    let patchThreshold = currentPatch?.patchNum ?? null
     for (const matchId of newIds) {
       if (signal?.aborted) break
       let detail
       try {
-        detail = await riotRequest(detailUrl(matchId), USER_PRIORITY, signal)
+        detail = await riotRequest(detailUrl(matchId), priority, signal)
       } catch (err) {
         if (err?.name === 'AbortError' || err?.code === 'ERR_CANCELED') throw err
         console.error('[getPlayerMatches] failed to fetch match', matchId, err?.message)
@@ -366,12 +372,14 @@ export async function getPlayerMatches(gameName, tagLine, region, signal, syncJo
 
       // Sentinel early-stop: store the first older-patch game as a stub (so it
       // dedups and is never re-fetched) and stop.
-      const pNum = patchToNum(extractPatch(detail.info?.game_version))
-      if (pNum == null || (patchThreshold != null && pNum < patchThreshold)) {
-        await upsertMatch(buildMatchStub(detail)).catch(() => {})
-        break
+      if (currentPatch) {
+        const pNum = patchToNum(extractPatch(detail.info?.game_version))
+        if (pNum == null || (patchThreshold != null && pNum < patchThreshold)) {
+          await upsertMatch(buildMatchStub(detail)).catch(() => {})
+          break
+        }
+        if (patchThreshold == null || pNum > patchThreshold) patchThreshold = pNum
       }
-      if (patchThreshold == null || pNum > patchThreshold) patchThreshold = pNum
 
       await storeMatchDetail(detail, matchId, puuid)
       processedNewMatches += 1
@@ -393,7 +401,7 @@ export async function getPlayerMatches(gameName, tagLine, region, signal, syncJo
     }
     const results = await Promise.allSettled(newIds.map(async (matchId) => {
       try {
-        const detail = await riotRequest(detailUrl(matchId), USER_PRIORITY, detailAbort.signal)
+        const detail = await riotRequest(detailUrl(matchId), priority, detailAbort.signal)
         await storeMatchDetail(detail, matchId, puuid)
       } catch (err) {
         if (err?.name !== 'AbortError' && err?.code !== 'ERR_CANCELED') {
@@ -423,7 +431,7 @@ export async function getPlayerMatches(gameName, tagLine, region, signal, syncJo
 
   // Match detail payloads do not include rank. The TFT League endpoint is the
   // exact source for current Double Up rank, so refresh it on every sync.
-  const rankInfo = await fetchRankInfo(puuid, region, signal)
+  const rankInfo = await fetchRankInfo(puuid, region, signal, priority)
 
   const syncedAt = new Date()
   const latestAfterSync = await getLatestMatchTimestamp(puuid).catch(() => null)

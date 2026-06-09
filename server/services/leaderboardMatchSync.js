@@ -38,7 +38,9 @@ export async function runLeaderboardMatchSync(regionInput = process.env.REGION |
     for (const player of players) {
       if (running === false) break // allow external cancellation
       try {
-        await getPlayerMatches(player.gameName, player.tagLine, platform, null, null)
+        // priority 0: background sync — queued user lookups always preempt it,
+        // and getPlayerMatches keeps it on the sequential (non-flooding) path.
+        await getPlayerMatches(player.gameName, player.tagLine, platform, null, null, { priority: 0 })
         synced++
       } catch (err) {
         console.error(`[leaderboardSync] ${player.gameName}#${player.tagLine} failed:`, err.message)
