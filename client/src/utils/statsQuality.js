@@ -6,14 +6,13 @@
 // labels, so the two are kept as independent tables instead of fused.
 
 const AVG_PLACEMENT_COLOR_BANDS = [
-  { max: 1.85, color: '#22C55E' },
-  { max: 2.0, color: '#65C95A' },
-  { max: 2.15, color: '#A3CF4A' },
-  { max: 2.25, color: '#FACC15' },
-  { max: 2.35, color: '#F59E0B' },
-  { max: 2.5, color: '#EF6A24' },
+  { max: 2.1,  color: '#22C55E' },
+  { max: 2.35, color: '#8BC220' },
+  { max: 2.5,  color: '#D4D520' },
+  { max: 2.65, color: '#F5C020' },
+  { max: 2.9,  color: '#F07820' },
 ]
-const AVG_PLACEMENT_FALLBACK_COLOR = '#DC2626'
+const AVG_PLACEMENT_FALLBACK_COLOR = '#EF4444'
 
 const AVG_PLACEMENT_QUALITY_BANDS = [
   { max: 1.85, quality: 'excellent' },
@@ -23,14 +22,13 @@ const AVG_PLACEMENT_QUALITY_BANDS = [
 const AVG_PLACEMENT_FALLBACK_QUALITY = 'low'
 
 const WIN_RATE_COLOR_BANDS = [
-  { min: 37.5, color: '#22C55E' },
-  { min: 32.5, color: '#65C95A' },
-  { min: 28, color: '#A3CF4A' },
-  { min: 25, color: '#FACC15' },
-  { min: 22, color: '#F59E0B' },
-  { min: 17.5, color: '#EF6A24' },
+  { min: 30, color: '#22C55E' },
+  { min: 27, color: '#8BC220' },
+  { min: 25, color: '#D4D520' },
+  { min: 23, color: '#F5C020' },
+  { min: 20, color: '#F07820' },
 ]
-const WIN_RATE_FALLBACK_COLOR = '#DC2626'
+const WIN_RATE_FALLBACK_COLOR = '#EF4444'
 
 const WIN_RATE_QUALITY_BANDS = [
   { min: 32.5, quality: 'excellent' },
