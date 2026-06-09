@@ -57,21 +57,35 @@ export default function StatsToolbar({
           {patches.length === 0 && <option value="">{t('stats.noPatch')}</option>}
           {patches.map(option => <option key={option} value={option}>{option}</option>)}
         </select>
-        {activeTab === 'units' && (
-          <div className={styles.costFilters} role="group" aria-label={t('stats.costFilterLabel')}>
-            <span className={styles.costLabel}>{t('stats.costLabel')}</span>
-            {COSTS.map(cost => (
-              <button
-                key={cost}
-                className={`${styles.costButton} ${costFilter === cost ? styles.costActive : ''}`}
-                style={{ '--cost-color': `var(--cost-${cost})` }}
-                type="button"
-                onClick={() => handleToggleCost(cost)}
-                aria-pressed={costFilter === cost}
-              >
-                {cost}
-              </button>
-            ))}
+        {(activeTab === 'units' || activeTab === 'items') && (
+          <div className={styles.costFilters} role="group" aria-label={t('stats.typeFilterLabel')}>
+            <span className={styles.costLabel}>{activeTab === 'units' ? t('stats.costLabel') : t('stats.typeLabel')}</span>
+            {activeTab === 'units'
+              ? COSTS.map(cost => (
+                  <button
+                    key={cost}
+                    className={`${styles.costButton} ${costFilter === cost ? styles.costActive : ''}`}
+                    style={{ '--cost-color': `var(--cost-${cost})` }}
+                    type="button"
+                    onClick={() => handleToggleCost(cost)}
+                    aria-pressed={costFilter === cost}
+                  >
+                    {cost}
+                  </button>
+                ))
+              : ITEM_CATEGORIES.map(cat => (
+                  <button
+                    key={cat}
+                    className={`${styles.costButton} ${styles.itemButton} ${itemCategory === cat ? styles.costActive : ''}`}
+                    style={{ '--cost-color': 'var(--cost-1)' }}
+                    type="button"
+                    onClick={() => setItemCategory(cat)}
+                    aria-pressed={itemCategory === cat}
+                  >
+                    {t(`filterBar.cat${capitalize(cat)}`)}
+                  </button>
+                ))
+            }
           </div>
         )}
         <input
@@ -96,20 +110,6 @@ export default function StatsToolbar({
           </Button>
         ))}
       </div>
-      {activeTab === 'items' && (
-        <div className={styles.categoryBar} role="group" aria-label={t('filterBar.categoryLabel', 'Item category')}>
-          {ITEM_CATEGORIES.map(cat => (
-            <Button
-              key={cat}
-              variant="tab"
-              pressed={itemCategory === cat}
-              onClick={() => setItemCategory(cat)}
-            >
-              {t(`filterBar.cat${capitalize(cat)}`)}
-            </Button>
-          ))}
-        </div>
-      )}
     </>
   )
 }

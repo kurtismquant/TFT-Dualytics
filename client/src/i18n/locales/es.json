@@ -102,6 +102,8 @@
     "noItems": "Sin Objetos",
     "noUnits": "Sin Unidades",
     "costLabel": "Coste:",
+    "typeLabel": "Tipo:",
+    "typeFilterLabel": "Filtro de tipo",
     "searchPlaceholder": "Buscar",
     "searchLabel": "Buscar estadísticas",
     "searchHelp": "Filtra la tabla de estadísticas actual por nombre.",

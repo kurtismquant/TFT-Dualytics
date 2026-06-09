@@ -102,6 +102,8 @@
     "noItems": "No Items",
     "noUnits": "No Units",
     "costLabel": "Cost:",
+    "typeLabel": "Type:",
+    "typeFilterLabel": "Type filter",
     "searchPlaceholder": "Search",
     "searchLabel": "Search stats",
     "searchHelp": "Filter the current stats table by name.",

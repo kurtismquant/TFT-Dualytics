@@ -141,11 +141,13 @@
   margin: 16px 0;
 }
 
-.categoryBar {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin: -4px 0 16px;
+.itemButton {
+  min-width: unset;
+  padding: 0 10px;
+}
+
+.itemButton::after {
+  content: '';
 }
 
 
