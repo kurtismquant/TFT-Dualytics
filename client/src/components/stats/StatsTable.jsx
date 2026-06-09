@@ -37,7 +37,6 @@ export default function StatsTable({
             <SortHeader columnKey="avgPlacement" label={t('stats.colAvgPlace')} sort={sort} onSort={onSort} />
             <SortHeader columnKey="winRate" label={t('stats.colWinRate')} sort={sort} onSort={onSort} />
             <SortHeader columnKey="frequency" label={t('stats.colFrequency')} sort={sort} onSort={onSort} />
-            {type === 'traits' && <th scope="col">{t('stats.colAvgUnits')}</th>}
             <th scope="col">{popularLabel}</th>
           </tr>
         </thead>

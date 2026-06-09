@@ -59,7 +59,6 @@ function StatsTableRow({
         <span>{row.count.toLocaleString()}</span>
         <span className={styles.frequency}>{formatPercent(row.frequency)}</span>
       </td>
-      {type === 'traits' && <td>{formatAvg(row.avgUnits)}</td>}
       <td>
         <PopularIcons
           entries={popularEntries}
