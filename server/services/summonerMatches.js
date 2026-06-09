@@ -60,7 +60,13 @@ function estimateSyncEtaSeconds(job) {
   const unknownWork = job.totalNewMatches == null ? 3 : 0
   const remainingRequests = Math.max(1, remainingDetails + unknownWork + (job.phase === 'rank' ? 1 : 0))
   const queuedRequests = stats.longQueueSize + stats.shortQueueSize + stats.longQueuePending + stats.shortQueuePending
-  return Math.max(10, Math.ceil(((queuedRequests + remainingRequests) / 50) * 60))
+  // Details are enqueued in parallel, so this job's remaining requests usually
+  // ARE the queued ones — max() instead of sum avoids double counting.
+  const totalOutstanding = Math.max(queuedRequests, remainingRequests)
+  // Within one 100-req/2min window the 20/sec short queue is the only
+  // constraint; beyond it, the sustained long-window rate (~50/min) dominates.
+  if (totalOutstanding <= 100) return Math.max(5, Math.ceil(totalOutstanding / 20))
+  return Math.max(10, Math.ceil((totalOutstanding / 50) * 60))
 }
 
 function publicSyncStatus(job) {
@@ -199,6 +205,33 @@ async function paginateMatchIds(puuid, massRegion, startTimeSec, signal, syncJob
   return allIds
 }
 
+// Store a fetched match detail. Only Double Up matches are aggregated or shown
+// in history; non-pairs are stored as a tiny stub so they dedup in
+// filterKnownMatchIds (never re-fetched) without keeping the full ~40KB payload.
+async function storeMatchDetail(detail, matchId, puuid) {
+  const isDoubleUp = detail.info?.tft_game_type === 'pairs'
+  const matchDoc = isDoubleUp ? buildMatchDocument(detail) : buildMatchStub(detail)
+  try {
+    const { inserted } = await upsertMatch(matchDoc)
+    if (inserted && isDoubleUp) {
+      const allPuuids = (detail.info?.participants ?? []).map(p => p.puuid).filter(Boolean)
+      for (const pPuuid of allPuuids) {
+        addMatchIdsToPlayer(pPuuid, [matchId]).catch(() => {})
+      }
+      const self = detail.info?.participants?.find(p => p.puuid === puuid)
+      const partner = detail.info?.participants?.find(
+        p => p.puuid !== puuid && p.partner_group_id === self?.partner_group_id
+      )
+      if (partner?.puuid) {
+        upsertPartner(puuid, partner.puuid, new Date(detail.info.game_datetime)).catch(() => {})
+      }
+    }
+  } catch (err) {
+    console.error('[getPlayerMatches] failed to store match', matchId, err?.message)
+    throw err
+  }
+}
+
 async function fetchRankInfo(puuid, region, signal) {
   try {
     const platform = getPlatformRegion(region)
@@ -310,69 +343,77 @@ export async function getPlayerMatches(gameName, tagLine, region, signal, syncJo
   })
 
   // 5. Fetch details for new matches only, upsert to MongoDB.
-  // newIds is newest-first, so for current-patch ingestion we raise a recency
-  // threshold to the newest patch this player has played (>= the DB's current
-  // patch — this is what lets a just-dropped patch self-heal) and stop at the
-  // first game older than it.
   let processedNewMatches = 0
-  let patchThreshold = currentPatch?.patchNum ?? null
-  for (const matchId of newIds) {
-    if (signal?.aborted) break
-    let detail
-    try {
-      detail = await riotRequest(
-        `https://${massRegion}.api.riotgames.com/tft/match/v1/matches/${matchId}`,
-        USER_PRIORITY,
-        signal
-      )
-    } catch (err) {
-      if (err?.name === 'AbortError' || err?.code === 'ERR_CANCELED') throw err
-      console.error('[getPlayerMatches] failed to fetch match', matchId, err?.message)
-      throw err
-    }
+  const detailUrl = (matchId) =>
+    `https://${massRegion}.api.riotgames.com/tft/match/v1/matches/${matchId}`
 
-    // Sentinel early-stop: once targeting the current patch, store the first
-    // older-patch game as a stub (so it dedups and is never re-fetched) and stop.
-    if (currentPatch) {
+  if (currentPatch) {
+    // Current-patch ingestion must stay sequential: newIds is newest-first, and
+    // we raise a recency threshold to the newest patch this player has played
+    // (>= the DB's current patch — this is what lets a just-dropped patch
+    // self-heal) and stop at the first game older than it.
+    let patchThreshold = currentPatch.patchNum ?? null
+    for (const matchId of newIds) {
+      if (signal?.aborted) break
+      let detail
+      try {
+        detail = await riotRequest(detailUrl(matchId), USER_PRIORITY, signal)
+      } catch (err) {
+        if (err?.name === 'AbortError' || err?.code === 'ERR_CANCELED') throw err
+        console.error('[getPlayerMatches] failed to fetch match', matchId, err?.message)
+        throw err
+      }
+
+      // Sentinel early-stop: store the first older-patch game as a stub (so it
+      // dedups and is never re-fetched) and stop.
       const pNum = patchToNum(extractPatch(detail.info?.game_version))
       if (pNum == null || (patchThreshold != null && pNum < patchThreshold)) {
         await upsertMatch(buildMatchStub(detail)).catch(() => {})
         break
       }
       if (patchThreshold == null || pNum > patchThreshold) patchThreshold = pNum
+
+      await storeMatchDetail(detail, matchId, puuid)
+      processedNewMatches += 1
+      touchSync(syncJob, {
+        phase: 'details',
+        message: 'FETCHING NEW MATCH DETAILS',
+        processedNewMatches,
+      })
     }
-
-    const isDoubleUp = detail.info?.tft_game_type === 'pairs'
-
-    // Only Double Up matches are aggregated or shown in history. Store non-pairs
-    // as a tiny stub so they dedup in filterKnownMatchIds (never re-fetched) without
-    // keeping the full ~40KB payload.
-    const matchDoc = isDoubleUp ? buildMatchDocument(detail) : buildMatchStub(detail)
-    try {
-      const { inserted } = await upsertMatch(matchDoc)
-      if (inserted && isDoubleUp) {
-        const allPuuids = (detail.info?.participants ?? []).map(p => p.puuid).filter(Boolean)
-        for (const pPuuid of allPuuids) {
-          addMatchIdsToPlayer(pPuuid, [matchId]).catch(() => {})
+  } else {
+    // Web lookups: enqueue every detail fetch at once. The shared p-queues in
+    // riotApi.js are the only throttle that matters (20/sec, 100/2min) —
+    // awaiting sequentially here would just serialize round-trip latency
+    // without saving any rate budget.
+    const detailAbort = new AbortController()
+    if (signal) {
+      if (signal.aborted) detailAbort.abort()
+      else signal.addEventListener('abort', () => detailAbort.abort(), { once: true })
+    }
+    const results = await Promise.allSettled(newIds.map(async (matchId) => {
+      try {
+        const detail = await riotRequest(detailUrl(matchId), USER_PRIORITY, detailAbort.signal)
+        await storeMatchDetail(detail, matchId, puuid)
+      } catch (err) {
+        if (err?.name !== 'AbortError' && err?.code !== 'ERR_CANCELED') {
+          console.error('[getPlayerMatches] failed to fetch match', matchId, err?.message)
+          // Drop the remaining queued fetches so they don't burn rate budget.
+          detailAbort.abort()
         }
-        const self = detail.info?.participants?.find(p => p.puuid === puuid)
-        const partner = detail.info?.participants?.find(
-          p => p.puuid !== puuid && p.partner_group_id === self?.partner_group_id
-        )
-        if (partner?.puuid) {
-          upsertPartner(puuid, partner.puuid, new Date(detail.info.game_datetime)).catch(() => {})
-        }
+        throw err
       }
-    } catch (err) {
-      console.error('[getPlayerMatches] failed to store match', matchId, err?.message)
-      throw err
-    }
-    processedNewMatches += 1
-    touchSync(syncJob, {
-      phase: 'details',
-      message: 'FETCHING NEW MATCH DETAILS',
-      processedNewMatches,
-    })
+      processedNewMatches += 1
+      touchSync(syncJob, {
+        phase: 'details',
+        message: 'FETCHING NEW MATCH DETAILS',
+        processedNewMatches,
+      })
+    }))
+    // First real failure fails the sync, matching the old sequential behavior.
+    // Aborts (including the outer signal firing) just end the loop early.
+    const failure = results.find(r => r.status === 'rejected' && r.reason?.name !== 'AbortError')
+    if (failure) throw failure.reason
   }
 
   touchSync(syncJob, {

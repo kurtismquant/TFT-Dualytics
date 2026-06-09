@@ -36,7 +36,7 @@ export const useSummonerMatches = (region, ids) => {
     retry: (failureCount, error) => error?.response?.status !== 404 && failureCount < 2,
     staleTime: 0,
     placeholderData: previousData => previousData,
-    refetchInterval: query => hasActiveSync(query.state.data) ? 3000 : false,
+    refetchInterval: query => hasActiveSync(query.state.data) ? 1000 : false,
   })
 }
 
