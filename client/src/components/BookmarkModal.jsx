@@ -1,11 +1,11 @@
-import { useEffect, useRef, useState } from 'react'
-import { createPortal } from 'react-dom'
+import { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { apiGet } from '../api/client.js'
 import { useBookmarkStore } from '../store/bookmarkStore.js'
 import { usePlayerSearch } from '../hooks/usePlayerSearch.js'
-import { parseRiotIdWithDefaultTag, REGIONS } from '../utils/riotSearch.js'
-import { useFocusTrap } from '../hooks/useFocusTrap.js'
+import { parseRiotIdWithDefaultTag } from '../utils/riotSearch.js'
+import RegionSelect from './ui/RegionSelect.jsx'
+import Modal from './ui/Modal.jsx'
 import styles from './BookmarkModal.module.css'
 
 export default function BookmarkModal({ defaultRegion = 'na', onClose }) {
@@ -18,7 +18,6 @@ export default function BookmarkModal({ defaultRegion = 'na', onClose }) {
   const [query, setQuery] = useState('')
   const [error, setError] = useState('')
   const [verifying, setVerifying] = useState(false)
-  const panelRef = useRef(null)
   const inputRef = useRef(null)
   const errorId = 'bookmark-search-error'
   const statusId = 'bookmark-search-status'
@@ -41,27 +40,6 @@ export default function BookmarkModal({ defaultRegion = 'na', onClose }) {
     error ? errorId : null,
     statusText ? statusId : null,
   ].filter(Boolean).join(' ')
-
-  useFocusTrap({
-    active: true,
-    rootRef: panelRef,
-    initialFocusRef: inputRef,
-    onEscape: onClose,
-  })
-
-  // Lock background scroll while the modal is open; the component only mounts
-  // when open, so cleanup on unmount restores the page's previous scroll state.
-  useEffect(() => {
-    const previousOverflow = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
-    return () => {
-      document.body.style.overflow = previousOverflow
-    }
-  }, [])
-
-  const handleOverlayClick = (e) => {
-    if (e.target === e.currentTarget) onClose()
-  }
 
   const handlePickSuggestion = (s) => {
     addBookmark({ gameName: s.gameName, tagLine: s.tagLine, region })
@@ -108,44 +86,34 @@ export default function BookmarkModal({ defaultRegion = 'na', onClose }) {
     }
   }
 
-  return createPortal(
-    <div className={styles.overlay} onClick={handleOverlayClick} role="presentation">
-      <div
-        ref={panelRef}
-        className={styles.panel}
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="bookmark-modal-title"
-        tabIndex={-1}
-      >
-        <div className={styles.header}>
-          <span id="bookmark-modal-title" className={styles.title}>{t('bookmarks.modalTitle')}</span>
-          <button
-            type="button"
-            className={styles.closeBtn}
-            aria-label={t('bookmarks.close')}
-            onClick={onClose}
-          >
-            ✕
-          </button>
-        </div>
-
-        <div className={styles.body} aria-busy={verifying || isFetching}>
-          <p id={regionHelpId} className="sr-only">{t('search.regionHelp')}</p>
+  return (
+    <Modal
+      titleId="bookmark-modal-title"
+      title={t('bookmarks.modalTitle')}
+      onClose={onClose}
+      closeLabel={t('bookmarks.close')}
+      size="md"
+      blur
+      scrollable
+      portal
+      lockScroll
+      initialFocusRef={inputRef}
+      bodyClassName={styles.body}
+      bodyProps={{ 'aria-busy': verifying || isFetching }}
+    >
+      <p id={regionHelpId} className="sr-only">{t('search.regionHelp')}</p>
           <p id={inputHelpId} className="sr-only">{t('search.riotIdHelp')}</p>
           <p id={statusId} className="sr-only" role="status" aria-live="polite">
             {statusText}
           </p>
           <div className={styles.searchRow}>
-            <select
+            <RegionSelect
               className={styles.select}
               value={region}
               onChange={e => setRegion(e.target.value)}
               aria-label={t('search.regionLabel')}
               aria-describedby={regionHelpId}
-            >
-              {REGIONS.map(r => <option key={r} value={r}>{r.toUpperCase()}</option>)}
-            </select>
+            />
             <input
               ref={inputRef}
               type="text"
@@ -225,9 +193,6 @@ export default function BookmarkModal({ defaultRegion = 'na', onClose }) {
               ))
             )}
           </div>
-        </div>
-      </div>
-    </div>,
-    document.body
+    </Modal>
   )
 }

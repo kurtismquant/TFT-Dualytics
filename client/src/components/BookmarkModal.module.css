@@ -1,72 +1,5 @@
-.overlay {
-  position: fixed;
-  inset: 0;
-  background: var(--bg-overlay-strong);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-  z-index: 1000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-  animation: fadeIn 150ms ease;
-}
-
-.panel {
-  position: relative;
-  width: 100%;
-  max-width: 560px;
-  max-height: 80vh;
-  background: var(--bg-card);
-  border: 1px solid var(--bg-border-bright);
-  display: flex;
-  flex-direction: column;
-  color: var(--text-primary);
-  animation: panelIn 180ms ease forwards;
-}
-
-.header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16px 20px;
-  border-bottom: 1px solid var(--bg-border-muted);
-}
-
-.title {
-  font-family: "Bebas Neue", "D-DIN-Bold", "D-DIN", Arial, sans-serif;
-  font-size: 0.95rem;
-  font-weight: 700;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--text-primary);
-}
-
-.closeBtn {
-  min-width: 44px;
-  min-height: 44px;
-  background: transparent;
-  border: 1px solid var(--bg-border);
-  color: var(--text-primary);
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1rem;
-  transition: border-color 150ms ease, background 150ms ease;
-}
-
-.closeBtn:hover {
-  border-color: var(--focus-border);
-  background: var(--bg-hover);
-}
-
-.closeBtn:focus-visible {
-  outline: 2px solid var(--focus-border);
-  outline-offset: 3px;
-  box-shadow: 0 0 0 4px var(--focus-ring);
-}
-
+/* Overlay / panel / header / title / close-button chrome now lives in
+   components/ui/Modal.module.css. This module only styles the bookmark body. */
 .body {
   padding: 18px 20px;
   overflow-y: auto;
@@ -300,39 +233,7 @@
   text-align: center;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes panelIn {
-  from {
-    opacity: 0;
-    transform: translateY(8px) scale(0.98);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .overlay,
-  .panel {
-    animation: none;
-  }
-}
-
 @media (max-width: 560px) {
-  .overlay {
-    align-items: stretch;
-    padding: 12px;
-  }
-
-  .panel {
-    max-height: calc(100vh - 24px);
-  }
-
   .searchRow {
     flex-wrap: wrap;
   }

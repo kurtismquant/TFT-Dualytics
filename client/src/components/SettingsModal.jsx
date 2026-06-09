@@ -1,7 +1,6 @@
-import { useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useSettings } from '../contexts/useSettings.js'
-import { useFocusTrap } from '../hooks/useFocusTrap.js'
+import Modal from './ui/Modal.jsx'
 import styles from './SettingsModal.module.css'
 
 function GearIcon() {
@@ -16,78 +15,45 @@ function GearIcon() {
 export default function SettingsModal({ onClose }) {
   const { t } = useTranslation()
   const { theme, setTheme, language, setLanguage } = useSettings()
-  const panelRef = useRef(null)
-  const closeButtonRef = useRef(null)
-
-  useFocusTrap({
-    active: true,
-    rootRef: panelRef,
-    initialFocusRef: closeButtonRef,
-    onEscape: onClose,
-  })
-
-  const handleOverlayClick = (e) => {
-    if (e.target === e.currentTarget) onClose()
-  }
 
   return (
-    <div className={styles.overlay} onClick={handleOverlayClick} role="presentation">
-      <div
-        ref={panelRef}
-        className={styles.panel}
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="settings-modal-title"
-        tabIndex={-1}
-      >
-        <div className={styles.header}>
-          <div className={styles.titleRow}>
-            <GearIcon />
-            <span id="settings-modal-title" className={styles.title}>{t('settings.title')}</span>
-          </div>
-          <button
-            ref={closeButtonRef}
-            type="button"
-            className={styles.closeBtn}
-            aria-label={t('settings.close')}
-            onClick={onClose}
-          >
-            ✕
-          </button>
-        </div>
-
-        <div className={styles.body}>
-          <div className={styles.row}>
-            <label className={styles.label} htmlFor="setting-theme">
-              {t('settings.theme')}
-            </label>
-            <select
-              id="setting-theme"
-              className={styles.select}
-              value={theme}
-              onChange={e => setTheme(e.target.value)}
-            >
-              <option value="dark">{t('settings.dark')}</option>
-              <option value="light">{t('settings.light')}</option>
-            </select>
-          </div>
-
-          <div className={styles.row}>
-            <label className={styles.label} htmlFor="setting-language">
-              {t('settings.language')}
-            </label>
-            <select
-              id="setting-language"
-              className={styles.select}
-              value={language}
-              onChange={e => setLanguage(e.target.value)}
-            >
-              <option value="en">{t('settings.langEn')}</option>
-              <option value="es">{t('settings.langEs')}</option>
-            </select>
-          </div>
-        </div>
+    <Modal
+      titleId="settings-modal-title"
+      title={t('settings.title')}
+      icon={<GearIcon />}
+      onClose={onClose}
+      closeLabel={t('settings.close')}
+      bodyClassName={styles.body}
+    >
+      <div className={styles.row}>
+        <label className={styles.label} htmlFor="setting-theme">
+          {t('settings.theme')}
+        </label>
+        <select
+          id="setting-theme"
+          className={styles.select}
+          value={theme}
+          onChange={e => setTheme(e.target.value)}
+        >
+          <option value="dark">{t('settings.dark')}</option>
+          <option value="light">{t('settings.light')}</option>
+        </select>
       </div>
-    </div>
+
+      <div className={styles.row}>
+        <label className={styles.label} htmlFor="setting-language">
+          {t('settings.language')}
+        </label>
+        <select
+          id="setting-language"
+          className={styles.select}
+          value={language}
+          onChange={e => setLanguage(e.target.value)}
+        >
+          <option value="en">{t('settings.langEn')}</option>
+          <option value="es">{t('settings.langEs')}</option>
+        </select>
+      </div>
+    </Modal>
   )
 }

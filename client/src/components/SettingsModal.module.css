@@ -1,75 +1,5 @@
-.overlay {
-  position: fixed;
-  inset: 0;
-  background: var(--bg-overlay);
-  z-index: 1000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-  animation: fadeIn 150ms ease;
-}
-
-.panel {
-  position: relative;
-  width: 100%;
-  max-width: 400px;
-  background: var(--bg-card);
-  border: 1px solid var(--bg-border-bright);
-  display: flex;
-  flex-direction: column;
-  color: var(--text-primary);
-}
-
-.header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16px 20px;
-  border-bottom: 1px solid var(--bg-border-muted);
-}
-
-.titleRow {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  color: var(--text-primary);
-}
-
-.title {
-  font-family: "Bebas Neue", "D-DIN-Bold", "D-DIN", Arial, sans-serif;
-  font-size: 0.81rem;
-  font-weight: 700;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--text-primary);
-}
-
-.closeBtn {
-  min-width: 44px;
-  min-height: 44px;
-  background: transparent;
-  border: 1px solid var(--bg-border);
-  color: var(--text-primary);
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1rem;
-  transition: border-color var(--t-fast), background var(--t-fast);
-}
-
-.closeBtn:hover {
-  border-color: var(--bg-border-bright);
-  background: var(--bg-hover);
-}
-
-.closeBtn:focus-visible {
-  outline: 2px solid var(--focus-border);
-  outline-offset: 3px;
-  box-shadow: 0 0 0 4px var(--focus-ring);
-}
-
+/* Overlay / panel / header / title / close-button chrome now lives in
+   components/ui/Modal.module.css. This module only styles the settings body. */
 .body {
   padding: 24px 20px;
   display: flex;
@@ -129,16 +59,7 @@
   border-color: var(--bg-border);
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: scale(0.98); }
-  to { opacity: 1; transform: scale(1); }
-}
-
 @media (max-width: 440px) {
-  .overlay {
-    padding: 12px;
-  }
-
   .body {
     padding: 20px 16px;
   }

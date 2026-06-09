@@ -22,6 +22,8 @@ const allowedOrigins = (process.env.CLIENT_ORIGINS || 'http://localhost:5173')
   .map(origin => origin.trim())
   .filter(Boolean)
 
+let initialized = false
+
 app.use(cors({
   origin(origin, callback) {
     if (!origin || allowedOrigins.includes('*') || allowedOrigins.includes(origin)) {
@@ -33,6 +35,17 @@ app.use(cors({
 }))
 app.use(express.json())
 
+app.get('/api/health', (req, res) => res.json({ status: initialized ? 'ok' : 'initializing' }))
+
+// Return 503 while startup tasks (DB connect, asset fetch, comp aggregation) are running.
+// Vite proxy returns 502 when nothing is listening, which is harder to distinguish from a
+// real infrastructure failure. 503 is the correct signal for "not ready yet" and React
+// Query's default retry logic handles it transparently.
+app.use((req, res, next) => {
+  if (!initialized) return res.status(503).json({ error: 'Server initializing, please retry shortly' })
+  next()
+})
+
 app.use('/api/comps', compsRouter)
 app.use('/api/summoner', summonerRouter)
 app.use('/api/assets', assetsRouter)
@@ -41,10 +54,9 @@ app.use('/api/leaderboard', leaderboardRouter)
 app.use('/api/players', playersRouter)
 app.use('/api/stats', statsRouter)
 
-app.get('/api/health', (req, res) => res.json({ status: 'ok' }))
-
-// Load assets first, then start server so champions are available immediately
 async function start() {
+  app.listen(PORT, () => console.log(`Server listening on port ${PORT}`))
+
   try {
     await connectMongo()
     await createIndexes()
@@ -58,18 +70,15 @@ async function start() {
     await runCompAggregation().catch(err => console.error('Initial comp aggregation failed:', err.message))
   }
 
-  app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`)
-    if (!backgroundJobsEnabled) {
-      console.log('Background jobs disabled')
-      return
-    }
+  initialized = true
+  console.log('Server ready')
 
+  if (backgroundJobsEnabled) {
     // Re-aggregate every 10 minutes (Mongo-only, cheap)
     cron.schedule('*/10 * * * *', () => runCompAggregation().catch(console.error))
     // Sync top-50 leaderboard players' match histories every hour, then re-aggregate
     cron.schedule('0 * * * *', () => runLeaderboardMatchSync().catch(console.error))
-  })
+  }
 }
 
 start().catch(err => {
