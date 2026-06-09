@@ -2,7 +2,7 @@ import { TraitChips as SharedTraitChips, UnitsGrid as SharedUnitsGrid } from '..
 import styles from '../MatchTable.module.css'
 
 export function TraitChips(props) {
-  return <SharedTraitChips {...props} styles={styles} copyBeforeSort={false} />
+  return <SharedTraitChips {...props} copyBeforeSort={false} />
 }
 
 export function UnitsGrid(props) {

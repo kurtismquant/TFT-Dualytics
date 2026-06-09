@@ -10,40 +10,10 @@
   width: 100%;
 }
 
-.input {
+/* Input sizing — ghost input styles live in ui/SearchInput.module.css */
+.inputWrap {
   flex: 1;
   min-width: 0;
-  min-height: 44px;
-  padding: 0 1.2rem;
-  border: 1px solid var(--ghost-border);
-  background: transparent;
-  color: var(--text-primary);
-  font-family: "D-DIN", Arial, Verdana, sans-serif;
-  font-size: 0.82rem;
-  letter-spacing: 1.17px;
-  text-transform: uppercase;
-  outline: none;
-  transition:
-    border-color var(--t-fast),
-    background-color var(--t-fast),
-    box-shadow var(--t-fast);
-}
-
-/* outline:none suppresses the global gold focus-visible ring; the white glow
-   below is the visible focus indicator instead. */
-.input:focus {
-  outline: none;
-  border-color: var(--search-focus-border);
-  background-color: var(--bg-input-focus);
-  box-shadow: 0 0 12px var(--search-focus-glow);
-}
-
-.input::placeholder {
-  color: var(--text-muted);
-}
-
-.input::-webkit-search-cancel-button {
-  display: none;
 }
 
 .clearButton {
@@ -85,7 +55,7 @@
     flex-wrap: wrap;
   }
 
-  .input {
+  .inputWrap {
     flex-basis: 100%;
   }
 

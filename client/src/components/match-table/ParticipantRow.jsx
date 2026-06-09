@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { DamageIcon, TraitChips, UnitsGrid } from './BoardDisplay.jsx'
+import PlacementBadge from '../ui/PlacementBadge.jsx'
 import {
   calcBoardCost,
   formatRankShort,
@@ -35,7 +36,7 @@ export default function ParticipantRow({ participant, champions, items, traits, 
   return (
     <div className={`${styles.participantRow} ${placementClass}`}>
       <div className={styles.participantMeta}>
-        <span className={`${styles.participantPlacement} ${placementClass}`}>{placementLabel}</span>
+        <PlacementBadge size="sm" placement={participant.teamPlacement} label={placementLabel} />
         {participant.level != null && (
           <span className={styles.levelBadge}>Lv {participant.level}</span>
         )}

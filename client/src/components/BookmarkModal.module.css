@@ -59,36 +59,10 @@
   box-shadow: 0 0 12px var(--search-focus-glow);
 }
 
-.addBtn {
-  min-height: 44px;
-  padding: 0 16px;
-  background: transparent;
-  border: 1px solid var(--bg-border-bright);
-  color: var(--text-primary);
-  font-family: "Bebas Neue", "D-DIN-Bold", "D-DIN", Arial, sans-serif;
-  font-size: 0.78rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: border-color 150ms ease, background 150ms ease;
-}
-
-.addBtn:hover:not(:disabled) {
-  border-color: var(--focus-border);
-  background: var(--bg-hover);
-}
-
-.addBtn:focus-visible,
-.suggestion:focus-visible,
-.removeBtn:focus-visible {
+.suggestion:focus-visible {
   outline: 2px solid var(--focus-border);
   outline-offset: 3px;
   box-shadow: 0 0 0 4px var(--focus-ring);
-}
-
-.addBtn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
 }
 
 .dropdown {
@@ -195,24 +169,6 @@
   text-transform: uppercase;
 }
 
-.removeBtn {
-  min-width: 44px;
-  min-height: 44px;
-  background: transparent;
-  border: 1px solid var(--bg-border);
-  color: var(--text-primary);
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.85rem;
-  transition: border-color 150ms ease, background 150ms ease;
-}
-
-.removeBtn:hover {
-  border-color: var(--focus-border);
-  background: var(--bg-hover);
-}
 
 .searching {
   font-family: "D-DIN", Arial, sans-serif;

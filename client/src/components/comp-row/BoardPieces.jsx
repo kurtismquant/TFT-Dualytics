@@ -2,7 +2,7 @@ import { TraitChips as SharedTraitChips, UnitsGrid as SharedUnitsGrid } from '..
 import styles from '../CompRow.module.css'
 
 export function TraitChips(props) {
-  return <SharedTraitChips {...props} styles={styles} />
+  return <SharedTraitChips {...props} />
 }
 
 export function UnitsGrid(props) {

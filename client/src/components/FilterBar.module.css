@@ -11,61 +11,11 @@
   flex-wrap: wrap;
 }
 
-/* ── Search input — ghost surface ──────────────────────── */
+/* ── Search input — ghost surface (input styles in ui/SearchInput.module.css) ── */
 .searchWrap {
-  position: relative;
   flex: 1 1 260px;
   min-width: 200px;
   max-width: 380px;
-}
-
-.search {
-  width: 100%;
-  min-height: 44px;
-  background: var(--ghost-surface);
-  border: 1px solid var(--ghost-border);
-  color: var(--text-primary);
-  padding: 12px 5.5rem 12px 18px;
-  font-family: 'D-DIN', Arial, Verdana, sans-serif;
-  font-size: 0.75rem;
-  font-weight: 700;
-  line-height: 0.94;
-  letter-spacing: 1.17px;
-  text-transform: uppercase;
-  outline: none;
-  transition: background-color var(--t-fast), border-color var(--t-fast), box-shadow var(--t-fast);
-}
-
-.search:focus {
-  outline: none;
-  border-color: var(--search-focus-border);
-  background-color: var(--bg-input-focus);
-  box-shadow: 0 0 12px var(--search-focus-glow);
-}
-
-.search::placeholder {
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 1.17px;
-}
-
-.hint {
-  position: absolute;
-  right: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-family: 'D-DIN', Arial, Verdana, sans-serif;
-  font-size: 0.63rem;
-  font-weight: 400;
-  line-height: 0.94;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  color: var(--text-muted);
-  background: transparent;
-  border: 1px solid var(--bg-border);
-  border-radius: 0;
-  padding: 3px 6px;
-  pointer-events: none;
 }
 
 /* ── Tab groups ─────────────────────────────────────────── */
@@ -73,39 +23,6 @@
   display: flex;
   gap: 4px;
   align-items: center;
-}
-
-.tab {
-  background: transparent;
-  border: 1px solid transparent;
-  color: var(--text-secondary);
-  font-family: 'Bebas Neue', 'D-DIN-Bold', 'D-DIN', Arial, Verdana, sans-serif;
-  font-size: 0.81rem;
-  font-weight: 700;
-  line-height: 0.94;
-  letter-spacing: 1.17px;
-  text-transform: uppercase;
-  min-height: 44px;
-  padding: 10px 14px;
-  cursor: pointer;
-  transition: color var(--t-fast), background var(--t-fast), border-color var(--t-fast);
-}
-
-.tab:hover {
-  color: var(--text-primary);
-  background: var(--ghost-surface);
-}
-
-.tabActive {
-  color: var(--text-primary);
-  background: var(--ghost-surface);
-  border-color: var(--ghost-border);
-}
-
-.tabActive:hover {
-  color: var(--text-primary);
-  background: var(--bg-hover);
-  border-color: var(--ghost-border);
 }
 
 @media (max-width: 760px) {
@@ -122,19 +39,5 @@
     flex-wrap: wrap;
   }
 
-  .tab {
-    flex: 1 1 88px;
-    padding: 10px;
-    font-size: 0.72rem;
-  }
 }
 
-@media (max-width: 380px) {
-  .search {
-    padding-right: 18px;
-  }
-
-  .hint {
-    display: none;
-  }
-}

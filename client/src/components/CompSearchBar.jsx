@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next'
+import SearchInput from './ui/SearchInput.jsx'
 import styles from './CompSearchBar.module.css'
 
 export default function CompSearchBar({
@@ -17,9 +18,9 @@ export default function CompSearchBar({
   return (
     <form className={styles.form} role="search" onSubmit={e => e.preventDefault()}>
       <div className={styles.searchLine}>
-        <input
+        <SearchInput
           id="comp-search"
-          className={styles.input}
+          className={styles.inputWrap}
           type="search"
           aria-label={t('comp.searchAriaLabel')}
           aria-describedby={countId}

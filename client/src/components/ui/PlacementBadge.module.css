@@ -1,0 +1,30 @@
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  font-family: "Bebas Neue", "D-DIN-Bold", "D-DIN", Arial, Verdana, sans-serif;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* Default size — used in match card header */
+.badge {
+  min-width: 40px;
+  padding: 4px 6px;
+  font-size: 1rem;
+}
+
+/* Compact size — used in scoreboard participant rows */
+.sm {
+  min-width: 28px;
+  font-size: 0.72rem;
+}
+
+/* Placement colors */
+.p1 { color: var(--placement-1); }
+.p2 { color: var(--placement-2); }
+.p3 { color: var(--placement-3); }
+.p4 { color: var(--placement-4); }

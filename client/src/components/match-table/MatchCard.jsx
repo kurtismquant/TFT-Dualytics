@@ -2,6 +2,7 @@ import { useId, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { DamageIcon, TraitChips, UnitsGrid } from './BoardDisplay.jsx'
 import ExpandedScoreboard from './ExpandedScoreboard.jsx'
+import PlacementBadge from '../ui/PlacementBadge.jsx'
 import {
   formatDate,
   formatRound,
@@ -65,7 +66,7 @@ export default function MatchCard({ match, champions, items, traits, showPartner
             {/* Left — user */}
             <div className={styles.splitCol}>
               <div className={styles.splitNameRow}>
-                <span className={`${styles.placementBadge} ${placementClass}`}>{placementLabel}</span>
+                <PlacementBadge placement={teamPlacement} label={placementLabel} />
                 {match.level != null && <span className={styles.levelBadge}>Lv {match.level}</span>}
                 <span className={styles.splitName}>
                   {summonerName}
@@ -165,7 +166,7 @@ export default function MatchCard({ match, champions, items, traits, showPartner
 
         <div className={styles.body}>
           <div className={styles.placementBlock}>
-            <span className={`${styles.placementBadge} ${placementClass}`}>{placementLabel}</span>
+            <PlacementBadge placement={teamPlacement} label={placementLabel} />
             {match.level != null && (
               <span className={styles.levelBadge} title="Level">Lv {match.level}</span>
             )}

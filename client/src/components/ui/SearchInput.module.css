@@ -1,0 +1,78 @@
+.wrap {
+  position: relative;
+}
+
+.input {
+  display: block;
+  width: 100%;
+  min-height: 44px;
+  padding: 0 1.2rem;
+  background: var(--ghost-surface);
+  border: 1px solid var(--ghost-border);
+  color: var(--text-primary);
+  font-family: 'D-DIN', Arial, Verdana, sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 0.94;
+  letter-spacing: 1.17px;
+  text-transform: uppercase;
+  outline: none;
+  transition:
+    background-color var(--t-fast),
+    border-color var(--t-fast),
+    box-shadow var(--t-fast);
+}
+
+/* outline:none suppresses the global gold focus-visible ring; the white glow
+   below is the visible focus indicator instead. */
+.input:focus {
+  outline: none;
+  border-color: var(--search-focus-border);
+  background-color: var(--bg-input-focus);
+  box-shadow: 0 0 12px var(--search-focus-glow);
+}
+
+.input::placeholder {
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1.17px;
+}
+
+.input::-webkit-search-cancel-button {
+  display: none;
+}
+
+/* Reserve right padding when a hint badge is present */
+.hasHint .input {
+  padding-right: 5.5rem;
+}
+
+/* Keyboard shortcut badge — overlaid at the right edge */
+.hint {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: 'D-DIN', Arial, Verdana, sans-serif;
+  font-size: 0.63rem;
+  font-weight: 400;
+  line-height: 0.94;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  background: transparent;
+  border: 1px solid var(--bg-border);
+  border-radius: 0;
+  padding: 3px 6px;
+  pointer-events: none;
+}
+
+@media (max-width: 380px) {
+  .hasHint .input {
+    padding-right: 1.2rem;
+  }
+
+  .hint {
+    display: none;
+  }
+}

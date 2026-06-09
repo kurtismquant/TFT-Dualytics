@@ -148,24 +148,6 @@
   margin: -4px 0 16px;
 }
 
-.tab {
-  min-height: 44px;
-  padding: 0 16px;
-  border: 1px solid var(--bg-border-muted);
-  background: transparent;
-  color: var(--text-secondary);
-  cursor: pointer;
-  font-size: 0.76rem;
-  font-weight: 700;
-  transition: border-color var(--t-fast), color var(--t-fast), background var(--t-fast);
-}
-
-.tab:hover,
-.tabActive {
-  border-color: var(--bg-border-bright);
-  color: var(--text-primary);
-  background: var(--bg-hover);
-}
 
 .tableWrap {
   width: 100%;

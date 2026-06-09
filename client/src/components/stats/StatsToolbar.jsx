@@ -1,5 +1,6 @@
 import { useCallback, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
+import Button from '../ui/Button.jsx'
 import styles from '../../pages/StatsPage.module.css'
 
 const COSTS = [1, 2, 3, 4, 5]
@@ -85,29 +86,27 @@ export default function StatsToolbar({
       </div>
       <div className={styles.tabBar} role="group" aria-label={t('stats.statsTypeLabel')}>
         {tabs.map(tab => (
-          <button
+          <Button
             key={tab.key}
-            className={`${styles.tab} ${activeTab === tab.key ? styles.tabActive : ''}`}
-            type="button"
+            variant="tab"
+            pressed={activeTab === tab.key}
             onClick={() => setActiveTab(tab.key)}
-            aria-pressed={activeTab === tab.key}
           >
             {tab.label}
-          </button>
+          </Button>
         ))}
       </div>
       {activeTab === 'items' && (
         <div className={styles.categoryBar} role="group" aria-label={t('filterBar.categoryLabel', 'Item category')}>
           {ITEM_CATEGORIES.map(cat => (
-            <button
+            <Button
               key={cat}
-              type="button"
-              className={`${styles.tab} ${itemCategory === cat ? styles.tabActive : ''}`}
+              variant="tab"
+              pressed={itemCategory === cat}
               onClick={() => setItemCategory(cat)}
-              aria-pressed={itemCategory === cat}
             >
               {t(`filterBar.cat${capitalize(cat)}`)}
-            </button>
+            </Button>
           ))}
         </div>
       )}

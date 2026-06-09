@@ -5,6 +5,7 @@ import UnitCard from '../UnitCard.jsx'
 import TraitCard from '../TraitCard.jsx'
 import ItemCard from '../ItemCard.jsx'
 import { useHoverCard } from '../../hooks/useHoverCard.js'
+import chipStyles from '../ui/TraitChip.module.css'
 
 export function HoverableUnit({ unit }) {
   const { onMouseEnter, onMouseLeave, cardProps } = useHoverCard(unit.champion)
@@ -30,7 +31,7 @@ export function HoverableItem({ item, allItems }) {
   )
 }
 
-export function HoverableTraitChip({ trait, traits, allChampions, styles }) {
+export function HoverableTraitChip({ trait, traits, allChampions }) {
   const meta = traits?.find(td => td.id === trait.id) || null
   const { onMouseEnter, onMouseLeave, cardProps } = useHoverCard({ meta, count: trait.numUnits })
   if (!meta) return null
@@ -39,13 +40,13 @@ export function HoverableTraitChip({ trait, traits, allChampions, styles }) {
   return (
     <>
       <span
-        className={`${styles.traitChip} ${styles[`style${trait.style}`] || ''}`}
+        className={`${chipStyles.traitChip} ${chipStyles[`style${trait.style}`] || ''}`}
         title={chipLabel}
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
       >
-        <img src={meta.iconUrl} alt="" className={styles.traitIcon} loading="lazy" aria-hidden="true" />
-        <span className={styles.traitCount} aria-hidden="true">{trait.numUnits}</span>
+        <img src={meta.iconUrl} alt="" className={chipStyles.traitIcon} loading="lazy" aria-hidden="true" />
+        <span className={chipStyles.traitCount} aria-hidden="true">{trait.numUnits}</span>
         <span className="sr-only">{chipLabel}</span>
       </span>
       {cardProps.isOpen && createPortal(<TraitCard {...cardProps} allChampions={allChampions} />, document.body)}
@@ -53,14 +54,14 @@ export function HoverableTraitChip({ trait, traits, allChampions, styles }) {
   )
 }
 
-export function TraitChips({ traitData, traits, filterOne, allChampions, styles, copyBeforeSort = true }) {
+export function TraitChips({ traitData, traits, filterOne, allChampions, copyBeforeSort = true }) {
   const source = copyBeforeSort ? [...(traitData || [])] : (traitData || [])
   const resolved = source
     .filter(t => !filterOne || t.numUnits > 1)
     .sort((a, b) => b.tierCurrent - a.tierCurrent || b.numUnits - a.numUnits)
 
   return resolved.map(t => (
-    <HoverableTraitChip key={t.id} trait={t} traits={traits} allChampions={allChampions} styles={styles} />
+    <HoverableTraitChip key={t.id} trait={t} traits={traits} allChampions={allChampions} />
   ))
 }
 

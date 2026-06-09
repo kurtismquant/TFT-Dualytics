@@ -6,6 +6,7 @@ import { usePlayerSearch } from '../hooks/usePlayerSearch.js'
 import { parseRiotIdWithDefaultTag } from '../utils/riotSearch.js'
 import RegionSelect from './ui/RegionSelect.jsx'
 import Modal from './ui/Modal.jsx'
+import Button from './ui/Button.jsx'
 import styles from './BookmarkModal.module.css'
 
 export default function BookmarkModal({ defaultRegion = 'na', onClose }) {
@@ -130,14 +131,13 @@ export default function BookmarkModal({ defaultRegion = 'na', onClose }) {
               autoCorrect="off"
               spellCheck={false}
             />
-            <button
-              type="button"
-              className={styles.addBtn}
+            <Button
+              variant="ghost"
               disabled={verifying || !query.trim()}
               onClick={handleManualAdd}
             >
               {verifying ? '...' : t('bookmarks.add')}
-            </button>
+            </Button>
 
             {showDropdown && (
               <div
@@ -181,14 +181,13 @@ export default function BookmarkModal({ defaultRegion = 'na', onClose }) {
                     <span className={styles.rowName}>{b.gameName}#{b.tagLine}</span>
                     <span className={styles.rowRegion}>{b.region.toUpperCase()}</span>
                   </div>
-                  <button
-                    type="button"
-                    className={styles.removeBtn}
+                  <Button
+                    variant="icon"
                     aria-label={t('bookmarks.removeAriaLabel', { name: `${b.gameName}#${b.tagLine}` })}
                     onClick={() => removeBookmark(b)}
                   >
                     ✕
-                  </button>
+                  </Button>
                 </div>
               ))
             )}

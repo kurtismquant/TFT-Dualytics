@@ -1,0 +1,89 @@
+/* ── Shared base reset ───────────────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-family: "Bebas Neue", "D-DIN-Bold", "D-DIN", Arial, sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.17px;
+  line-height: 0.94;
+  transition: color var(--t-fast), background var(--t-fast), border-color var(--t-fast);
+}
+
+.btn:disabled {
+  cursor: default;
+}
+
+/* ── Ghost — transparent bg, 1px border, text action ─────── */
+.ghost {
+  min-height: 44px;
+  padding: 0 16px;
+  background: transparent;
+  border: 1px solid var(--bg-border-bright);
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  letter-spacing: 0.14em;
+}
+
+.ghost:hover:not(:disabled) {
+  border-color: var(--focus-border);
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.ghost:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ── Tab — toggle button for filter / segmented groups ────── */
+.tab {
+  min-height: 44px;
+  padding: 0 14px;
+  background: transparent;
+  border: 1px solid var(--bg-border-muted);
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+}
+
+.tab:hover,
+.tab[aria-pressed='true'] {
+  border-color: var(--bg-border-bright);
+  color: var(--text-primary);
+  background: var(--bg-hover);
+}
+
+/* ── Icon — 44px square, icon-only ────────────────────────── */
+.icon {
+  width: 44px;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0;
+  background: transparent;
+  border: 1px solid var(--bg-border);
+  color: var(--text-primary);
+  font-size: 1rem;
+}
+
+.icon:hover {
+  border-color: var(--focus-border);
+  background: var(--bg-hover);
+}
+
+/* ─── Shared :focus-visible ring ────────────────────────────
+   Supplements the global ring in globals.css; ensures the gold
+   focus treatment is applied even when a caller overrides outline. */
+.btn:focus-visible {
+  outline: 2px solid var(--focus-border);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 4px var(--focus-ring);
+}
+
+@media (pointer: coarse) {
+  /* Keep touch targets at 44px minimum even on small buttons */
+  .btn {
+    min-height: 44px;
+  }
+}
