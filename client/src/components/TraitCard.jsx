@@ -230,7 +230,6 @@ export default function TraitCard({ isOpen, data, style, allChampions }) {
             const tokens = resolveTokens(row, effect.variables, effect.minUnits, `r${i}`)
             return (
               <p key={i} className={`${styles.row} ${isActive ? styles.rowActive : styles.rowInactive}`}>
-                <span className={styles.rowPrefix}>({effect.minUnits})</span>{' '}
                 {tokens}
               </p>
             )
