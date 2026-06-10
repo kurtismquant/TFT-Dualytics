@@ -172,10 +172,10 @@
 }
 
 .taglineEyebrow {
-  font-family: "Bebas Neue", "D-DIN-Bold", "Barlow Condensed", Arial, sans-serif;
-  font-size: 1.6rem;
-  font-weight: 700;
-  letter-spacing: 1.17px;
+  font-family: var(--font-body);
+  font-size: var(--text-2xl);
+  font-weight: var(--fw-bold);
+  letter-spacing: var(--track-wider);
   line-height: 0.94;
   text-transform: uppercase;
   color: var(--text-primary);
@@ -184,10 +184,10 @@
 }
 
 .taglineBody {
-  font-family: "D-DIN", "Barlow Condensed", Arial, sans-serif;
-  font-size: 1.2rem;
-  font-weight: 400;
-  letter-spacing: 0.12em;
+  font-family: var(--font-body);
+  font-size: var(--text-lg);
+  font-weight: var(--fw-regular);
+  letter-spacing: var(--track-wider);
   text-transform: uppercase;
   color: var(--text-secondary);
   max-width: 800px;
@@ -217,8 +217,8 @@
   border: 1px solid var(--bg-border-bright);
   color: var(--text-primary);
   border-radius: 0;
-  font-family: "IBM Plex Mono", ui-monospace, monospace;
-  font-size: 0.85rem;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
   outline: none;
   text-transform: none;
   letter-spacing: 0;
@@ -290,9 +290,9 @@
 }
 
 .searchError {
-  font-family: "D-DIN", Arial, sans-serif;
-  font-size: 0.72rem;
-  letter-spacing: 0.08em;
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  letter-spacing: var(--track-wider);
   text-transform: uppercase;
   color: var(--accent-red);
   margin: 6px 0 0;
@@ -415,20 +415,20 @@
 }
 
 .destEyebrow {
-  font-family: "Bebas Neue", "D-DIN-Bold", "Barlow Condensed", Arial, sans-serif;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 1.4px;
+  font-family: var(--font-body);
+  font-size: var(--text-2xs);
+  font-weight: var(--fw-bold);
+  letter-spacing: var(--track-widest);
   text-transform: uppercase;
   color: var(--text-muted);
 }
 
 .destTitle {
-  font-family: "Bebas Neue", "D-DIN-Bold", "Barlow Condensed", Arial, sans-serif;
-  font-size: 32px;
-  font-weight: 700;
+  font-family: var(--font-body);
+  font-size: var(--text-3xl);
+  font-weight: var(--fw-bold);
   line-height: 0.94;
-  letter-spacing: 1.5px;
+  letter-spacing: var(--track-wide);
   color: var(--text-primary);
   margin-bottom: 8px;
 }
@@ -439,9 +439,9 @@
 }
 
 .destBody {
-  font-family: "D-DIN", "Barlow Condensed", Arial, sans-serif;
-  font-size: 0.78rem;
-  letter-spacing: 0.06em;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  letter-spacing: var(--track-wide);
   text-transform: uppercase;
   color: var(--text-secondary);
   margin-bottom: 14px;
@@ -457,19 +457,19 @@
 }
 
 .statVal {
-  font-family: "Bebas Neue", "D-DIN-Bold", "Barlow Condensed", Arial, sans-serif;
-  font-size: 22px;
-  font-weight: 700;
+  font-family: var(--font-body);
+  font-size: var(--text-2xl);
+  font-weight: var(--fw-bold);
   color: var(--text-primary);
-  letter-spacing: 0.5px;
-  line-height: 1;
+  letter-spacing: var(--track-tight);
+  line-height: var(--leading-none);
   display: block;
 }
 
 .statLabel {
-  font-family: "D-DIN", Arial, sans-serif;
-  font-size: 0.63rem;
-  letter-spacing: 1px;
+  font-family: var(--font-body);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--track-wider);
   text-transform: uppercase;
   color: var(--text-muted);
   display: block;
@@ -574,7 +574,7 @@
   }
 
   .taglineBody {
-    font-size: 1rem;
+    font-size: var(--text-base);
     line-height: 1.45;
   }
 
@@ -584,7 +584,7 @@
   }
 
   .destTitle {
-    font-size: 1.65rem;
+    font-size: var(--text-2xl);
     overflow-wrap: anywhere;
   }
 
