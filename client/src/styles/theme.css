@@ -3,6 +3,14 @@
    SpaceX-inspired design system: THEME VARIABLES
    ────────────────────────────────────────────────────────── */
 
+/* ── Layout tokens (theme-independent) ── */
+:root {
+  --page-max-width: 1240px;
+  --page-gutter:    2rem;    /* 32px — horizontal padding; collapses at mobile */
+  --grid-cols:      12;
+  --grid-gap:       1.5rem;  /* 24px column gap when grid is active */
+}
+
 /* ── Typography tokens (theme-independent) ── */
 :root {
   /* Families */
@@ -97,6 +105,26 @@
   --placement-3-glow:  rgba(205, 127, 50, 0.2);
   --placement-4:       #64748b;
   --placement-4-glow:  rgba(100, 116, 139, 0.15);
+
+  /* ── Stat quality bands (0 = best/green → 5 = worst/red) ── */
+  --stat-tier-0: #22c55e;
+  --stat-tier-1: #8bc220;
+  --stat-tier-2: #d4d520;
+  --stat-tier-3: #f5c020;
+  --stat-tier-4: #f07820;
+  --stat-tier-5: #ef4444;
+
+  /* ── Rank tiers ── */
+  --tier-iron:        #7d7d7d;
+  --tier-bronze:      #b07c4a;
+  --tier-silver:      #bfc7d1;
+  --tier-gold:        #f5c542;
+  --tier-platinum:    #3fa8a0;
+  --tier-emerald:     #22c55e;
+  --tier-diamond:     #5b8def;
+  --tier-master:      #a855f7;
+  --tier-grandmaster: #ef4444;
+  --tier-challenger:  #22d3ee;
 
   /* ── Champion cost ── */
   --cost-1:            rgb(172, 172, 172);
@@ -202,6 +230,26 @@
   --placement-3-glow:  rgba(146, 64, 14, 0.15);
   --placement-4:       #94a3b8;
   --placement-4-glow:  rgba(148, 163, 184, 0.10);
+
+  /* ── Stat quality bands — darkened for contrast on white ── */
+  --stat-tier-0: #16a34a;
+  --stat-tier-1: #4a7900;
+  --stat-tier-2: #7a7a00;
+  --stat-tier-3: #a16207;
+  --stat-tier-4: #c2410c;
+  --stat-tier-5: #dc2626;
+
+  /* ── Rank tiers — darkened for contrast on white ── */
+  --tier-iron:        #6b7280;
+  --tier-bronze:      #92400e;
+  --tier-silver:      #6b7280;
+  --tier-gold:        #b8860b;
+  --tier-platinum:    #0f766e;
+  --tier-emerald:     #16a34a;
+  --tier-diamond:     #1d4ed8;
+  --tier-master:      #7c3aed;
+  --tier-grandmaster: #dc2626;
+  --tier-challenger:  #0891b2;
 
   /* ── Champion cost — darkened for contrast on white ── */
   --cost-1:            rgb(100, 100, 100);
