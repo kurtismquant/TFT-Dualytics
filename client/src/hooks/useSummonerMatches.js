@@ -36,7 +36,13 @@ export const useSummonerMatches = (region, ids) => {
     retry: (failureCount, error) => error?.response?.status !== 404 && failureCount < 2,
     staleTime: 0,
     placeholderData: previousData => previousData,
-    refetchInterval: query => hasActiveSync(query.state.data) ? 1000 : false,
+    // 1s while a sync is running so new matches stream in as they land in Mongo.
+    // 30s when idle: matches can arrive out-of-band (ingest daemon, hourly cron,
+    // or the player's own just-finished game) and the page would otherwise never
+    // learn about them — each idle tick re-reads Mongo and nudges the server's
+    // auto-refresh, which ensurePlayerRefresh gates to at most once per 60s.
+    // Intervals pause while the tab is hidden (refetchIntervalInBackground: false).
+    refetchInterval: query => hasActiveSync(query.state.data) ? 1000 : 30_000,
   })
 }
 
