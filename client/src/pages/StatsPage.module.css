@@ -20,15 +20,15 @@
 .muted,
 .frequency,
 .costLabel {
-  font-family: "D-DIN", Arial, Verdana, sans-serif;
-  letter-spacing: 1.1px;
+  font-family: var(--font-body);
+  letter-spacing: var(--track-wider);
   text-transform: uppercase;
 }
 
 .eyebrow {
   margin-bottom: 8px;
   color: var(--text-muted);
-  font-size: 0.72rem;
+  font-size: var(--text-xs);
 }
 
 .title {
@@ -39,7 +39,7 @@
 
 .meta {
   color: var(--text-muted);
-  font-size: 0.72rem;
+  font-size: var(--text-xs);
   white-space: nowrap;
 }
 
@@ -58,7 +58,7 @@
   border: 1px solid var(--bg-border-muted);
   background: var(--bg-card);
   color: var(--text-primary);
-  font-size: 0.76rem;
+  font-size: var(--text-xs);
   outline: none;
   transition:
     border-color 180ms ease,
@@ -106,8 +106,8 @@
 
 .costLabel {
   color: var(--text-secondary);
-  font-size: 0.72rem;
-  font-weight: 700;
+  font-size: var(--text-xs);
+  font-weight: var(--fw-bold);
 }
 
 .costButton {
@@ -118,7 +118,7 @@
   color: var(--text-secondary);
   background: var(--ghost-surface);
   cursor: pointer;
-  font-size: 0.7rem;
+  font-size: var(--text-xs);
   transition: background var(--t-fast), color var(--t-fast), box-shadow var(--t-fast);
 }
 
@@ -182,7 +182,7 @@
   height: 34px;
   background: var(--bg-card);
   color: var(--text-primary);
-  font-size: 0.75rem;
+  font-size: var(--text-xs);
   text-align: left;
 }
 
@@ -198,7 +198,7 @@
   color: inherit;
   cursor: pointer;
   font-size: inherit;
-  font-weight: 700;
+  font-weight: var(--fw-bold);
   padding: 0;
 }
 
@@ -215,8 +215,8 @@
 
 .sortMark {
   color: var(--text-muted);
-  font-size: 0.58rem;
-  letter-spacing: 0.9px;
+  font-size: var(--text-2xs);
+  letter-spacing: var(--track-wide);
 }
 
 .table th:not(:first-child),
@@ -282,7 +282,7 @@
 
 .fallbackIcon.traitIcon {
   color: #fafaff;
-  font-weight: 700;
+  font-weight: var(--fw-bold);
 }
 
 .fallbackIcon {
@@ -293,21 +293,21 @@
 }
 
 .avg {
-  font-size: 1rem;
-  font-weight: 700;
+  font-size: var(--text-base);
+  font-weight: var(--fw-bold);
 }
 
 .metricValue {
   color: var(--metric-color, var(--text-primary));
-  font-weight: 700;
+  font-weight: var(--fw-bold);
 }
 
 .metricLabel {
   display: inline-block;
   margin-left: 6px;
   color: var(--text-muted);
-  font-size: 0.58rem;
-  letter-spacing: 0.9px;
+  font-size: var(--text-2xs);
+  letter-spacing: var(--track-wide);
   text-transform: uppercase;
 }
 
@@ -315,7 +315,7 @@
   display: inline-block;
   margin-left: 6px;
   color: var(--text-muted);
-  font-size: 0.65rem;
+  font-size: var(--text-2xs);
 }
 
 .popularIcons {
@@ -337,7 +337,7 @@
 .muted,
 .message {
   color: var(--text-muted);
-  font-size: 0.75rem;
+  font-size: var(--text-xs);
 }
 
 .message {
