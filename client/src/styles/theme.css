@@ -3,6 +3,42 @@
    SpaceX-inspired design system: THEME VARIABLES
    ────────────────────────────────────────────────────────── */
 
+/* ── Typography tokens (theme-independent) ── */
+:root {
+  /* Families */
+  --font-display: 'Bebas Neue', 'D-DIN-Bold', 'D-DIN', Arial, Verdana, sans-serif;
+  --font-body:    'D-DIN', Arial, Verdana, sans-serif;
+  --font-mono:    'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  /* Type scale — standard static scale */
+  --text-2xs:  0.625rem;  /* 10px — micro badges, unit labels, footnotes */
+  --text-xs:   0.75rem;   /* 12px — labels, kickers, table headers */
+  --text-sm:   0.875rem;  /* 14px — table cells, secondary body, section titles */
+  --text-base: 1rem;      /* 16px — body copy */
+  --text-lg:   1.125rem;  /* 18px — emphasized body */
+  --text-xl:   1.25rem;   /* 20px — nav logo, card/section headlines */
+  --text-2xl:  1.5rem;    /* 24px — large card titles */
+  --text-3xl:  1.875rem;  /* 30px — big stat numerals */
+  --text-4xl:  2.25rem;   /* 36px — page titles */
+
+  /* Tracking — em only, scales with font size */
+  --track-tight:  0.02em;  /* page titles */
+  --track-base:   0.04em;  /* body default */
+  --track-wide:   0.06em;  /* headings, buttons */
+  --track-wider:  0.09em;  /* small-label tracking */
+  --track-widest: 0.14em;  /* technical labels: kickers, eyebrows, table headers */
+
+  /* Weights */
+  --fw-regular: 400;
+  --fw-bold:    700;
+
+  /* Line heights */
+  --leading-none:    1;
+  --leading-tight:   1.2;
+  --leading-normal:  1.5;
+  --leading-relaxed: 1.7;
+}
+
 /* Dark theme — default. Also applied to :root for no-JS / flash prevention */
 :root,
 [data-theme="dark"] {
