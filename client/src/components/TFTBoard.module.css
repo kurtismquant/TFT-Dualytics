@@ -49,11 +49,11 @@
   color: var(--unit-label-text);
   padding: 1px 6px;
   border-radius: 0;
-  font-family: 'Bebas Neue', 'D-DIN-Bold', 'D-DIN', Arial, Verdana, sans-serif;
-  font-size: 0.63rem;
-  font-weight: 700;
+  font-family: var(--font-body);
+  font-size: var(--text-2xs);
+  font-weight: var(--fw-bold);
   line-height: 0.94;
-  letter-spacing: 1px;
+  letter-spacing: var(--track-wider);
   text-transform: uppercase;
   white-space: nowrap;
   pointer-events: none;

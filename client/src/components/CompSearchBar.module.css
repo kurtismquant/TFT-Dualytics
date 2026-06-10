@@ -22,10 +22,10 @@
   border: 1px solid var(--ghost-border);
   background: transparent;
   color: var(--text-secondary);
-  font-family: "Bebas Neue", "D-DIN-Bold", "D-DIN", Arial, Verdana, sans-serif;
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 1.17px;
+  font-family: var(--font-display);
+  font-size: var(--text-xs);
+  font-weight: var(--fw-bold);
+  letter-spacing: var(--track-wider);
   text-transform: uppercase;
   cursor: pointer;
   transition:
@@ -43,9 +43,9 @@
 
 .count {
   color: var(--text-muted);
-  font-family: "D-DIN", Arial, Verdana, sans-serif;
-  font-size: 0.72rem;
-  letter-spacing: 1.17px;
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  letter-spacing: var(--track-wider);
   text-transform: uppercase;
   white-space: nowrap;
 }

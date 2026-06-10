@@ -42,9 +42,9 @@
   padding: 8px 12px;
   background: transparent;
   border-bottom: 1px solid var(--bg-border-muted);
-  font-family: "Bebas Neue", "D-DIN-Bold", "D-DIN", Arial, Verdana, sans-serif;
-  font-size: 0.75rem;
-  font-weight: 700;
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  font-weight: var(--fw-bold);
   flex-wrap: wrap;
 }
 
@@ -62,10 +62,10 @@
 }
 
 .headerStat {
-  font-family: "D-DIN", Arial, Verdana, sans-serif;
-  font-weight: 400;
-  font-size: 0.75rem;
-  letter-spacing: 0.06em;
+  font-family: var(--font-body);
+  font-weight: var(--fw-regular);
+  font-size: var(--text-xs);
+  letter-spacing: var(--track-wide);
   color: var(--text-secondary);
   text-transform: uppercase;
 }
@@ -137,10 +137,10 @@
 .expandedHeader {
   margin: 0;
   padding: 10px 12px;
-  font-family: "Bebas Neue", "D-DIN-Bold", "D-DIN", Arial, Verdana, sans-serif;
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 1.17px;
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  font-weight: var(--fw-bold);
+  letter-spacing: var(--track-widest);
   text-transform: uppercase;
   color: var(--text-primary);
   border-bottom: 1px solid var(--bg-border);
@@ -148,10 +148,10 @@
 
 .expandedEmpty {
   padding: 12px;
-  font-family: "D-DIN", Arial, Verdana, sans-serif;
-  font-size: 0.72rem;
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
   color: var(--text-muted);
-  letter-spacing: 0.06em;
+  letter-spacing: var(--track-wide);
   text-transform: uppercase;
 }
 
@@ -181,10 +181,10 @@
 }
 
 .partnerPlacement {
-  font-family: "Bebas Neue", "D-DIN-Bold", "D-DIN", Arial, Verdana, sans-serif;
-  font-size: 0.81rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: var(--fw-bold);
+  letter-spacing: var(--track-wide);
   text-transform: uppercase;
 }
 
@@ -194,11 +194,11 @@
 .partnerPlacement.p4 { color: var(--placement-4); }
 
 .partnerStat {
-  font-family: "D-DIN", Arial, Verdana, sans-serif;
-  font-size: 0.72rem;
-  font-weight: 400;
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  font-weight: var(--fw-regular);
   color: var(--text-secondary);
-  letter-spacing: 0.06em;
+  letter-spacing: var(--track-wide);
   text-transform: uppercase;
 }
 
