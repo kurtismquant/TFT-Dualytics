@@ -34,9 +34,9 @@ html, body, #root {
   /* Use the variable instead of hardcoded hex */
   background-color: var(--bg-base); 
   color: var(--text-primary);
-  font-family: 'D-DIN', Arial, Verdana, sans-serif;
-  font-weight: 400;
-  letter-spacing: 0.02em;
+  font-family: var(--font-body);
+  font-weight: var(--fw-regular);
+  letter-spacing: var(--track-tight);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -44,18 +44,20 @@ html, body, #root {
 /* Universal uppercase + positive tracking — the aerospace voice */
 body {
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: var(--track-base);
   /* Flexbox logic for the Sticky Footer */
   display: flex;
   flex-direction: column;
 }
 
+/* Headings default to the body face — the display face (Bebas Neue) is
+   opt-in via component classes for page titles, nav, and buttons only. */
 h1, h2, h3, h4, h5, h6 {
-  font-family: 'Bebas Neue', 'D-DIN-Bold', 'D-DIN', Arial, Verdana, sans-serif;
-  font-weight: 700;
+  font-family: var(--font-body);
+  font-weight: var(--fw-bold);
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  line-height: 1.0;
+  letter-spacing: var(--track-wide);
+  line-height: var(--leading-none);
   color: var(--text-primary);
 }
 
@@ -87,7 +89,7 @@ img {
 button, input, select, textarea {
   font-family: inherit;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: var(--track-wide);
   color: var(--text-primary);
   background: transparent;
   border: 1px solid var(--bg-border-muted);
