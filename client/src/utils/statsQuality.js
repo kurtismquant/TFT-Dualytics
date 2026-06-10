@@ -6,13 +6,13 @@
 // labels, so the two are kept as independent tables instead of fused.
 
 const AVG_PLACEMENT_COLOR_BANDS = [
-  { max: 2.1,  color: '#22C55E' },
-  { max: 2.35, color: '#8BC220' },
-  { max: 2.5,  color: '#D4D520' },
-  { max: 2.65, color: '#F5C020' },
-  { max: 2.9,  color: '#F07820' },
+  { max: 2.1,  color: 'var(--stat-tier-0)' },
+  { max: 2.35, color: 'var(--stat-tier-1)' },
+  { max: 2.5,  color: 'var(--stat-tier-2)' },
+  { max: 2.65, color: 'var(--stat-tier-3)' },
+  { max: 2.9,  color: 'var(--stat-tier-4)' },
 ]
-const AVG_PLACEMENT_FALLBACK_COLOR = '#EF4444'
+const AVG_PLACEMENT_FALLBACK_COLOR = 'var(--stat-tier-5)'
 
 const AVG_PLACEMENT_QUALITY_BANDS = [
   { max: 1.85, quality: 'excellent' },
@@ -22,13 +22,13 @@ const AVG_PLACEMENT_QUALITY_BANDS = [
 const AVG_PLACEMENT_FALLBACK_QUALITY = 'low'
 
 const WIN_RATE_COLOR_BANDS = [
-  { min: 30, color: '#22C55E' },
-  { min: 27, color: '#8BC220' },
-  { min: 25, color: '#D4D520' },
-  { min: 23, color: '#F5C020' },
-  { min: 20, color: '#F07820' },
+  { min: 30, color: 'var(--stat-tier-0)' },
+  { min: 27, color: 'var(--stat-tier-1)' },
+  { min: 25, color: 'var(--stat-tier-2)' },
+  { min: 23, color: 'var(--stat-tier-3)' },
+  { min: 20, color: 'var(--stat-tier-4)' },
 ]
-const WIN_RATE_FALLBACK_COLOR = '#EF4444'
+const WIN_RATE_FALLBACK_COLOR = 'var(--stat-tier-5)'
 
 const WIN_RATE_QUALITY_BANDS = [
   { min: 32.5, quality: 'excellent' },
