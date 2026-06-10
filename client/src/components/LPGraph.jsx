@@ -5,10 +5,10 @@ import {
 import {
   formatRankLabel,
   rankFromLp,
-  TIER_COLORS,
   TIER_THRESHOLDS,
   APEX_LP_BASE,
 } from '../utils/lpFromRank.js'
+import { getCSSVar } from '../utils/cssVars.js'
 import { estimateMatchLp } from '../utils/estimateMatchLp.js'
 import { useSettings } from '../contexts/useSettings.js'
 import { useTranslation } from 'react-i18next'
@@ -189,7 +189,7 @@ export default function LPGraph({ summoner, rankSnapshots, matches }) {
                   )
                   if (threshold) {
                     label = threshold.tier
-                    fill = TIER_COLORS[threshold.tier] || axisColor
+                    fill = getCSSVar(`--tier-${threshold.tier.toLowerCase()}`) || axisColor
                     letterSpacing = 1
                     opacity = 0.85
                   }
@@ -219,7 +219,7 @@ export default function LPGraph({ summoner, rankSnapshots, matches }) {
               <ReferenceLine
                 key={t.tier + t.absLp}
                 y={t.absLp}
-                stroke={TIER_COLORS[t.tier]}
+                stroke={getCSSVar(`--tier-${t.tier.toLowerCase()}`)}
                 strokeDasharray="2 4"
                 strokeOpacity={0.35}
               />

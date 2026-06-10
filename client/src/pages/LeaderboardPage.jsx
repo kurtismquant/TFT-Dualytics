@@ -4,17 +4,9 @@ import { useTranslation } from 'react-i18next'
 import { useLeaderboard } from '../hooks/useLeaderboard.js'
 import { LEADERBOARD_REGION_OPTIONS } from '../constants/regions.js'
 import { buildSummonerPath } from '../constants/routes.js'
+import { PageShell } from '../components/layout/PageShell.jsx'
 import styles from './LeaderboardPage.module.css'
-
-const TIER_COLORS = {
-  CHALLENGER: '#f5c542',
-  GRANDMASTER: '#ef4444',
-  MASTER: '#c084fc',
-  DIAMOND: '#22d3ee',
-  EMERALD: '#22c55e',
-  PLATINUM: '#22d3ee',
-  GOLD: '#f5c542',
-}
+import { getCSSVar } from '../utils/cssVars.js'
 
 const TIER_ORDER = ['CHALLENGER', 'GRANDMASTER', 'MASTER', 'DIAMOND', 'EMERALD', 'PLATINUM', 'GOLD']
 const DIVISION_ORDER = { I: 0, II: 1, III: 2, IV: 3, '': 0 }
@@ -117,7 +109,7 @@ export default function LeaderboardPage() {
 
   return (
     <div className={styles.page}>
-      <div className={styles.main}>
+      <PageShell>
         <h1 className={styles.title}>{t('leaderboard.title')}</h1>
 
         <div className={styles.regionBar} role="group" aria-label={t('leaderboard.regionLabel')}>
@@ -204,7 +196,7 @@ export default function LeaderboardPage() {
                           <div className={styles.tierBadge}>
                             <span
                               className={styles.tierLabel}
-                              style={{ color: TIER_COLORS[p.tier] || 'var(--text-muted)' }}
+                              style={{ color: getCSSVar(`--tier-${p.tier.toLowerCase()}`) || 'var(--text-muted)' }}
                             >
                               {formatTier(p.tier)}{p.division && p.tier && !['CHALLENGER','GRANDMASTER','MASTER'].includes(p.tier) ? ` ${p.division}` : ''}
                             </span>
@@ -265,7 +257,7 @@ export default function LeaderboardPage() {
         </div>
 
         {updatedLabel && <div className={styles.metaLine} role={refreshing ? 'status' : undefined}>{updatedLabel}</div>}
-      </div>
+      </PageShell>
     </div>
   )
 }

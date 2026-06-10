@@ -6,8 +6,7 @@ import { lastRoundToStage } from '../utils/roundToStage.js'
 import { useSettings } from '../contexts/useSettings.js'
 import { useTranslation } from 'react-i18next'
 import styles from './SummonerStatsCard.module.css'
-
-const PLACEMENT_COLORS = ['#f5c542', '#e5e7eb', '#cd7f32', '#64748b']
+import { getCSSVar } from '../utils/cssVars.js'
 
 function avg(arr) {
   return arr.length ? arr.reduce((a, b) => a + b, 0) / arr.length : 0
@@ -39,6 +38,11 @@ export default function SummonerStatsCard({ matches, resolvedChampions }) {
   const { theme } = useSettings()
   const { t } = useTranslation()
   const [activeBar, setActiveBar] = useState(null)
+
+  const placementColors = useMemo(
+    () => [1, 2, 3, 4].map(i => getCSSVar(`--placement-${i}`)),
+    [theme]
+  )
 
   const STAT_DEFS = [
     ['gamesPlayed', t('statsCard.gamesPlayed')],
@@ -130,7 +134,7 @@ export default function SummonerStatsCard({ matches, resolvedChampions }) {
                 {barData.map((_, i) => (
                   <Cell
                     key={i}
-                    fill={PLACEMENT_COLORS[i]}
+                    fill={placementColors[i]}
                     fillOpacity={activeBar === i ? 1 : 0.85}
                     style={{
                       filter: activeBar === i ? 'brightness(1.15)' : 'none',

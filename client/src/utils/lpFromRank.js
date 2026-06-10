@@ -31,19 +31,6 @@ const APEX_CHALLENGER_OFFSET = 500
 
 const DIVISION_OFFSET = { IV: 0, III: 100, II: 200, I: 300 }
 
-export const TIER_COLORS = {
-  IRON: '#7d7d7d',
-  BRONZE: '#b07c4a',
-  SILVER: '#bfc7d1',
-  GOLD: '#e0b94a',
-  PLATINUM: '#3fa8a0',
-  EMERALD: '#3fa86b',
-  DIAMOND: '#5b8def',
-  MASTER: '#a855f7',
-  GRANDMASTER: '#dc2626',
-  CHALLENGER: '#22d3ee',
-}
-
 export function lpFromRank({ tier, rank, leaguePoints }) {
   if (!tier) return null
   const upper = tier.toUpperCase()
