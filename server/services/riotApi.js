@@ -1,28 +1,124 @@
 import axios from 'axios'
-import PQueue from 'p-queue'
 
 // Riot API key lives ONLY in this file. Never import RIOT_API_KEY elsewhere.
 const API_KEY = process.env.RIOT_API_KEY
 
-// Personal key: 20 req/sec AND 100 req / 2 min. Both must hold — a request
-// clears the long-window queue first, then the short-window queue.
-const longQueue = new PQueue({ interval: 120_000, intervalCap: 100 })
-const shortQueue = new PQueue({ interval: 1000, intervalCap: 20 })
+// Personal key: 20 req/sec AND 100 req/2min. Enforced as SLIDING windows over
+// actual dispatch times: a request fires only when both windows have room.
+// A fixed-window limiter (previous p-queue setup) drifts out of phase with
+// Riot's own bucket, drawing 429 storms whose retries double-spend the budget;
+// a sliding window keeps every possible 1s/120s span under the caps no matter
+// how Riot aligns its bucket, so sustained large batches get the full 100/2min.
+// Short window enforced over 1.2s instead of Riot's 1s: dispatch spacing is
+// exact, but network jitter compresses arrivals and Riot counts on receipt —
+// the extra 200ms keeps a jitter-squeezed second from exceeding 20 at Riot's edge.
+const SHORT_WINDOW_MS = 1_200
+const SHORT_CAP = 20
+const LONG_WINDOW_MS = 120_000
+const LONG_CAP = 100
+// Slack added when sleeping until a slot frees, absorbing timer jitter.
+const SLOT_EPSILON_MS = 25
 
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms))
 
-// Rolling request log for rate-limit visibility (last 60 seconds)
-const requestLog = []
+// Dispatch timestamps within the last LONG_WINDOW_MS (ascending).
+const sentLog = []
 // Cumulative count of every Riot request issued this process — lets long-running
 // jobs (e.g. the ingestion daemon) report exact calls consumed per run.
 let totalRequests = 0
+let retriesAfter429 = 0
+let inFlight = 0
 
-function logRequest() {
-  const now = Date.now()
-  totalRequests += 1
-  requestLog.push(now)
-  const cutoff = now - 60_000
-  while (requestLog.length && requestLog[0] < cutoff) requestLog.shift()
+// Jobs waiting for a rate-limit slot: highest priority first, FIFO within.
+const pending = []
+let nextSeq = 0
+let pumpTimer = null
+
+function pruneSentLog(now) {
+  while (sentLog.length && sentLog[0] <= now - LONG_WINDOW_MS) sentLog.shift()
+}
+
+// 0 when a request may fire now, otherwise ms until the next slot frees.
+function msUntilSlot(now) {
+  pruneSentLog(now)
+  if (sentLog.length >= LONG_CAP) {
+    return sentLog[sentLog.length - LONG_CAP] + LONG_WINDOW_MS - now
+  }
+  let recent = 0
+  for (let i = sentLog.length - 1; i >= 0 && sentLog[i] > now - SHORT_WINDOW_MS; i--) recent += 1
+  if (recent >= SHORT_CAP) {
+    return sentLog[sentLog.length - SHORT_CAP] + SHORT_WINDOW_MS - now
+  }
+  return 0
+}
+
+// Dispatch as many pending jobs as the windows allow; when a window is full,
+// sleep exactly until the oldest blocking dispatch ages out, then resume.
+function pump() {
+  if (pumpTimer) {
+    clearTimeout(pumpTimer)
+    pumpTimer = null
+  }
+  while (pending.length) {
+    if (pending[0].settled) {
+      pending.shift()
+      continue
+    }
+    const now = Date.now()
+    const wait = msUntilSlot(now)
+    if (wait > 0) {
+      pumpTimer = setTimeout(pump, wait + SLOT_EPSILON_MS)
+      return
+    }
+    const job = pending.shift()
+    sentLog.push(now)
+    totalRequests += 1
+    execute(job)
+  }
+}
+
+function enqueue(job) {
+  pending.push(job)
+  pending.sort((a, b) => (b.priority - a.priority) || (a.seq - b.seq))
+  pump()
+}
+
+async function execute(job) {
+  const { url, priority, signal } = job
+  inFlight += 1
+  try {
+    const response = await axios.get(url, {
+      headers: { 'X-Riot-Token': API_KEY },
+      timeout: 15_000,
+      signal,
+    })
+    job.settle(null, response.data)
+  } catch (err) {
+    if (signal?.aborted || err?.code === 'ERR_CANCELED') {
+      job.settle(new DOMException('Aborted', 'AbortError'))
+    } else if (err.response?.status === 429) {
+      // Backstop for budget consumed outside this scheduler: another process on
+      // the same key (ingest daemon), or a Riot window already part-spent
+      // before a server restart wiped the dispatch log.
+      retriesAfter429 += 1
+      const retryAfter = parseInt(err.response.headers['retry-after'] || '5') * 1000
+      await sleep(retryAfter)
+      try {
+        job.settle(null, await riotRequest(url, priority, signal))
+      } catch (retryErr) {
+        job.settle(retryErr)
+      }
+    } else if (err.response?.status === 403) {
+      job.settle(Object.assign(
+        new Error('Riot API key is expired or invalid — regenerate your personal key'),
+        { statusCode: 403 }
+      ))
+    } else {
+      job.settle(err)
+    }
+  } finally {
+    inFlight -= 1
+  }
 }
 
 export function getTotalRequestCount() {
@@ -31,53 +127,46 @@ export function getTotalRequestCount() {
 
 export function getRateLimitStats() {
   const now = Date.now()
-  const cutoff = now - 60_000
-  while (requestLog.length && requestLog[0] < cutoff) requestLog.shift()
+  pruneSentLog(now)
+  let lastMinute = 0
+  for (let i = sentLog.length - 1; i >= 0 && sentLog[i] > now - 60_000; i--) lastMinute += 1
   return {
-    requestsLastMinute: requestLog.length,
-    limitPerMinute: 50,         // personal key: 100 per 2 min ≈ 50 per min sustained
-    longQueueSize: longQueue.size,
-    longQueuePending: longQueue.pending,
-    shortQueueSize: shortQueue.size,
-    shortQueuePending: shortQueue.pending,
+    requestsLastMinute: lastMinute,
+    limitPerMinute: 50, // personal key: 100 per 2 min ≈ 50 per min sustained
+    queuedRequests: pending.length,
+    inFlightRequests: inFlight,
+    retriesAfter429,
   }
 }
 
-// priority: higher number = pulled from longQueue sooner.
-// User-initiated requests should use priority 10; aggregation uses 0 (default).
-// signal: optional AbortSignal — queued jobs are dropped and in-flight requests are cancelled.
-export const riotRequest = async (url, priority = 0, signal = null) => {
-  const queueOptions = signal ? { priority, signal } : { priority }
-  return longQueue.add(
-    () => shortQueue.add(
-      async () => {
-        if (signal?.aborted) throw new DOMException('Aborted', 'AbortError')
-        logRequest()
-        try {
-          const response = await axios.get(url, {
-            headers: { 'X-Riot-Token': API_KEY },
-            timeout: 15_000,
-            signal,
-          })
-          return response.data
-        } catch (err) {
-          if (signal?.aborted || err?.code === 'ERR_CANCELED') throw new DOMException('Aborted', 'AbortError')
-          if (err.response?.status === 429) {
-            const retryAfter = parseInt(err.response.headers['retry-after'] || '5') * 1000
-            await sleep(retryAfter)
-            return riotRequest(url, priority, signal)
-          }
-          if (err.response?.status === 403) {
-            throw Object.assign(new Error('Riot API key is expired or invalid — regenerate your personal key'), { statusCode: 403 })
-          }
-          throw err
-        }
+// priority: higher number = dispatched sooner (FIFO within a priority).
+// User-initiated requests should use priority 10; background work uses 0 (default).
+// signal: optional AbortSignal — queued jobs are dropped and in-flight requests cancelled.
+export const riotRequest = (url, priority = 0, signal = null) =>
+  new Promise((resolve, reject) => {
+    const job = {
+      url,
+      priority,
+      signal,
+      seq: nextSeq++,
+      settled: false,
+      settle(err, data) {
+        if (job.settled) return
+        job.settled = true
+        if (err) reject(err)
+        else resolve(data)
       },
-      queueOptions
-    ),
-    queueOptions
-  )
-}
+    }
+    if (signal) {
+      if (signal.aborted) {
+        job.settle(new DOMException('Aborted', 'AbortError'))
+        return
+      }
+      // Settling marks the job; pump() discards settled jobs when they surface.
+      signal.addEventListener('abort', () => job.settle(new DOMException('Aborted', 'AbortError')), { once: true })
+    }
+    enqueue(job)
+  })
 
 export const getMassRegion = (region) => {
   const map = {

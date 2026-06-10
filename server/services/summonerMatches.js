@@ -59,7 +59,7 @@ function estimateSyncEtaSeconds(job) {
   const remainingDetails = Math.max(0, (job.totalNewMatches ?? 0) - (job.processedNewMatches ?? 0))
   const unknownWork = job.totalNewMatches == null ? 3 : 0
   const remainingRequests = Math.max(1, remainingDetails + unknownWork + (job.phase === 'rank' ? 1 : 0))
-  const queuedRequests = stats.longQueueSize + stats.shortQueueSize + stats.longQueuePending + stats.shortQueuePending
+  const queuedRequests = stats.queuedRequests + stats.inFlightRequests
   // Details are enqueued in parallel, so this job's remaining requests usually
   // ARE the queued ones — max() instead of sum avoids double counting.
   const totalOutstanding = Math.max(queuedRequests, remainingRequests)
@@ -357,7 +357,7 @@ export async function getPlayerMatches(gameName, tagLine, region, signal, syncJo
     // just-dropped patch self-heal), stopping at the first older game.
     // Background syncs need it because bulk-enqueueing a whole backlog would
     // flood the shared queue, stalling user lookups that arrive later
-    // (p-queue is FIFO within a priority) and distorting their ETAs.
+    // (the scheduler is FIFO within a priority) and distorting their ETAs.
     let patchThreshold = currentPatch?.patchNum ?? null
     for (const matchId of newIds) {
       if (signal?.aborted) break
@@ -390,10 +390,10 @@ export async function getPlayerMatches(gameName, tagLine, region, signal, syncJo
       })
     }
   } else {
-    // Web lookups: enqueue every detail fetch at once. The shared p-queues in
-    // riotApi.js are the only throttle that matters (20/sec, 100/2min) —
-    // awaiting sequentially here would just serialize round-trip latency
-    // without saving any rate budget.
+    // Web lookups: enqueue every detail fetch at once. The shared rate-limit
+    // scheduler in riotApi.js is the only throttle that matters (20/sec,
+    // 100/2min) — awaiting sequentially here would just serialize round-trip
+    // latency without saving any rate budget.
     const detailAbort = new AbortController()
     if (signal) {
       if (signal.aborted) detailAbort.abort()

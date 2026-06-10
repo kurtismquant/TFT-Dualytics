@@ -138,9 +138,9 @@ export default function MatchHistoryPage() {
       {isLoading && !data && (
         <div className={styles.loadingBlock}>
           <p className={styles.status} role="status">{t('matchHistory.loading')}</p>
-          {rlStats && rlStats.longQueueSize > 5 && (
+          {rlStats && rlStats.queuedRequests > 5 && (
             <p className={styles.rateNote}>
-              {t('matchHistory.rateNote', { size: rlStats.longQueueSize, used: rlStats.requestsLastMinute, limit: rlStats.limitPerMinute * 2 })}
+              {t('matchHistory.rateNote', { size: rlStats.queuedRequests, used: rlStats.requestsLastMinute, limit: rlStats.limitPerMinute * 2 })}
             </p>
           )}
         </div>
