@@ -16,8 +16,8 @@
   border: 1px solid var(--bg-border);
   color: var(--text-primary);
   border-radius: 0;
-  font-family: "IBM Plex Mono", ui-monospace, monospace;
-  font-size: 0.75rem;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
   outline: none;
   min-height: 38px;
   transition:
@@ -83,9 +83,9 @@
 }
 
 .error {
-  font-family: "D-DIN", Arial, sans-serif;
-  font-size: 0.65rem;
-  letter-spacing: 0.06em;
+  font-family: var(--font-body);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--track-wide);
   text-transform: uppercase;
   color: var(--accent-red);
   margin: 4px 0 0;

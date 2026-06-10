@@ -13,11 +13,11 @@
 }
 
 .sectionTitle {
-  font-family: "Bebas Neue", "D-DIN-Bold", "D-DIN", Arial, Verdana, sans-serif;
-  font-size: 0.81rem;
-  font-weight: 700;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: var(--fw-bold);
   line-height: 0.94;
-  letter-spacing: 1.17px;
+  letter-spacing: var(--track-widest);
   text-transform: uppercase;
   color: var(--text-primary);
   margin-bottom: 18px;
@@ -101,9 +101,9 @@
   background: transparent;
   border-top: 1px solid var(--bg-border);
   border-bottom: 1px solid var(--bg-border-muted);
-  font-family: "Bebas Neue", "D-DIN-Bold", "D-DIN", Arial, Verdana, sans-serif;
-  font-size: 0.75rem;
-  font-weight: 700;
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  font-weight: var(--fw-bold);
   flex-wrap: wrap;
 }
 
@@ -115,11 +115,11 @@
 }
 
 .modeLabel {
-  font-family: "Bebas Neue", "D-DIN-Bold", "D-DIN", Arial, Verdana, sans-serif;
-  font-weight: 700;
-  font-size: 0.81rem;
+  font-family: var(--font-body);
+  font-weight: var(--fw-bold);
+  font-size: var(--text-xs);
   line-height: 0.94;
-  letter-spacing: 1.17px;
+  letter-spacing: var(--track-widest);
   text-transform: uppercase;
   color: var(--text-primary);
 }
@@ -128,10 +128,10 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  font-family: "D-DIN", Arial, Verdana, sans-serif;
-  font-weight: 400;
-  font-size: 0.75rem;
-  letter-spacing: 0.06em;
+  font-family: var(--font-body);
+  font-weight: var(--fw-regular);
+  font-size: var(--text-xs);
+  letter-spacing: var(--track-wide);
   color: var(--text-secondary);
 }
 
@@ -143,28 +143,28 @@
 }
 
 .round {
-  font-family: "D-DIN", Arial, Verdana, sans-serif;
-  font-size: 0.75rem;
-  font-weight: 400;
-  letter-spacing: 0.06em;
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  font-weight: var(--fw-regular);
+  letter-spacing: var(--track-wide);
   color: var(--text-secondary);
 }
 
 .dateLabel {
-  font-family: "D-DIN", Arial, Verdana, sans-serif;
-  font-size: 0.75rem;
-  font-weight: 400;
-  letter-spacing: 0.06em;
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  font-weight: var(--fw-regular);
+  letter-spacing: var(--track-wide);
   color: var(--text-muted);
 }
 
 /* Partners badge — ghost pill */
 .partnerTag {
-  font-family: "Bebas Neue", "D-DIN-Bold", "D-DIN", Arial, Verdana, sans-serif;
-  font-size: 0.63rem;
-  font-weight: 700;
+  font-family: var(--font-body);
+  font-size: var(--text-2xs);
+  font-weight: var(--fw-bold);
   line-height: 0.94;
-  letter-spacing: 1.17px;
+  letter-spacing: var(--track-wider);
   text-transform: uppercase;
   color: var(--accent-cyan);
   border: 1px solid rgba(0, 212, 255, 0.35);
@@ -203,11 +203,11 @@
 /* Placement badge styling lives in components/ui/PlacementBadge.module.css */
 
 .levelBadge {
-  font-family: "D-DIN", Arial, Verdana, sans-serif;
-  font-weight: 400;
-  font-size: 0.63rem;
+  font-family: var(--font-body);
+  font-weight: var(--fw-regular);
+  font-size: var(--text-2xs);
   line-height: 0.94;
-  letter-spacing: 1px;
+  letter-spacing: var(--track-wider);
   text-transform: uppercase;
   color: var(--text-muted);
 }
@@ -271,20 +271,20 @@
 }
 
 .splitName {
-  font-family: "Bebas Neue", "D-DIN-Bold", "D-DIN", Arial, Verdana, sans-serif;
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  font-weight: var(--fw-bold);
+  letter-spacing: var(--track-wider);
   text-transform: uppercase;
   color: var(--text-secondary);
 }
 
 .splitTag {
-  font-family: "D-DIN", Arial, Verdana, sans-serif;
-  font-size: 0.69rem;
-  font-weight: 400;
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  font-weight: var(--fw-regular);
   color: var(--text-muted);
-  letter-spacing: 0.04em;
+  letter-spacing: var(--track-base);
 }
 
 .splitTraits {
@@ -343,10 +343,10 @@
 
 .expandedEmpty {
   padding: 12px;
-  font-family: "D-DIN", Arial, Verdana, sans-serif;
-  font-size: 0.72rem;
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
   color: var(--text-muted);
-  letter-spacing: 0.06em;
+  letter-spacing: var(--track-wide);
   text-transform: uppercase;
 }
 
@@ -393,10 +393,10 @@
 }
 
 .participantName {
-  font-family: "Bebas Neue", "D-DIN-Bold", "D-DIN", Arial, Verdana, sans-serif;
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  font-weight: var(--fw-bold);
+  letter-spacing: var(--track-wider);
   text-transform: uppercase;
   color: var(--text-secondary);
 }
@@ -413,11 +413,11 @@
 }
 
 .participantRank {
-  font-family: "D-DIN", Arial, Verdana, sans-serif;
-  font-size: 0.69rem;
-  font-weight: 400;
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  font-weight: var(--fw-regular);
   color: var(--text-muted);
-  letter-spacing: 0.06em;
+  letter-spacing: var(--track-wide);
   text-transform: uppercase;
   border: 1px solid var(--bg-border);
   padding: 1px 6px;
@@ -432,11 +432,11 @@
 }
 
 .boardCost {
-  font-family: "D-DIN", Arial, Verdana, sans-serif;
-  font-size: 0.72rem;
-  font-weight: 400;
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  font-weight: var(--fw-regular);
   color: var(--text-muted);
-  letter-spacing: 0.06em;
+  letter-spacing: var(--track-wide);
 }
 
 .participantBoard {
@@ -530,11 +530,11 @@
 /* ── Empty state ────────────────────────────────────────── */
 .empty {
   color: var(--text-secondary);
-  font-family: "D-DIN", Arial, Verdana, sans-serif;
-  font-size: 0.81rem;
-  font-weight: 700;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: var(--fw-bold);
   line-height: 0.94;
-  letter-spacing: 1.17px;
+  letter-spacing: var(--track-wider);
   text-transform: uppercase;
   padding: 2rem 0;
 }

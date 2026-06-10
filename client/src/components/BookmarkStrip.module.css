@@ -21,10 +21,10 @@
   align-items: center;
   gap: 8px;
   flex-shrink: 0;
-  font-family: "Bebas Neue", "D-DIN-Bold", "D-DIN", Arial, sans-serif;
-  font-size: 0.9rem;
-  font-weight: 700;
-  letter-spacing: 0.14em;
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  font-weight: var(--fw-bold);
+  letter-spacing: var(--track-widest);
   text-transform: uppercase;
   color: var(--text-primary);
 }
@@ -51,9 +51,9 @@
   border: 1px solid var(--bg-border);
   background: transparent;
   color: var(--text-primary);
-  font-family: "D-DIN", Arial, sans-serif;
-  font-size: 0.78rem;
-  letter-spacing: 0.06em;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  letter-spacing: var(--track-wide);
   text-transform: uppercase;
   text-decoration: none;
   cursor: pointer;
@@ -72,14 +72,14 @@
 .chipRegion {
   margin-left: 6px;
   color: var(--text-muted);
-  font-size: 0.7rem;
+  font-size: var(--text-xs);
 }
 
 .empty {
   flex: 1;
-  font-family: "D-DIN", Arial, sans-serif;
-  font-size: 0.78rem;
-  letter-spacing: 0.08em;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  letter-spacing: var(--track-wider);
   text-transform: uppercase;
   color: var(--text-muted);
 }
@@ -116,6 +116,6 @@
     gap: 10px;
   }
   .label {
-    font-size: 0.82rem;
+    font-size: var(--text-sm);
   }
 }

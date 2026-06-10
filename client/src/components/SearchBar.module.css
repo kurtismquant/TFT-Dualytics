@@ -13,8 +13,8 @@
   border: 1px solid var(--bg-border-bright);
   color: var(--text-primary);
   border-radius: 5px;
-  font-family: "IBM Plex Mono", monospace;
-  font-size: 0.85rem;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
   transition:
     border-color var(--t-fast),
     box-shadow var(--t-fast),
@@ -94,9 +94,9 @@
 
 .error {
   color: var(--accent-red);
-  font-size: 0.78rem;
+  font-size: var(--text-sm);
   margin-top: 0.5rem;
-  letter-spacing: 0.02em;
+  letter-spacing: var(--track-tight);
 }
 
 @media (max-width: 760px) {

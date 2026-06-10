@@ -19,8 +19,8 @@
   border: 1px solid var(--bg-border-bright);
   color: var(--text-primary);
   border-radius: 0;
-  font-family: "IBM Plex Mono", ui-monospace, monospace;
-  font-size: 0.85rem;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
   outline: none;
   min-height: 44px;
   transition: border-color 180ms ease, box-shadow 220ms ease, background-color 220ms ease;
@@ -87,9 +87,9 @@
   border: none;
   border-bottom: 1px solid var(--bg-border-muted);
   color: var(--text-primary);
-  font-family: "D-DIN", Arial, sans-serif;
-  font-size: 0.82rem;
-  letter-spacing: 0.04em;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  letter-spacing: var(--track-base);
   text-align: left;
   cursor: pointer;
   transition: background 120ms ease;
@@ -109,25 +109,25 @@
 
 .suggestionMeta {
   color: var(--text-muted);
-  font-size: 0.72rem;
-  letter-spacing: 0.06em;
+  font-size: var(--text-xs);
+  letter-spacing: var(--track-wide);
   text-transform: uppercase;
 }
 
 .error {
-  font-family: "D-DIN", Arial, sans-serif;
-  font-size: 0.72rem;
-  letter-spacing: 0.08em;
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  letter-spacing: var(--track-wider);
   text-transform: uppercase;
   color: var(--accent-red);
   margin: 0;
 }
 
 .sectionHeader {
-  font-family: "Bebas Neue", "D-DIN-Bold", "D-DIN", Arial, sans-serif;
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.18em;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: var(--fw-bold);
+  letter-spacing: var(--track-widest);
   text-transform: uppercase;
   color: var(--text-muted);
   margin: 4px 0 0;
@@ -155,34 +155,34 @@
 }
 
 .rowName {
-  font-family: "D-DIN", Arial, sans-serif;
-  font-size: 0.85rem;
-  letter-spacing: 0.04em;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  letter-spacing: var(--track-base);
   color: var(--text-primary);
 }
 
 .rowRegion {
   margin-left: 8px;
   color: var(--text-muted);
-  font-size: 0.7rem;
-  letter-spacing: 0.06em;
+  font-size: var(--text-xs);
+  letter-spacing: var(--track-wide);
   text-transform: uppercase;
 }
 
 
 .searching {
-  font-family: "D-DIN", Arial, sans-serif;
-  font-size: 0.72rem;
-  letter-spacing: 0.08em;
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  letter-spacing: var(--track-wider);
   text-transform: uppercase;
   color: var(--text-muted);
   margin: 0;
 }
 
 .emptyList {
-  font-family: "D-DIN", Arial, sans-serif;
-  font-size: 0.78rem;
-  letter-spacing: 0.06em;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  letter-spacing: var(--track-wide);
   text-transform: uppercase;
   color: var(--text-muted);
   padding: 14px 4px;

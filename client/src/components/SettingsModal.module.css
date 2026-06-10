@@ -14,10 +14,10 @@
 }
 
 .label {
-  font-family: "Bebas Neue", "D-DIN-Bold", "D-DIN", Arial, sans-serif;
-  font-size: 0.7rem;
-  font-weight: 700;
-  letter-spacing: 0.14em;
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  font-weight: var(--fw-bold);
+  letter-spacing: var(--track-widest);
   text-transform: uppercase;
   color: var(--text-muted);
 }
@@ -29,9 +29,9 @@
   background: var(--bg-base);
   border: 1px solid var(--bg-border-muted);
   color: var(--text-primary);
-  font-family: "D-DIN", Arial, sans-serif;
-  font-size: 0.81rem;
-  letter-spacing: 0.06em;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  letter-spacing: var(--track-wide);
   text-transform: uppercase;
   cursor: pointer;
   appearance: none;

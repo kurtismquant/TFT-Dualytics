@@ -33,19 +33,19 @@
 }
 
 .statLabel {
-  font-size: 10px;
+  font-size: var(--text-2xs);
   color: var(--text-muted);
-  letter-spacing: 1px;
-  line-height: 1;
+  letter-spacing: var(--track-wider);
+  line-height: var(--leading-none);
 }
 
 .statValue {
-  font-family: "Bebas Neue", "D-DIN-Bold", "D-DIN", Arial, sans-serif;
-  font-size: 22px;
-  font-weight: 700;
+  font-family: var(--font-body);
+  font-size: var(--text-2xl);
+  font-weight: var(--fw-bold);
   color: var(--text-primary);
-  line-height: 1;
-  letter-spacing: 0.02em;
+  line-height: var(--leading-none);
+  letter-spacing: var(--track-tight);
 }
 
 /* ── Charts row ──────────────────────────────────────── */
@@ -81,17 +81,17 @@
 }
 
 .chartTitle {
-  font-family: "Bebas Neue", "D-DIN-Bold", "D-DIN", Arial, sans-serif;
-  font-size: 11px;
-  font-weight: 700;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: var(--fw-bold);
   color: var(--text-secondary);
-  letter-spacing: 1.2px;
+  letter-spacing: var(--track-widest);
 }
 
 .chartSub {
-  font-size: 10px;
+  font-size: var(--text-2xs);
   color: var(--text-muted);
-  letter-spacing: 0.8px;
+  letter-spacing: var(--track-wide);
 }
 
 .chartEmpty {
@@ -99,9 +99,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 11px;
+  font-size: var(--text-xs);
   color: var(--text-muted);
-  letter-spacing: 1px;
+  letter-spacing: var(--track-wider);
   border: 1px solid var(--bg-border);
 }
 
