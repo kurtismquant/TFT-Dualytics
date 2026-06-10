@@ -3,10 +3,10 @@
   align-items: center;
   justify-content: center;
   background: transparent;
-  font-family: "Bebas Neue", "D-DIN-Bold", "D-DIN", Arial, Verdana, sans-serif;
-  font-weight: 700;
-  line-height: 1;
-  letter-spacing: 0.06em;
+  font-family: var(--font-body);
+  font-weight: var(--fw-bold);
+  line-height: var(--leading-none);
+  letter-spacing: var(--track-wide);
   text-transform: uppercase;
 }
 
@@ -14,13 +14,13 @@
 .badge {
   min-width: 40px;
   padding: 4px 6px;
-  font-size: 1rem;
+  font-size: var(--text-base);
 }
 
 /* Compact size — used in scoreboard participant rows */
 .sm {
   min-width: 28px;
-  font-size: 0.72rem;
+  font-size: var(--text-xs);
 }
 
 /* Placement colors */

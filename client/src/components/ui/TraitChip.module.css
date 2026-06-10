@@ -9,10 +9,10 @@
   border-radius: 3px;
   background: var(--ghost-surface);
   border: 1px solid var(--bg-border);
-  font-size: 0.72rem;
+  font-size: var(--text-xs);
   font-weight: 600;
   color: var(--text-primary);
-  line-height: 1;
+  line-height: var(--leading-none);
 }
 
 .traitIcon {
@@ -23,8 +23,8 @@
 }
 
 .traitCount {
-  font-family: "Bebas Neue", "D-DIN-Bold", "D-DIN", Arial, Verdana, sans-serif;
-  font-weight: 700;
+  font-family: var(--font-body);
+  font-weight: var(--fw-bold);
 }
 
 /* ── Tier colors ─────────────────────────────────────────── */

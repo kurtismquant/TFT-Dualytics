@@ -4,10 +4,10 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  font-family: "Bebas Neue", "D-DIN-Bold", "D-DIN", Arial, sans-serif;
-  font-weight: 700;
+  font-family: var(--font-display);
+  font-weight: var(--fw-bold);
   text-transform: uppercase;
-  letter-spacing: 1.17px;
+  letter-spacing: var(--track-wider);
   line-height: 0.94;
   transition: color var(--t-fast), background var(--t-fast), border-color var(--t-fast);
 }
@@ -23,8 +23,8 @@
   background: transparent;
   border: 1px solid var(--bg-border-bright);
   color: var(--text-secondary);
-  font-size: 0.78rem;
-  letter-spacing: 0.14em;
+  font-size: var(--text-sm);
+  letter-spacing: var(--track-widest);
 }
 
 .ghost:hover:not(:disabled) {
@@ -45,7 +45,7 @@
   background: transparent;
   border: 1px solid var(--bg-border-muted);
   color: var(--text-secondary);
-  font-size: 0.78rem;
+  font-size: var(--text-sm);
 }
 
 .tab:hover,
@@ -64,7 +64,7 @@
   background: transparent;
   border: 1px solid var(--bg-border);
   color: var(--text-primary);
-  font-size: 1rem;
+  font-size: var(--text-base);
 }
 
 .icon:hover {
