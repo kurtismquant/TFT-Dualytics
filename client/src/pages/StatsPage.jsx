@@ -9,6 +9,7 @@ import { useTraits } from '../hooks/useTraits.js'
 import { makeMap, normalizeName } from '../utils/statsFormatting.js'
 import { compareRows, DEFAULT_SORT, nextSort } from '../utils/statsSort.js'
 import { getTraitTierInfo } from '../utils/traitTier.js'
+import { PageShell } from '../components/layout/PageShell.jsx'
 import styles from './StatsPage.module.css'
 
 // Items in this collection are filtered from the items table.
@@ -88,7 +89,7 @@ export default function StatsPage() {
   const matchCount = (data?.matchCount || 0).toLocaleString()
 
   return (
-    <div className={styles.page}>
+    <PageShell>
       <div className={styles.header}>
         <div>
           <p className={styles.eyebrow}>{t('stats.eyebrow')}</p>
@@ -124,6 +125,6 @@ export default function StatsPage() {
           allChampions={champions}
         />
       )}
-    </div>
+    </PageShell>
   )
 }

@@ -11,6 +11,7 @@ import TraitList from '../components/TraitList.jsx'
 import FilterBar from '../components/FilterBar.jsx'
 import UnitIcon from '../components/UnitIcon.jsx'
 import ItemIcon from '../components/ItemIcon.jsx'
+import { PageShell } from '../components/layout/PageShell.jsx'
 import styles from './CompBuilderPage.module.css'
 
 const BOARD_UNIT_SIZE = 90
@@ -147,7 +148,7 @@ export default function CompBuilderPage() {
   }
 
   return (
-    <div className={styles.page}>
+    <PageShell wide>
       <div className={styles.toolbar}>
         <h1 className={styles.title}>{t('builder.title')}</h1>
         <button className={styles.clearBtn} onClick={clearBoard}>{t('builder.clearBoard')}</button>
@@ -215,6 +216,6 @@ export default function CompBuilderPage() {
           {renderDragOverlay()}
         </DragOverlay>
       </DndContext>
-    </div>
+    </PageShell>
   )
 }

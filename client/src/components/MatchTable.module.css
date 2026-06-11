@@ -56,9 +56,7 @@
 }
 
 .cardButton:focus-visible {
-  outline: 2px solid var(--focus-border);
-  outline-offset: -2px;
-  box-shadow: inset 0 0 0 2px var(--focus-ring), 0 0 16px var(--focus-glow);
+  outline: none;
 }
 
 .cardButton:focus-visible .compactContent {

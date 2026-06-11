@@ -1,9 +1,3 @@
-.page {
-  padding: 3rem 2rem 4rem;
-  max-width: 1240px;
-  margin: 0 auto;
-}
-
 /* ── Hero title — D-DIN-Bold 48px uppercase ─────────────── */
 .title {
   font-family: var(--font-display);
@@ -91,10 +85,6 @@
 
 /* ── Responsive ────────────────────────────────────────– */
 @media (max-width: 760px) {
-  .page {
-    padding: 1.5rem 1rem 2rem;
-  }
-
   .title {
     font-size: var(--text-3xl);
     margin-bottom: 0.75rem;

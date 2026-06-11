@@ -189,6 +189,7 @@
   },
   "summoner": {
     "refresh": "Refresh",
+    "refreshing": "Refreshing",
     "syncing": "Syncing",
     "bookmark": "Bookmark",
     "bookmarked": "Bookmarked",

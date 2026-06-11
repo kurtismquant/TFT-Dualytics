@@ -203,18 +203,17 @@
 }
 
 .row:focus-visible {
-  outline: 1px solid var(--ghost-border);
-  outline-offset: -1px;
+  outline: none;
 }
 
-/* Active row — gold left border + subtle gold tint */
+/* Active row — white left border + subtle neutral tint */
 .rowActive {
-  background: rgba(245, 197, 66, 0.06);
-  border-left: 2px solid var(--accent-gold);
+  background: var(--bg-hover);
+  border-left: 2px solid var(--search-focus-border);
 }
 
 .rowActive .playerName {
-  color: var(--accent-gold);
+  color: var(--text-primary);
 }
 
 /* ── Cells ───────────────────────────────────────────── */

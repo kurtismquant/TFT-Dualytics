@@ -7,6 +7,7 @@ import { useTraits } from "../hooks/useTraits.js";
 import CompRow from "../components/CompRow.jsx";
 import CompSearchBar from "../components/CompSearchBar.jsx";
 import { filterComps } from "../utils/compSearch.js";
+import { PageShell } from '../components/layout/PageShell.jsx';
 import styles from "./CompPage.module.css";
 
 export default function CompPage() {
@@ -28,7 +29,7 @@ export default function CompPage() {
   );
 
   return (
-    <div className={styles.page}>
+    <PageShell>
       <h1 className={styles.title}>{t('comp.pageTitle')}</h1>
       <p id={patchHelpId} className="sr-only">{t('comp.patchHelp')}</p>
       <div className={styles.controls}>
@@ -86,6 +87,6 @@ export default function CompPage() {
           )}
         </>
       )}
-    </div>
+    </PageShell>
   );
 }

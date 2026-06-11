@@ -1,10 +1,11 @@
 import { useTranslation } from 'react-i18next'
+import { PageShell } from '../components/layout/PageShell.jsx'
 import styles from './PrivacyPolicy.module.css';
 
 const PrivacyPolicy = () => {
   const { t, i18n } = useTranslation()
   return (
-    <div className={styles.page}>
+    <PageShell>
       <h1 className={styles.title}>{t('privacy.title')}</h1>
       {i18n.language !== 'en' && <p className={styles.languageNotice}>{t('privacy.languageNotice')}</p>}
       <p className={styles.lastUpdated}>Last Updated: April 29, 2026</p>
@@ -53,7 +54,7 @@ const PrivacyPolicy = () => {
           For inquiries regarding data usage or privacy concerns, contact: support@tftdualytics.gg
         </p>
       </section>
-    </div>
+    </PageShell>
   );
 };
 

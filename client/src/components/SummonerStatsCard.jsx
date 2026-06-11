@@ -38,6 +38,7 @@ export default function SummonerStatsCard({ matches, resolvedChampions }) {
   const { theme } = useSettings()
   const { t } = useTranslation()
   const [activeBar, setActiveBar] = useState(null)
+  const [activeX, setActiveX] = useState(null)
 
   const placementColors = useMemo(
     () => [1, 2, 3, 4].map(i => getCSSVar(`--placement-${i}`)),
@@ -59,24 +60,12 @@ export default function SummonerStatsCard({ matches, resolvedChampions }) {
   const cs = getComputedStyle(document.documentElement)
   const axisColor = cs.getPropertyValue('--chart-axis-color').trim()
   const gridColor = cs.getPropertyValue('--chart-grid-color').trim()
-  const tooltipBg = cs.getPropertyValue('--chart-tooltip-bg').trim()
-  const tooltipText = cs.getPropertyValue('--chart-tooltip-text').trim()
-  const tooltipBorder = cs.getPropertyValue('--chart-tooltip-border').trim()
 
   const AXIS_STYLE = {
     fill: axisColor,
     fontSize: 10,
     fontFamily: 'D-DIN, Arial, sans-serif',
     textTransform: 'uppercase',
-  }
-  const TOOLTIP_STYLE = {
-    background: tooltipBg,
-    border: `1px solid ${tooltipBorder}`,
-    borderRadius: 2,
-    fontSize: 11,
-    fontFamily: 'D-DIN, Arial, sans-serif',
-    textTransform: 'uppercase',
-    color: tooltipText,
   }
 
   const stats = useMemo(
@@ -113,38 +102,54 @@ export default function SummonerStatsCard({ matches, resolvedChampions }) {
             <span className={styles.chartTitle}>{t('statsCard.chartTitle')}</span>
             <span className={styles.chartSub}>{t('statsCard.chartSub', { count: chartCount })}</span>
           </div>
-          <ResponsiveContainer key={theme} width="100%" height={180}>
-            <BarChart data={barData} barCategoryGap="30%">
-              <CartesianGrid vertical={false} stroke={gridColor} />
-              <XAxis dataKey="label" tick={AXIS_STYLE} axisLine={false} tickLine={false} />
-              <YAxis allowDecimals={false} tick={AXIS_STYLE} axisLine={false} tickLine={false} width={24} />
-              <Tooltip
-                cursor={false}
-                contentStyle={TOOLTIP_STYLE}
-                labelStyle={{ color: tooltipText, textTransform: 'uppercase' }}
-                itemStyle={{ color: tooltipText }}
-                formatter={v => [v, t('statsCard.games')]}
-              />
-              <Bar
-                dataKey="count"
-                radius={[2, 2, 0, 0]}
-                onMouseEnter={(_, i) => setActiveBar(i)}
-                onMouseLeave={() => setActiveBar(null)}
+          <div className={styles.chartCanvas}>
+            {activeBar != null && activeX != null && barData[activeBar] && (
+              <div
+                className={styles.hoverCard}
+                style={{ left: activeX }}
+                aria-hidden="true"
               >
-                {barData.map((_, i) => (
-                  <Cell
-                    key={i}
-                    fill={placementColors[i]}
-                    fillOpacity={activeBar === i ? 1 : 0.85}
-                    style={{
-                      filter: activeBar === i ? 'brightness(1.15)' : 'none',
-                      transition: 'filter 0.15s ease, fill-opacity 0.15s ease',
-                    }}
-                  />
-                ))}
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
+                {barData[activeBar].label} · {barData[activeBar].count} {t('statsCard.games')}
+              </div>
+            )}
+            <ResponsiveContainer key={theme} width="100%" height={180}>
+              <BarChart
+                data={barData}
+                barCategoryGap="30%"
+                onMouseMove={state => {
+                  setActiveBar(state?.activeTooltipIndex ?? null)
+                  setActiveX(state?.activeCoordinate?.x ?? null)
+                }}
+                onMouseLeave={() => {
+                  setActiveBar(null)
+                  setActiveX(null)
+                }}
+              >
+                <CartesianGrid vertical={false} stroke={gridColor} />
+                <XAxis dataKey="label" tick={AXIS_STYLE} axisLine={false} tickLine={false} />
+                <YAxis allowDecimals={false} tick={AXIS_STYLE} axisLine={false} tickLine={false} width={24} />
+                {/* Tooltip renders nothing; it stays mounted so recharts keeps
+                    computing activeTooltipIndex / activeCoordinate for the band
+                    hover, which drives the glow and the anchored card above. */}
+                <Tooltip cursor={false} content={() => null} />
+                <Bar dataKey="count" radius={[2, 2, 0, 0]}>
+                  {barData.map((_, i) => (
+                    <Cell
+                      key={i}
+                      fill={placementColors[i]}
+                      fillOpacity={activeBar === i ? 1 : 0.85}
+                      style={{
+                        filter: activeBar === i
+                          ? `brightness(1.12) drop-shadow(0 0 6px ${placementColors[i]})`
+                          : 'none',
+                        transition: 'filter 0.15s ease, fill-opacity 0.15s ease',
+                      }}
+                    />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
         </div>
       </div>
     </div>

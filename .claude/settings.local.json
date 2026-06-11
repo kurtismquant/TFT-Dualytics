@@ -20,7 +20,9 @@
       "Bash(tar -xf bundle -C extracted)",
       "WebSearch",
       "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\Kurtis\\\\Desktop\\\\web dev\\\\DoubleUpV2\" -Recurse -Directory)",
-      "Bash(Select-Object FullName)"
+      "Bash(Select-Object FullName)",
+      "PowerShell(git add client/src/pages/StatsPage.module.css client/src/components/ItemCard.module.css client/src/components/UnitCard.module.css client/src/components/TraitCard.module.css client/src/components/ItemPicker.module.css client/src/components/UnitRoster.module.css client/src/components/UnitIcon.module.css)",
+      "PowerShell(git add client/src/pages/MatchHistoryPage.module.css client/src/components/MatchTable.module.css client/src/components/SummonerProfileCard.module.css client/src/components/SummonerStatsCard.module.css client/src/components/LPGraph.module.css client/src/components/TeammatesCard.module.css client/src/components/RiotIdCandidates.module.css client/src/components/SearchBar.module.css client/src/components/NavSearchBar.module.css client/src/components/SettingsModal.module.css client/src/components/BookmarkModal.module.css client/src/components/BookmarkStrip.module.css)"
     ]
   }
 }

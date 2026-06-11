@@ -9,7 +9,7 @@
   text-transform: uppercase;
   letter-spacing: var(--track-wider);
   line-height: 0.94;
-  transition: color var(--t-fast), background var(--t-fast), border-color var(--t-fast);
+  transition: color var(--t-fast), background var(--t-fast), border-color var(--t-fast), box-shadow var(--t-fast);
 }
 
 .btn:disabled {
@@ -28,8 +28,9 @@
 }
 
 .ghost:hover:not(:disabled) {
-  border-color: var(--focus-border);
-  background: var(--bg-hover);
+  border-color: var(--search-focus-border);
+  background-color: var(--bg-input-focus);
+  box-shadow: 0 0 12px var(--search-focus-glow);
   color: var(--text-primary);
 }
 
@@ -68,17 +69,13 @@
 }
 
 .icon:hover {
-  border-color: var(--focus-border);
-  background: var(--bg-hover);
+  border-color: var(--search-focus-border);
+  background-color: var(--bg-input-focus);
+  box-shadow: 0 0 12px var(--search-focus-glow);
 }
 
-/* ─── Shared :focus-visible ring ────────────────────────────
-   Supplements the global ring in globals.css; ensures the gold
-   focus treatment is applied even when a caller overrides outline. */
 .btn:focus-visible {
-  outline: 2px solid var(--focus-border);
-  outline-offset: 3px;
-  box-shadow: 0 0 0 4px var(--focus-ring);
+  outline: none;
 }
 
 @media (pointer: coarse) {

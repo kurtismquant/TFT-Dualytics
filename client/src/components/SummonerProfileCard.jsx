@@ -77,7 +77,16 @@ export default function SummonerProfileCard({
             aria-label={t('summoner.refreshAriaLabel', { name: `${gameName}#${tagLine}` })}
             title={t('summoner.refreshTitle')}
           >
-            {isRefreshing ? t('summoner.syncing') : t('summoner.refresh')}
+            {isRefreshing ? (
+              <span className={styles.refreshingLabel}>
+                {t('summoner.refreshing')}
+                <span className={styles.dots} aria-hidden="true">
+                  <span className={styles.dot} />
+                  <span className={styles.dot} />
+                  <span className={styles.dot} />
+                </span>
+              </span>
+            ) : t('summoner.refresh')}
           </button>
         )}
       </div>

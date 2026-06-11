@@ -18,7 +18,7 @@
   overflow: hidden;
   background: var(--bg-input);
   cursor: pointer;
-  transition: border-color var(--t-fast);
+  transition: border-color var(--t-fast), box-shadow var(--t-fast);
 }
 
 @media (pointer: coarse) {
@@ -29,7 +29,8 @@
 }
 
 .slot:hover {
-  border-color: var(--focus-border);
+  border-color: var(--search-focus-border);
+  box-shadow: 0 0 12px var(--search-focus-glow);
 }
 
 .slot img {

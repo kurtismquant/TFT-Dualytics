@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useRefreshSummonerMatches, useSummonerMatches } from '../hooks/useSummonerMatches.js'
@@ -13,6 +13,7 @@ import SummonerProfileCard from '../components/SummonerProfileCard.jsx'
 import SummonerStatsCard from '../components/SummonerStatsCard.jsx'
 import LPGraph from '../components/LPGraph.jsx'
 import TeammatesCard from '../components/TeammatesCard.jsx'
+import { PageShell } from '../components/layout/PageShell.jsx'
 import styles from './MatchHistoryPage.module.css'
 
 function formatRiotId(gameName, tagLine) {
@@ -111,9 +112,28 @@ export default function MatchHistoryPage() {
     refreshMatches.mutate([id])
   }
 
+  // Surface refresh progress in the browser console (the on-screen debug notice
+  // was removed). Logs a line per progress update while syncing, plus a start
+  // line on the first tick and a completion line when the sync finishes.
+  const progressLine = isSyncing && syncProgress
+    ? `Refreshing match history — ${syncProgress.label} / ETA ${formatEta(syncProgress.eta)}`
+    : null
+  const wasSyncingRef = useRef(false)
+  useEffect(() => {
+    if (isSyncing && !wasSyncingRef.current) {
+      console.log('Refreshing match history — starting Riot sync')
+    } else if (!isSyncing && wasSyncingRef.current) {
+      console.log(`Refresh complete — ${loadedCount} matches loaded`)
+    }
+    wasSyncingRef.current = isSyncing
+  }, [isSyncing, loadedCount])
+  useEffect(() => {
+    if (progressLine) console.log(progressLine)
+  }, [progressLine])
+
   if (isNotFound) {
     return (
-      <div className={`${styles.page} ${styles.notFoundPage}`}>
+      <div className={styles.notFoundPage}>
         <section className={styles.notFoundScene}>
           <p className={styles.kicker}>{t('matchHistory.notFoundKicker')}</p>
           <h1 className={styles.notFoundTitle}>{t('matchHistory.notFoundTitle', { id: requestedIds || 'Player' })}</h1>
@@ -128,7 +148,7 @@ export default function MatchHistoryPage() {
   }
 
   return (
-    <div className={styles.page}>
+    <PageShell>
       <SearchBar
         defaultRegion={region}
         defaultName1={formatRiotId(gameName, tagLine)}
@@ -156,16 +176,10 @@ export default function MatchHistoryPage() {
         </p>
       )}
 
-      {data && (isSyncing || syncErrors.length > 0) && (
-        <div className={styles.syncNotice} role={isSyncing ? 'status' : 'alert'}>
-          <p className={styles.syncTitle}>
-            {isSyncing ? t('matchHistory.syncTitle') : t('matchHistory.syncPaused')}
-          </p>
-          <p className={styles.syncMeta}>
-            {t('matchHistory.syncCached', { count: loadedCount })}
-            {syncProgress ? ` / ${syncProgress.label} / ETA ${formatEta(syncProgress.eta)}` : ''}
-            {syncErrors.length > 0 ? ` / ${syncErrors[0].error || 'Refresh failed'}` : ''}
-          </p>
+      {data && syncErrors.length > 0 && (
+        <div className={styles.syncNotice} role="alert">
+          <p className={styles.syncTitle}>{t('matchHistory.syncPaused')}</p>
+          <p className={styles.syncMeta}>{syncErrors[0].error || 'Refresh failed'}</p>
         </div>
       )}
 
@@ -265,6 +279,6 @@ export default function MatchHistoryPage() {
         </>
       )}
 
-    </div>
+    </PageShell>
   )
 }

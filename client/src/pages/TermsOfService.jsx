@@ -1,10 +1,11 @@
 import { useTranslation } from 'react-i18next'
+import { PageShell } from '../components/layout/PageShell.jsx'
 import styles from "./TermsOfService.module.css";
 
 export default function TermsOfService() {
   const { t, i18n } = useTranslation()
   return (
-    <div className={styles.page}>
+    <PageShell>
       <h1 className={styles.title}>{t('tos.title')}</h1>
       {i18n.language !== 'en' && <p className={styles.languageNotice}>{t('tos.languageNotice')}</p>}
       <p className={styles.lastUpdated}>Last Updated: April 29, 2026</p>
@@ -105,6 +106,6 @@ export default function TermsOfService() {
           the then-current version of these terms.
         </p>
       </section>
-    </div>
+    </PageShell>
   );
 }

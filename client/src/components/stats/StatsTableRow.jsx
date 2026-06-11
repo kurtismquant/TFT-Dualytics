@@ -45,7 +45,6 @@ function StatsTableRow({
         aria-label={`${t('stats.colAvgPlace')}: ${avgValue}. ${t('stats.metricLabel')}: ${avgQuality}`}
       >
         {avgValue}
-        <span className={styles.metricLabel}>{avgQuality}</span>
       </td>
       <td
         className={styles.metricValue}
@@ -53,7 +52,6 @@ function StatsTableRow({
         aria-label={`${t('stats.colWinRate')}: ${winRateValue}. ${t('stats.metricLabel')}: ${winRateQuality}`}
       >
         {winRateValue}
-        <span className={styles.metricLabel}>{winRateQuality}</span>
       </td>
       <td>
         <span>{row.count.toLocaleString()}</span>

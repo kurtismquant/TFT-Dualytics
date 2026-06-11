@@ -62,14 +62,63 @@
 
 .refreshButton:hover:not(:disabled),
 .refreshButton:focus-visible {
-  border-color: var(--bg-border-bright);
-  color: var(--accent-gold);
+  border-color: var(--search-focus-border);
+  color: var(--text-primary);
   outline: none;
 }
 
 .refreshButton:disabled {
   cursor: default;
   opacity: 0.55;
+}
+
+/* ── Refreshing label + 3-dot sweep ──────────────────── */
+.refreshingLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dots {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--text-muted);
+  opacity: 0.4;
+  /* delays staggered below produce a left→right sweep, one lit dot at a time */
+  animation: dotPulse 1.2s linear infinite;
+}
+
+.dot:nth-child(2) {
+  animation-delay: 0.4s;
+}
+
+.dot:nth-child(3) {
+  animation-delay: 0.8s;
+}
+
+@keyframes dotPulse {
+  0% {
+    background: #fff;
+    opacity: 1;
+  }
+  33%,
+  100% {
+    background: var(--text-muted);
+    opacity: 0.4;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dot {
+    animation: none;
+  }
 }
 
 .divider {
@@ -155,19 +204,21 @@
   letter-spacing: var(--track-widest);
   text-transform: uppercase;
   cursor: pointer;
-  transition: border-color 150ms ease, background 150ms ease;
+  transition: border-color 150ms ease, background 150ms ease, box-shadow 150ms ease;
   margin-left: auto;
   flex-shrink: 0;
 }
 
 .bookmarkBtn:hover {
-  border-color: var(--focus-border);
-  background: var(--bg-hover);
+  border-color: var(--search-focus-border);
+  background-color: var(--bg-input-focus);
+  box-shadow: 0 0 12px var(--search-focus-glow);
 }
 
 .bookmarkBtnActive {
-  border-color: var(--focus-border);
-  background: var(--bg-hover);
+  border-color: var(--search-focus-border);
+  background-color: var(--bg-input-focus);
+  box-shadow: 0 0 12px var(--search-focus-glow);
 }
 
 @media (max-width: 760px) {

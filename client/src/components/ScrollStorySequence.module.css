@@ -87,8 +87,7 @@
 }
 
 .scrollCue:focus-visible {
-  outline: 2px solid rgba(245, 200, 75, 0.75);
-  outline-offset: 4px;
+  outline: none;
 }
 
 @keyframes scrollCuePulse {

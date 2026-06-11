@@ -1,0 +1,36 @@
+.shell {
+  width: 100%;
+  max-width: var(--page-max-width);
+  margin: 0 auto;
+  padding: 3rem var(--page-gutter) 4rem;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 12-col grid layer — opt-in via grid prop */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(var(--grid-cols), 1fr);
+  column-gap: var(--grid-gap);
+}
+
+/* CompBuilder exception — wider canvas needed for the board */
+.wide {
+  max-width: 1440px;
+}
+
+@media (max-width: 760px) {
+  .shell {
+    --page-gutter: 1rem;
+    padding-top: 1.5rem;
+    padding-bottom: 3rem;
+  }
+}
+
+@media (max-width: 420px) {
+  .shell {
+    --page-gutter: 0.75rem;
+    padding-top: 1rem;
+    padding-bottom: 2.5rem;
+  }
+}

@@ -74,6 +74,35 @@
   outline: none;
 }
 
+/* Positioning context for the anchored hover card. ResponsiveContainer fills
+   this wrapper, so recharts' activeCoordinate.x maps directly to .hoverCard's
+   left offset. */
+.chartCanvas {
+  position: relative;
+}
+
+/* Hover card pinned to the top of the chart, centered over the active bar.
+   It only ever moves horizontally (left updates in discrete bar steps) — it
+   never tracks the mouse vertically. */
+.hoverCard {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+  z-index: 2;
+  pointer-events: none;
+  white-space: nowrap;
+  padding: 4px 8px;
+  border: 1px solid var(--chart-tooltip-border);
+  border-radius: 2px;
+  background: var(--chart-tooltip-bg);
+  color: var(--chart-tooltip-text);
+  font-family: var(--font-body, 'D-DIN', Arial, sans-serif);
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: var(--track-wide);
+  line-height: var(--leading-none);
+}
+
 .chartHeader {
   display: flex;
   align-items: baseline;

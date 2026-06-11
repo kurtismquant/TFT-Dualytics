@@ -317,7 +317,8 @@
 
 .destCard {
   position: relative;
-  display: block;
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
   isolation: isolate;
   padding: 20px 22px 18px;
@@ -447,12 +448,17 @@
   margin-bottom: 14px;
   max-width: 360px;
   line-height: 1.5;
+  /* Reserve 3 lines (the tallest body) so the stat separator below lands at the
+     same vertical position on every card, even when a body is only 2 lines. */
+  min-height: calc(var(--text-sm) * 1.5 * 3);
 }
 
 .destStats {
   display: flex;
   gap: 28px;
   padding-top: 10px;
+  /* Pin to the card bottom so the separator aligns across cards in a row. */
+  margin-top: auto;
   border-top: 1px solid var(--bg-border-muted);
 }
 
