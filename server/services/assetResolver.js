@@ -18,6 +18,13 @@ let ddVersion = null
 // .png conversions in place of the raw .tex/.dds files.
 const CDRAGON_BASE = 'https://raw.communitydragon.org/latest/game/'
 
+// Startup awaits these CDN fetches before the server marks itself ready. axios
+// defaults to no timeout, so a stalled connection (CDragon is occasionally flaky)
+// would hang the await forever — every /api route then 503s indefinitely because
+// `initialized` never flips. A bounded timeout turns a stall into a rejection the
+// startup .catch() can absorb, so the server comes up (degraded) instead of wedging.
+const ASSET_FETCH_TIMEOUT_MS = 15_000
+
 // CDragon returns effect/variable collections as either an array [{name,value}]
 // or a plain object {StatName: value}. Normalize both to [{name, value}].
 const toNameValueArray = (raw) => {
@@ -57,15 +64,15 @@ export const fetchAndCacheAssets = async () => {
   console.log(`Fetching static assets (set ${CURRENT_SET}) from Data Dragon and Community Dragon...`)
 
   // Step 1: Get latest Data Dragon version
-  const versions = await axios.get('https://ddragon.leagueoflegends.com/api/versions.json').then(r => r.data)
+  const versions = await axios.get('https://ddragon.leagueoflegends.com/api/versions.json', { timeout: ASSET_FETCH_TIMEOUT_MS }).then(r => r.data)
   ddVersion = versions[0]
   console.log(`Data Dragon version: ${ddVersion}`)
 
   // Step 2: Fetch DD champion/item + Community Dragon data in parallel
   const [champData, itemData, cdData] = await Promise.all([
-    axios.get(`https://ddragon.leagueoflegends.com/cdn/${ddVersion}/data/en_US/tft-champion.json`).then(r => r.data),
-    axios.get(`https://ddragon.leagueoflegends.com/cdn/${ddVersion}/data/en_US/tft-item.json`).then(r => r.data),
-    axios.get('https://raw.communitydragon.org/latest/cdragon/tft/en_us.json').then(r => r.data).catch(() => null),
+    axios.get(`https://ddragon.leagueoflegends.com/cdn/${ddVersion}/data/en_US/tft-champion.json`, { timeout: ASSET_FETCH_TIMEOUT_MS }).then(r => r.data),
+    axios.get(`https://ddragon.leagueoflegends.com/cdn/${ddVersion}/data/en_US/tft-item.json`, { timeout: ASSET_FETCH_TIMEOUT_MS }).then(r => r.data),
+    axios.get('https://raw.communitydragon.org/latest/cdragon/tft/en_us.json', { timeout: ASSET_FETCH_TIMEOUT_MS }).then(r => r.data).catch(() => null),
   ])
 
   // Step 3: Build champion map from Community Dragon (has traits + icons)

@@ -66,14 +66,17 @@ async function start() {
   }
 
   await fetchAndCacheAssets().catch(err => console.error('Asset fetch failed:', err.message))
-  if (backgroundJobsEnabled) {
-    await runCompAggregation().catch(err => console.error('Initial comp aggregation failed:', err.message))
-  }
 
   initialized = true
   console.log('Server ready')
 
   if (backgroundJobsEnabled) {
+    // Kick the initial comp aggregation off in the background rather than awaiting it:
+    // on a large match set it takes several minutes, and awaiting it here kept every
+    // /api route 503ing (the `initialized` gate) for that whole window. The /api/comps
+    // route reads the persisted aggregation collection, so it serves the previously
+    // stored comps immediately while this refresh runs; the cron then keeps it current.
+    runCompAggregation().catch(err => console.error('Initial comp aggregation failed:', err.message))
     // Re-aggregate every 10 minutes (Mongo-only, cheap)
     cron.schedule('*/10 * * * *', () => runCompAggregation().catch(console.error))
     // Sync top-50 leaderboard players' match histories every hour, then re-aggregate

@@ -1,4 +1,5 @@
 import { getMatchesCollection } from '../db/mongo.js'
+import { getAggregatedStats } from '../db/aggregatedStatsRepo.js'
 import { deduplicateUnits } from './unitUtils.js'
 import { toTeamPlacement } from './teamPlacement.js'
 // Pure patch math lives in patchFilters.js (shared with the Comps aggregator).
@@ -189,19 +190,24 @@ export async function getAvailablePatches() {
     return patchesCache.value
   }
 
-  const docs = await matches
-    .find(buildStatsMatchFilter(), { projection: { _id: 0, 'info.game_version': 1, gameDatetime: 1 } })
-    .sort({ gameDatetime: -1 })
-    .toArray()
+  // distinct() computes the unique game_version values server-side and returns only
+  // those (~a handful of strings) instead of streaming every current-set Double Up
+  // match over the wire. The previous find().toArray() pulled all ~12k match docs
+  // just to derive the patch list — very slow against a remote (Atlas) cluster, and
+  // it runs on every /api/stats and /api/comps request.
+  const versions = await matches.distinct('info.game_version', buildStatsMatchFilter())
 
   const patches = []
   const seen = new Set()
-  for (const doc of docs) {
-    const patch = extractPatch(doc.info?.game_version)
+  for (const version of versions) {
+    const patch = extractPatch(version)
     if (!patch || seen.has(patch)) continue
     seen.add(patch)
     patches.push(patch)
   }
+  // Newest patch first (higher patch number = more recent). This matches the prior
+  // gameDatetime-desc ordering without pulling/sorting match documents.
+  patches.sort((a, b) => patchToNum(b) - patchToNum(a))
   patchesCache = { at: Date.now(), value: patches }
   return patches
 }
@@ -225,6 +231,36 @@ export async function getStats({ type = 'units', patch = null } = {}) {
 
   const patches = await getAvailablePatches()
   const selectedPatch = patch && patches.includes(patch) ? patch : patches[0] ?? null
+  if (!selectedPatch) {
+    return { type, patch: null, patches, rows: [], matchCount: 0, participantCount: 0, itemCount: 0 }
+  }
+
+  // Current patch is pre-aggregated by the comp-aggregation pass (which pulls the same
+  // matches) and stored, so serve it directly instead of re-streaming ~20MB of raw
+  // matches per request over the slow remote link.
+  if (selectedPatch === patches[0]) {
+    const stored = await getAggregatedStats(selectedPatch, type)
+    if (stored) {
+      const value = {
+        type,
+        patch: selectedPatch,
+        patches,
+        rows: stored.rows ?? [],
+        matchCount: stored.matchCount ?? 0,
+        participantCount: stored.participantCount ?? 0,
+        itemCount: stored.itemCount ?? 0,
+      }
+      statsCache.set(cacheKey, { at: Date.now(), value })
+      return value
+    }
+    // Not aggregated yet (e.g. right after startup, before the first pass completes) —
+    // return empty rather than triggering a multi-minute raw pull on the request path.
+    // The background aggregation (startup + 10-min cron) populates it shortly; don't
+    // cache the empty result so it recovers on the next request once data lands.
+    return { type, patch: selectedPatch, patches, rows: [], matchCount: 0, participantCount: 0, itemCount: 0 }
+  }
+
+  // Older patches aren't pre-stored — aggregate them on demand (rare path).
   const docs = await matches
     .find(buildStatsMatchFilter(selectedPatch), { projection: { _id: 0, info: 1, gameDatetime: 1 } })
     .toArray()

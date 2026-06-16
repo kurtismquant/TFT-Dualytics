@@ -7,7 +7,8 @@ import { toTeamPlacement as teamPlacement } from './teamPlacement.js'
 // Patch math comes from the shared patchFilters module; patch *discovery* (a DB
 // query) still lives in statsAggregator.
 import { buildStatsMatchFilter } from './patchFilters.js'
-import { getAvailablePatches } from './statsAggregator.js'
+import { getAvailablePatches, aggregateStats } from './statsAggregator.js'
+import { replaceAggregatedStats } from '../db/aggregatedStatsRepo.js'
 
 const TOP_PARTNERS_LIMIT = 3
 const COMP_MERGE_SHARED_UNITS = 6
@@ -468,7 +469,21 @@ export async function runCompAggregation() {
 
   const comps = aggregateComps(docs)
   await replaceAggregatedComps(comps, docs.length)
-  console.log(`Comp aggregation: ${comps.length} comps from ${docs.length} Double Up matches on patch ${patch ?? 'unknown'}`)
+
+  // Compute the Stats tables (units/items/traits) from the SAME docs we just pulled,
+  // then store them so getStats serves the current patch without re-streaming ~20MB of
+  // raw matches over the slow remote link. Pulling once for both aggregations is the
+  // whole point of doing it here rather than in a separate stats job.
+  if (patch) {
+    const statsByType = {
+      units: aggregateStats(docs, 'units'),
+      items: aggregateStats(docs, 'items'),
+      traits: aggregateStats(docs, 'traits'),
+    }
+    await replaceAggregatedStats(patch, statsByType)
+  }
+
+  console.log(`Comp aggregation: ${comps.length} comps + unit/item/trait stats from ${docs.length} Double Up matches on patch ${patch ?? 'unknown'}`)
 }
 
 const DEMAND_COOLDOWN_MS = 60 * 60 * 1000 // 1 hour
@@ -479,11 +494,15 @@ const DEMAND_COOLDOWN_MS = 60 * 60 * 1000 // 1 hour
 const patchCache = new Map() // tftPatch -> { comps, matchCount, computedAt }
 let lastCurrentRefresh = 0
 
-async function refreshCurrentIfStale() {
+function refreshCurrentIfStale() {
   const now = Date.now()
   if (now - lastCurrentRefresh < DEMAND_COOLDOWN_MS) return
-  lastCurrentRefresh = now // set before await to prevent concurrent triggers
-  await runCompAggregation()
+  lastCurrentRefresh = now // set before kicking off to prevent concurrent triggers
+  // Fire-and-forget: runCompAggregation can take minutes on a large match set, and
+  // awaiting it here blocked the /api/comps request for that whole window. The caller
+  // reads the persisted collection, so it serves the previously stored comps now and
+  // picks up this refresh on a later request. The 10-min cron also keeps it current.
+  runCompAggregation().catch(err => console.error('Background comp refresh failed:', err.message))
 }
 
 async function getOnDemandPatchComps(matches, patch, limit) {

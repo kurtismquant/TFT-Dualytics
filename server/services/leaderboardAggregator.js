@@ -80,7 +80,18 @@ export async function runLeaderboardAggregation(regionInput) {
         console.log(`[leaderboard] ${platform} ${apex}: ${entries.length} entries (running total ${collected.length + entries.length})`)
         collected.push(...entries)
       } catch (err) {
-        console.error(`[leaderboard] ${platform} ${apex} fetch failed:`, err.response?.status || '', err.message)
+        // The apex league endpoints occasionally hiccup (transient 404/timeout/429).
+        // Without a fallback this silently dropped a whole tier from the stored ladder.
+        // Retry via the paged entries endpoint, which exposes the same apex players
+        // under uppercase tier + division 'I' and returns the identical entry shape.
+        console.warn(`[leaderboard] ${platform} ${apex} league endpoint failed (${err.response?.status ?? err.message}) — retrying via entries endpoint`)
+        try {
+          const entries = await fetchPagedDivision(platform, apex.toUpperCase(), 'I')
+          console.log(`[leaderboard] ${platform} ${apex}: ${entries.length} entries (entries-endpoint fallback, running total ${collected.length + entries.length})`)
+          collected.push(...entries)
+        } catch (fallbackErr) {
+          console.error(`[leaderboard] ${platform} ${apex} entries fallback also failed:`, fallbackErr.response?.status || '', fallbackErr.message)
+        }
       }
     }
 

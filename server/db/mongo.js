@@ -16,6 +16,7 @@ export async function connectMongo() {
 export const getPlayersCollection = () => db?.collection('players') ?? null
 export const getMatchesCollection = () => db?.collection('matches') ?? null
 export const getAggregatedCompsCollection = () => db?.collection('aggregated_comps') ?? null
+export const getAggregatedStatsCollection = () => db?.collection('aggregated_stats') ?? null
 export const getLeaderboardsCollection = () => db?.collection('leaderboards') ?? null
 export const getRankSnapshotsCollection = () => db?.collection('rank_snapshots') ?? null
 export const getIngestionStateCollection = () => db?.collection('ingestion_state') ?? null
@@ -24,9 +25,10 @@ export async function createIndexes() {
   const players = getPlayersCollection()
   const matches = getMatchesCollection()
   const aggregatedComps = getAggregatedCompsCollection()
+  const aggregatedStats = getAggregatedStatsCollection()
   const leaderboards = getLeaderboardsCollection()
   const rankSnapshots = getRankSnapshotsCollection()
-  if (!players || !matches || !aggregatedComps || !leaderboards || !rankSnapshots) return
+  if (!players || !matches || !aggregatedComps || !aggregatedStats || !leaderboards || !rankSnapshots) return
 
   await players.createIndex({ puuid: 1 }, { unique: true })
   await players.createIndex({ gameNameLower: 1, tagLineLower: 1 }, { unique: true })
@@ -44,6 +46,9 @@ export async function createIndexes() {
 
   await aggregatedComps.createIndex({ fingerprint: 1 }, { unique: true })
   await aggregatedComps.createIndex({ playCount: -1 })
+
+  // One stored stats doc per (patch, type) — read directly by getStats for the current patch.
+  await aggregatedStats.createIndex({ patch: 1, type: 1 }, { unique: true })
 
   await leaderboards.createIndex({ region: 1 }, { unique: true })
 

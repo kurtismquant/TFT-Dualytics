@@ -30,11 +30,27 @@ export function selectTopComps(comps, totalMatches, limit = 20) {
 export async function getAggregatedComps(limit = 20) {
   const collection = getAggregatedCompsCollection()
   if (!collection) return { comps: [], matchCount: 0 }
-  const all = await collection
-    .find({}, { projection: { _id: 0 } })
-    .toArray()
-  const meta = all.find(d => d._type === 'meta')
+
+  // Read the small meta doc first for the total match count, then let Mongo apply the
+  // play-rate floor, canonical sort, and limit server-side. The previous version pulled
+  // every stored comp (hundreds of multi-KB docs) over the wire and filtered in JS —
+  // slow against a remote (Atlas) cluster, and wasteful when only `limit` are shown.
+  const meta = await collection.findOne({ _type: 'meta' }, { projection: { _id: 0, matchCount: 1 } })
   const totalMatches = meta?.matchCount ?? 0
-  const comps = selectTopComps(all.filter(d => d._type !== 'meta'), totalMatches, limit)
+  if (totalMatches <= 0) return { comps: [], matchCount: 0 }
+
+  // selectTopComps keeps comps with playCount / totalMatches > MIN_PLAY_RATE and sorts
+  // by playCount desc, then avgPlacement asc. Express that same floor and order as a
+  // server-side query (the playCount:-1 index covers it) so non-qualifying comps never
+  // transfer. Kept identical to selectTopComps so the on-demand patch path still matches.
+  const cursor = collection
+    .find(
+      { _type: { $ne: 'meta' }, playCount: { $gt: MIN_PLAY_RATE * totalMatches } },
+      { projection: { _id: 0 } }
+    )
+    .sort({ playCount: -1, avgPlacement: 1 })
+  if (Number.isFinite(limit) && limit > 0) cursor.limit(limit)
+
+  const comps = await cursor.toArray()
   return { comps, matchCount: totalMatches }
 }

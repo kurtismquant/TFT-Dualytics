@@ -5,7 +5,7 @@ export async function findPlayerByRiotId(gameNameLower, tagLineLower) {
   if (!players) return null
   return players.findOne({ gameNameLower, tagLineLower })
 }
-
+//note maybe doesnt have to limit to 20
 export async function findPlayersByGameName(gameNameLower) {
   const players = getPlayersCollection()
   if (!players) return []
@@ -105,6 +105,8 @@ export async function markMatchHistorySynced(puuid, syncedAt = new Date(), synce
 
 // Case-insensitive prefix search for autocomplete. Splits on `#` if present.
 // Escapes regex metacharacters so user input can't break the query.
+// used for search bar autocomplete
+// note when no results maybe use updated algorithm for typos
 export async function searchPlayers(query, limit = 8) {
   const players = getPlayersCollection()
   if (!players) return []
