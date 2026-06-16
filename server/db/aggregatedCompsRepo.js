@@ -18,6 +18,7 @@ export const MIN_PLAY_RATE = 0.02
 // Applies the play-rate floor, the canonical sort, and the limit. Shared by the
 // stored (Mongo) read path and the on-demand per-patch aggregation path so both
 // return the same shape.
+// note 
 export function selectTopComps(comps, totalMatches, limit = 20) {
   const sorted = comps
     .filter(d => totalMatches > 0 && d.playCount / totalMatches > MIN_PLAY_RATE)

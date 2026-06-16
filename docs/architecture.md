@@ -40,15 +40,13 @@ TFT **Double Up** stats web app. Ingests Riot match data → MongoDB, aggregates
 ## Danger zones
 - `server/services/riotApi.js` — key isolation + rate-limit queues; mistakes here leak the key or get the key banned. Single chokepoint.
 - `server/services/summonerMatches.js` — sync-job state machine + ETA + the `matchHistorySyncedThrough` cursor (only advances on full completion so partial newest-first writes don't skip older matches). Subtle; touch carefully.
-- `server/db/matchRepo.js` `buildMatchDocument`/`buildMatchStub` — idempotency contract; `trim-matches.js`/`prune-matches.js` migrations depend on it.
+- `server/db/matchRepo.js` `buildMatchDocument`/`buildMatchStub` — idempotency contract; any future match migration depends on it staying re-runnable.
 - `server/db/mongo.js` `createIndexes` — unique + TTL + multikey indexes; changing shapes can silently break aggregation scans.
 - `client/src/utils/estimateMatchLp.js` (~324L) — heuristic LP-estimation model (provisional games, decay, calibration). Has a real test suite (`estimateMatchLp.test.js`, 13 tests) — run it on any change.
 - `server/services/assetResolver.js` — huge junk-item-name regex (line ~181) + CDragon URL/shape normalization; brittle to upstream data changes.
 - `server/services/statsAggregator.js` / `compsAggregator.js` — pure reducers with fixture tests; keep `aggregate*` pure (exported for testability).
 
 ## In progress / incomplete
-- **Dead code**: `server/cache/matchStore.js` (in-memory match store, imported nowhere — legacy pre-Mongo). Delete candidate.
-- **Orphan**: `client/src/pages/AboutPage.module.css` with no `AboutPage.jsx`.
-- **Doc sprawl**: `CLAUDE.md` ≈ `claude.md` ≈ `AGENTS.md` (identical), plus thinner `CODEX.md` — drift risk; no single canonical.
+- **Canonical docs**: `CLAUDE.md`/`claude.md` is the single source for agent instructions; the duplicate `AGENTS.md` and thinner `CODEX.md` were removed. This file is the canonical technical reference.
 - **Active area**: LP system + ingestion — recent commits add `patchToNum`/`getCurrentPatchWindow` to `statsAggregator` for current-patch-only daemon ingestion; LP estimation + decay/placement logic recently reworked. Expect churn here.
 - **Not started**: shared client/server package for set/region constants (would need workspace/build change); the mixed-concern file splits above.

@@ -256,6 +256,5 @@ export const getAugmentIcon = (id) => augmentMap.get(id)?.iconUrl || ''
 export const getChampionData = (id) => championMap.get(id) || null
 export const getAllChampions = () => Array.from(championMap.values())
 export const getAllItems = () => Array.from(itemMap.values())
-export const getAllAugments = () => Array.from(augmentMap.values())
 export const getTraitData = (id) => traitMap.get(id) || null
 export const getAllTraits = () => Array.from(traitMap.values())

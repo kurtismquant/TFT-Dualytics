@@ -1,13 +1,5 @@
 import { getMatchesCollection } from './mongo.js'
 
-// Store the raw Riot API response shape ({ matchId, info, metadata }) so
-// downstream consumers can use the doc as a drop-in without any transformation.
-export async function findMatch(matchId) {
-  const matches = getMatchesCollection()
-  if (!matches) return null
-  return matches.findOne({ matchId }, { projection: { _id: 0 } })
-}
-
 // Returns a Set of matchIds that already exist in the DB.
 // Uses the unique matchId index for an index-only scan — no document fetch.
 export async function filterKnownMatchIds(matchIds) {

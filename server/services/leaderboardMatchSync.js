@@ -9,10 +9,6 @@ const SYNC_TOP_N = 50
 
 let running = false
 
-export function isLeaderboardSyncRunning() {
-  return running
-}
-
 export async function runLeaderboardMatchSync(regionInput = process.env.REGION || 'na1') {
   if (running) {
     console.log('[leaderboardSync] already running, skipping')

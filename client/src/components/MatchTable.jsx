@@ -1,14 +1,19 @@
+import { useMemo } from 'react'
 import { useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import MatchCard from './match-table/MatchCard.jsx'
 import styles from './MatchTable.module.css'
 
 function MatchSection({ matches, label, splitView, summonerName, summonerTag, participantRanks, isTwoPlayer, champions, items, traits, ownPuuids, region }) {
+  const sortedMatches = useMemo(
+    () => matches.slice().sort((a, b) => b.date - a.date),
+    [matches]
+  )
   return (
     <div className={styles.section}>
       {isTwoPlayer && <h3 className={styles.sectionTitle}>{label}</h3>}
       <div className={styles.cardList} role="list" aria-label={label}>
-        {matches.slice().sort((a, b) => b.date - a.date).map(match => (
+        {sortedMatches.map(match => (
           <MatchCard
             key={match.matchId}
             match={match}
@@ -46,8 +51,11 @@ export default function MatchTable({ summonerData, summoner2Data, champions, ite
   const summonerLabel2 = riotId(summoner2Data) || t('matchHistory.summoner2')
   const participantRanks1 = summonerData?.participantRanks || {}
   const participantRanks2 = summoner2Data?.participantRanks || {}
-  const ownPuuids = new Set(
-    [summonerData?.summoner?.puuid, summoner2Data?.summoner?.puuid].filter(Boolean)
+  const puuid1 = summonerData?.summoner?.puuid
+  const puuid2 = summoner2Data?.summoner?.puuid
+  const ownPuuids = useMemo(
+    () => new Set([puuid1, puuid2].filter(Boolean)),
+    [puuid1, puuid2]
   )
 
   if (matches1.length === 0 && matches2.length === 0) {

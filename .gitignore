@@ -5,3 +5,5 @@ dist/
 .DS_Store
 .vercel
 server/scripts/.ingest-paused
+client/test-results/
+scripts/shots/
