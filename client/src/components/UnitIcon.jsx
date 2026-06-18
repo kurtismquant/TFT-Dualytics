@@ -14,6 +14,7 @@ export default function UnitIcon2({
   showName = false,
   tier,
   variant = 'rect',
+  floatStars = false,
   onClick,
   onContextMenu,
 }) {
@@ -75,7 +76,7 @@ export default function UnitIcon2({
   if (!tier) return iconEl
 
   return (
-    <div className={styles.wrapper} style={{ width: size }}>
+    <div className={`${styles.wrapper}${floatStars ? ` ${styles.floatStars}` : ''}`} style={{ width: size }}>
       <div className={styles.stars} data-tier={tier}>
         {Array.from({ length: tier }).map((_, i) => (
           <span key={i} className={styles.star}>★</span>

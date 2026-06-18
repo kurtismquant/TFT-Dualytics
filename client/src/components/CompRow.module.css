@@ -5,6 +5,7 @@
   border-radius: 0;
   overflow: hidden;
   transition: background var(--t-fast);
+  font-family: var(--font-accent);
 }
 
 .rowButton {
@@ -40,20 +41,20 @@
   padding: 8px 12px;
   background: transparent;
   border-bottom: 1px solid var(--bg-border-muted);
-  font-family: var(--font-body);
+  font-family: var(--font-accent);
   font-size: var(--text-xs);
   font-weight: var(--fw-bold);
   flex-wrap: wrap;
 }
 
 .compName {
-  font-family: var(--font-display);
-  font-size: var(--text-2xl);
-  font-weight: var(--fw-bold);
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  font-weight: var(--fw-regular);
   line-height: var(--leading-none);
-  letter-spacing: var(--track-tight);
+  letter-spacing: var(--track-wide);
   text-transform: uppercase;
-  color: var(--text-primary);
+  color: var(--text-secondary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -118,7 +119,10 @@
 
 .body .itemRow {
   position: absolute;
-  top: calc(100% - 5px);
+  /* Row is 16px tall with 14px items centered, so its center sits 8px below
+     its top. Anchoring top at 100% - 8px puts the item's vertical center on
+     the unit's bottom border. */
+  top: calc(100% - 8px);
   left: 0;
   right: 0;
   margin-top: 0;
@@ -148,7 +152,7 @@
 }
 
 .statValue {
-  font-family: var(--font-body);
+  font-family: var(--font-accent);
   font-size: var(--text-xl);
   font-weight: var(--fw-bold);
   line-height: var(--leading-none);
@@ -156,7 +160,7 @@
 }
 
 .statLabel {
-  font-family: var(--font-body);
+  font-family: var(--font-accent);
   font-size: var(--text-2xs);
   font-weight: var(--fw-regular);
   letter-spacing: var(--track-wide);
@@ -170,13 +174,13 @@
 .expandedBody {
   border-top: 1px solid var(--bg-border);
   cursor: default;
-  background-color: var(--bg-base);
+  background-color: var(--bg-card);
 }
 
 .expandedHeader {
   margin: 0;
   padding: 10px 12px;
-  font-family: var(--font-body);
+  font-family: var(--font-accent);
   font-size: var(--text-xs);
   font-weight: var(--fw-bold);
   letter-spacing: var(--track-widest);
@@ -187,7 +191,7 @@
 
 .expandedEmpty {
   padding: 12px;
-  font-family: var(--font-body);
+  font-family: var(--font-accent);
   font-size: var(--text-xs);
   color: var(--text-muted);
   letter-spacing: var(--track-wide);
@@ -198,18 +202,12 @@
 .partnerRow {
   padding: 8px 12px;
   border-bottom: 1px solid var(--bg-border);
-  border-left: 3px solid transparent;
   transition: background var(--t-fast);
 }
 
 .partnerRow:last-child {
   border-bottom: none;
 }
-
-.partnerRow.p1 { border-left-color: var(--placement-1); }
-.partnerRow.p2 { border-left-color: var(--placement-2); }
-.partnerRow.p3 { border-left-color: var(--placement-3); }
-.partnerRow.p4 { border-left-color: var(--placement-4); }
 
 .partnerMeta {
   display: flex;

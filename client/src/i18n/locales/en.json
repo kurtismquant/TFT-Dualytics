@@ -82,7 +82,11 @@
     "topTeammateComps": "Top Teammate Comps",
     "statPlayRate": "Play Rate",
     "statWin": "Win",
-    "statAvg": "Avg"
+    "statAvg": "Avg",
+    "sortLabel": "Sort comps by",
+    "sort_placement": "Avg Placement",
+    "sort_playRate": "Play Rate",
+    "sort_winRate": "Win Rate"
   },
   "stats": {
     "eyebrow": "Double Up Patch Stats",

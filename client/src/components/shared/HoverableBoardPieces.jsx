@@ -7,12 +7,12 @@ import ItemCard from '../ItemCard.jsx'
 import { useHoverCard } from '../../hooks/useHoverCard.js'
 import chipStyles from '../ui/TraitChip.module.css'
 
-export function HoverableUnit({ unit }) {
+export function HoverableUnit({ unit, floatStars }) {
   const { onMouseEnter, onMouseLeave, cardProps } = useHoverCard(unit.champion)
   return (
     <>
       <div onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
-        <UnitIcon champion={unit.champion} size={44} tier={unit.tier} />
+        <UnitIcon champion={unit.champion} size={44} tier={unit.tier} floatStars={floatStars} />
       </div>
       {cardProps.isOpen && createPortal(<UnitCard {...cardProps} />, document.body)}
     </>
@@ -65,10 +65,10 @@ export function TraitChips({ traitData, traits, filterOne, excludeTraitIds, allC
   ))
 }
 
-export function UnitsGrid({ resolvedUnits, allItems, styles }) {
+export function UnitsGrid({ resolvedUnits, allItems, styles, floatStars }) {
   return resolvedUnits.map((unit, i) => (
     <div key={i} className={styles.unitColumn}>
-      <HoverableUnit unit={unit} />
+      <HoverableUnit unit={unit} floatStars={floatStars} />
       <div className={styles.itemRow}>
         {unit.resolvedItems.map((item, j) => (
           item

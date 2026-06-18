@@ -16,6 +16,7 @@
   /* Families */
   --font-display: 'Bebas Neue', 'D-DIN-Bold', 'D-DIN', Arial, Verdana, sans-serif;
   --font-body:    'D-DIN', Arial, Verdana, sans-serif;
+  --font-accent:  'Rajdhani', 'D-DIN', Arial, Verdana, sans-serif;
   --font-mono:    'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
   /* Type scale — standard static scale */

@@ -46,6 +46,20 @@
   height: 10px;
 }
 
+/* floatStars: take the star row out of flow so 3-star units don't add to the
+   column height. Stars float just above the icon instead. */
+.floatStars {
+  position: relative;
+}
+
+.floatStars .stars {
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  right: 0;
+  margin-bottom: 1px;
+}
+
 .star {
   font-size: 9px;
   color: var(--bronze-star-level);

@@ -82,7 +82,11 @@
     "topTeammateComps": "Mejores comps de compañero",
     "statPlayRate": "Tasa de juego",
     "statWin": "Victoria",
-    "statAvg": "Pos."
+    "statAvg": "Pos.",
+    "sortLabel": "Ordenar comps por",
+    "sort_placement": "Posición Media",
+    "sort_playRate": "Tasa de Juego",
+    "sort_winRate": "% Victoria"
   },
   "stats": {
     "eyebrow": "Estadísticas de Parche Double Up",

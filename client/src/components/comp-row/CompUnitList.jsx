@@ -6,7 +6,7 @@ export default function CompUnitList({ resolvedUnits, items, playRate, winRate, 
   return (
     <div className={styles.body}>
       <div className={styles.unitsRow}>
-        <UnitsGrid resolvedUnits={resolvedUnits} allItems={items} />
+        <UnitsGrid resolvedUnits={resolvedUnits} allItems={items} floatStars />
       </div>
       <CompStatBlock playRate={playRate} winRate={winRate} avgPlacement={avgPlacement} />
     </div>

@@ -22,8 +22,9 @@
   filter: brightness(1.05);
 }
 
+/* No explicit font-family: the count inherits the surrounding row's font
+   (accent inside comp rows, body in match history). */
 .traitCount {
-  font-family: var(--font-body);
   font-weight: var(--fw-bold);
 }
 
