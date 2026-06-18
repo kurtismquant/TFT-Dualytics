@@ -80,8 +80,9 @@
     "expandCompDetails": "Expandir detalles de la comp",
     "collapseCompDetails": "Contraer detalles de la comp",
     "topTeammateComps": "Mejores comps de compañero",
-    "timesPlayed_one": "jugada {{count}} vez",
-    "timesPlayed_other": "jugada {{count}} veces"
+    "statPlayRate": "Tasa de juego",
+    "statWin": "Victoria",
+    "statAvg": "Pos."
   },
   "stats": {
     "eyebrow": "Estadísticas de Parche Double Up",

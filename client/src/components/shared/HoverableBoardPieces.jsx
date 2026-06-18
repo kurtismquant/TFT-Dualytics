@@ -54,10 +54,10 @@ export function HoverableTraitChip({ trait, traits, allChampions }) {
   )
 }
 
-export function TraitChips({ traitData, traits, filterOne, allChampions, copyBeforeSort = true }) {
+export function TraitChips({ traitData, traits, filterOne, excludeTraitIds, allChampions, copyBeforeSort = true }) {
   const source = copyBeforeSort ? [...(traitData || [])] : (traitData || [])
   const resolved = source
-    .filter(t => !filterOne || t.numUnits > 1)
+    .filter(t => (!filterOne || t.numUnits > 1) && !excludeTraitIds?.has(t.id))
     .sort((a, b) => b.tierCurrent - a.tierCurrent || b.numUnits - a.numUnits)
 
   return resolved.map(t => (

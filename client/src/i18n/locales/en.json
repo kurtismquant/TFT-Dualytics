@@ -80,8 +80,9 @@
     "expandCompDetails": "Expand comp details",
     "collapseCompDetails": "Collapse comp details",
     "topTeammateComps": "Top Teammate Comps",
-    "timesPlayed_one": "{{count}} time played",
-    "timesPlayed_other": "{{count}} times played"
+    "statPlayRate": "Play Rate",
+    "statWin": "Win",
+    "statAvg": "Avg"
   },
   "stats": {
     "eyebrow": "Double Up Patch Stats",

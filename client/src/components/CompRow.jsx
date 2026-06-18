@@ -4,9 +4,10 @@ import CompRowHeader from './comp-row/CompRowHeader.jsx'
 import CompUnitList from './comp-row/CompUnitList.jsx'
 import PartnerRows from './comp-row/PartnerRows.jsx'
 import { resolveUnits } from './comp-row/resolveUnits.js'
+import { generateCompName } from '../utils/compName.js'
 import styles from './CompRow.module.css'
 
-export default function CompRow({ comp, champions, items, traits }) {
+export default function CompRow({ comp, champions, items, traits, matchCount, uniqueTraitIds }) {
   const { t } = useTranslation()
   const reactId = useId()
   const [expanded, setExpanded] = useState(false)
@@ -17,6 +18,11 @@ export default function CompRow({ comp, champions, items, traits }) {
     () => resolveUnits(comp.units, champions, items),
     [comp.units, champions, items]
   )
+  const name = useMemo(
+    () => generateCompName(comp, { champions, traits, uniqueTraitIds }),
+    [comp, champions, traits, uniqueTraitIds]
+  )
+  const playRate = matchCount > 0 ? comp.playCount / matchCount : 0
 
   const toggleExpand = () => setExpanded(v => !v)
 
@@ -32,8 +38,20 @@ export default function CompRow({ comp, champions, items, traits }) {
         id={buttonId}
       >
         <div className={styles.compactContent}>
-        <CompRowHeader comp={comp} traits={traits} champions={champions} />
-        <CompUnitList resolvedUnits={resolvedUnits} items={items} />
+        <CompRowHeader
+          name={name}
+          comp={comp}
+          traits={traits}
+          champions={champions}
+          excludeTraitIds={uniqueTraitIds}
+        />
+        <CompUnitList
+          resolvedUnits={resolvedUnits}
+          items={items}
+          playRate={playRate}
+          winRate={comp.winRate}
+          avgPlacement={comp.avgPlacement}
+        />
         </div>
       </button>
 
@@ -50,6 +68,8 @@ export default function CompRow({ comp, champions, items, traits }) {
             champions={champions}
             items={items}
             traits={traits}
+            parentGames={comp.playCount}
+            uniqueTraitIds={uniqueTraitIds}
           />
         </div>
       )}

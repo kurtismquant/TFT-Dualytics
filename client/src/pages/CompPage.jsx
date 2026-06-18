@@ -7,6 +7,7 @@ import { useTraits } from "../hooks/useTraits.js";
 import CompRow from "../components/CompRow.jsx";
 import CompSearchBar from "../components/CompSearchBar.jsx";
 import { filterComps } from "../utils/compSearch.js";
+import { getUniqueTraitIds } from "../utils/compName.js";
 import { PageShell } from '../components/layout/PageShell.jsx';
 import styles from "./CompPage.module.css";
 
@@ -23,6 +24,7 @@ export default function CompPage() {
   const matchCount = compsData?.matchCount ?? 0;
   const patches = compsData?.patches || [];
   const patchHelpId = 'comp-patch-help';
+  const uniqueTraitIds = useMemo(() => getUniqueTraitIds(champions || []), [champions]);
   const filteredComps = useMemo(
     () => filterComps(comps, champions || [], traits || [], compSearch),
     [comps, champions, traits, compSearch]
@@ -79,6 +81,8 @@ export default function CompPage() {
                   champions={champions || []}
                   items={items || []}
                   traits={traits || []}
+                  matchCount={matchCount}
+                  uniqueTraitIds={uniqueTraitIds}
                 />
               ))}
             </div>
