@@ -60,6 +60,6 @@
   }
 
   .count {
-    margin-left: auto;
+    display: none;
   }
 }

@@ -135,8 +135,13 @@
   .controls {
     flex-wrap: wrap;
   }
+  /* Row 1: patch + sort dropdowns share the width. */
   .select {
     flex: 1;
+  }
+  /* Row 2: the search bar takes full width, forcing it onto its own line. */
+  .controls > :last-child {
+    flex: 1 1 100%;
   }
   .title {
     font-size: var(--text-3xl);

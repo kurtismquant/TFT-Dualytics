@@ -257,7 +257,7 @@
     justify-content: space-between;
   }
 
-  /* Units stack into 2 columns of up to 5; stats become a single column
+  /* Units stack into 5 columns of up to 2 rows; stats become a single column
      to the right with the win-rate hidden. */
   .body,
   .partnerBody {
@@ -274,7 +274,7 @@
   .unitsRow,
   .partnerUnits {
     display: grid;
-    grid-template-columns: repeat(2, max-content);
+    grid-template-columns: repeat(5, max-content);
     grid-auto-flow: row;
     gap: 6px 10px;
     flex: 0 0 auto;
