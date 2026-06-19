@@ -8,10 +8,10 @@ import { useHoverCard } from '../../hooks/useHoverCard.js'
 import chipStyles from '../ui/TraitChip.module.css'
 
 export function HoverableUnit({ unit, floatStars }) {
-  const { onMouseEnter, onMouseLeave, cardProps } = useHoverCard(unit.champion)
+  const { triggerProps, cardProps } = useHoverCard(unit.champion)
   return (
     <>
-      <div onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+      <div {...triggerProps}>
         <UnitIcon champion={unit.champion} size={44} tier={unit.tier} floatStars={floatStars} />
       </div>
       {cardProps.isOpen && createPortal(<UnitCard {...cardProps} />, document.body)}
@@ -20,10 +20,10 @@ export function HoverableUnit({ unit, floatStars }) {
 }
 
 export function HoverableItem({ item, allItems }) {
-  const { onMouseEnter, onMouseLeave, cardProps } = useHoverCard(item)
+  const { triggerProps, cardProps } = useHoverCard(item)
   return (
     <>
-      <div onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+      <div {...triggerProps}>
         <ItemIcon item={item} size={14} />
       </div>
       {cardProps.isOpen && createPortal(<ItemCard {...cardProps} allItems={allItems} />, document.body)}
@@ -33,7 +33,7 @@ export function HoverableItem({ item, allItems }) {
 
 export function HoverableTraitChip({ trait, traits, allChampions }) {
   const meta = traits?.find(td => td.id === trait.id) || null
-  const { onMouseEnter, onMouseLeave, cardProps } = useHoverCard({ meta, count: trait.numUnits })
+  const { triggerProps, cardProps } = useHoverCard({ meta, count: trait.numUnits })
   if (!meta) return null
   const tierLabel = trait.style ? `, trait tier ${trait.style}` : ''
   const chipLabel = `${meta.name}, ${trait.numUnits} units${tierLabel}`
@@ -42,8 +42,7 @@ export function HoverableTraitChip({ trait, traits, allChampions }) {
       <span
         className={`${chipStyles.traitChip} ${chipStyles[`style${trait.style}`] || ''}`}
         title={chipLabel}
-        onMouseEnter={onMouseEnter}
-        onMouseLeave={onMouseLeave}
+        {...triggerProps}
       >
         <img src={meta.iconUrl} alt="" className={chipStyles.traitIcon} loading="lazy" aria-hidden="true" />
         <span className={chipStyles.traitCount} aria-hidden="true">{trait.numUnits}</span>

@@ -30,6 +30,7 @@ export default function TFTBoard({
   onRemoveUnit,
   onRemoveItem,
   onHexSizeChange,
+  overlay = null,
 }) {
   const wrapperRef = useRef(null);
   const [hexSize, setHexSize] = useState(MAX_HEX_SIZE);
@@ -65,6 +66,7 @@ export default function TFTBoard({
       className={styles.boardWrapper}
       style={{ height: boardHeight + 60 }}
     >
+      {overlay}
       <div className={styles.board} style={{ width: boardWidth, height: boardHeight }}>
         {Array.from({ length: ROWS }, (_, row) =>
           Array.from({ length: COLS }, (_, col) => {

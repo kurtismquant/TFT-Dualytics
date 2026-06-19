@@ -35,7 +35,11 @@ export default function StatsToolbar({
     { key: 'traits', label: t('stats.tabTraits') },
   ]), [t])
 
-  const handlePatchChange = useCallback(event => setPatch(event.target.value), [setPatch])
+  const handlePatchChange = useCallback(event => {
+    setPatch(event.target.value)
+    // Blur so the :focus-driven caret resets to pointing down after selection.
+    event.target.blur()
+  }, [setPatch])
   const handleQueryChange = useCallback(event => setQuery(event.target.value), [setQuery])
   const handleToggleCost = useCallback(
     cost => setCostFilter(current => current === cost ? null : cost),

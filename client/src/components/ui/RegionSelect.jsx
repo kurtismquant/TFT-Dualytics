@@ -6,8 +6,15 @@ import { REGIONS } from '../../utils/riotSearch.js'
  * callers pass their own `className` so each placement keeps its intended chrome.
  */
 export default function RegionSelect({ value, onChange, className, ...rest }) {
+  // Native <select> keeps focus after a pick, which leaves any :focus-driven caret
+  // stuck pointing up. Blur on change so the dropdown chrome resets immediately.
+  const handleChange = e => {
+    onChange?.(e)
+    e.currentTarget.blur()
+  }
+
   return (
-    <select className={className} value={value} onChange={onChange} {...rest}>
+    <select className={className} value={value} onChange={handleChange} {...rest}>
       {REGIONS.map(r => (
         <option key={r} value={r}>{r.toUpperCase()}</option>
       ))}

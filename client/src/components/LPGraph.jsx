@@ -139,7 +139,7 @@ export default function LPGraph({ summoner, rankSnapshots, matches }) {
         <select
           className={styles.select}
           value={range}
-          onChange={e => setRange(e.target.value)}
+          onChange={e => { setRange(e.target.value); e.target.blur() }}
           aria-label={t('lpGraph.rangeLabel')}
         >
           {RANGE_OPTIONS.map(opt => (

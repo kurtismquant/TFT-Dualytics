@@ -1,4 +1,5 @@
 import StatIcon from './StatIcon.jsx'
+import DetailCardShell from './shared/DetailCardShell.jsx'
 import { tokenize } from '../utils/descriptionTokenizer.js'
 import styles from './UnitCard.module.css'
 
@@ -49,13 +50,13 @@ function ManaBar({ initialMana, mana }) {
   )
 }
 
-export default function UnitCard({ isOpen, data: champion, style }) {
+export default function UnitCard({ isOpen, data: champion, style, mode, onClose }) {
   if (!isOpen || !champion) return null
 
   const borderColor = COST_COLORS[champion.cost] || 'var(--ghost-border)'
 
   return (
-    <div className={styles.card} style={style} role="tooltip" aria-hidden="true">
+    <DetailCardShell mode={mode} style={style} onClose={onClose} cardClassName={styles.card} label={champion.name}>
       <div className={styles.header}>
         <img
           src={champion.iconUrl}
@@ -104,6 +105,6 @@ export default function UnitCard({ isOpen, data: champion, style }) {
           </p>
         </div>
       )}
-    </div>
+    </DetailCardShell>
   )
 }

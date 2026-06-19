@@ -36,13 +36,12 @@ function activeTier(breakpoints, count) {
 }
 
 function TraitRow({ row, meta, allChampions }) {
-  const { onMouseEnter, onMouseLeave, cardProps } = useHoverCard({ meta, count: row.count })
+  const { triggerProps, cardProps } = useHoverCard({ meta, count: row.count })
   return (
     <>
       <li
         className={`${styles.trait} ${row.tier ? styles[`tier_${row.tier}`] : styles.tierInactive}`}
-        onMouseEnter={onMouseEnter}
-        onMouseLeave={onMouseLeave}
+        {...triggerProps}
       >
         <div className={styles.iconHex} aria-hidden="true">
           {row.iconUrl && (

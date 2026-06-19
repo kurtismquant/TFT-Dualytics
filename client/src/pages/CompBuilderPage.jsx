@@ -210,9 +210,6 @@ export default function CompBuilderPage() {
           <div className={styles.topRow}>
             <TraitList activeTraits={activeTraits} />
 
-            {/* Mobile-only: clear sits below the traits, top-right of the board. */}
-            <button className={styles.clearBtnMobile} onClick={clearBoard}>{t('builder.clearBoard')}</button>
-
             <div className={styles.boardWrap}>
               <TFTBoard
                 board={board}
@@ -225,6 +222,12 @@ export default function CompBuilderPage() {
                 onRemoveUnit={removeUnit}
                 onRemoveItem={removeItem}
                 onHexSizeChange={setBoardHexSize}
+                /* Mobile-only: clear sits inside the board, top-right corner. */
+                overlay={isMobile ? (
+                  <button className={styles.clearBtnMobile} onClick={clearBoard}>
+                    {t('builder.clearBoard')}
+                  </button>
+                ) : null}
               />
             </div>
           </div>

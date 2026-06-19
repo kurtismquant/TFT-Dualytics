@@ -1,6 +1,7 @@
 import { lookupBuffName } from '../data/buffNames.js'
 import { findVariable } from '../utils/descriptionTokenizer.js'
 import StatIcon from './StatIcon.jsx'
+import DetailCardShell from './shared/DetailCardShell.jsx'
 import styles from './TraitCard.module.css'
 
 const SCALE_TEXT = {
@@ -157,7 +158,7 @@ function resolveTokens(text, variables, minUnits, keyPrefix) {
     .filter(n => (typeof n === 'string' ? n.length > 0 : true))
 }
 
-export default function TraitCard({ isOpen, data, style, allChampions }) {
+export default function TraitCard({ isOpen, data, style, allChampions, mode, onClose }) {
   if (!isOpen || !data) return null
   const { meta, count } = data
 
@@ -185,7 +186,7 @@ export default function TraitCard({ isOpen, data, style, allChampions }) {
   const activeStyle = activeIdx >= 0 ? STYLE_TIER[effects[activeIdx].style] : null
 
   return (
-    <div className={styles.card} style={style} role="tooltip" aria-hidden="true">
+    <DetailCardShell mode={mode} style={style} onClose={onClose} cardClassName={styles.card} label={meta.name}>
       <div className={styles.header}>
         <div className={styles.headerLeft}>
           {meta.iconUrl && (
@@ -263,6 +264,6 @@ export default function TraitCard({ isOpen, data, style, allChampions }) {
           ))}
         </div>
       )}
-    </div>
+    </DetailCardShell>
   )
 }

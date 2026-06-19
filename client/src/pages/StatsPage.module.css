@@ -251,6 +251,12 @@
   letter-spacing: 0;
 }
 
+/* Wraps the row icon as the hover-card anchor without changing its layout. */
+.nameAnchor {
+  display: inline-flex;
+  flex: 0 0 auto;
+}
+
 .icon,
 .fallbackIcon {
   width: 34px;

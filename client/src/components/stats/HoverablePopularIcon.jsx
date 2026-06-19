@@ -10,7 +10,7 @@ const CARDS = {
 }
 
 export default function HoverablePopularIcon({ entry, meta, cardType, allItems }) {
-  const { onMouseEnter, onMouseLeave, cardProps } = useHoverCard(meta)
+  const { triggerProps, cardProps } = useHoverCard(meta)
   const Card = CARDS[cardType]
   if (!meta?.iconUrl) return null
 
@@ -22,8 +22,7 @@ export default function HoverablePopularIcon({ entry, meta, cardType, allItems }
         alt={meta.name || entry.id}
         title={`${meta.name || entry.id}: ${entry.count.toLocaleString()}`}
         loading="lazy"
-        onMouseEnter={onMouseEnter}
-        onMouseLeave={onMouseLeave}
+        {...triggerProps}
       />
       {cardProps.isOpen && createPortal(
         <Card {...cardProps} allItems={allItems} />,

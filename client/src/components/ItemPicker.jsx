@@ -6,10 +6,11 @@ import styles from './ItemPicker.module.css'
 import { useHoverCard } from '../hooks/useHoverCard.js'
 
 function PickerItem({ item, allItems, onSelect, selected }) {
-  const { onMouseEnter, onMouseLeave, cardProps } = useHoverCard(item)
+  // Long-press for the detail sheet on touch (tap already selects the item).
+  const { triggerProps, cardProps } = useHoverCard(item, { touchTrigger: 'longpress' })
   return (
     <>
-      <div onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+      <div {...triggerProps}>
         <DraggableItem
           id={`item-${item.id}`}
           item={item}

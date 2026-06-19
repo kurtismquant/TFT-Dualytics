@@ -1,5 +1,6 @@
 import ItemIcon from './ItemIcon.jsx'
 import StatIcon from './StatIcon.jsx'
+import DetailCardShell from './shared/DetailCardShell.jsx'
 import { tokenize } from '../utils/descriptionTokenizer.js'
 import styles from './ItemCard.module.css'
 
@@ -86,7 +87,7 @@ function GlossaryFooter({ desc }) {
   )
 }
 
-export default function ItemCard({ isOpen, data: item, style, allItems }) {
+export default function ItemCard({ isOpen, data: item, style, allItems, mode, onClose }) {
   if (!isOpen || !item) return null
 
   const components = (item.composition || [])
@@ -97,7 +98,7 @@ export default function ItemCard({ isOpen, data: item, style, allItems }) {
     .filter(e => e.name && e.value != null && STAT_DISPLAY[e.name])
 
   return (
-    <div className={styles.card} style={style} role="tooltip" aria-hidden="true">
+    <DetailCardShell mode={mode} style={style} onClose={onClose} cardClassName={styles.card} label={item.name}>
       <span className={styles.name}>{item.name}</span>
 
       {visibleEffects.length > 0 && (
@@ -132,6 +133,6 @@ export default function ItemCard({ isOpen, data: item, style, allItems }) {
       )}
 
       <GlossaryFooter desc={item.desc} />
-    </div>
+    </DetailCardShell>
   )
 }

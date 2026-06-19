@@ -7,10 +7,11 @@ import { useBoardStore } from '../store/boardStore'
 import { useHoverCard } from '../hooks/useHoverCard.js'
 
 function RosterUnit({ champion, onPlace }) {
-  const { onMouseEnter, onMouseLeave, cardProps } = useHoverCard(champion)
+  // Long-press for the detail sheet on touch (tap already places the unit).
+  const { triggerProps, cardProps } = useHoverCard(champion, { touchTrigger: 'longpress' })
   return (
     <>
-      <div onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+      <div {...triggerProps}>
         <DraggableUnit
           id={`roster-${champion.id}`}
           champion={champion}

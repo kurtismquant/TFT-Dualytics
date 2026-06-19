@@ -54,7 +54,7 @@ export default function CompPage() {
         <select
           className={styles.select}
           value={compsData?.patch || selectedPatch || ''}
-          onChange={event => setSelectedPatch(event.target.value)}
+          onChange={event => { setSelectedPatch(event.target.value); event.target.blur() }}
           aria-label={t('comp.patchLabel')}
           aria-describedby={patchHelpId}
         >
@@ -64,7 +64,7 @@ export default function CompPage() {
         <select
           className={styles.select}
           value={sortBy}
-          onChange={event => setSortBy(event.target.value)}
+          onChange={event => { setSortBy(event.target.value); event.target.blur() }}
           aria-label={t('comp.sortLabel')}
         >
           {SORT_OPTIONS.map(option => (

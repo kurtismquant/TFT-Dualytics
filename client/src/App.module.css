@@ -202,17 +202,6 @@
   background: var(--landing-card-hover, rgba(255, 255, 255, 0.06));
 }
 
-/* Subtle quarter-turn on the gear icon when its button is hovered */
-.gearBtn svg,
-.gearBtnDrawer svg {
-  transition: transform 220ms cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.gearBtn:hover svg,
-.gearBtnDrawer:hover svg {
-  transform: rotate(90deg);
-}
-
 /* ── Hamburger — hidden on desktop ─────────────────────── */
 .hamburger {
   display: none;
@@ -406,8 +395,6 @@
   .link,
   .gearBtn,
   .gearBtnDrawer,
-  .gearBtn svg,
-  .gearBtnDrawer svg,
   .footerLink {
     transition: none;
   }
