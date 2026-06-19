@@ -107,7 +107,7 @@
   transform: translateY(-1px);
 }
 
-@media (max-width: 760px) {
+@media (--bp-md) {
   .wrapper {
     padding: 0 1rem;
   }

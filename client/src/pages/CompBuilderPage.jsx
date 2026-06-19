@@ -12,6 +12,7 @@ import FilterBar from '../components/FilterBar.jsx'
 import UnitIcon from '../components/UnitIcon.jsx'
 import ItemIcon from '../components/ItemIcon.jsx'
 import { PageShell } from '../components/layout/PageShell.jsx'
+import { useIsMobile } from '../hooks/useMediaQuery.js'
 import styles from './CompBuilderPage.module.css'
 
 const BOARD_UNIT_SIZE = 90
@@ -39,6 +40,48 @@ export default function CompBuilderPage() {
   const [draggedUnit, setDraggedUnit] = useState(null)
   const [draggedItem, setDraggedItem] = useState(null)
   const searchInputRef = useRef(null)
+  const isMobile = useIsMobile()
+  // Live hex size reported by the board, so the drag overlay matches it.
+  const [boardHexSize, setBoardHexSize] = useState(BOARD_UNIT_SIZE)
+
+  // Mobile tap interactions: a single `selected` slot is either a board unit
+  // queued to move, or an item queued to attach. Desktop keeps drag + star/remove.
+  const [selected, setSelected] = useState(null)
+
+  // Tap on a placed unit.
+  const handleUnitClick = (cellId) => {
+    if (!isMobile) {
+      toggleStars(cellId)
+      return
+    }
+    if (selected?.type === 'item') {
+      addItem(cellId, selected.itemId)
+      setSelected(null)
+      return
+    }
+    if (selected?.type === 'boardUnit' && selected.cellId === cellId) {
+      setSelected(null)
+      return
+    }
+    setSelected({ type: 'boardUnit', cellId })
+  }
+
+  // Tap on an empty hex (occupied cells stopPropagation in TFTBoard).
+  const handleEmptyHexClick = (cellId) => {
+    if (!isMobile) return
+    if (board[cellId]?.championId) return
+    if (selected?.type === 'boardUnit') {
+      moveUnit(selected.cellId, cellId)
+      setSelected(null)
+    }
+  }
+
+  // Tap an item in the picker (mobile only) to queue it for attaching.
+  const handleItemSelect = (itemId) => {
+    setSelected(prev =>
+      prev?.type === 'item' && prev.itemId === itemId ? null : { type: 'item', itemId },
+    )
+  }
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -58,6 +101,8 @@ export default function CompBuilderPage() {
   const [search, setSearch] = useState('')
   const [champSort, setChampSort] = useState('cost')
   const [itemCategory, setItemCategory] = useState('craftable')
+  // Mobile roster panel: 'units' (default) or 'items'. Ignored on desktop (both show).
+  const [mode, setMode] = useState('units')
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 4 } }))
 
@@ -130,7 +175,7 @@ export default function CompBuilderPage() {
   const renderDragOverlay = () => {
     if (draggedUnit?.source === 'board') {
       return (
-        <div style={{ width: BOARD_UNIT_SIZE, height: BOARD_UNIT_SIZE }}>
+        <div style={{ width: boardHexSize, height: boardHexSize }}>
           <UnitIcon champion={draggedUnit.champion} variant="hex" />
         </div>
       )
@@ -151,6 +196,7 @@ export default function CompBuilderPage() {
     <PageShell wide>
       <div className={styles.toolbar}>
         <h1 className={styles.title}>{t('builder.title')}</h1>
+        {/* Desktop position; on mobile this is hidden and re-shown below the traits. */}
         <button className={styles.clearBtn} onClick={clearBoard}>{t('builder.clearBoard')}</button>
       </div>
 
@@ -164,14 +210,21 @@ export default function CompBuilderPage() {
           <div className={styles.topRow}>
             <TraitList activeTraits={activeTraits} />
 
+            {/* Mobile-only: clear sits below the traits, top-right of the board. */}
+            <button className={styles.clearBtnMobile} onClick={clearBoard}>{t('builder.clearBoard')}</button>
+
             <div className={styles.boardWrap}>
               <TFTBoard
                 board={board}
                 champions={champions || []}
                 items={items || []}
-                onToggleStars={toggleStars}
+                isMobile={isMobile}
+                selectedCellId={selected?.type === 'boardUnit' ? selected.cellId : null}
+                onUnitClick={handleUnitClick}
+                onEmptyHexClick={handleEmptyHexClick}
                 onRemoveUnit={removeUnit}
                 onRemoveItem={removeItem}
+                onHexSizeChange={setBoardHexSize}
               />
             </div>
           </div>
@@ -185,29 +238,38 @@ export default function CompBuilderPage() {
               onChampSortChange={setChampSort}
               itemCategory={itemCategory}
               onItemCategoryChange={setItemCategory}
+              mode={mode}
+              onModeChange={setMode}
             />
 
-            <div className={styles.bottomGrid}>
-              {champions ? (
-                <UnitRoster
-                  champions={champions}
-                  search={search}
-                  sortMode={champSort}
-                  layout="horizontal"
-                />
-              ) : (
-                <div className={styles.loading} role="status" aria-live="polite">{t('builder.loadingChampions')}</div>
-              )}
+            {/* data-mode drives which panel shows on mobile; both show on desktop. */}
+            <div className={styles.bottomGrid} data-mode={mode}>
+              <div className={styles.unitsPanel}>
+                {champions ? (
+                  <UnitRoster
+                    champions={champions}
+                    search={search}
+                    sortMode={champSort}
+                    layout="horizontal"
+                  />
+                ) : (
+                  <div className={styles.loading} role="status" aria-live="polite">{t('builder.loadingChampions')}</div>
+                )}
+              </div>
 
-              {items ? (
-                <ItemPicker
-                  items={items}
-                  search={search}
-                  category={itemCategory}
-                />
-              ) : (
-                <div className={styles.loading} role="status" aria-live="polite">{t('builder.loadingItems')}</div>
-              )}
+              <div className={styles.itemsPanel}>
+                {items ? (
+                  <ItemPicker
+                    items={items}
+                    search={search}
+                    category={itemCategory}
+                    onSelect={isMobile ? handleItemSelect : undefined}
+                    selectedItemId={selected?.type === 'item' ? selected.itemId : null}
+                  />
+                ) : (
+                  <div className={styles.loading} role="status" aria-live="polite">{t('builder.loadingItems')}</div>
+                )}
+              </div>
             </div>
           </section>
         </div>

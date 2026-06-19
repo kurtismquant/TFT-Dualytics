@@ -28,6 +28,25 @@
   background: var(--bg-card);
 }
 
+/* Tap-to-move selection highlight (mobile flow). */
+.selected {
+  background: var(--search-focus-border);
+  z-index: 10;
+}
+
+.selected .hexFill {
+  background: var(--bg-card);
+}
+
+/* Thinner hex ring on mobile so the playable fill (and the unit inside) is
+   larger within the same footprint — keeps 7 columns on-screen. */
+@media (--bp-md) {
+  .hexFill {
+    width: calc(100% - 5px);
+    height: calc(100% - 5px);
+  }
+}
+
 .content {
   position: absolute;
   inset: 0;

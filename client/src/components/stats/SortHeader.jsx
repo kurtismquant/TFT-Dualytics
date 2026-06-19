@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import styles from '../../pages/StatsPage.module.css'
 
-export default function SortHeader({ columnKey, label, sort, onSort }) {
+export default function SortHeader({ columnKey, label, sort, onSort, className }) {
   const { t } = useTranslation()
   const isActive = sort.key === columnKey
   const ariaSort = isActive
@@ -9,7 +9,7 @@ export default function SortHeader({ columnKey, label, sort, onSort }) {
     : 'none'
 
   return (
-    <th scope="col" aria-sort={ariaSort}>
+    <th scope="col" aria-sort={ariaSort} className={className}>
       <button
         className={`${styles.sortButton} ${isActive ? styles.sortButtonActive : ''}`}
         type="button"

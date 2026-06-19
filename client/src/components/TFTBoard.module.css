@@ -67,9 +67,11 @@
 }
 
 
-@media (max-width: 1100px) {
-  .boardWrapper {
-    border: none;
-    /* OR use 'border-color: transparent;' if you want to keep the padding/spacing consistent */
+/* Keep the framed board border at every size (desktop look carries to mobile). */
+
+@media (--bp-md) {
+  /* Hide the unit name labels on mobile to keep the shrunken hexes readable. */
+  .unitName {
+    display: none;
   }
 }

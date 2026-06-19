@@ -7,37 +7,51 @@ import styles from "./TFTBoard.module.css";
 const ROWS = 4;
 const COLS = 7;
 const MAX_HEX_SIZE = 90;
-const MIN_HEX_SIZE = 38;
-const HEX_GAP = 10;
 
-// BOARD_WIDTH = (COLS + 2)*HEX_GAP + (COLS + 0.5)*hexSize
+// BOARD_WIDTH = (COLS + 2)*gap + (COLS + 0.5)*hexSize
 // Solve for hexSize given available container width (minus 20px padding).
-function calcHexSize(wrapperWidth) {
+// On mobile we shrink the gap and the min size so all 7 columns fit the
+// viewport without horizontal scroll while keeping the hexes as large as
+// possible (the per-hex ring is also thinned in DroppableHex.module.css).
+function calcHexSize(wrapperWidth, gap, minSize) {
   const available = wrapperWidth - 20;
-  const size = (available - (COLS + 2) * HEX_GAP) / (COLS + 0.5);
-  return Math.min(MAX_HEX_SIZE, Math.max(MIN_HEX_SIZE, Math.floor(size)));
+  const size = (available - (COLS + 2) * gap) / (COLS + 0.5);
+  return Math.min(MAX_HEX_SIZE, Math.max(minSize, Math.floor(size)));
 }
 
 export default function TFTBoard({
   board,
   champions,
   items,
-  onToggleStars,
+  isMobile = false,
+  selectedCellId = null,
+  onUnitClick,
+  onEmptyHexClick,
   onRemoveUnit,
   onRemoveItem,
+  onHexSizeChange,
 }) {
   const wrapperRef = useRef(null);
   const [hexSize, setHexSize] = useState(MAX_HEX_SIZE);
+
+  const HEX_GAP = isMobile ? 5 : 10;
+  const MIN_HEX_SIZE = isMobile ? 28 : 38;
 
   useEffect(() => {
     const el = wrapperRef.current;
     if (!el) return;
     const ro = new ResizeObserver(([entry]) => {
-      setHexSize(calcHexSize(entry.contentRect.width));
+      setHexSize(calcHexSize(entry.contentRect.width, HEX_GAP, MIN_HEX_SIZE));
     });
     ro.observe(el);
     return () => ro.disconnect();
-  }, []);
+  }, [HEX_GAP, MIN_HEX_SIZE]);
+
+  // Report the live hex size so the drag overlay can match it (otherwise a
+  // dragged board unit renders at the fixed desktop size on small screens).
+  useEffect(() => {
+    onHexSizeChange?.(hexSize);
+  }, [hexSize, onHexSizeChange]);
 
   const horizSpacing = hexSize + HEX_GAP;
   const vertSpacing = hexSize * 0.75 + HEX_GAP;
@@ -75,7 +89,12 @@ export default function TFTBoard({
                   height: hexSize,
                 }}
               >
-                <DroppableHex cellId={cellId} size={hexSize}>
+                <DroppableHex
+                  cellId={cellId}
+                  size={hexSize}
+                  selected={selectedCellId === cellId}
+                  onClick={() => onEmptyHexClick?.(cellId)}
+                >
                   {champion && (
                     <>
                       <DraggableUnit
@@ -84,7 +103,12 @@ export default function TFTBoard({
                         variant="hex"
                         fillParent
                         stars={!!unit.stars}
-                        onClick={() => onToggleStars?.(cellId)}
+                        onClick={(e) => {
+                          // Stop the click from also reaching the hex's onClick
+                          // (the empty-hex / move-target handler).
+                          e.stopPropagation();
+                          onUnitClick?.(cellId);
+                        }}
                         onContextMenu={(e) => {
                           e.preventDefault();
                           onRemoveUnit?.(cellId);

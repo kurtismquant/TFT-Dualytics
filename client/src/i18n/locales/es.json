@@ -25,7 +25,9 @@
   },
   "landing": {
     "taglineEyebrow": "Análisis de Double Up | TFT Set {{set}}",
+    "taglineEyebrowShort": "Análisis de Double Up",
     "taglineBody": "Dos jugadores | Decisiones infinitas | Cero dudas",
+    "taglineBodyShort": "2 Jugadores | ∞ Decisiones | 0 Dudas",
     "compsTitle": "Comps",
     "compsEyebrow": "TOP-FEED",
     "compsBody": "Las mejores composiciones de Double Up, emparejadas con compañeros y clasificadas por posición promedio.",
@@ -142,6 +144,9 @@
   },
   "filterBar": {
     "searchPlaceholder": "Buscar unidades, objetos o rasgos",
+    "modeLabel": "Mostrar unidades u objetos",
+    "modeUnits": "Unidades",
+    "modeItems": "Objetos",
     "sortCost": "Coste",
     "sortName": "Nombre",
     "sortOrigin": "Origen",

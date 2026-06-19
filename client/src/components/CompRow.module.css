@@ -245,7 +245,7 @@
 }
 
 /* ── Mobile responsive ──────────────────────────────────── */
-@media (max-width: 760px) {
+@media (--bp-md) {
   .headerBar {
     flex-direction: column;
     align-items: flex-start;
@@ -294,7 +294,7 @@
   }
 }
 
-@media (max-width: 380px) {
+@media (--bp-sm) {
   .headerRight,
   .partnerMeta,
   .partnerTraits {

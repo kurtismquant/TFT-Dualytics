@@ -256,7 +256,7 @@
 }
 
 /* ── Mobile nav ─────────────────────────────────────────── */
-@media (max-width: 1250px) {
+@media (--bp-xl) {
   .nav {
     position: relative;
     flex-wrap: wrap;
@@ -372,7 +372,7 @@
   }
 }
 
-@media (max-width: 520px) {
+@media (--bp-sm) {
   .nav {
     padding: 0 1rem;
   }

@@ -47,7 +47,7 @@ function StatsTableRow({
         {avgValue}
       </td>
       <td
-        className={styles.metricValue}
+        className={`${styles.metricValue} ${styles.colWinRate}`}
         style={{ '--metric-color': getWinRateColor(row.winRate) }}
         aria-label={`${t('stats.colWinRate')}: ${winRateValue}. ${t('stats.metricLabel')}: ${winRateQuality}`}
       >
@@ -57,7 +57,7 @@ function StatsTableRow({
         <span>{row.count.toLocaleString()}</span>
         <span className={styles.frequency}>{formatPercent(row.frequency)}</span>
       </td>
-      <td>
+      <td className={styles.colPopular}>
         <PopularIcons
           entries={popularEntries}
           map={popularMap}

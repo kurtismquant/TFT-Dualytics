@@ -1,0 +1,17 @@
+/* Single source of truth for responsive breakpoints.
+ *
+ * These @custom-media definitions are injected into every CSS Module at build
+ * time by @csstools/postcss-global-data (see postcss.config.js), so any file can
+ * write `@media (--bp-md) { ... }` without importing this file.
+ *
+ * Keep the JS side (src/hooks/useMediaQuery.js -> useIsMobile) in sync with --bp-md.
+ *
+ *   --bp-xl  1280px  wide desktop  -> desktop
+ *   --bp-lg  1024px  tablet        -> sidebars / multi-col grids stack
+ *   --bp-md   720px  mobile        -> condense, hide secondary data
+ *   --bp-sm   480px  small phone   -> tightest spacing / smallest type
+ */
+@custom-media --bp-xl (max-width: 1280px);
+@custom-media --bp-lg (max-width: 1024px);
+@custom-media --bp-md (max-width: 720px);
+@custom-media --bp-sm (max-width: 480px);

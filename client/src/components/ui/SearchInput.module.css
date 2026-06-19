@@ -67,7 +67,9 @@
   pointer-events: none;
 }
 
-@media (max-width: 380px) {
+/* Keyboard shortcut hints (e.g. the builder's Ctrl+F) are irrelevant on touch,
+   so hide them on tablet and below and reclaim the reserved input padding. */
+@media (--bp-lg) {
   .hasHint .input {
     padding-right: 1.2rem;
   }

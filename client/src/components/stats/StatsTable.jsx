@@ -33,11 +33,14 @@ export default function StatsTable({
         <caption className="sr-only">{t('stats.tableCaption', { type: tableTypeLabel })}</caption>
         <thead>
           <tr>
-            <SortHeader columnKey="name" label={nameLabel} sort={sort} onSort={onSort} />
-            <SortHeader columnKey="avgPlacement" label={t('stats.colAvgPlace')} sort={sort} onSort={onSort} />
-            <SortHeader columnKey="winRate" label={t('stats.colWinRate')} sort={sort} onSort={onSort} />
-            <SortHeader columnKey="frequency" label={t('stats.colFrequency')} sort={sort} onSort={onSort} />
-            <th scope="col">{popularLabel}</th>
+            {/* On mobile (--bp-md) the table is fixed-layout: name gives up width so
+                Avg Placement + Frequency share equal, roomier columns. */}
+            <SortHeader columnKey="name" label={nameLabel} sort={sort} onSort={onSort} className={styles.colName} />
+            <SortHeader columnKey="avgPlacement" label={t('stats.colAvgPlace')} sort={sort} onSort={onSort} className={styles.colMetric} />
+            {/* Win Rate + Popular are hidden on mobile (--bp-md) to keep the table on-screen. */}
+            <SortHeader columnKey="winRate" label={t('stats.colWinRate')} sort={sort} onSort={onSort} className={styles.colWinRate} />
+            <SortHeader columnKey="frequency" label={t('stats.colFrequency')} sort={sort} onSort={onSort} className={styles.colMetric} />
+            <th scope="col" className={styles.colPopular}>{popularLabel}</th>
           </tr>
         </thead>
         <tbody>

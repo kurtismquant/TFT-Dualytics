@@ -36,13 +36,13 @@
   max-height: none;
 }
 
-@media (max-width: 1100px) {
+@media (--bp-lg) {
   .roster {
     width: 100%;
   }
 }
 
-@media (max-width: 520px), (pointer: coarse) {
+@media (--bp-sm), (pointer: coarse) {
   .grid {
     grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
   }

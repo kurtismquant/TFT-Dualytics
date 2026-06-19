@@ -16,7 +16,7 @@
   gap: 6px;
 }
 
-@media (max-width: 520px), (pointer: coarse) {
+@media (--bp-sm), (pointer: coarse) {
   .grid {
     grid-template-columns: repeat(auto-fill, minmax(44px, 1fr));
   }

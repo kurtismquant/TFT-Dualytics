@@ -11,6 +11,8 @@ const FilterBar = forwardRef(function FilterBar({
   onChampSortChange,
   itemCategory,
   onItemCategoryChange,
+  mode = 'units',
+  onModeChange,
 }, searchInputRef) {
   const { t } = useTranslation()
   const shortcutId = 'builder-filter-shortcut'
@@ -31,7 +33,18 @@ const FilterBar = forwardRef(function FilterBar({
   ]
 
   return (
-    <div className={styles.bar}>
+    <div className={styles.bar} data-mode={mode}>
+      {/* Mobile-only Units/Items switch (hidden on desktop via CSS). Picks which
+          roster panel + which filter group is shown on small screens. */}
+      <div className={styles.modeToggle} role="group" aria-label={t('filterBar.modeLabel')}>
+        <Button variant="tab" pressed={mode === 'units'} onClick={() => onModeChange?.('units')}>
+          {t('filterBar.modeUnits')}
+        </Button>
+        <Button variant="tab" pressed={mode === 'items'} onClick={() => onModeChange?.('items')}>
+          {t('filterBar.modeItems')}
+        </Button>
+      </div>
+
       <SearchInput
         ref={searchInputRef}
         className={styles.searchWrap}
@@ -44,7 +57,7 @@ const FilterBar = forwardRef(function FilterBar({
         hintId={shortcutId}
       />
 
-      <div className={styles.tabGroup}>
+      <div className={`${styles.tabGroup} ${styles.champSorts}`}>
         {CHAMP_SORTS.map(s => (
           <Button
             key={s.id}
@@ -57,7 +70,7 @@ const FilterBar = forwardRef(function FilterBar({
         ))}
       </div>
 
-      <div className={styles.tabGroup}>
+      <div className={`${styles.tabGroup} ${styles.itemCats}`}>
         {ITEM_CATEGORIES.map(c => (
           <Button
             key={c.id}

@@ -84,7 +84,7 @@
 }
 
 /* ── Responsive ────────────────────────────────────────── */
-@media (max-width: 760px) {
+@media (--bp-md) {
   .title {
     font-size: var(--text-3xl);
     margin-bottom: 0.75rem;

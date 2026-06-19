@@ -5,12 +5,18 @@ import ItemCard from './ItemCard.jsx'
 import styles from './ItemPicker.module.css'
 import { useHoverCard } from '../hooks/useHoverCard.js'
 
-function PickerItem({ item, allItems }) {
+function PickerItem({ item, allItems, onSelect, selected }) {
   const { onMouseEnter, onMouseLeave, cardProps } = useHoverCard(item)
   return (
     <>
       <div onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
-        <DraggableItem id={`item-${item.id}`} item={item} size={42} />
+        <DraggableItem
+          id={`item-${item.id}`}
+          item={item}
+          size={42}
+          onClick={onSelect ? () => onSelect(item.id) : undefined}
+          selected={selected}
+        />
       </div>
       {cardProps.isOpen && createPortal(
         <ItemCard {...cardProps} allItems={allItems} />,
@@ -20,7 +26,7 @@ function PickerItem({ item, allItems }) {
   )
 }
 
-export default function ItemPicker({ items, search = '', category = 'craftable' }) {
+export default function ItemPicker({ items, search = '', category = 'craftable', onSelect, selectedItemId }) {
   const { t } = useTranslation()
   const normalizedSearch = search.trim().toLowerCase()
 
@@ -36,7 +42,13 @@ export default function ItemPicker({ items, search = '', category = 'craftable' 
       ) : (
         <div className={styles.grid}>
           {visible.map(item => (
-            <PickerItem key={item.id} item={item} allItems={items} />
+            <PickerItem
+              key={item.id}
+              item={item}
+              allItems={items}
+              onSelect={onSelect}
+              selected={selectedItemId === item.id}
+            />
           ))}
         </div>
       )}

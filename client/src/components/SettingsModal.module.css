@@ -57,7 +57,7 @@
   border-color: var(--bg-border);
 }
 
-@media (max-width: 440px) {
+@media (--bp-sm) {
   .body {
     padding: 20px 16px;
   }

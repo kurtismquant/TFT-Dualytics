@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import LandingSearch from '../components/LandingSearchBar.jsx'
@@ -17,16 +17,42 @@ function HeroSign() {
   const size = 150
   const outside = size * 0.5
 
+  // The corner dangos overhang the sign and get clipped by the window before the
+  // mobile breakpoint. Measure each dango's real rendered box (rotation + float
+  // included) and hide both the moment either one isn't fully inside the window.
+  const trImgRef = useRef(null)
+  const blImgRef = useRef(null)
+  const [hideDangos, setHideDangos] = useState(false)
+
+  useLayoutEffect(() => {
+    const check = () => {
+      const els = [trImgRef.current, blImgRef.current].filter(Boolean)
+      if (!els.length) return
+      const clipped = els.some((el) => {
+        const r = el.getBoundingClientRect()
+        return r.left < 0 || r.right > window.innerWidth
+      })
+      setHideDangos(clipped)
+    }
+    check()
+    window.addEventListener('resize', check)
+    return () => window.removeEventListener('resize', check)
+  }, [])
+
+  const dangoTRClass = `${styles.dangoTR}${hideDangos ? ` ${styles.dangoHidden}` : ''}`
+  const dangoBLClass = `${styles.dangoBL}${hideDangos ? ` ${styles.dangoHidden}` : ''}`
+
   return (
     <div className={styles.heroWrap}>
       <div className={styles.signOuter}>
         {/* Top-right dango: rotate 45° so head points up-right */}
         <div
-          className={styles.dangoTR}
+          className={dangoTRClass}
           style={{ width: size, height: size, top: -outside, right: -outside }}
         >
           <div className={styles.dangoMotionFast}>
             <img
+              ref={trImgRef}
               src="/assets/dango-limeberry-cutout.png"
               alt=""
               className={styles.dangoImg}
@@ -36,11 +62,12 @@ function HeroSign() {
         </div>
 
         <div
-          className={styles.dangoBL}
+          className={dangoBLClass}
           style={{ width: size, height: size, bottom: -outside-20, left: -outside-20 }}
         >
           <div className={styles.dangoMotionSlow}>
             <img
+              ref={blImgRef}
               src="/assets/dango-limeberry-cutout.png"
               alt=""
               className={styles.dangoImg}
@@ -180,10 +207,18 @@ function Tagline() {
 
   // The tagline is the value proposition, so it renders immediately and simply
   // fades up — no per-character typing that would delay reading it.
+  // Each line has a full (desktop) and short (mobile) variant; CSS swaps them at
+  // --bp-md so the copy stays on one line on phones.
   return (
     <div className={styles.tagline}>
-      <div className={styles.taglineEyebrow}>{t('landing.taglineEyebrow', { set: CURRENT_SET })}</div>
-      <div className={styles.taglineBody}>{t('landing.taglineBody')}</div>
+      <div className={styles.taglineEyebrow}>
+        <span className={styles.lineFull}>{t('landing.taglineEyebrow', { set: CURRENT_SET })}</span>
+        <span className={styles.lineShort}>{t('landing.taglineEyebrowShort')}</span>
+      </div>
+      <div className={styles.taglineBody}>
+        <span className={styles.lineFull}>{t('landing.taglineBody')}</span>
+        <span className={styles.lineShort}>{t('landing.taglineBodyShort')}</span>
+      </div>
     </div>
   )
 }

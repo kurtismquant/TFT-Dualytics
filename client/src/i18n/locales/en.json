@@ -25,7 +25,9 @@
   },
   "landing": {
     "taglineEyebrow": "Double Up Analytics | TFT Set {{set}}",
+    "taglineEyebrowShort": "Double Up Analytics",
     "taglineBody": "Two players | Infinite Decisions | Zero hesitation",
+    "taglineBodyShort": "2 Players | ∞ Decisions | 0 Hesitation",
     "compsTitle": "Comps",
     "compsEyebrow": "TOP-FEED",
     "compsBody": "Highest-placing Double Up compositions, partner-paired and ranked by avg placement.",
@@ -142,6 +144,9 @@
   },
   "filterBar": {
     "searchPlaceholder": "Search units, items, or traits",
+    "modeLabel": "Show units or items",
+    "modeUnits": "Units",
+    "modeItems": "Items",
     "sortCost": "Cost",
     "sortName": "Name",
     "sortOrigin": "Origin",

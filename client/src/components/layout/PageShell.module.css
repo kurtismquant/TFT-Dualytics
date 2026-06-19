@@ -19,7 +19,7 @@
   max-width: 1440px;
 }
 
-@media (max-width: 760px) {
+@media (--bp-md) {
   .shell {
     --page-gutter: 1rem;
     padding-top: 1.5rem;
@@ -27,7 +27,7 @@
   }
 }
 
-@media (max-width: 420px) {
+@media (--bp-sm) {
   .shell {
     --page-gutter: 0.75rem;
     padding-top: 1rem;

@@ -187,7 +187,7 @@
   text-align: center;
 }
 
-@media (max-width: 560px) {
+@media (--bp-sm) {
   .searchRow {
     flex-wrap: wrap;
   }

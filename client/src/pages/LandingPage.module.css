@@ -130,6 +130,13 @@
   filter: drop-shadow(0 0 12px var(--focus-glow)) drop-shadow(0 0 24px var(--accent-gold-glow));
 }
 
+/* Hidden when the dango would be clipped by the window edge. Uses opacity (not
+   display:none) so JS can keep measuring its box to know when to show it again. */
+.dangoHidden {
+  opacity: 0;
+  transition: opacity 200ms ease;
+}
+
 .dangoMotionFast,
 .dangoMotionSlow {
   width: 100%;
@@ -193,6 +200,12 @@
   max-width: 800px;
   /* Reserve a line so the empty pre-typed state doesn't shift layout. */
   min-height: 1.2em;
+}
+
+/* Tagline copy has a full (desktop) and short (mobile) variant per line; the
+   short one is swapped in at --bp-md so each line stays on one row. */
+.lineShort {
+  display: none;
 }
 
 .searchForm {
@@ -525,9 +538,17 @@
   }
 }
 
-@media (max-width: 760px) {
+@media (--bp-md) {
   .main {
     padding-bottom: 32px;
+  }
+
+  .lineFull {
+    display: none;
+  }
+
+  .lineShort {
+    display: inline;
   }
 
   .sign {
@@ -549,14 +570,9 @@
   .heroWrap {
     padding: 32px 0 24px;
   }
-
-  .dangoTR,
-  .dangoBL {
-    display: none;
-  }
 }
 
-@media (max-width: 520px) {
+@media (--bp-sm) {
   .searchForm {
     padding: 0 1rem;
     margin-bottom: 48px;

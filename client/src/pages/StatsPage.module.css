@@ -154,7 +154,6 @@
 .table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 860px;
 }
 
 .table th,
@@ -326,7 +325,26 @@
   padding: 18px 0;
 }
 
-@media (max-width: 760px) {
+@media (--bp-lg) {
+  /* Hide the wide Popular column on tablet and below; let the name truncate so
+     the table always fits the screen with no horizontal scroll at any size. */
+  .colPopular {
+    display: none;
+  }
+
+  .nameCell {
+    min-width: 0;
+  }
+
+  .nameCell span {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+@media (--bp-md) {
   .header,
   .primaryControls,
   .tabBar {
@@ -352,16 +370,31 @@
   .costButton {
     min-height: 44px;
   }
+
+  /* Mobile also drops Win Rate, leaving Name + Avg Placement + Frequency. */
+  .colWinRate {
+    display: none;
+  }
+
+  /* Fixed layout so the 3 columns get explicit shares: name gives up space to
+     widen Frequency, and Avg Placement + Frequency are equal width. */
+  .table {
+    table-layout: fixed;
+  }
+
+  .colName {
+    width: 44%;
+  }
+
+  .colMetric {
+    width: 28%;
+  }
 }
 
-@media (max-width: 420px) {
+@media (--bp-sm) {
   .meta {
     white-space: normal;
     line-height: 1.35;
-  }
-
-  .table {
-    min-width: 720px;
   }
 
   .frequency {
