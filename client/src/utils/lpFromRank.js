@@ -31,11 +31,19 @@ const APEX_CHALLENGER_OFFSET = 500
 
 const DIVISION_OFFSET = { IV: 0, III: 100, II: 200, I: 300 }
 
+// Master, Grandmaster, and Challenger have no divisions — Riot still returns
+// rank: "I" for them, so callers must check tier (not rank) to detect apex.
+export function isApexTier(tier) {
+  if (!tier) return false
+  const upper = tier.toUpperCase()
+  return upper === 'MASTER' || upper === 'GRANDMASTER' || upper === 'CHALLENGER'
+}
+
 export function lpFromRank({ tier, rank, leaguePoints }) {
   if (!tier) return null
   const upper = tier.toUpperCase()
   const lp = Number(leaguePoints) || 0
-  if (upper === 'MASTER' || upper === 'GRANDMASTER' || upper === 'CHALLENGER') {
+  if (isApexTier(upper)) {
     return APEX_BASE + lp
   }
   const tierIdx = TIER_ORDER.indexOf(upper)
@@ -82,7 +90,7 @@ export function formatRankLabel({ tier, rank, leaguePoints }) {
   if (!tier) return 'Unranked'
   const upper = tier.toUpperCase()
   const lp = Number(leaguePoints) || 0
-  if (upper === 'MASTER' || upper === 'GRANDMASTER' || upper === 'CHALLENGER') {
+  if (isApexTier(upper)) {
     const pretty = upper.charAt(0) + upper.slice(1).toLowerCase()
     return `${pretty} ${lp} LP`
   }

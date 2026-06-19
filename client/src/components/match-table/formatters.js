@@ -1,3 +1,5 @@
+import { isApexTier } from '../../utils/lpFromRank.js'
+
 export function getPlacementClass(styles, placement) {
   return {
     1: styles.p1,
@@ -47,5 +49,7 @@ export function getRankIconUrl(tier) {
 export function formatRankShort(rankInfo) {
   if (!rankInfo?.tier) return null
   const tier = rankInfo.tier.charAt(0).toUpperCase() + rankInfo.tier.slice(1).toLowerCase()
+  // Apex tiers (Master/GM/Challenger) have no division — Riot returns rank "I" anyway.
+  if (isApexTier(rankInfo.tier)) return `${tier} ${rankInfo.leaguePoints}LP`
   return `${tier} ${rankInfo.rank} ${rankInfo.leaguePoints}LP`
 }

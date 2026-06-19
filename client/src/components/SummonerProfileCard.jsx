@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import { useBookmarkStore } from '../store/bookmarkStore.js'
+import { isApexTier } from '../utils/lpFromRank.js'
 import styles from './SummonerProfileCard.module.css'
 
 const RANK_ICON_BASE = 'https://raw.communitydragon.org/latest/game/assets/ux/tftmobile/particles'
@@ -104,7 +105,10 @@ export default function SummonerProfileCard({
             )}
             <div className={styles.rankText}>
               <span className={styles.tierLabel}>
-                {formatTier(rankInfo.tier)} {formatRank(rankInfo.rank)}
+                <span className={styles.tierName}>{formatTier(rankInfo.tier)}</span>
+                {!isApexTier(rankInfo.tier) && formatRank(rankInfo.rank) && (
+                  <span className={styles.division}>{formatRank(rankInfo.rank)}</span>
+                )}
               </span>
               <span className={styles.lpLabel}>{rankInfo.leaguePoints} LP</span>
             </div>

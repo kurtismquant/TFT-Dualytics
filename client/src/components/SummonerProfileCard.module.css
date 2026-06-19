@@ -150,6 +150,9 @@
 }
 
 .tierLabel {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
   font-family: var(--font-body);
   font-size: var(--text-sm);
   font-weight: var(--fw-bold);
@@ -245,6 +248,12 @@
   .rankIcon {
     width: 28px;
     height: 28px;
+  }
+
+  /* Mobile: hide only the tier word — keep the icon, division number, and LP.
+     Divisional → "icon  II  209 LP"; apex → "icon  209 LP". */
+  .tierName {
+    display: none;
   }
 
 }
