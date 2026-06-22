@@ -241,7 +241,7 @@
   },
   "teammates": {
     "title": "Compañeros Más Frecuentes",
-    "tip": "Haz clic en una fila para filtrar partidas por compañero",
+    "tip": "Filtrar partidas por compañero",
     "dismissTip": "Cerrar aviso",
     "clearFilter": "Quitar Filtro",
     "clearAriaLabel": "Quitar filtro",

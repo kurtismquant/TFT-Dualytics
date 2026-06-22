@@ -241,7 +241,7 @@
   },
   "teammates": {
     "title": "Most Frequent Teammates",
-    "tip": "Click a row to filter matches by teammate",
+    "tip": "Filter matches by teammate",
     "dismissTip": "Dismiss hint",
     "clearFilter": "Clear Filter",
     "clearAriaLabel": "Clear filter",
