@@ -4,6 +4,7 @@ import { DamageIcon, TraitChips, UnitsGrid } from './BoardDisplay.jsx'
 import PlacementBadge from '../ui/PlacementBadge.jsx'
 import {
   calcBoardCost,
+  formatRankDetail,
   formatRankShort,
   formatRound,
   getPlacementClass,
@@ -12,7 +13,7 @@ import {
 } from './formatters.js'
 import styles from '../MatchTable.module.css'
 
-export default function ParticipantRow({ participant, champions, items, traits, participantRanks, ownPuuids, region }) {
+export default function ParticipantRow({ participant, champions, items, traits, excludeTraitIds, participantRanks, ownPuuids, region }) {
   const { t } = useTranslation()
   const resolvedUnits = resolveUnits(participant.units, champions, items)
   const allItems = items
@@ -21,6 +22,7 @@ export default function ParticipantRow({ participant, champions, items, traits, 
   const placementLabel = t(`placement.${participant.teamPlacement}`, { defaultValue: String(participant.teamPlacement || '') })
   const rankInfo = participantRanks?.[participant.puuid] || null
   const rankText = formatRankShort(rankInfo)
+  const rankDetail = formatRankDetail(rankInfo)
   const rankIconUrl = rankInfo ? getRankIconUrl(rankInfo.tier) : null
   const isSelf = !!(participant.puuid && ownPuuids?.has(participant.puuid))
   const canLink = !isSelf && region && participant.gameName && participant.tagLine
@@ -52,7 +54,14 @@ export default function ParticipantRow({ participant, champions, items, traits, 
           <span className={styles.participantName}>{nameContent}</span>
         )}
         {rankIconUrl && <img src={rankIconUrl} alt={rankInfo.tier} className={styles.participantRankIcon} />}
-        {rankText && <span className={styles.participantRank}>{rankText}</span>}
+        {rankInfo?.tier && (
+          <span className={styles.participantRank}>
+            {/* Desktop: full text. Mobile: icon + division (non-apex) + LP. */}
+            <img src={rankIconUrl} alt="" aria-hidden="true" className={styles.participantRankBoxIcon} />
+            <span className={styles.participantRankText}>{rankText}</span>
+            <span className={styles.participantRankDetail}>{rankDetail}</span>
+          </span>
+        )}
         {participant.totalDamageToPlayers != null && (
           <span className={styles.stat} title="Damage to players">
             <DamageIcon />
@@ -68,7 +77,7 @@ export default function ParticipantRow({ participant, champions, items, traits, 
       </div>
       <div className={styles.participantBoard}>
         <div className={styles.participantTraits}>
-          <TraitChips traitData={participant.traits} traits={traits} filterOne={false} allChampions={champions} />
+          <TraitChips traitData={participant.traits} traits={traits} filterOne={false} excludeTraitIds={excludeTraitIds} allChampions={champions} />
         </div>
         <div className={styles.participantUnits}>
           <UnitsGrid resolvedUnits={resolvedUnits} allItems={allItems} />

@@ -1,7 +1,7 @@
 import ParticipantRow from './ParticipantRow.jsx'
 import styles from '../MatchTable.module.css'
 
-export default function ExpandedScoreboard({ match, champions, items, traits, participantRanks, ownPuuids, region, id, labelledBy }) {
+export default function ExpandedScoreboard({ match, champions, items, traits, excludeTraitIds, participantRanks, ownPuuids, region, id, labelledBy }) {
   const participants = match.allParticipants
   if (!participants?.length) {
     return <div className={styles.expandedEmpty} id={id} role="status">Full scoreboard not available - restart the server to fetch new match data.</div>
@@ -20,6 +20,7 @@ export default function ExpandedScoreboard({ match, champions, items, traits, pa
                 champions={champions}
                 items={items}
                 traits={traits}
+                excludeTraitIds={excludeTraitIds}
                 participantRanks={participantRanks}
                 ownPuuids={ownPuuids}
                 region={region}

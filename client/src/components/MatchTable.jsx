@@ -2,9 +2,10 @@ import { useMemo } from 'react'
 import { useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import MatchCard from './match-table/MatchCard.jsx'
+import { getUniqueTraitIds } from '../utils/compName.js'
 import styles from './MatchTable.module.css'
 
-function MatchSection({ matches, label, splitView, summonerName, summonerTag, participantRanks, isTwoPlayer, champions, items, traits, ownPuuids, region }) {
+function MatchSection({ matches, label, splitView, summonerName, summonerTag, participantRanks, isTwoPlayer, champions, items, traits, excludeTraitIds, ownPuuids, region }) {
   const sortedMatches = useMemo(
     () => matches.slice().sort((a, b) => b.date - a.date),
     [matches]
@@ -20,6 +21,7 @@ function MatchSection({ matches, label, splitView, summonerName, summonerTag, pa
             champions={champions}
             items={items}
             traits={traits}
+            excludeTraitIds={excludeTraitIds}
             showPartnerBadge={isTwoPlayer}
             splitView={splitView}
             summonerName={summonerName}
@@ -57,6 +59,9 @@ export default function MatchTable({ summonerData, summoner2Data, champions, ite
     () => new Set([puuid1, puuid2].filter(Boolean)),
     [puuid1, puuid2]
   )
+  // "Unique" traits = held by exactly one champion in the set; hidden from the
+  // match trait chips as they only add clutter. Computed once for all cards.
+  const excludeTraitIds = useMemo(() => getUniqueTraitIds(champions, traits), [champions, traits])
 
   if (matches1.length === 0 && matches2.length === 0) {
     return <p className={styles.empty} role="status">{t('matchHistory.noMatches')}</p>
@@ -75,6 +80,7 @@ export default function MatchTable({ summonerData, summoner2Data, champions, ite
         champions={champions}
         items={items}
         traits={traits}
+        excludeTraitIds={excludeTraitIds}
         ownPuuids={ownPuuids}
         region={region}
       />
@@ -90,6 +96,7 @@ export default function MatchTable({ summonerData, summoner2Data, champions, ite
           champions={champions}
           items={items}
           traits={traits}
+          excludeTraitIds={excludeTraitIds}
           ownPuuids={ownPuuids}
           region={region}
         />

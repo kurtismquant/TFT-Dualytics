@@ -36,7 +36,7 @@ export default function CompPage() {
   const matchCount = compsData?.matchCount ?? 0;
   const patches = compsData?.patches || [];
   const patchHelpId = 'comp-patch-help';
-  const uniqueTraitIds = useMemo(() => getUniqueTraitIds(champions || []), [champions]);
+  const uniqueTraitIds = useMemo(() => getUniqueTraitIds(champions || [], traits || []), [champions, traits]);
   const filteredComps = useMemo(
     () => filterComps(comps, champions || [], traits || [], compSearch),
     [comps, champions, traits, compSearch]

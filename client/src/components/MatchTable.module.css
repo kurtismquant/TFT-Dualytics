@@ -66,6 +66,11 @@
 .compactContent:hover {
   background: var(--bg-card-hover);
 }
+
+/* Keep the hover color while the card is expanded; reverts on collapse. */
+.compactContentActive {
+  background: var(--bg-card-hover);
+}
 /* ── Compact content wrapper — carries placement left-bar ── */
 .compactContent {
   border-left: 3px solid transparent;
@@ -332,7 +337,8 @@
 .expandedBody {
   border-top: 1px solid var(--bg-border);
   cursor: default;
-  background-color: var(--bg-base);
+  /* Match the default (un-hovered) row background, not the darker page surface. */
+  background-color: var(--bg-card);
 }
 
 .expandedBody .participantRow:hover {
@@ -429,6 +435,13 @@
   flex-shrink: 0;
 }
 
+/* Mobile-only rank box content (icon + division/LP); hidden on desktop, which
+   shows the full .participantRankText instead. */
+.participantRankBoxIcon,
+.participantRankDetail {
+  display: none;
+}
+
 .boardCost {
   font-family: var(--font-body);
   font-size: var(--text-xs);
@@ -522,6 +535,45 @@
   .participantName,
   .expandedEmpty {
     line-height: 1.25;
+  }
+}
+
+/* Mobile: compact the expanded player row — rank as a boxed icon, drop the
+   external rank icon + total gold + eliminated-at, and pin damage to the right. */
+@media (--bp-md) {
+  .participantRankIcon {
+    display: none;
+  }
+
+  .participantRankText {
+    display: none;
+  }
+
+  .participantRankBoxIcon {
+    display: block;
+    width: 16px;
+    height: 16px;
+    object-fit: contain;
+  }
+
+  .participantRankDetail {
+    display: inline;
+  }
+
+  .participantRank {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 6px;
+  }
+
+  .participantMeta .round,
+  .participantMeta .boardCost {
+    display: none;
+  }
+
+  .participantMeta .stat {
+    margin-left: auto;
   }
 }
 

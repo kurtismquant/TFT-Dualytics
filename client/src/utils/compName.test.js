@@ -3,6 +3,9 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import { generateCompName, getUniqueTraitIds } from './compName.js'
 
+// champion.traits hold trait DISPLAY NAMES; comp/match trait ids are apiNames.
+// The fixtures keep these distinct (id !== name) so the tests exercise the real
+// name → apiName translation rather than masking it with id === name.
 const champions = [
   { id: 'Veigar', name: 'Veigar', cost: 5, traits: ['Mystic', 'Sorcerer'] },
   { id: 'Ahri', name: 'Ahri', cost: 4, traits: ['Mystic', 'Sorcerer'] },
@@ -14,25 +17,27 @@ const champions = [
 ]
 
 const traits = [
-  { id: 'Mystic', name: 'Mystic' },
-  { id: 'Sorcerer', name: 'Sorcerer' },
-  { id: 'Bastion', name: 'Bastion' },
-  { id: 'Apex', name: 'Apex' },
+  { id: 'TFT17_Mystic', name: 'Mystic' },
+  { id: 'TFT17_Sorcerer', name: 'Sorcerer' },
+  { id: 'TFT17_Bastion', name: 'Bastion' },
+  { id: 'TFT17_Apex', name: 'Apex' },
 ]
 
-test('getUniqueTraitIds flags single-champion traits only', () => {
-  const unique = getUniqueTraitIds(champions)
-  assert.ok(unique.has('Apex'))
-  assert.ok(!unique.has('Mystic'))
-  assert.ok(!unique.has('Sorcerer'))
+test('getUniqueTraitIds returns apiNames for single-champion traits only', () => {
+  const unique = getUniqueTraitIds(champions, traits)
+  // Returned ids are apiNames (matching the t.id the chip filters check), not display names.
+  assert.ok(unique.has('TFT17_Apex'))
+  assert.ok(!unique.has('Apex'))
+  assert.ok(!unique.has('TFT17_Mystic'))
+  assert.ok(!unique.has('TFT17_Sorcerer'))
 })
 
 test('gold-or-better trait drives the name', () => {
   const comp = {
     units: [{ id: 'Veigar', items: ['x', 'y', 'z'] }],
     traits: [
-      { id: 'Mystic', numUnits: 6, style: 4, tierCurrent: 3 }, // gold
-      { id: 'Sorcerer', numUnits: 2, style: 2, tierCurrent: 1 }, // silver
+      { id: 'TFT17_Mystic', numUnits: 6, style: 4, tierCurrent: 3 }, // gold
+      { id: 'TFT17_Sorcerer', numUnits: 2, style: 2, tierCurrent: 1 }, // silver
     ],
   }
   assert.equal(generateCompName(comp, { champions, traits }), '6 Mystic')
@@ -42,8 +47,8 @@ test('unique traits are ignored even at higher tier', () => {
   const comp = {
     units: [{ id: 'Aatrox', items: ['x'] }],
     traits: [
-      { id: 'Apex', numUnits: 1, style: 5, tierCurrent: 1 }, // unique, prismatic
-      { id: 'Mystic', numUnits: 4, style: 4, tierCurrent: 2 }, // gold, real headline
+      { id: 'TFT17_Apex', numUnits: 1, style: 5, tierCurrent: 1 }, // unique, prismatic
+      { id: 'TFT17_Mystic', numUnits: 4, style: 4, tierCurrent: 2 }, // gold, real headline
     ],
   }
   assert.equal(generateCompName(comp, { champions, traits }), '4 Mystic')
@@ -56,7 +61,7 @@ test('no gold trait falls back to carry units', () => {
       { id: 'Poppy', items: [] },
       { id: 'Lulu', items: ['a'] }, // 1 item → secondary
     ],
-    traits: [{ id: 'Sorcerer', numUnits: 2, style: 2, tierCurrent: 1 }],
+    traits: [{ id: 'TFT17_Sorcerer', numUnits: 2, style: 2, tierCurrent: 1 }],
   }
   // Two carries → "Ahri Lulu"; both names fit under the cap.
   assert.equal(generateCompName(comp, { champions, traits }), 'Ahri Lulu')
@@ -65,7 +70,7 @@ test('no gold trait falls back to carry units', () => {
 test('single carry gets a Carry suffix when it fits', () => {
   const comp = {
     units: [{ id: 'Ahri', items: ['a', 'b'] }, { id: 'Poppy', items: [] }],
-    traits: [{ id: 'Sorcerer', numUnits: 1, style: 1, tierCurrent: 0 }],
+    traits: [{ id: 'TFT17_Sorcerer', numUnits: 1, style: 1, tierCurrent: 0 }],
   }
   assert.equal(generateCompName(comp, { champions, traits }), 'Ahri Carry')
 })

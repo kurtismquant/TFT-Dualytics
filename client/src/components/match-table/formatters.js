@@ -9,8 +9,16 @@ export function getPlacementClass(styles, placement) {
   }[placement] || ''
 }
 
-export function formatDate(ms) {
-  return new Date(ms).toLocaleDateString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
+export function formatDate(ms, compact = false) {
+  const d = new Date(ms)
+  // Compact (mobile): format date + time separately and join with a comma so the
+  // locale's "at" connector (e.g. en-GB "22 Jun at 11:18") is dropped.
+  if (compact) {
+    const datePart = d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })
+    const timePart = d.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })
+    return `${datePart}, ${timePart}`
+  }
+  return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
 }
 
 export function formatRound(r) {
@@ -52,4 +60,12 @@ export function formatRankShort(rankInfo) {
   // Apex tiers (Master/GM/Challenger) have no division — Riot returns rank "I" anyway.
   if (isApexTier(rankInfo.tier)) return `${tier} ${rankInfo.leaguePoints}LP`
   return `${tier} ${rankInfo.rank} ${rankInfo.leaguePoints}LP`
+}
+
+// Tier omitted (the rank icon conveys it): division (non-apex only) + LP.
+// Apex → "120LP"; otherwise → "II 45LP".
+export function formatRankDetail(rankInfo) {
+  if (!rankInfo?.tier) return null
+  if (isApexTier(rankInfo.tier)) return `${rankInfo.leaguePoints}LP`
+  return `${rankInfo.rank} ${rankInfo.leaguePoints}LP`
 }

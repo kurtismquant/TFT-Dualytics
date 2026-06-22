@@ -10,18 +10,25 @@
 const GOLD_STYLE = 4
 const MAX_LEN = 24
 
-// Trait ids held by exactly one champion in the set are "unique" traits — they
-// add no signal to a comp name and clutter the trait chip row, so we drop them.
-export function getUniqueTraitIds(champions) {
+// Traits held by exactly one champion in the set are "unique" traits — they add
+// no signal to a comp name and clutter the trait chip row, so we drop them.
+//
+// champion.traits hold trait DISPLAY NAMES (e.g. "Academy"), but match/comp trait
+// ids are Riot apiNames (e.g. "TFT17_Academy"). Map name → id via the trait
+// metadata so the returned Set matches the t.id the chip filters check against —
+// otherwise it never intersects and nothing is excluded.
+export function getUniqueTraitIds(champions, traits = []) {
+  const nameToId = new Map((traits || []).map(t => [t.name, t.id]))
   const counts = new Map()
   for (const champ of champions || []) {
-    for (const traitId of champ.traits || []) {
-      counts.set(traitId, (counts.get(traitId) || 0) + 1)
+    for (const traitName of champ.traits || []) {
+      counts.set(traitName, (counts.get(traitName) || 0) + 1)
     }
   }
   const unique = new Set()
-  for (const [traitId, count] of counts) {
-    if (count === 1) unique.add(traitId)
+  for (const [traitName, count] of counts) {
+    if (count !== 1) continue
+    unique.add(nameToId.get(traitName) ?? traitName) // fall back to raw name if no metadata
   }
   return unique
 }
@@ -32,7 +39,7 @@ function truncate(name) {
 }
 
 export function generateCompName(comp, { champions = [], traits = [], uniqueTraitIds } = {}) {
-  const unique = uniqueTraitIds || getUniqueTraitIds(champions)
+  const unique = uniqueTraitIds || getUniqueTraitIds(champions, traits)
   const traitName = new Map((traits || []).map(t => [t.id, t.name]))
   const championById = new Map((champions || []).map(c => [c.id, c]))
 

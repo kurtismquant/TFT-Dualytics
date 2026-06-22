@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next'
 import { useIsMobile } from '../hooks/useMediaQuery.js'
 import styles from './SummonerStatsCard.module.css'
 import { getCSSVar } from '../utils/cssVars.js'
+import { calcBoardCost } from './match-table/formatters.js'
 
 // Compact mobile grid: 6 stats in a fixed order (2 rows × 3). The other stats
 // (avg star level, team cost, eliminated) are dropped on mobile.
@@ -23,7 +24,6 @@ function pct(count, total) {
 
 function computeStats(matches, champions) {
   if (!matches.length) return null
-  const costMap = new Map(champions.map(c => [c.id, c.cost ?? 0]))
   const total = matches.length
   const allUnits = matches.flatMap(m => m.units)
   return {
@@ -34,7 +34,7 @@ function computeStats(matches, champions) {
     winRate: pct(matches.filter(m => m.teamPlacement === 1).length, total),
     avgLevel: avg(matches.map(m => m.level)).toFixed(1),
     avgStarLevel: avg(allUnits.map(u => u.tier)).toFixed(2),
-    avgTeamCost: avg(allUnits.map(u => costMap.get(u.id) ?? 0)).toFixed(1),
+    avgTeamCost: avg(matches.map(m => calcBoardCost(m.units, champions))).toFixed(1),
     avgEliminated: lastRoundToStage(Math.round(avg(matches.map(m => m.lastRound)))),
   }
 }

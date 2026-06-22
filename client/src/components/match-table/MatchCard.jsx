@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { DamageIcon, TraitChips, UnitsGrid } from './BoardDisplay.jsx'
 import ExpandedScoreboard from './ExpandedScoreboard.jsx'
 import PlacementBadge from '../ui/PlacementBadge.jsx'
+import { useIsMobile } from '../../hooks/useMediaQuery.js'
 import {
   formatDate,
   formatRound,
@@ -12,13 +13,14 @@ import {
 } from './formatters.js'
 import styles from '../MatchTable.module.css'
 
-export default function MatchCard({ match, champions, items, traits, showPartnerBadge, splitView, summonerName, summonerTag, participantRanks, ownPuuids, region }) {
+export default function MatchCard({ match, champions, items, traits, excludeTraitIds, showPartnerBadge, splitView, summonerName, summonerTag, participantRanks, ownPuuids, region }) {
   const { t } = useTranslation()
   const reactId = useId()
+  const isMobile = useIsMobile()
   const [expanded, setExpanded] = useState(false)
   const teamPlacement = getTeamPlacement(match)
   const placementClass = getPlacementClass(styles, teamPlacement)
-  const dateLabel = formatDate(match.date)
+  const dateLabel = formatDate(match.date, isMobile)
   const buttonId = `${reactId}-match-summary`
   const panelId = `${reactId}-match-scoreboard`
   const placementLabel = t(`placement.${teamPlacement}`, { defaultValue: String(teamPlacement || '–') })
@@ -41,6 +43,7 @@ export default function MatchCard({ match, champions, items, traits, showPartner
       champions={champions}
       items={items}
       traits={traits}
+      excludeTraitIds={excludeTraitIds}
       participantRanks={participantRanks}
       ownPuuids={ownPuuids}
       region={region}
@@ -61,7 +64,7 @@ export default function MatchCard({ match, champions, items, traits, showPartner
           aria-label={toggleLabel}
           id={buttonId}
         >
-          <div className={`${styles.compactContent} ${placementClass}`}>
+          <div className={`${styles.compactContent} ${placementClass} ${expanded ? styles.compactContentActive : ''}`}>
           <div className={styles.splitBody}>
             {/* Left — user */}
             <div className={styles.splitCol}>
@@ -83,7 +86,7 @@ export default function MatchCard({ match, champions, items, traits, showPartner
                 )}
               </div>
               <div className={styles.splitTraits}>
-                <TraitChips traitData={match.traits} traits={traits} filterOne allChampions={champions} />
+                <TraitChips traitData={match.traits} traits={traits} filterOne excludeTraitIds={excludeTraitIds} allChampions={champions} />
               </div>
               <div className={styles.splitUnits}>
                 <UnitsGrid resolvedUnits={resolvedUnits} allItems={items} />
@@ -111,7 +114,7 @@ export default function MatchCard({ match, champions, items, traits, showPartner
                 )}
               </div>
               <div className={styles.splitTraits}>
-                <TraitChips traitData={match.partnerTraits} traits={traits} filterOne allChampions={champions} />
+                <TraitChips traitData={match.partnerTraits} traits={traits} filterOne excludeTraitIds={excludeTraitIds} allChampions={champions} />
               </div>
               <div className={styles.splitUnits}>
                 <UnitsGrid resolvedUnits={resolvedPartnerUnits} allItems={items} />
@@ -141,7 +144,7 @@ export default function MatchCard({ match, champions, items, traits, showPartner
         aria-label={toggleLabel}
         id={buttonId}
       >
-        <div className={`${styles.compactContent} ${placementClass}`}>
+        <div className={`${styles.compactContent} ${placementClass} ${expanded ? styles.compactContentActive : ''}`}>
         <div className={styles.headerBar}>
           <div className={styles.headerLeft}>
             <span className={styles.modeLabel}>Double Up</span>
@@ -159,7 +162,7 @@ export default function MatchCard({ match, champions, items, traits, showPartner
           </div>
           <div className={styles.headerRight}>
             <div className={styles.traitRow}>
-              <TraitChips traitData={resolvedTraits} traits={traits} filterOne={false} allChampions={champions} />
+              <TraitChips traitData={resolvedTraits} traits={traits} filterOne={false} excludeTraitIds={excludeTraitIds} allChampions={champions} />
             </div>
           </div>
         </div>
