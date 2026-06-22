@@ -157,16 +157,71 @@
   }
 }
 
-@media (max-width: 760px) {
-  .statsGrid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-
-  .statItem:nth-child(3n) {
-    border-right: none;
-  }
-
+/* Mobile: compact 2×3 grid of 6 stats (the JSX renders only those 6 here).
+   Full-width horizontal lines (mid-row + below grid); vertical dividers are
+   inset so they don't touch the horizontal lines or the top. The 16px inset
+   matches the card's mobile padding below — keep them in sync. */
+@media (--bp-md) {
   .card {
     padding: 16px;
+  }
+
+  .statsGrid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    /* base padding-bottom:20px would offset the bottom line; the row-2 cells own
+       the gap instead, so the line sits right at their edge. */
+    padding-bottom: 0;
+  }
+
+  .statItem {
+    position: relative;
+    align-items: center;
+    text-align: center;
+    gap: 6px;
+    padding: 0 12px;
+    /* Drop the base/tablet full-height borders; verticals are drawn via ::after. */
+    border-right: none;
+    border-top: none;
+  }
+
+  /* Shrink the value + label with the viewport so all 6 stats always fit the
+     card on small screens (capped at the base sizes on wider mobile). */
+  .statValue {
+    font-size: clamp(0.95rem, 4.6vw, var(--text-2xl));
+  }
+
+  .statLabel {
+    font-size: clamp(0.5rem, 2.3vw, var(--text-2xs));
+  }
+
+  /* Row 1 (cells 1–3): content flush to grid top, 16px gap before the mid line. */
+  .statItem:nth-child(-n + 3) {
+    padding-bottom: 16px;
+  }
+
+  /* Row 2 (cells 4–6): full-width mid line on top, 16px gaps above & below. */
+  .statItem:nth-child(n + 4) {
+    border-top: 1px solid var(--bg-border);
+    padding-top: 16px;
+    padding-bottom: 16px;
+  }
+
+  /* Inset vertical dividers between columns (right edge of cols 1 & 2 each row). */
+  .statItem:nth-child(3n + 1)::after,
+  .statItem:nth-child(3n + 2)::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 16px;
+    bottom: 16px;
+    width: 1px;
+    background: var(--bg-border);
+  }
+
+  /* Row-1 dividers reach the grid top (whose 16px offset from the card border
+     is itself the card padding). */
+  .statItem:nth-child(-n + 3)::after {
+    top: 0;
   }
 }

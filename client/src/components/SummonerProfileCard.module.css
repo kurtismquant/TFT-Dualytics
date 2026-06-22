@@ -79,6 +79,11 @@
   gap: 6px;
 }
 
+/* Word shows on desktop; hidden on mobile so only the dots remain. */
+.refreshingText {
+  display: inline;
+}
+
 .dots {
   display: inline-flex;
   align-items: center;
@@ -224,7 +229,9 @@
   box-shadow: 0 0 12px var(--search-focus-glow);
 }
 
-@media (max-width: 760px) {
+/* Mobile: reflow the header into 2 rows of 2.
+   Row 1: name+tag (left) | refresh (right).  Row 2: rank (left) | bookmark (right). */
+@media (--bp-md) {
   .card {
     flex-wrap: wrap;
     padding: 12px 16px;
@@ -236,13 +243,47 @@
     font-size: var(--text-base);
   }
 
+  /* Row 1: full-width, name pinned left and refresh pinned right. */
   .identityGroup {
-    flex-wrap: wrap;
+    width: 100%;
+    flex-wrap: nowrap;
+    justify-content: space-between;
   }
 
+  /* Long names slide horizontally inside their column instead of growing the
+     row — keeps the refresh button on-screen. Scrollbar hidden for a clean look. */
+  .identity {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow-x: auto;
+    white-space: nowrap;
+    scrollbar-width: none;
+  }
+
+  .identity::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* The divider doesn't belong in the 2-row layout. */
+  .divider {
+    display: none;
+  }
+
+  /* Refresh holds its size (never pushed off) and matches the bookmark height.
+     Fixed height keeps idle vs refreshing states identical. */
   .refreshButton {
-    min-height: 30px;
+    flex-shrink: 0;
+    height: 32px;
+    min-height: 0;
     padding: 0 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* While refreshing, hide the word and keep only the dot animation. */
+  .refreshingText {
+    display: none;
   }
 
   .rankIcon {
@@ -250,10 +291,20 @@
     height: 28px;
   }
 
-  /* Mobile: hide only the tier word — keep the icon, division number, and LP.
-     Divisional → "icon  II  209 LP"; apex → "icon  209 LP". */
-  .tierName {
-    display: none;
+  /* Mobile: show the full rank like desktop (icon + tier + division + LP), but
+     compact — shrink the tier/division text to match the LP number (--text-xs). */
+  .tierLabel {
+    font-size: var(--text-xs);
   }
+}
 
+/* Touch devices: enforce the 44px minimum touch target (overrides the 32px
+   sizing above). The global rule in globals.css is defeated here by the
+   class-level min-height, so re-assert it on these buttons. */
+@media (pointer: coarse) {
+  .refreshButton,
+  .bookmarkBtn {
+    min-height: 44px;
+    min-width: 44px;
+  }
 }

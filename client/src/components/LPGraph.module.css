@@ -18,6 +18,8 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
+  /* Hold the title at full size; the range select absorbs any shrink instead. */
+  flex-shrink: 0;
 }
 
 .title {
@@ -27,6 +29,8 @@
   color: var(--text-secondary);
   letter-spacing: var(--track-widest);
   text-transform: uppercase;
+  /* Always one row — never wrap to a second line. */
+  white-space: nowrap;
 }
 
 .sub {
@@ -40,7 +44,9 @@
   background: transparent;
   color: var(--text-primary);
   border: 1px solid var(--bg-border);
-  padding: 6px 34px 6px 10px;
+  /* Match the refresh/bookmark button height (32px) in the card above. */
+  height: 32px;
+  padding: 0 34px 0 10px;
   font-family: var(--font-body);
   font-size: var(--text-xs);
   letter-spacing: var(--track-wider);
@@ -52,6 +58,8 @@
   background-position: right 12px center;
   background-size: 12px 8px;
   background-repeat: no-repeat;
+  /* Allow the select to shrink on very small screens so it always fits the card. */
+  min-width: 0;
 }
 
 .select:hover {
@@ -105,8 +113,17 @@
   color: #f87171;
 }
 
-@media (max-width: 760px) {
+@media (--bp-md) {
   .card {
     padding: 16px;
+  }
+}
+
+/* Touch devices: 44px minimum touch target (the global rule doesn't set a
+   min-width on selects, and our min-width:0 would otherwise let it go smaller). */
+@media (pointer: coarse) {
+  .select {
+    min-height: 44px;
+    min-width: 44px;
   }
 }

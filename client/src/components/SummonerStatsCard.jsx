@@ -5,8 +5,13 @@ import {
 import { lastRoundToStage } from '../utils/roundToStage.js'
 import { useSettings } from '../contexts/useSettings.js'
 import { useTranslation } from 'react-i18next'
+import { useIsMobile } from '../hooks/useMediaQuery.js'
 import styles from './SummonerStatsCard.module.css'
 import { getCSSVar } from '../utils/cssVars.js'
+
+// Compact mobile grid: 6 stats in a fixed order (2 rows × 3). The other stats
+// (avg star level, team cost, eliminated) are dropped on mobile.
+const MOBILE_STAT_KEYS = ['gamesPlayed', 'top2Rate', 'winRate', 'avgPlacement', 'avgDamage', 'avgLevel']
 
 function avg(arr) {
   return arr.length ? arr.reduce((a, b) => a + b, 0) / arr.length : 0
@@ -37,6 +42,7 @@ function computeStats(matches, champions) {
 export default function SummonerStatsCard({ matches, resolvedChampions }) {
   const { theme } = useSettings()
   const { t } = useTranslation()
+  const isMobile = useIsMobile()
   const [activeBar, setActiveBar] = useState(null)
   const [activeX, setActiveX] = useState(null)
 
@@ -56,6 +62,11 @@ export default function SummonerStatsCard({ matches, resolvedChampions }) {
     ['avgTeamCost', t('statsCard.avgTeamCost')],
     ['avgEliminated', t('statsCard.avgEliminated')],
   ]
+
+  // Mobile shows a reordered subset; desktop keeps the full list.
+  const visibleStats = isMobile
+    ? MOBILE_STAT_KEYS.map(k => STAT_DEFS.find(([key]) => key === k)).filter(Boolean)
+    : STAT_DEFS
 
   const cs = getComputedStyle(document.documentElement)
   const axisColor = cs.getPropertyValue('--chart-axis-color').trim()
@@ -88,7 +99,7 @@ export default function SummonerStatsCard({ matches, resolvedChampions }) {
   return (
     <div className={styles.card}>
       <div className={styles.statsGrid}>
-        {STAT_DEFS.map(([key, label]) => (
+        {visibleStats.map(([key, label]) => (
           <div key={key} className={styles.statItem}>
             <span className={styles.statLabel}>{label}</span>
             <span className={styles.statValue}>{stats[key]}</span>

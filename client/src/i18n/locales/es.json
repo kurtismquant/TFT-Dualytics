@@ -223,6 +223,7 @@
   },
   "lpGraph": {
     "title": "Historial LP — {{name}}",
+    "titleBase": "Historial LP",
     "matches_one": "{{count}} partida",
     "matches_other": "{{count}} partidas",
     "noData": "Sin datos de rango aún",
@@ -230,6 +231,10 @@
     "range50": "Últimas 50 Partidas",
     "range100": "Últimas 100 Partidas",
     "rangeAll": "Todas las Partidas",
+    "range20Short": "Últimas 20",
+    "range50Short": "Últimas 50",
+    "range100Short": "Últimas 100",
+    "rangeAllShort": "Todas",
     "rangeLabel": "Filtro de rango de partidas",
     "emptyOne": "Esperando la próxima partida para graficar los cambios de LP",
     "emptyRange": "Sin partidas en este rango"

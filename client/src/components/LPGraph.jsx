@@ -12,6 +12,7 @@ import { getCSSVar } from '../utils/cssVars.js'
 import { estimateMatchLp } from '../utils/estimateMatchLp.js'
 import { useSettings } from '../contexts/useSettings.js'
 import { useTranslation } from 'react-i18next'
+import { useIsMobile, useMediaQuery } from '../hooks/useMediaQuery.js'
 import styles from './LPGraph.module.css'
 
 function getCutoffMs(matches, rangeValue) {
@@ -49,10 +50,15 @@ function CustomDot(props) {
 export default function LPGraph({ summoner, rankSnapshots, matches }) {
   const { theme } = useSettings()
   const { t } = useTranslation()
+  const isMobile = useIsMobile()
+  // On really small screens the select shrinks, so drop the "Games" word (--bp-sm).
+  const isSmall = useMediaQuery('(max-width: 480px)')
   const [range, setRange] = useState('20')
 
   const cs = getComputedStyle(document.documentElement)
   const axisColor = cs.getPropertyValue('--chart-axis-color').trim()
+  // Slightly brighter than the muted axis color, for the apex LP number labels.
+  const labelColor = cs.getPropertyValue('--text-secondary').trim()
   const gridColor = cs.getPropertyValue('--chart-grid-color').trim()
   const lineColor = cs.getPropertyValue('--chart-line-color').trim()
   const cursorColor = cs.getPropertyValue('--chart-cursor-color').trim()
@@ -64,10 +70,10 @@ export default function LPGraph({ summoner, rankSnapshots, matches }) {
   }
 
   const RANGE_OPTIONS = [
-    { value: '20', label: t('lpGraph.range20') },
-    { value: '50', label: t('lpGraph.range50') },
-    { value: '100', label: t('lpGraph.range100') },
-    { value: 'all', label: t('lpGraph.rangeAll') },
+    { value: '20', label: t(isSmall ? 'lpGraph.range20Short' : 'lpGraph.range20') },
+    { value: '50', label: t(isSmall ? 'lpGraph.range50Short' : 'lpGraph.range50') },
+    { value: '100', label: t(isSmall ? 'lpGraph.range100Short' : 'lpGraph.range100') },
+    { value: 'all', label: t(isSmall ? 'lpGraph.rangeAllShort' : 'lpGraph.rangeAll') },
   ]
 
   const allPoints = useMemo(
@@ -123,13 +129,15 @@ export default function LPGraph({ summoner, rankSnapshots, matches }) {
   }, [yDomain, lpStep])
 
   const summonerName = summoner?.gameName ? `${summoner.gameName}#${summoner.tagLine}` : 'Player'
+  // Mobile drops the player name (it's redundant + space-tight); desktop keeps it.
+  const title = isMobile ? t('lpGraph.titleBase') : t('lpGraph.title', { name: summonerName })
   const isEmpty = pointsWithDelta.length < 2
 
   return (
     <div className={styles.card}>
       <div className={styles.header}>
         <div className={styles.titleGroup}>
-          <span className={styles.title}>{t('lpGraph.title', { name: summonerName })}</span>
+          <span className={styles.title}>{title}</span>
           <span className={styles.sub}>
             {pointsWithDelta.length > 0
               ? t('lpGraph.matches', { count: pointsWithDelta.length })
@@ -183,14 +191,16 @@ export default function LPGraph({ summoner, rankSnapshots, matches }) {
                 if (v >= APEX_LP_BASE) {
                   const r = rankFromLp(v)
                   label = r ? String(r.leaguePoints) : ''
+                  fill = labelColor
+                  opacity = 0.85
                 } else {
                   const threshold = TIER_THRESHOLDS.find(
                     t => t.absLp === v && t.absLp < APEX_LP_BASE,
                   )
                   if (threshold) {
-                    label = threshold.tier
+                    // Single capital-letter abbreviation (Diamond → D, Iron → I, …).
+                    label = threshold.tier.charAt(0)
                     fill = getCSSVar(`--tier-${threshold.tier.toLowerCase()}`) || axisColor
-                    letterSpacing = 1
                     opacity = 0.85
                   }
                 }
@@ -212,7 +222,7 @@ export default function LPGraph({ summoner, rankSnapshots, matches }) {
               }}
               axisLine={false}
               tickLine={false}
-              width={72}
+              width={36}
               interval={0}
             />
             {visibleThresholds.map(t => (

@@ -92,6 +92,15 @@
   transform: none;
 }
 
+/* Desktop: show the text label, hide the magnifier (mobile flips these). */
+.btnLabel {
+  display: inline;
+}
+
+.btnIcon {
+  display: none;
+}
+
 .error {
   color: var(--accent-red);
   font-size: var(--text-sm);
@@ -99,14 +108,83 @@
   letter-spacing: var(--track-tight);
 }
 
-@media (max-width: 760px) {
+/* Mobile: collapse the three controls into one connected bar.
+   Region dropdown (~15%) | input (~75%) | gold search icon (~10%). */
+@media (--bp-md) {
   .inputs {
-    flex-direction: column;
+    gap: 0;
+    align-items: stretch;
+    border: 1px solid var(--bg-border-bright);
+    border-radius: 5px;
+    background: var(--bg-input);
+    overflow: hidden;
   }
 
-  .input,
+  /* Unified focus ring around the whole bar (replaces per-element glow). */
+  .inputs:focus-within {
+    border-color: var(--search-focus-border);
+    box-shadow: 0 0 12px var(--search-focus-glow);
+  }
+
+  /* Blend each control into the bar — the container owns the border/bg. */
   .select,
+  .input,
   .submitBtn {
-    width: 100%;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    min-width: 0;
+  }
+
+  .select {
+    flex: 0 0 15%;
+    /* `background: transparent` above clears the shorthand, so restore the caret
+       here (transparent fill + the caret image). Tighter padding/position keep
+       the arrow visible at ~15% width. */
+    background: transparent var(--select-caret-down) no-repeat right 0.3rem center;
+    background-size: 9px 6px;
+    padding: 0.5rem 1.125rem 0.5rem 0.5rem;
+  }
+
+  .input {
+    flex: 1 1 75%;
+    padding: 0.5rem 0.625rem;
+  }
+
+  /* Don't double up the glow inside the bar; defer to :focus-within above. */
+  .input:focus,
+  .select:focus {
+    border-color: transparent;
+    background-color: var(--bg-input-focus);
+    box-shadow: none;
+  }
+
+  .submitBtn {
+    flex: 0 0 10%;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    filter: none;
+    transform: none;
+  }
+
+  .submitBtn:hover,
+  .submitBtn:active {
+    filter: none;
+    transform: none;
+    box-shadow: none;
+  }
+
+  .btnLabel {
+    display: none;
+  }
+
+  .btnIcon {
+    display: block;
+    width: 18px;
+    height: 18px;
+    color: var(--accent-gold);
   }
 }

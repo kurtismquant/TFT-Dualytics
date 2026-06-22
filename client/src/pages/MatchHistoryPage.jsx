@@ -151,7 +151,6 @@ export default function MatchHistoryPage() {
     <PageShell>
       <SearchBar
         defaultRegion={region}
-        defaultName1={formatRiotId(gameName, tagLine)}
         defaultName2={formatRiotId(gameName2, tagLine2)}
       />
 

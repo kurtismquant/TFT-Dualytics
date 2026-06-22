@@ -80,7 +80,8 @@ export default function SummonerProfileCard({
           >
             {isRefreshing ? (
               <span className={styles.refreshingLabel}>
-                {t('summoner.refreshing')}
+                {/* Text is hidden on mobile (CSS), leaving just the dot animation. */}
+                <span className={styles.refreshingText}>{t('summoner.refreshing')}</span>
                 <span className={styles.dots} aria-hidden="true">
                   <span className={styles.dot} />
                   <span className={styles.dot} />

@@ -223,6 +223,7 @@
   },
   "lpGraph": {
     "title": "LP History — {{name}}",
+    "titleBase": "LP History",
     "matches_one": "{{count}} match",
     "matches_other": "{{count}} matches",
     "noData": "No rank data yet",
@@ -230,6 +231,10 @@
     "range50": "Last 50 Games",
     "range100": "Last 100 Games",
     "rangeAll": "All Games",
+    "range20Short": "Last 20",
+    "range50Short": "Last 50",
+    "range100Short": "Last 100",
+    "rangeAllShort": "All",
     "rangeLabel": "Match range filter",
     "emptyOne": "Waiting for the next match to plot LP changes",
     "emptyRange": "No matches in this range"
