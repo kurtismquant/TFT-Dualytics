@@ -81,36 +81,44 @@
   font-size: var(--text-2xs);
 }
 
+/* These badges are keyed by Data Dragon's meta `effect.style`, whose ids are
+   non-contiguous: 1=bronze, 3=silver, 4=ruby, 5=gold, 6=prismatic (2 is unused).
+   This differs from the match-data `trait.style` enum used by the trait chips
+   (consecutive 1..6). Keep these hues aligned with the meta palette in
+   StatsRowIcon.jsx / TraitList.module.css so a trait reads the same color
+   everywhere. */
 .bp_style1 {
   background: linear-gradient(145deg, rgba(138, 90, 59, 0.55) 0%, rgba(74, 47, 30, 0.55) 100%);
   color: #d4956a;
 }
 
+/* style2 is never emitted by the meta enum; kept as a harmless silver fallback. */
 .bp_style2 {
   background: linear-gradient(145deg, rgba(199, 201, 204, 0.4) 0%, rgba(107, 109, 112, 0.4) 100%);
   color: #c7c9cc;
 }
 
 .bp_style3 {
+  background: linear-gradient(145deg, rgba(199, 201, 204, 0.4) 0%, rgba(107, 109, 112, 0.4) 100%);
+  color: #c7c9cc;
+}
+
+.bp_style4 {
   background: linear-gradient(145deg, rgba(230, 110, 80, 0.4) 0%, rgba(160, 50, 40, 0.4) 100%);
   color: #ffb3a0;
 }
 
-.bp_style4 {
+.bp_style5 {
   background: linear-gradient(145deg, rgba(232, 197, 90, 0.45) 0%, rgba(154, 118, 36, 0.45) 100%);
   color: var(--cost-5);
 }
 
-.bp_style5 {
+.bp_style6 {
   background: linear-gradient(145deg, rgba(255, 122, 224, 0.4) 0%, rgba(122, 210, 255, 0.4) 50%, rgba(255, 242, 122, 0.4) 100%);
   color: #f0f0fa;
 }
 
-.bp_style6 {
-  background: linear-gradient(145deg, rgba(0, 212, 255, 0.3) 0%, rgba(0, 104, 120, 0.3) 100%);
-  color: #00d4ff;
-}
-
+/* Light-theme overrides — same meta-enum keying as the dark block above. */
 :global([data-theme="light"]) .bp_style1 {
   border-color: rgba(124, 45, 18, 0.42);
   background: rgba(180, 83, 9, 0.14);
@@ -124,27 +132,27 @@
 }
 
 :global([data-theme="light"]) .bp_style3 {
+  border-color: rgba(75, 85, 99, 0.42);
+  background: rgba(75, 85, 99, 0.14);
+  color: #374151;
+}
+
+:global([data-theme="light"]) .bp_style4 {
   border-color: rgba(153, 27, 27, 0.42);
   background: rgba(220, 38, 38, 0.12);
   color: #991b1b;
 }
 
-:global([data-theme="light"]) .bp_style4 {
+:global([data-theme="light"]) .bp_style5 {
   border-color: rgba(146, 64, 14, 0.46);
   background: rgba(217, 119, 6, 0.16);
   color: #92400e;
 }
 
-:global([data-theme="light"]) .bp_style5 {
+:global([data-theme="light"]) .bp_style6 {
   border-color: rgba(76, 29, 149, 0.36);
   background: linear-gradient(145deg, rgba(236, 72, 153, 0.14), rgba(14, 165, 233, 0.14), rgba(234, 179, 8, 0.12));
   color: #4c1d95;
-}
-
-:global([data-theme="light"]) .bp_style6 {
-  border-color: rgba(14, 116, 144, 0.42);
-  background: rgba(8, 145, 178, 0.12);
-  color: #0e7490;
 }
 
 /* ── Shared preamble (renders above tier rows) ──────────── */
