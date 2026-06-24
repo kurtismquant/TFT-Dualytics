@@ -177,14 +177,14 @@
 
 [data-theme="light"] {
   /* ── Backgrounds ── */
-  --bg-base:           #f0f2f5;
-  --bg-elevated:       #d8dce5;
+  --bg-base:           #f7f8fb;
+  --bg-elevated:       #e9edf3;
   --bg-card:           #ffffff;
   --bg-card-hover:     rgba(0, 0, 0, 0.06);
   --bg-hover:          rgba(0, 0, 0, 0.06);
-  --bg-border:         rgba(0, 0, 0, 0.25);
-  --bg-border-muted:   rgba(0, 0, 0, 0.18);
-  --bg-border-bright:  rgba(0, 0, 0, 0.45);
+  --bg-border:         rgba(15, 23, 42, 0.12);
+  --bg-border-muted:   rgba(15, 23, 42, 0.08);
+  --bg-border-bright:  rgba(15, 23, 42, 0.20);
   --bg-input:          #ffffff;
   --bg-input-focus:    rgba(0, 0, 0, 0.02);
   --bg-row-odd:        rgba(0, 0, 0, 0.035);
@@ -206,21 +206,21 @@
   /* ── Text ── */
   --text-primary:      rgba(10, 10, 20, 1);
   --text-secondary:    rgba(10, 10, 20, 0.72);
-  --text-muted:        rgba(10, 10, 20, 0.48);
+  --text-muted:        rgba(10, 10, 20, 0.56);
   --text-inverse:      #ffffff;
   --text-link-hover:   rgba(10, 10, 20, 1);
   --text-hero-sign:    rgba(10, 10, 20, 1);
   --text-on-accent:    #ffffff;
 
   /* ── Accents — darkened for contrast on white ── */
-  --accent-gold:       #b8860b;
-  --accent-gold-glow:  rgba(184, 134, 11, 0.20);
-  --accent-cyan:       #0891b2;
-  --accent-cyan-glow:  rgba(8, 145, 178, 0.20);
-  --accent-red:        #dc2626;
-  --accent-red-glow:   rgba(220, 38, 38, 0.15);
-  --accent-green:      #16a34a;
-  --accent-green-glow: rgba(22, 163, 74, 0.15);
+  --accent-gold:       #f5a300;
+  --accent-gold-glow:  transparent;
+  --accent-cyan:       #06b6d4;
+  --accent-cyan-glow:  transparent;
+  --accent-red:        #ef4444;
+  --accent-red-glow:   transparent;
+  --accent-green:      #1eb85a;
+  --accent-green-glow: transparent;
 
   /* ── Placement tiers ── */
   --placement-1:       #b8860b;
@@ -253,11 +253,11 @@
   --tier-challenger:  #0891b2;
 
   /* ── Champion cost — darkened for contrast on white ── */
-  --cost-1:            rgb(100, 100, 100);
-  --cost-2:            rgb(22, 163, 74);
-  --cost-3:            rgb(29, 78, 216);
-  --cost-4:            rgb(124, 58, 237);
-  --cost-5:            rgb(161, 98, 7);
+  --cost-1:            #7a88a8;
+  --cost-2:            #0fb85a;
+  --cost-3:            #1f6feb;
+  --cost-4:            #9d2bf0;
+  --cost-5:            #d9a400;
 
   --cost-1-glow:       rgb(130, 130, 130);
   --cost-2-glow:       rgb(34, 197, 94);
@@ -271,16 +271,16 @@
 
   /* ── Ghost surface ── */
   --ghost-surface:     rgba(10, 10, 20, 0.06);
-  --ghost-border:      rgba(10, 10, 20, 0.20);
+  --ghost-border:      rgba(15, 23, 42, 0.28);
   --overlay-dark:      rgba(0, 0, 0, 0.45);
-  --focus-border:      rgba(10, 10, 20, 0.75);
-  --focus-ring:        rgba(10, 10, 20, 0.14);
-  --focus-glow:        rgba(10, 10, 20, 0.10);
-  --search-focus-border: rgba(10, 10, 20, 0.80);
-  --search-focus-glow:   rgba(10, 10, 20, 0.10);
-  --shadow-elevated:   rgba(10, 15, 25, 0.12);
-  --scrollbar-thumb:   rgba(10, 10, 20, 0.20);
-  --scrollbar-hover:   rgba(10, 10, 20, 0.36);
+  --focus-border:      rgba(245, 163, 0, 0.90);
+  --focus-ring:        transparent;
+  --focus-glow:        transparent;
+  --search-focus-border: rgba(15, 23, 42, 0.80);
+  --search-focus-glow:   transparent;
+  --shadow-elevated:   rgba(15, 23, 42, 0.14);
+  --scrollbar-thumb:   rgba(15, 23, 42, 0.18);
+  --scrollbar-hover:   rgba(15, 23, 42, 0.30);
 
   /* ── Transitions ── */
   --t-fast:            150ms ease;
@@ -295,6 +295,7 @@
   --chart-tooltip-border: rgba(10, 10, 20, 0.15);
   --chart-line-color:    rgba(10, 10, 20, 0.85);
   --chart-cursor-color:  rgba(10, 10, 20, 0.10);
+  --chart-dot-fill:      rgba(10, 10, 20, 0.85);
 
   /* ── Select option bg ── */
   --select-option-bg:  #ffffff;

@@ -149,10 +149,12 @@ export default function MatchHistoryPage() {
 
   return (
     <PageShell>
-      <SearchBar
-        defaultRegion={region}
-        defaultName2={formatRiotId(gameName2, tagLine2)}
-      />
+      <div className={styles.playerSearch}>
+        <SearchBar
+          defaultRegion={region}
+          defaultName2={formatRiotId(gameName2, tagLine2)}
+        />
+      </div>
 
       {isLoading && !data && (
         <div className={styles.loadingBlock}>

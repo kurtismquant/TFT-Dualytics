@@ -44,7 +44,10 @@ function CustomDot(props) {
   const { cx, cy } = props
   if (cx == null || cy == null) return null
   const cs = getComputedStyle(document.documentElement)
-  return <circle cx={cx} cy={cy} r={3.5} fill="#ffffff" stroke={cs.getPropertyValue('--chart-tooltip-bg').trim()} strokeWidth={1} />
+  // Dot fill is theme-aware: dark theme leaves it undefined (falls back to white,
+  // its original look); light theme sets a dark fill so dots aren't white-on-white.
+  const dotFill = cs.getPropertyValue('--chart-dot-fill').trim() || '#ffffff'
+  return <circle cx={cx} cy={cy} r={3.5} fill={dotFill} stroke={cs.getPropertyValue('--chart-tooltip-bg').trim()} strokeWidth={1} />
 }
 
 export default function LPGraph({ summoner, rankSnapshots, matches }) {

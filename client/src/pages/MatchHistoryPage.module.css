@@ -1,3 +1,17 @@
+/* In-page player search — redundant on wide desktop, where the nav bar shows
+   its own search (NavSearchBar is visible only above --bp-xl / 1280px). Hide it
+   there; keep it on narrower viewports where the nav search collapses into the
+   hamburger menu. Theme-independent. */
+.playerSearch {
+  display: none;
+}
+
+@media (--bp-xl) {
+  .playerSearch {
+    display: block;
+  }
+}
+
 .status {
   color: var(--text-secondary);
   font-family: var(--font-body);

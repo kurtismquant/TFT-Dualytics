@@ -129,6 +129,18 @@
   transition: opacity 150ms ease;
 }
 
+/* Light theme: the tip's dark-theme ink (#dddddd text, near-white tail) vanishes
+   on a light background — give it dark, readable text plus a visible border/tail. */
+:global([data-theme="light"]) .tip {
+  color: var(--text-secondary);
+  border-color: var(--text-muted);
+  box-shadow: 0 2px 8px var(--shadow-elevated);
+}
+
+:global([data-theme="light"]) .tip::after {
+  border-top-color: var(--text-muted);
+}
+
 /* ── Clear filter button ─────────────────────────────── */
 .clearBtn {
   background: none;

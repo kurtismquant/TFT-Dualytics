@@ -107,6 +107,13 @@
   transform: translateY(-1px);
 }
 
+/* Light theme: the hardcoded dark hover shadow reads as a heavy black smudge on
+   white, so swap it for a soft, cool-tinted lift. Dark theme keeps its shadow. */
+:global([data-theme="light"]) .chip:hover,
+:global([data-theme="light"]) .editBtn:hover {
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.12);
+}
+
 @media (--bp-md) {
   .wrapper {
     padding: 0 1rem;
