@@ -204,6 +204,16 @@ export const getMassRegion = (region) => {
   return map[region?.toLowerCase()] || 'americas'
 }
 
+// account-v1 routing. Unlike match-v1 (which requires `sea` for OCE/SEA platforms),
+// account-v1 has NO `sea` cluster — sea.api.riotgames.com returns 403 for it. Account
+// data is global, so any of americas/asia/europe resolves the same Riot ID; route the
+// SEA platforms to the geographically closest valid cluster, asia. Use this for every
+// /riot/account/v1 call; keep getMassRegion for /tft/match/v1.
+export const getAccountRegion = (region) => {
+  const mass = getMassRegion(region)
+  return mass === 'sea' ? 'asia' : mass
+}
+
 // Normalizes short region codes (na, euw, kr…) to the full platform host (na1, euw1, kr…)
 export const getPlatformRegion = (region) => {
   const map = {

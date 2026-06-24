@@ -1,4 +1,4 @@
-import { riotRequest, getMassRegion, getPlatformRegion } from './riotApi.js'
+import { riotRequest, getAccountRegion, getPlatformRegion } from './riotApi.js'
 import { replaceLeaderboard, getLeaderboard } from '../db/leaderboardRepo.js'
 
 const QUEUE = 'RANKED_TFT_DOUBLE_UP'
@@ -68,8 +68,8 @@ async function fetchPagedDivision(platform, tier, division) {
   return out.sort((a, b) => b.lp - a.lp)
 }
 
-async function resolveAccount(massRegion, puuid) {
-  const url = `${regionalHost(massRegion)}/riot/account/v1/accounts/by-puuid/${puuid}`
+async function resolveAccount(accountRegion, puuid) {
+  const url = `${regionalHost(accountRegion)}/riot/account/v1/accounts/by-puuid/${puuid}`
   try {
     const data = await riotRequest(url)
     return { gameName: data?.gameName || null, tagLine: data?.tagLine || null }
@@ -80,7 +80,7 @@ async function resolveAccount(massRegion, puuid) {
 
 export async function runLeaderboardAggregation(regionInput) {
   const platform = getPlatformRegion(regionInput)
-  const mass = getMassRegion(platform)
+  const accountRegion = getAccountRegion(platform)
 
   if (inFlight.has(platform)) return inFlight.get(platform)
 
@@ -145,7 +145,7 @@ export async function runLeaderboardAggregation(regionInput) {
       return existing?.entries ?? []
     }
 
-    const accounts = await Promise.all(top.map(e => resolveAccount(mass, e.puuid)))
+    const accounts = await Promise.all(top.map(e => resolveAccount(accountRegion, e.puuid)))
     const entries = top.map((e, i) => ({
       rank: i + 1,
       puuid: e.puuid,

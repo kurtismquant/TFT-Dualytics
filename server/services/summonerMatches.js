@@ -1,4 +1,4 @@
-import { riotRequest, getMassRegion, getPlatformRegion, getRateLimitStats } from './riotApi.js'
+import { riotRequest, getMassRegion, getAccountRegion, getPlatformRegion, getRateLimitStats } from './riotApi.js'
 import { normalizeMatch } from './matchNormalizers.js'
 import {
   findPlayerByRiotId,
@@ -297,8 +297,10 @@ export async function getPlayerMatches(gameName, tagLine, region, signal, syncJo
     })
     const encGame = encodeURIComponent(gameName.trim())
     const encTag = encodeURIComponent(tagLine.trim())
+    // account-v1 has no `sea` cluster (it 403s) — route via getAccountRegion, not the
+    // match-v1 massRegion used below for /tft/match/v1.
     const account = await riotRequest(
-      `https://${massRegion}.api.riotgames.com/riot/account/v1/accounts/by-riot-id/${encGame}/${encTag}`,
+      `https://${getAccountRegion(region)}.api.riotgames.com/riot/account/v1/accounts/by-riot-id/${encGame}/${encTag}`,
       priority,
       signal
     )
