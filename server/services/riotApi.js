@@ -19,6 +19,14 @@ const LONG_CAP = 100
 // Slack added when sleeping until a slot frees, absorbing timer jitter.
 const SLOT_EPSILON_MS = 25
 
+// Riot's edge intermittently returns 401 for a perfectly valid key — most often
+// in the minutes after a dev key is regenerated (the new key is still propagating
+// across edge nodes), so identical calls alternate success/401. Treat 401 as
+// transient and retry a bounded number of times before surfacing the auth error,
+// so these blips don't fail a whole batch. Bounded so a genuinely dead key can't loop.
+const AUTH_RETRY_LIMIT = 2
+const AUTH_RETRY_DELAY_MS = 1_500
+
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms))
 
 // Dispatch timestamps within the last LONG_WINDOW_MS (ascending).
@@ -83,8 +91,18 @@ function enqueue(job) {
   pump()
 }
 
+// Auth failures (401/403) share a clear, actionable message and an isAuthError tag
+// so callers (e.g. the leaderboard aggregator) can distinguish them from other errors
+// and avoid overwriting good cached data on a key outage. Never include API_KEY.
+function authError(status) {
+  return Object.assign(
+    new Error('Riot API key is expired or invalid — regenerate your personal key'),
+    { statusCode: status, isAuthError: true }
+  )
+}
+
 async function execute(job) {
-  const { url, priority, signal } = job
+  const { url, priority, signal, attempt } = job
   inFlight += 1
   try {
     const response = await axios.get(url, {
@@ -108,11 +126,17 @@ async function execute(job) {
       } catch (retryErr) {
         job.settle(retryErr)
       }
-    } else if (err.response?.status === 403) {
-      job.settle(Object.assign(
-        new Error('Riot API key is expired or invalid — regenerate your personal key'),
-        { statusCode: 403 }
-      ))
+    } else if (err.response?.status === 401 && attempt < AUTH_RETRY_LIMIT) {
+      // Transient edge 401 on a valid key (see AUTH_RETRY_LIMIT note). Re-enter via
+      // riotRequest so the retry respects the rate-limiter budget; bounded by attempt.
+      await sleep(AUTH_RETRY_DELAY_MS)
+      try {
+        job.settle(null, await riotRequest(url, priority, signal, attempt + 1))
+      } catch (retryErr) {
+        job.settle(retryErr)
+      }
+    } else if (err.response?.status === 401 || err.response?.status === 403) {
+      job.settle(authError(err.response.status))
     } else {
       job.settle(err)
     }
@@ -142,12 +166,14 @@ export function getRateLimitStats() {
 // priority: higher number = dispatched sooner (FIFO within a priority).
 // User-initiated requests should use priority 10; background work uses 0 (default).
 // signal: optional AbortSignal — queued jobs are dropped and in-flight requests cancelled.
-export const riotRequest = (url, priority = 0, signal = null) =>
+// attempt: internal — bounded-401-retry counter, threaded by execute(). Do not pass externally.
+export const riotRequest = (url, priority = 0, signal = null, attempt = 0) =>
   new Promise((resolve, reject) => {
     const job = {
       url,
       priority,
       signal,
+      attempt,
       seq: nextSeq++,
       settled: false,
       settle(err, data) {

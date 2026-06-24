@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import { getLeaderboard } from '../db/leaderboardRepo.js'
-import { runLeaderboardAggregation, isRefreshing } from '../services/leaderboardAggregator.js'
+import { runLeaderboardAggregation, isRefreshing, isRetryCoolingDown } from '../services/leaderboardAggregator.js'
 import { getPlatformRegion } from '../services/riotApi.js'
 
 const router = Router()
@@ -17,7 +17,9 @@ router.get('/', async (req, res) => {
     const empty = !cached?.entries || cached.entries.length === 0
     const stale = age > ONE_DAY_MS || empty
 
-    if (stale && !isRefreshing(platform)) {
+    // Don't relaunch a doomed refresh on every poll while a recent failure is cooling down;
+    // a manual POST /refresh can still force one. The cooldown bounds a key-outage 401 storm.
+    if (stale && !isRefreshing(platform) && !isRetryCoolingDown(platform)) {
       runLeaderboardAggregation(platform)
     }
 
