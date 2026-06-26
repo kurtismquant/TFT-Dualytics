@@ -1,4 +1,4 @@
-import { riotRequest, getMassRegion, getAccountRegion, getPlatformRegion, getRateLimitStats } from './riotApi.js'
+import { riotRequest, getMassRegion, getAccountRegion, getPlatformRegion, getRateLimitStats, getRateLimits } from './riotApi.js'
 import { normalizeMatch } from './matchNormalizers.js'
 import {
   findPlayerByRiotId,
@@ -64,10 +64,12 @@ function estimateSyncEtaSeconds(job) {
   // Details are enqueued in parallel, so this job's remaining requests usually
   // ARE the queued ones — max() instead of sum avoids double counting.
   const totalOutstanding = Math.max(queuedRequests, remainingRequests)
-  // Within one 100-req/2min window the 20/sec short queue is the only
-  // constraint; beyond it, the sustained long-window rate (~50/min) dominates.
-  if (totalOutstanding <= 100) return Math.max(5, Math.ceil(totalOutstanding / 20))
-  return Math.max(10, Math.ceil((totalOutstanding / 50) * 60))
+  // Within one long-window's worth of budget the short per-second rate is the only
+  // constraint; beyond it, the sustained long-window rate dominates. Both rates come
+  // from the configured limits so this tracks a production key automatically.
+  const { longCap, perSecond, perMinute } = getRateLimits()
+  if (totalOutstanding <= longCap) return Math.max(5, Math.ceil(totalOutstanding / perSecond))
+  return Math.max(10, Math.ceil((totalOutstanding / perMinute) * 60))
 }
 
 function publicSyncStatus(job) {

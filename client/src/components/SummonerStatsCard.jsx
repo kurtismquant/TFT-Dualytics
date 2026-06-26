@@ -39,7 +39,7 @@ function computeStats(matches, champions) {
   }
 }
 
-export default function SummonerStatsCard({ matches, resolvedChampions }) {
+export default function SummonerStatsCard({ matches, resolvedChampions, syncProgress = null }) {
   const { theme } = useSettings()
   const { t } = useTranslation()
   const isMobile = useIsMobile()
@@ -98,6 +98,13 @@ export default function SummonerStatsCard({ matches, resolvedChampions }) {
 
   return (
     <div className={styles.card}>
+      {syncProgress && (
+        <p className={styles.partialNote} role="status">
+          {syncProgress.total != null
+            ? t('statsCard.partial', { loaded: syncProgress.loaded, total: syncProgress.total })
+            : t('statsCard.partialPending')}
+        </p>
+      )}
       <div className={styles.statsGrid}>
         {visibleStats.map(([key, label]) => (
           <div key={key} className={styles.statItem}>

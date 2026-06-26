@@ -186,6 +186,9 @@
     "syncTitle": "Actualizando historial desde Riot",
     "syncPaused": "Actualización del historial pausada",
     "syncCached": "Mostrando {{count}} partidas en caché",
+    "progressDetails": "{{processed}}/{{total}} partidas nuevas",
+    "progressIds": "{{count}} IDs de partida comprobados",
+    "progressResolving": "Resolviendo datos de Riot",
     "notFoundKicker": "Riot ID no encontrado",
     "notFoundTitle": "{{id}} no fue encontrado",
     "notFoundCopy": "Verifica el nombre de usuario y el tag, luego realiza una nueva búsqueda.",
@@ -219,7 +222,9 @@
     "avgEliminated": "Elim. Promedio",
     "chartTitle": "Distribución de Posiciones",
     "chartSub": "Últimas {{count}} Partidas",
-    "games": "Partidas"
+    "games": "Partidas",
+    "partial": "Actualizando en vivo — {{loaded}}/{{total}} partidas cargadas",
+    "partialPending": "Actualizando en vivo — cargando partidas…"
   },
   "lpGraph": {
     "title": "Historial LP — {{name}}",

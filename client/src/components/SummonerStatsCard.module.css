@@ -6,6 +6,18 @@
   background: transparent;
 }
 
+/* Shown while a sync is still streaming games in — flags that the numbers below
+   are computed over the games loaded so far and will keep updating. */
+.partialNote {
+  color: var(--accent-gold);
+  font-family: var(--font-body);
+  font-size: var(--text-2xs);
+  font-weight: var(--fw-regular);
+  letter-spacing: var(--track-wider);
+  text-transform: uppercase;
+  margin: 0 0 16px;
+}
+
 /* ── Stats row ───────────────────────────────────────── */
 .statsGrid {
   display: grid;

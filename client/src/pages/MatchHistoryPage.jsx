@@ -42,16 +42,24 @@ function getSyncProgress(syncStatuses) {
   const totals = syncing.map(sync => sync.totalNewMatches).filter(total => total != null)
   const processed = syncing.reduce((sum, sync) => sum + (sync.processedNewMatches || 0), 0)
 
+  // Once the new-match totals are known, processed/total is a real fraction (used by
+  // the console progress log); before that (resolving / listing ids) only counts exist.
   if (totals.length === syncing.length) {
     const total = totals.reduce((sum, value) => sum + value, 0)
-    return { label: `${processed}/${total} new matches`, eta }
+    return { phase: 'details', processed, total, eta }
   }
 
   const idsFound = syncing.reduce((sum, sync) => sum + (sync.matchIdsFound || 0), 0)
-  return {
-    label: idsFound > 0 ? `${idsFound} match ids checked` : 'Resolving Riot data',
-    eta,
+  return { phase: idsFound > 0 ? 'ids' : 'resolving', idsFound, eta }
+}
+
+function formatProgressLabel(t, progress) {
+  if (!progress) return ''
+  if (progress.phase === 'details') {
+    return t('matchHistory.progressDetails', { processed: progress.processed, total: progress.total })
   }
+  if (progress.phase === 'ids') return t('matchHistory.progressIds', { count: progress.idsFound })
+  return t('matchHistory.progressResolving')
 }
 
 function isSameRiotId(a, b) {
@@ -96,7 +104,19 @@ export default function MatchHistoryPage() {
   const activeSyncs = syncStatuses.filter(sync => sync.state === 'syncing')
   const syncErrors = syncStatuses.filter(sync => sync.state === 'error')
   const syncProgress = getSyncProgress(syncStatuses)
+  const progressLabel = formatProgressLabel(t, syncProgress)
   const isSyncing = activeSyncs.length > 0
+  // Per-player sync progress so the stats card can show "loaded/total games" while
+  // matches stream in. null when that player isn't syncing; total is null until the
+  // sync has finished listing the new match ids.
+  const isSyncing1 = summonerData?.sync?.state === 'syncing'
+  const isSyncing2 = summoner2Data?.sync?.state === 'syncing'
+  const statsProgress1 = isSyncing1
+    ? { loaded: summonerData.sync.processedNewMatches ?? 0, total: summonerData.sync.totalNewMatches ?? null }
+    : null
+  const statsProgress2 = isSyncing2
+    ? { loaded: summoner2Data.sync.processedNewMatches ?? 0, total: summoner2Data.sync.totalNewMatches ?? null }
+    : null
   const showCachedShell = !!data && !hasAnyMatches && isSyncing
   const syncNotFound = !hasAnyMatches && syncErrors.some(sync => sync.error === 'RIOT ID NOT FOUND')
   const isNotFound = (isError && error?.response?.status === 404) || syncNotFound
@@ -116,7 +136,7 @@ export default function MatchHistoryPage() {
   // was removed). Logs a line per progress update while syncing, plus a start
   // line on the first tick and a completion line when the sync finishes.
   const progressLine = isSyncing && syncProgress
-    ? `Refreshing match history — ${syncProgress.label} / ETA ${formatEta(syncProgress.eta)}`
+    ? `Refreshing match history — ${progressLabel} / ETA ${formatEta(syncProgress.eta)}`
     : null
   const wasSyncingRef = useRef(false)
   useEffect(() => {
@@ -200,6 +220,7 @@ export default function MatchHistoryPage() {
               <SummonerStatsCard
                 matches={summonerData?.matches || []}
                 resolvedChampions={champions || []}
+                syncProgress={statsProgress1}
               />
               <LPGraph
                 summoner={summonerData?.summoner}
@@ -217,6 +238,7 @@ export default function MatchHistoryPage() {
               <SummonerStatsCard
                 matches={summoner2Data?.matches || []}
                 resolvedChampions={champions || []}
+                syncProgress={statsProgress2}
               />
               <LPGraph
                 summoner={summoner2Data?.summoner}
@@ -238,6 +260,7 @@ export default function MatchHistoryPage() {
               <SummonerStatsCard
                 matches={summonerData?.matches || []}
                 resolvedChampions={champions || []}
+                syncProgress={statsProgress1}
               />
               <LPGraph
                 summoner={summonerData?.summoner}

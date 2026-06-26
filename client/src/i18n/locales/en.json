@@ -186,6 +186,9 @@
     "syncTitle": "Updating match history from Riot",
     "syncPaused": "Match history refresh paused",
     "syncCached": "Showing {{count}} cached Mongo matches",
+    "progressDetails": "{{processed}}/{{total}} new matches",
+    "progressIds": "{{count}} match IDs checked",
+    "progressResolving": "Resolving Riot data",
     "notFoundKicker": "Riot ID not found",
     "notFoundTitle": "{{id}} was not found",
     "notFoundCopy": "Check the username and tag, then run a new search.",
@@ -219,7 +222,9 @@
     "avgEliminated": "Avg Eliminated",
     "chartTitle": "Placement Frequency",
     "chartSub": "Last {{count}} Games",
-    "games": "Games"
+    "games": "Games",
+    "partial": "Updating live — {{loaded}}/{{total}} games loaded so far",
+    "partialPending": "Updating live — loading games…"
   },
   "lpGraph": {
     "title": "LP History — {{name}}",

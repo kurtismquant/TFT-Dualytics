@@ -12,10 +12,20 @@ const API_KEY = process.env.RIOT_API_KEY
 // Short window enforced over 1.2s instead of Riot's 1s: dispatch spacing is
 // exact, but network jitter compresses arrivals and Riot counts on receipt —
 // the extra 200ms keeps a jitter-squeezed second from exceeding 20 at Riot's edge.
-const SHORT_WINDOW_MS = 1_200
-const SHORT_CAP = 20
-const LONG_WINDOW_MS = 120_000
-const LONG_CAP = 100
+// Caps/windows are env-configurable so a production key (much higher limits) can be
+// used without code changes — set RIOT_SHORT_CAP / RIOT_SHORT_WINDOW_MS /
+// RIOT_LONG_CAP / RIOT_LONG_WINDOW_MS in .env. Defaults are the personal-key limits
+// (20/sec, 100/2min), so unset env = current behavior (the demo is unchanged). The
+// sliding-window scheduler already works for any window/cap, so this is the only knob
+// needed to unlock the bigger budget. Standard production tier is ~500/10s + ~30k/10min.
+const envInt = (name, fallback) => {
+  const n = Number(process.env[name])
+  return Number.isFinite(n) && n > 0 ? n : fallback
+}
+const SHORT_WINDOW_MS = envInt('RIOT_SHORT_WINDOW_MS', 1_200)
+const SHORT_CAP = envInt('RIOT_SHORT_CAP', 20)
+const LONG_WINDOW_MS = envInt('RIOT_LONG_WINDOW_MS', 120_000)
+const LONG_CAP = envInt('RIOT_LONG_CAP', 100)
 // Slack added when sleeping until a slot frees, absorbing timer jitter.
 const SLOT_EPSILON_MS = 25
 
@@ -149,6 +159,21 @@ export function getTotalRequestCount() {
   return totalRequests
 }
 
+// Configured throughput, derived from the (possibly env-overridden) caps/windows.
+// perSecond / perMinute are the sustained rates each window allows — consumers (ETA
+// estimate, debug stats) read these instead of hardcoding 20/50 so they track a
+// production key automatically.
+export function getRateLimits() {
+  return {
+    shortCap: SHORT_CAP,
+    shortWindowMs: SHORT_WINDOW_MS,
+    longCap: LONG_CAP,
+    longWindowMs: LONG_WINDOW_MS,
+    perSecond: (SHORT_CAP * 1000) / SHORT_WINDOW_MS,
+    perMinute: Math.round((LONG_CAP * 60_000) / LONG_WINDOW_MS),
+  }
+}
+
 export function getRateLimitStats() {
   const now = Date.now()
   pruneSentLog(now)
@@ -156,7 +181,7 @@ export function getRateLimitStats() {
   for (let i = sentLog.length - 1; i >= 0 && sentLog[i] > now - 60_000; i--) lastMinute += 1
   return {
     requestsLastMinute: lastMinute,
-    limitPerMinute: 50, // personal key: 100 per 2 min ≈ 50 per min sustained
+    limitPerMinute: getRateLimits().perMinute, // sustained long-window rate
     queuedRequests: pending.length,
     inFlightRequests: inFlight,
     retriesAfter429,
