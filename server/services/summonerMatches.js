@@ -11,6 +11,7 @@ import {
 } from '../db/playerRepo.js'
 import {
   findMatchesByPuuid,
+  countMatchesByPuuid,
   filterKnownMatchIds,
   getLatestMatchTimestamp,
   upsertMatch,
@@ -139,42 +140,53 @@ async function buildParticipantRanks(matches, rankInfo, puuid) {
   return participantRanks
 }
 
-async function buildStoredPlayerResponse(dbPlayer, gameName, tagLine) {
+async function buildStoredPlayerResponse(dbPlayer, gameName, tagLine, { since = null } = {}) {
   if (!dbPlayer?.puuid) return null
-  const matchDocs = await findMatchesByPuuid(dbPlayer.puuid, 0).catch(() => [])
+  const puuid = dbPlayer.puuid
+  // Incremental poll path: `since` is the newest match timestamp (ms) the client
+  // already holds, so we load and return only matches newer than it instead of the
+  // whole history (the costly full pull over the slow Atlas link). 0/null = full load.
+  const sinceTs = Number.isFinite(since) && since > 0 ? since : 0
+  const matchDocs = await findMatchesByPuuid(puuid, sinceTs).catch(() => [])
   const matches = matchDocs
-    .map(doc => normalizeMatch(doc, dbPlayer.puuid, CURRENT_SET))
+    .map(doc => normalizeMatch(doc, puuid, CURRENT_SET))
     .filter(Boolean)
     .sort((a, b) => b.date - a.date)
 
   const rankInfo = rankInfoFromPlayer(dbPlayer)
-  const rankSnapshots = await findRankSnapshots(dbPlayer.puuid, { sinceMs: SET_RELEASE_MS }).catch(() => [])
+  const rankSnapshots = await findRankSnapshots(puuid, { sinceMs: SET_RELEASE_MS }).catch(() => [])
+  // With `since`, `matches` is only the new slice, so its length is NOT the player's
+  // total. Fetch the authoritative total via a count (an int over the wire — cheap on
+  // Atlas) the client uses to detect drift and trigger a full reconcile when needed.
+  const matchCount = sinceTs > 0
+    ? await countMatchesByPuuid(puuid, CURRENT_SET).catch(() => matches.length)
+    : matches.length
 
   return {
     summoner: {
       gameName: dbPlayer.accountDetails?.gameName ?? gameName,
       tagLine: dbPlayer.accountDetails?.tagLine ?? tagLine,
-      puuid: dbPlayer.puuid,
+      puuid,
     },
     matches,
     rankInfo,
     rankSnapshots,
-    participantRanks: await buildParticipantRanks(matches, rankInfo, dbPlayer.puuid),
+    participantRanks: await buildParticipantRanks(matches, rankInfo, puuid),
     cache: {
       source: 'mongo',
-      matchCount: matches.length,
+      matchCount,
       lastMatchAt: matches[0]?.date ?? null,
       lastUpdated: dbPlayer.matchHistorySyncedAt ?? null,
     },
   }
 }
 
-export async function getStoredPlayerMatches(gameName, tagLine) {
+export async function getStoredPlayerMatches(gameName, tagLine, region, options = {}) {
   validateRiotId(gameName, tagLine)
   const gameNameLower = gameName.trim().toLowerCase()
   const tagLineLower = tagLine.trim().toLowerCase()
   const dbPlayer = await findPlayerByRiotId(gameNameLower, tagLineLower).catch(() => null)
-  return buildStoredPlayerResponse(dbPlayer, gameName, tagLine)
+  return buildStoredPlayerResponse(dbPlayer, gameName, tagLine, { since: options.since ?? null })
 }
 
 // Paginate Riot's match-ids endpoint to collect all match IDs since startTimeSec.
@@ -439,32 +451,15 @@ export async function getPlayerMatches(gameName, tagLine, region, signal, syncJo
   const latestAfterSync = await getLatestMatchTimestamp(puuid).catch(() => null)
   await markMatchHistorySynced(puuid, syncedAt, latestAfterSync ?? syncedAt.getTime())
 
-  touchSync(syncJob, {
-    phase: 'loading-cache',
-    message: 'LOADING UPDATED MONGO SNAPSHOT',
-  })
-
-  // 6. Load all stored Double Up matches from DB and return
-  const matchDocs = await findMatchesByPuuid(puuid, 0).catch(() => [])
-  const matches = matchDocs
-    .map(doc => normalizeMatch(doc, puuid, CURRENT_SET))
-    .filter(Boolean)
-    .sort((a, b) => b.date - a.date)
-
-  const rankSnapshots = await findRankSnapshots(puuid, { sinceMs: SET_RELEASE_MS }).catch(() => [])
-
+  // Deliberately no full-history readback here. The UI loads matches via the poll
+  // path (getStoredPlayerMatches), so re-reading the entire history from Atlas just to
+  // return it would be wasted bandwidth on the slow link — and every caller of this
+  // function (ensurePlayerRefresh, leaderboardMatchSync, ingest) discards the return.
+  // Return only a lightweight summary built from values already in hand (no DB reads).
   return {
     summoner: { gameName: resolvedGameName, tagLine: resolvedTagLine, puuid },
-    matches,
     rankInfo,
-    rankSnapshots,
-    participantRanks: await buildParticipantRanks(matches, rankInfo, puuid),
-    cache: {
-      source: 'mongo',
-      matchCount: matches.length,
-      lastMatchAt: matches[0]?.date ?? null,
-      lastUpdated: syncedAt,
-    },
+    processedNewMatches,
   }
 }
 

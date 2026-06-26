@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { apiGet, apiPost } from '../api/client.js'
+import { mergeSummonerMatches, needsReconcile } from '../utils/mergeSummonerMatches.js'
 
 function hasActiveSync(data) {
   if (!data) return false
@@ -22,16 +23,33 @@ function buildMatchesKey(region, ids) {
 }
 
 export const useSummonerMatches = (region, ids) => {
+  const queryClient = useQueryClient()
   const enabled = Array.isArray(ids) && ids.length > 0 &&
     ids.every(id => id?.gameName?.trim() && id?.tagLine?.trim())
 
   const path = buildMatchesPath(ids)
   const queryKey = buildMatchesKey(region, ids)
+  // Only the single-player history goes incremental. The 2-player compare route
+  // cross-references both full match lists server-side, so it always fetches full.
+  const incremental = Array.isArray(ids) && ids.length === 1
 
   return useQuery({
     queryKey,
-    queryFn: ({ signal }) =>
-      apiGet(`/api/summoner/${region}/${path}`, { signal }),
+    queryFn: async ({ signal }) => {
+      const base = `/api/summoner/${region}/${path}`
+      const prev = incremental ? queryClient.getQueryData(queryKey) : undefined
+      // Cursor = newest match we already hold (matches are sorted newest-first).
+      // Omitted on first load / player switch (no prior data) → server sends full.
+      const since = prev?.matches?.[0]?.date
+      if (!incremental || since == null) return apiGet(base, { signal })
+
+      const res = await apiGet(`${base}?since=${since}`, { signal })
+      const merged = mergeSummonerMatches(prev, res)
+      // Sync settled but our merged set drifted from the server's authoritative
+      // total → one full reload reconciles (out-of-order backlog / TTL expiry).
+      if (needsReconcile(merged)) return apiGet(base, { signal })
+      return merged
+    },
     enabled,
     retry: (failureCount, error) => error?.response?.status !== 404 && failureCount < 2,
     staleTime: 0,

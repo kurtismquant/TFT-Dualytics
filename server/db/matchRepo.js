@@ -23,6 +23,22 @@ export async function getLatestMatchTimestamp(puuid) {
   return doc?.gameDatetime ?? null
 }
 
+// Authoritative count of a puuid's current-set Double Up matches. Runs entirely on
+// Atlas and returns a single integer — safe on the slow Atlas link, unlike pulling the
+// documents. The incremental poll path returns this as cache.matchCount so the client
+// can detect when its locally-merged set has drifted and a full reload is needed.
+// Filter mirrors normalizeMatch's keep condition (pairs + current set), so the count
+// equals the number of matches the client would normalize from a full load.
+export async function countMatchesByPuuid(puuid, currentSet) {
+  const matches = getMatchesCollection()
+  if (!matches) return 0
+  return matches.countDocuments({
+    'participants.puuid': puuid,
+    'info.tft_game_type': 'pairs',
+    'info.tft_set_number': currentSet,
+  })
+}
+
 // Load all matches for a puuid since a given timestamp, sorted newest-first.
 export async function findMatchesByPuuid(puuid, sinceTimestamp = 0) {
   const matches = getMatchesCollection()

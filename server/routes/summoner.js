@@ -43,8 +43,16 @@ function emptyStoredPlayer(gameName, tagLine) {
   }
 }
 
-async function getCachedPayload(region, gameName, tagLine) {
-  const stored = await getStoredPlayerMatches(gameName, tagLine, region)
+// `since` (ms, optional): incremental poll cursor — only matches newer than it are
+// loaded/returned. Null means a full load. Two-player route omits it (always full).
+export function parseSince(raw) {
+  if (raw == null) return null
+  const n = Number(raw)
+  return Number.isFinite(n) && n > 0 ? Math.floor(n) : null
+}
+
+async function getCachedPayload(region, gameName, tagLine, since = null) {
+  const stored = await getStoredPlayerMatches(gameName, tagLine, region, { since })
   const sync = ensurePlayerRefresh(gameName, tagLine, region)
   return {
     ...(stored ?? emptyStoredPlayer(gameName, tagLine)),
@@ -70,7 +78,7 @@ router.get('/resolve/:region/:gameName', async (req, res) => {
 router.get('/:region/:gameName/:tagLine', async (req, res) => {
   const { region, gameName, tagLine } = req.params
   try {
-    const result = await getCachedPayload(region, gameName, tagLine)
+    const result = await getCachedPayload(region, gameName, tagLine, parseSince(req.query.since))
     res.json(result)
   } catch (err) {
     if (isAbortError(err)) return res.status(499).end()
