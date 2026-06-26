@@ -66,7 +66,6 @@ export default function TeammatesCard({ matches, selectedPuuid, onSelect }) {
             <div
               className={styles.tip}
               role="status"
-              onClick={() => setTipDismissed(true)}
             >
               <span className={styles.tipText}>{t('teammates.tip')}</span>
               <button

@@ -17,6 +17,10 @@ export default function DroppableHex({ cellId, children, size, onClick, selected
       className={`${styles.hex} ${isOver ? styles.over : ''} ${selected ? styles.selected : ''}`}
       style={hexStyle}
       onClick={onClick}
+      onKeyDown={e => (e.key === 'Enter' || e.key === ' ') && onClick?.(e)}
+      role="button"
+      tabIndex={0}
+      aria-pressed={selected}
     >
       <div className={styles.hexFill} />
       <div className={styles.content}>

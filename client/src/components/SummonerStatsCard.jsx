@@ -48,6 +48,9 @@ export default function SummonerStatsCard({ matches, resolvedChampions, syncProg
 
   const placementColors = useMemo(
     () => [1, 2, 3, 4].map(i => getCSSVar(`--placement-${i}`)),
+    // getCSSVar reads computed CSS variables off the DOM, which change with the
+    // active theme — `theme` is a deliberate recompute trigger ESLint can't see.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [theme]
   )
 
