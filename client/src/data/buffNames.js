@@ -1,12 +1,10 @@
-// Maps CDragon `{{TFT<set>_<TRAIT>_<BUFFNAME>}}` references to their display names.
+// Maps CDragon `{{<SET PREFIX>_<TRAIT>_<BUFFNAME>}}` references to their display names.
 // Extend this map as new buff references are encountered. Keys are case-insensitive
-// (lookup normalizes to UPPER_SNAKE_CASE).
-export const BUFF_NAMES = {
-  TFT17_SPACEGROOVE_THEGROOVE: 'The Groove',
-}
+// (lookup normalizes to UPPER_SNAKE_CASE). Set 18 descriptions don't use any yet.
+export const BUFF_NAMES = {}
 
 // Title-case fallback when a reference isn't in the map.
-// "TFT17_SPACEGROOVE_THEGROOVE" → "Thegroove" (best-effort)
+// "DA_18_COVEN_RITUAL" → "Ritual" (best-effort)
 export function fallbackBuffName(ref) {
   const tail = ref.split('_').pop() || ref
   if (!tail) return ref

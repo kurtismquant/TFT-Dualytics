@@ -10,6 +10,10 @@ const SCALE_ICON_TYPE = {
   mr: 'mr',
   as: 'as',
   attackspeed: 'as',
+  // Set 18 additions: damage reduction, mana regen, damage amp.
+  dr: 'durability',
+  manaregen: 'mana',
+  da: 'amp',
 }
 
 // Strip CDragon HTML tags and entities from a literal text segment.
@@ -17,6 +21,8 @@ const SCALE_ICON_TYPE = {
 export function stripMarkup(str) {
   return str
     .replace(/<br\s*\/?>/gi, ' ')
+    // Set 18 CDragon text contains literal "\n" escape sequences and CRLFs.
+    .replace(/\\n|\r?\n/g, ' ')
     .replace(/<[^>]+>/g, '')
     .replace(/&nbsp;/gi, ' ')
     .replace(/&amp;/gi, '&')
@@ -98,6 +104,9 @@ export function tokenize(desc, variables, championId, stats) {
     `^${GAP}[(（]${GAP}((?:%i:(?:scale[a-z]+|set14ampicon)%${GAP})+)[)）]`,
     'i',
   )
+  // Set 18 descriptions put the scale icons right after the token with no
+  // parentheses ("@PhysicalDamageCalc1@ %i:scaleAD%%i:scaleAP% physical damage").
+  const BARE_SCALE_RE = new RegExp(`^${GAP}(?:%i:(?:scale[a-z]+|set14ampicon)%${GAP})+`, 'i')
 
   const nodes = []
   let last = 0
@@ -189,7 +198,17 @@ export function tokenize(desc, variables, championId, stats) {
 
       // Fallback: generic variable lookup.
       const variable = findVariable(variables, rawName)
-      if (!variable || !Array.isArray(variable.value)) continue
+      if (!variable || !Array.isArray(variable.value)) {
+        // Unresolved value (CDragon ships no data for it): also drop the scale
+        // icons that annotate it, otherwise they render orphaned mid-sentence.
+        const ahead = desc.slice(last)
+        const m2 = SCALE_GROUP_RE.exec(ahead) || BARE_SCALE_RE.exec(ahead)
+        if (m2) {
+          last += m2[0].length
+          TOKEN_RE.lastIndex = last
+        }
+        continue
+      }
       const scaledValues = variable.value.map(x => x * multiplier)
       nodes.push({ type: 'var', content: formatValues(scaledValues, false) })
     }

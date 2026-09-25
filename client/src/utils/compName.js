@@ -11,8 +11,8 @@ const MAX_LEN = 24
 // Traits held by exactly one champion in the set are "unique" traits — they add
 // no signal to a comp name and clutter the trait chip row, so we drop them.
 //
-// champion.traits hold trait DISPLAY NAMES (e.g. "Academy"), but match/comp trait
-// ids are Riot apiNames (e.g. "TFT17_Academy"). Map name → id via the trait
+// champion.traits hold trait DISPLAY NAMES (e.g. "Coven"), but match/comp trait
+// ids are Riot apiNames (e.g. "DA_18_Coven"). Map name → id via the trait
 // metadata so the returned Set matches the t.id the chip filters check against —
 // otherwise it never intersects and nothing is excluded.
 export function getUniqueTraitIds(champions, traits = []) {

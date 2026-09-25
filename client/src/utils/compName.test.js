@@ -17,27 +17,27 @@ const champions = [
 ]
 
 const traits = [
-  { id: 'TFT17_Mystic', name: 'Mystic' },
-  { id: 'TFT17_Sorcerer', name: 'Sorcerer' },
-  { id: 'TFT17_Bastion', name: 'Bastion' },
-  { id: 'TFT17_Apex', name: 'Apex' },
+  { id: 'DA_18_Mystic', name: 'Mystic' },
+  { id: 'DA_Sorcerer18', name: 'Sorcerer' },
+  { id: 'DA_18_Bastion', name: 'Bastion' },
+  { id: 'DA_18_Apex', name: 'Apex' },
 ]
 
 test('getUniqueTraitIds returns apiNames for single-champion traits only', () => {
   const unique = getUniqueTraitIds(champions, traits)
   // Returned ids are apiNames (matching the t.id the chip filters check), not display names.
-  assert.ok(unique.has('TFT17_Apex'))
+  assert.ok(unique.has('DA_18_Apex'))
   assert.ok(!unique.has('Apex'))
-  assert.ok(!unique.has('TFT17_Mystic'))
-  assert.ok(!unique.has('TFT17_Sorcerer'))
+  assert.ok(!unique.has('DA_18_Mystic'))
+  assert.ok(!unique.has('DA_Sorcerer18'))
 })
 
 test('name is "{Trait} {Unit}": highest-count trait, no number, plus the carry', () => {
   const comp = {
     units: [{ id: 'Veigar', items: ['x', 'y', 'z'] }],
     traits: [
-      { id: 'TFT17_Mystic', numUnits: 6, style: 4, tierCurrent: 3 },
-      { id: 'TFT17_Sorcerer', numUnits: 2, style: 2, tierCurrent: 1 },
+      { id: 'DA_18_Mystic', numUnits: 6, style: 4, tierCurrent: 3 },
+      { id: 'DA_Sorcerer18', numUnits: 2, style: 2, tierCurrent: 1 },
     ],
   }
   assert.equal(generateCompName(comp, { champions, traits }), 'Mystic Veigar')
@@ -47,8 +47,8 @@ test('higher unit count beats higher tier ("5 Meeple over 3 Arbiter")', () => {
   const comp = {
     units: [{ id: 'Veigar', items: ['x', 'y', 'z'] }],
     traits: [
-      { id: 'TFT17_Mystic', numUnits: 5, style: 3, tierCurrent: 2 }, // more units, lower tier
-      { id: 'TFT17_Sorcerer', numUnits: 3, style: 5, tierCurrent: 3 }, // fewer units, higher tier
+      { id: 'DA_18_Mystic', numUnits: 5, style: 3, tierCurrent: 2 }, // more units, lower tier
+      { id: 'DA_Sorcerer18', numUnits: 3, style: 5, tierCurrent: 3 }, // fewer units, higher tier
     ],
   }
   // Mystic wins on count even though Sorcerer's tier (style) is higher.
@@ -59,8 +59,8 @@ test('unique traits are ignored even at higher count', () => {
   const comp = {
     units: [{ id: 'Aatrox', items: ['x', 'y', 'z'] }],
     traits: [
-      { id: 'TFT17_Apex', numUnits: 9, style: 5, tierCurrent: 1 }, // unique → ignored
-      { id: 'TFT17_Mystic', numUnits: 4, style: 4, tierCurrent: 2 }, // real headline
+      { id: 'DA_18_Apex', numUnits: 9, style: 5, tierCurrent: 1 }, // unique → ignored
+      { id: 'DA_18_Mystic', numUnits: 4, style: 4, tierCurrent: 2 }, // real headline
     ],
   }
   assert.equal(generateCompName(comp, { champions, traits }), 'Mystic Aatrox')
@@ -73,7 +73,7 @@ test('the most-itemized unit wins; higher cost breaks ties', () => {
       { id: 'Ahri', items: ['a', 'b', 'c'] }, // 3 items, cost 4 → primary carry
       { id: 'Poppy', items: [] },
     ],
-    traits: [{ id: 'TFT17_Sorcerer', numUnits: 2, style: 2, tierCurrent: 1 }],
+    traits: [{ id: 'DA_Sorcerer18', numUnits: 2, style: 2, tierCurrent: 1 }],
   }
   assert.equal(generateCompName(comp, { champions, traits }), 'Sorcerer Ahri')
 })
@@ -84,7 +84,7 @@ test('falls back to highest-cost unit when nothing is itemized', () => {
       { id: 'Poppy', items: [] }, // cost 1
       { id: 'Veigar', items: [] }, // cost 5 → fallback unit
     ],
-    traits: [{ id: 'TFT17_Mystic', numUnits: 3, style: 3, tierCurrent: 2 }],
+    traits: [{ id: 'DA_18_Mystic', numUnits: 3, style: 3, tierCurrent: 2 }],
   }
   assert.equal(generateCompName(comp, { champions, traits }), 'Mystic Veigar')
 })
@@ -92,7 +92,7 @@ test('falls back to highest-cost unit when nothing is itemized', () => {
 test('unit only when no non-unique trait exists', () => {
   const comp = {
     units: [{ id: 'Ahri', items: ['a', 'b', 'c'] }, { id: 'Poppy', items: [] }],
-    traits: [{ id: 'TFT17_Apex', numUnits: 1, style: 1, tierCurrent: 1 }], // unique → ignored
+    traits: [{ id: 'DA_18_Apex', numUnits: 1, style: 1, tierCurrent: 1 }], // unique → ignored
   }
   assert.equal(generateCompName(comp, { champions, traits }), 'Ahri')
 })

@@ -3,7 +3,7 @@
 Dense reference for future sessions. Not human-facing docs.
 
 ## Overview
-TFT **Double Up** stats web app. Ingests Riot match data → MongoDB, aggregates top comps / unit-item-trait stats / leaderboards, serves via Express; React SPA renders comps, stats, drag-drop comp builder, leaderboard, and 1-or-2 summoner match history. Only `tft_game_type === 'pairs'` (Double Up) + current set (17) is ever stored/shown.
+TFT **Double Up** stats web app. Ingests Riot match data → MongoDB, aggregates top comps / unit-item-trait stats / leaderboards, serves via Express; React SPA renders comps, stats, drag-drop comp builder, leaderboard, and 1-or-2 summoner match history. Only `tft_game_type === 'pairs'` (Double Up) + current set (18) is ever stored/shown. Set 18 payloads report Double Up as `tft_game_type: 'standard'` + `queue_id: 1160` and drop `partner_group_id`; `riotMatchCompat.normalizeRiotMatch` restores the old shape at the single fetch point in `summonerMatches.js`.
 
 ## Tech stack
 - **Server**: Node ESM, Express, MongoDB driver, `node-cron`, `axios`, `p-queue`. No build step. Tests via `node --test`.
@@ -23,7 +23,7 @@ TFT **Double Up** stats web app. Ingests Riot match data → MongoDB, aggregates
 
 ## Remaining violations (NOT fixed)
 - **Mixed-concern god files** (split candidates): `StatsPage.jsx` (~460L, sub-components+color/sort logic inline), `summonerMatches.js` (~444L, job-state-machine + fetch pipeline + response shaping + validation), `assetResolver.js` (fetch + classify + URL-transform + in-memory store/getters).
-- **Cross-package dup, NOT unified** (no monorepo/shared pkg): `CURRENT_SET=17` in both `server/constants/game.js` and `client/src/constants/game.js`; region maps in `server/services/riotApi.js` (`getPlatformRegion`/`getMassRegion`) vs `client/src/constants/regions.js`. Kept as mirrors — **edit together**.
+- **Cross-package dup, NOT unified** (no monorepo/shared pkg): `CURRENT_SET=18` in both `server/constants/game.js` and `client/src/constants/game.js`; region maps in `server/services/riotApi.js` (`getPlatformRegion`/`getMassRegion`) vs `client/src/constants/regions.js`. Kept as mirrors — **edit together**.
 - **Unit/trait shaping dup**: `matchNormalizers.normalizeUnits/normalizeTraits` vs `compsAggregator.extractComp` vs `statsAggregator` inline trait reshape all re-implement filter-tier>0 / halve `num_units` when doubled / map items.
 - **formatRound dup**: `match-table/formatters.formatRound` reimplements `utils/roundToStage.lastRoundToStage`.
 - **Other**: `summoner.js` route holds serialization/partner-cross-ref (business logic in HTTP layer); `boardStore.js` embeds trait/emblem rules; `LandingPage.jsx` inlines `Starfield` canvas engine; `riotSearch.js` mixes pure parse/validate with apiGet+navigate; `App.jsx` inlines `GearIcon`; 3 near-parallel search bars (`SearchBar`/`NavSearchBar`/`LandingSearchBar`).
@@ -31,7 +31,8 @@ TFT **Double Up** stats web app. Ingests Riot match data → MongoDB, aggregates
 ## Key decisions (inferred)
 - **Mongo is source of truth; DB-first lookups** skip the Riot Account API when puuid known. Match docs **trimmed** (~56% smaller) to only fields consumers read; `buildMatchDocument` MUST stay idempotent (migrations re-run it). Non-pairs games stored as tiny **stubs** so they dedup in `filterKnownMatchIds` without keeping ~40KB payload.
 - **Single Riot key isolated in `riotApi.js`**; dual `p-queue` (long: 100/2min, short: 20/s) enforces both windows; priority 10 = user, 0 = background; AbortSignal cancels queued+in-flight; 429 respects `Retry-After`; 403 → key-expired error.
-- **Patch system**: Riot `game_version` LoL number (16.x) ↔ user-facing TFT label (17.x) via `LOL_SEASON=16`, `SET_LAUNCH_LOL_MINOR=8` (TFT 17.1 = LoL 16.8). Filters convert TFT→LoL regex for DB queries.
+- **Patch system**: Set 18 `game_version` is `"TFT Unreal Version ?.?.?.?"` (no patch number), so patches are **date windows** from `SET_PATCH_SCHEDULE` in `server/constants/game.js` (18.1 = Aug 26 2026). `patchForTimestamp` labels a match by `game_datetime`; `buildStatsMatchFilter` filters on a `gameDatetime` range. **Add one schedule entry per TFT patch.**
+- **Set 18 ids**: apiNames use a `DA_` prefix with the set number anywhere (`DA_18_Xayah`, `DA_Vi18`, `DA_Gromp18_AP`); items are `DA_*` (`DA_InfinityEdge`) alongside legacy `TFT_Item_*` copies. `assetResolver` selects the CDragon set entry by number/mutator, keeps traited units, prefers `TFTSet18/` DD items on name collisions, and un-hashes FNV-1a `{xxxxxxxx}` variable names from description tokens.
 - **Rank snapshots** append-on-change (`rankSnapshotsRepo`) because match payload lacks LP — needed for the LP graph; clipped to set-release to avoid cross-set MMR-reset deltas.
 - **Two background paths**: in-process cron (re-aggregate comps /10min, leaderboard match-sync hourly) vs standalone **pausable ingest daemon** (`scripts/ingest.js`, round-robins top-N ladder, resumable cursor in `ingestionStateRepo`) — both share the one key budget, so daemon has a pause sentinel to yield to the webapp.
 - **TTL index** on `gameDate` auto-expires old matches (`MATCH_TTL_DAYS`, default 90).

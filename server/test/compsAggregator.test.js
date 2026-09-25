@@ -7,7 +7,7 @@ import {
 } from '../services/compsAggregator.js'
 import { CURRENT_SET } from '../constants/game.js'
 
-const THIEVES_GLOVES = 'TFT_Item_ThievesGloves'
+const THIEVES_GLOVES = 'DA_ThiefsGloves'
 
 function unit(id, overrides = {}) {
   return {
@@ -35,7 +35,7 @@ function match(participants, overrides = {}) {
     gameDatetime: 1000,
     info: {
       tft_game_type: 'pairs',
-      game_version: 'Version 17.2.614.1234',
+      game_version: 'TFT Unreal Version ?.?.?.?',
       participants,
       ...overrides.info,
     },
@@ -54,9 +54,9 @@ function units(unitIds, overridesById = {}) {
 
 describe('aggregateComps', () => {
   it('aggregates repeated comps with Double Up team placement, win rate, traits, and partners', () => {
-    const alphaUnits = [unit('TFT17_ALPHA'), unit('TFT17_BRAVO')]
-    const betaUnits = [unit('TFT17_CHARLIE'), unit('TFT17_DELTA')]
-    const gammaUnits = [unit('TFT17_ECHO'), unit('TFT17_FOXTROT')]
+    const alphaUnits = [unit('DA_18_ALPHA'), unit('DA_18_BRAVO')]
+    const betaUnits = [unit('DA_18_CHARLIE'), unit('DA_18_DELTA')]
+    const gammaUnits = [unit('DA_18_ECHO'), unit('DA_18_FOXTROT')]
 
     const results = aggregateComps([
       match([
@@ -66,8 +66,8 @@ describe('aggregateComps', () => {
           placement: 1,
           units: alphaUnits,
           traits: [
-            { name: 'TFT17_ACTIVE', num_units: 2, tier_current: 1, style: 1 },
-            { name: 'TFT17_INACTIVE', num_units: 1, tier_current: 0, style: 0 },
+            { name: 'DA_18_ACTIVE', num_units: 2, tier_current: 1, style: 1 },
+            { name: 'DA_18_INACTIVE', num_units: 1, tier_current: 0, style: 0 },
           ],
         }),
         participant({
@@ -99,18 +99,18 @@ describe('aggregateComps', () => {
       ]),
     ])
 
-    const alpha = findComp(results, ['TFT17_ALPHA', 'TFT17_BRAVO'])
+    const alpha = findComp(results, ['DA_18_ALPHA', 'DA_18_BRAVO'])
 
     assert.equal(alpha.playCount, 2)
     assert.equal(alpha.avgPlacement, 2)
     assert.equal(alpha.winRate, 0.5)
-    assert.deepEqual(alpha.units.map(u => u.id), ['TFT17_ALPHA', 'TFT17_BRAVO'])
+    assert.deepEqual(alpha.units.map(u => u.id), ['DA_18_ALPHA', 'DA_18_BRAVO'])
     assert.deepEqual(alpha.traits, [
-      { id: 'TFT17_ACTIVE', numUnits: 2, tierCurrent: 1, style: 1 },
+      { id: 'DA_18_ACTIVE', numUnits: 2, tierCurrent: 1, style: 1 },
     ])
     assert.deepEqual(alpha.topPartners.map(p => p.fingerprint), [
-      'TFT17_CHARLIE|TFT17_DELTA',
-      'TFT17_ECHO|TFT17_FOXTROT',
+      'DA_18_CHARLIE|DA_18_DELTA',
+      'DA_18_ECHO|DA_18_FOXTROT',
     ])
     assert.equal(alpha.topPartners[0].pairCount, 1)
     assert.equal(alpha.topPartners[0].avgPlacement, 1)
@@ -118,13 +118,13 @@ describe('aggregateComps', () => {
   })
 
   it('normalizes duplicate unit observations, three-star flags, sorted item combos, and Thieves Gloves', () => {
-    const carryItems = ['TFT_Item_Zeke', 'TFT_Item_ArchangelsStaff', 'TFT_Item_MadredsBloodrazor']
-    const fillerUnits = Array.from({ length: 12 }, (_, index) => unit(`TFT17_FILLER_${index + 1}`))
+    const carryItems = ['DA_ArchangelsStaff', 'DA_GiantSlayer', 'DA_SteraksGage']
+    const fillerUnits = Array.from({ length: 12 }, (_, index) => unit(`DA_18_FILLER_${index + 1}`))
     const noisyUnits = [
-      unit('TFT17_CARRY', { tier: 3, itemNames: carryItems }),
-      unit('TFT17_SUPPORT', { itemNames: [THIEVES_GLOVES] }),
+      unit('DA_18_CARRY', { tier: 3, itemNames: carryItems }),
+      unit('DA_18_SUPPORT', { itemNames: [THIEVES_GLOVES] }),
       ...fillerUnits,
-      unit('TFT17_CARRY', { tier: 3, itemNames: carryItems }),
+      unit('DA_18_CARRY', { tier: 3, itemNames: carryItems }),
     ]
 
     const results = aggregateComps([
@@ -133,12 +133,12 @@ describe('aggregateComps', () => {
     ])
 
     const comp = results[0]
-    const carry = comp.units.find(u => u.id === 'TFT17_CARRY')
-    const support = comp.units.find(u => u.id === 'TFT17_SUPPORT')
+    const carry = comp.units.find(u => u.id === 'DA_18_CARRY')
+    const support = comp.units.find(u => u.id === 'DA_18_SUPPORT')
 
     assert.equal(comp.playCount, 2)
     assert.equal(comp.units.length, 14)
-    assert.equal(comp.units.filter(u => u.id === 'TFT17_CARRY').length, 1)
+    assert.equal(comp.units.filter(u => u.id === 'DA_18_CARRY').length, 1)
     assert.equal(carry.tier, 3)
     assert.deepEqual(carry.items, carryItems.slice().sort())
     assert.deepEqual(support.items, [THIEVES_GLOVES])
@@ -146,51 +146,51 @@ describe('aggregateComps', () => {
 
   it('merges similar comps into the original best comp while preserving units, traits, stars, and absorbing items and partners', () => {
     const mainIds = [
-      'TFT17_MAIN_1',
-      'TFT17_MAIN_2',
-      'TFT17_MAIN_3',
-      'TFT17_MAIN_4',
-      'TFT17_MAIN_5',
-      'TFT17_MAIN_6',
-      'TFT17_MAIN_7',
+      'DA_18_MAIN_1',
+      'DA_18_MAIN_2',
+      'DA_18_MAIN_3',
+      'DA_18_MAIN_4',
+      'DA_18_MAIN_5',
+      'DA_18_MAIN_6',
+      'DA_18_MAIN_7',
     ]
     const variantIds = [
-      'TFT17_MAIN_1',
-      'TFT17_MAIN_2',
-      'TFT17_MAIN_3',
-      'TFT17_MAIN_4',
-      'TFT17_MAIN_5',
-      'TFT17_MAIN_6',
-      'TFT17_VARIANT_1',
+      'DA_18_MAIN_1',
+      'DA_18_MAIN_2',
+      'DA_18_MAIN_3',
+      'DA_18_MAIN_4',
+      'DA_18_MAIN_5',
+      'DA_18_MAIN_6',
+      'DA_18_VARIANT_1',
     ]
     const chainedIds = [
-      'TFT17_MAIN_1',
-      'TFT17_MAIN_2',
-      'TFT17_MAIN_3',
-      'TFT17_MAIN_4',
-      'TFT17_MAIN_5',
-      'TFT17_VARIANT_1',
-      'TFT17_VARIANT_2',
+      'DA_18_MAIN_1',
+      'DA_18_MAIN_2',
+      'DA_18_MAIN_3',
+      'DA_18_MAIN_4',
+      'DA_18_MAIN_5',
+      'DA_18_VARIANT_1',
+      'DA_18_VARIANT_2',
     ]
     const partnerIds = [
-      'TFT17_PARTNER_1',
-      'TFT17_PARTNER_2',
-      'TFT17_PARTNER_3',
-      'TFT17_PARTNER_4',
-      'TFT17_PARTNER_5',
-      'TFT17_PARTNER_6',
-      'TFT17_PARTNER_7',
+      'DA_18_PARTNER_1',
+      'DA_18_PARTNER_2',
+      'DA_18_PARTNER_3',
+      'DA_18_PARTNER_4',
+      'DA_18_PARTNER_5',
+      'DA_18_PARTNER_6',
+      'DA_18_PARTNER_7',
     ]
     const partnerVariantIds = [
-      'TFT17_PARTNER_1',
-      'TFT17_PARTNER_2',
-      'TFT17_PARTNER_3',
-      'TFT17_PARTNER_4',
-      'TFT17_PARTNER_5',
-      'TFT17_PARTNER_6',
-      'TFT17_PARTNER_VARIANT_1',
+      'DA_18_PARTNER_1',
+      'DA_18_PARTNER_2',
+      'DA_18_PARTNER_3',
+      'DA_18_PARTNER_4',
+      'DA_18_PARTNER_5',
+      'DA_18_PARTNER_6',
+      'DA_18_PARTNER_VARIANT_1',
     ]
-    const carryItems = ['TFT_Item_Zeke', 'TFT_Item_ArchangelsStaff', 'TFT_Item_MadredsBloodrazor']
+    const carryItems = ['DA_ArchangelsStaff', 'DA_GiantSlayer', 'DA_SteraksGage']
     let gameIndex = 0
 
     const pairedMatch = ({ placement, compUnits, partnerUnits = units(partnerIds) }) => {
@@ -201,7 +201,7 @@ describe('aggregateComps', () => {
           partner_group_id: gameIndex,
           placement,
           units: compUnits,
-          traits: [{ name: 'TFT17_CANONICAL', num_units: 7, tier_current: 2, style: 2 }],
+          traits: [{ name: 'DA_18_CANONICAL', num_units: 7, tier_current: 2, style: 2 }],
         }),
         participant({
           puuid: `partner-${gameIndex}`,
@@ -215,11 +215,11 @@ describe('aggregateComps', () => {
     const results = aggregateComps([
       pairedMatch({
         placement: 1,
-        compUnits: units(mainIds, { TFT17_MAIN_2: { tier: 3 } }),
+        compUnits: units(mainIds, { DA_18_MAIN_2: { tier: 3 } }),
       }),
       pairedMatch({
         placement: 3,
-        compUnits: units(mainIds, { TFT17_MAIN_2: { tier: 3 } }),
+        compUnits: units(mainIds, { DA_18_MAIN_2: { tier: 3 } }),
       }),
       pairedMatch({
         placement: 3,
@@ -227,18 +227,18 @@ describe('aggregateComps', () => {
       }),
       pairedMatch({
         placement: 5,
-        compUnits: units(variantIds, { TFT17_MAIN_1: { itemNames: carryItems } }),
-        partnerUnits: units(partnerVariantIds, { TFT17_PARTNER_1: { itemNames: carryItems } }),
+        compUnits: units(variantIds, { DA_18_MAIN_1: { itemNames: carryItems } }),
+        partnerUnits: units(partnerVariantIds, { DA_18_PARTNER_1: { itemNames: carryItems } }),
       }),
       pairedMatch({
         placement: 7,
-        compUnits: units(variantIds, { TFT17_MAIN_1: { itemNames: carryItems } }),
-        partnerUnits: units(partnerVariantIds, { TFT17_PARTNER_1: { itemNames: carryItems } }),
+        compUnits: units(variantIds, { DA_18_MAIN_1: { itemNames: carryItems } }),
+        partnerUnits: units(partnerVariantIds, { DA_18_PARTNER_1: { itemNames: carryItems } }),
       }),
       pairedMatch({
         placement: 7,
-        compUnits: units(variantIds, { TFT17_MAIN_1: { itemNames: carryItems } }),
-        partnerUnits: units(partnerVariantIds, { TFT17_PARTNER_1: { itemNames: carryItems } }),
+        compUnits: units(variantIds, { DA_18_MAIN_1: { itemNames: carryItems } }),
+        partnerUnits: units(partnerVariantIds, { DA_18_PARTNER_1: { itemNames: carryItems } }),
       }),
       pairedMatch({
         placement: 1,
@@ -249,17 +249,17 @@ describe('aggregateComps', () => {
     const main = findComp(results, mainIds)
     const variant = findComp(results, variantIds)
     const chained = findComp(results, chainedIds)
-    const mainCarry = main.units.find(u => u.id === 'TFT17_MAIN_1')
-    const mainStar = main.units.find(u => u.id === 'TFT17_MAIN_2')
+    const mainCarry = main.units.find(u => u.id === 'DA_18_MAIN_1')
+    const mainStar = main.units.find(u => u.id === 'DA_18_MAIN_2')
     const topPartner = main.topPartners[0]
-    const partnerCarry = topPartner.units.find(u => u.id === 'TFT17_PARTNER_1')
+    const partnerCarry = topPartner.units.find(u => u.id === 'DA_18_PARTNER_1')
 
     assert.equal(main.playCount, 6)
     assert.equal(main.avgPlacement, 16 / 6)
     assert.equal(main.winRate, 1 / 6)
     assert.deepEqual(main.units.map(u => u.id), mainIds)
     assert.deepEqual(main.traits, [
-      { id: 'TFT17_CANONICAL', numUnits: 7, tierCurrent: 2, style: 2 },
+      { id: 'DA_18_CANONICAL', numUnits: 7, tierCurrent: 2, style: 2 },
     ])
     assert.deepEqual(mainCarry.items, carryItems.slice().sort())
     assert.equal(mainStar.tier, 3)
@@ -289,12 +289,12 @@ describe('buildCompAggregationMatchFilter', () => {
     })
   })
 
-  it('converts the TFT patch label to a LoL game_version regex when a patch is known', () => {
-    // TFT 17.2 = LoL 16.9, so the raw game_version filter targets "16.9".
-    assert.deepEqual(buildCompAggregationMatchFilter('17.2'), {
+  it('scopes a known TFT patch to its gameDatetime window', () => {
+    // 18.1 → 18.2 are consecutive schedule entries, so 18.1 gets a closed window.
+    assert.deepEqual(buildCompAggregationMatchFilter('18.1'), {
       'info.tft_game_type': 'pairs',
       tftSetNumber: CURRENT_SET,
-      'info.game_version': { $regex: '\\b16\\.9\\.' },
+      gameDatetime: { $gte: Date.UTC(2026, 7, 26), $lt: Date.UTC(2026, 8, 9) },
     })
   })
 })

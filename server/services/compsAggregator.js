@@ -3,8 +3,7 @@ import { replaceAggregatedComps, getAggregatedComps, selectTopComps } from '../d
 import { deduplicateUnits, hadUnitDoubling } from './unitUtils.js'
 import { toTeamPlacement as teamPlacement } from './teamPlacement.js'
 // Comps share the Stats patch logic so both pages label and filter patches the
-// same way: game_version carries the LoL number (16.x), shown to users as TFT (17.x).
-// Patch math comes from the shared patchFilters module; patch *discovery* (a DB
+// same way (a patch is a gameDatetime window from SET_PATCH_SCHEDULE). Patch math comes from the shared patchFilters module; patch *discovery* (a DB
 // query) still lives in statsAggregator.
 import { buildStatsMatchFilter } from './patchFilters.js'
 import { getAvailablePatches, aggregateStats } from './statsAggregator.js'
@@ -12,7 +11,7 @@ import { replaceAggregatedStats } from '../db/aggregatedStatsRepo.js'
 
 const TOP_PARTNERS_LIMIT = 3
 const COMP_MERGE_SHARED_UNITS = 6
-const THIEVES_GLOVES = 'TFT_Item_ThievesGloves'
+const THIEVES_GLOVES = 'DA_ThiefsGloves'
 
 function buildCompFingerprint(unitIds) {
   return unitIds.slice().sort().join('|')
@@ -443,8 +442,7 @@ export function aggregateComps(matches, { maxComps = null } = {}) {
 }
 
 // Builds the Mongo filter for a comp aggregation read. `patch` is the TFT label
-// (e.g. "17.2"); buildStatsMatchFilter converts it back to the LoL game_version
-// regex (16.x) used in the raw Riot field.
+// (e.g. "18.2"); buildStatsMatchFilter converts it to that patch's gameDatetime window.
 export function buildCompAggregationMatchFilter(patch = null) {
   return buildStatsMatchFilter(patch)
 }

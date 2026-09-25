@@ -1,8 +1,61 @@
 import axios from 'axios'
 import { CURRENT_SET } from '../constants/game.js'
 
-// Data Dragon champions for the current set use this ID prefix
-const SET_ID_PREFIX = `TFT${CURRENT_SET}_`
+// Riot apiNames stopped following one prefix scheme in Set 18. Sets up to 17 used
+// "TFT17_Ahri"; Set 18 uses "DA_" with the set number anywhere in the name
+// ("DA_18_Xayah", "DA_Vi18", "DA_Gromp18_AP", "DA_Primal18"), and match-v1
+// character_id / trait name / itemNames use these same apiNames. Only used by the
+// Data Dragon fallback; the CDragon path selects the set entry by number instead.
+export const isCurrentSetId = (id, setNumber = CURRENT_SET) => {
+  if (!id) return false
+  if (id.startsWith(`TFT${setNumber}_`)) return true
+  return id.startsWith('DA_') && new RegExp(`(^|[^0-9])${setNumber}([^0-9]|$)`).test(id)
+}
+
+// CDragon setData holds several entries per set number (base, _PAIRS, _PVEMODE,
+// events). Prefer the Double Up variant, then the base set, then any entry that
+// isn't a PvE or event mode.
+export const selectSetEntry = (setData, setNumber = CURRENT_SET) => {
+  if (!Array.isArray(setData)) return null
+  const byMutator = (m) => setData.find(s => s.mutator === m)
+  return byMutator(`TFTSet${setNumber}_PAIRS`)
+    || byMutator(`TFTSet${setNumber}`)
+    || setData.find(s => s.number === setNumber && !/PVEMODE|Event/i.test(s.mutator || ''))
+    || null
+}
+
+// Real, playable units carry at least one trait; golems, training dummies,
+// anvils and loot chests listed alongside them in setData have none.
+export const selectSetUnits = (setEntry) =>
+  (setEntry?.champions || []).filter(c => c.apiName && (c.traits || []).length > 0)
+
+// CDragon emits some variable names as FNV-1a 32-bit hashes of the lowercased
+// name ("{7a9d7f0e}" = fnv1a("essenceperdeath")) when it can't resolve the
+// field name. The descriptions still reference the readable @Token@ names, so
+// hash each token and map the hashed keys back. Unmatched hashes pass through.
+const fnv1a = (str) => {
+  let hash = 0x811c9dc5
+  for (const ch of str.toLowerCase()) {
+    hash ^= ch.charCodeAt(0)
+    hash = Math.imul(hash, 0x01000193) >>> 0
+  }
+  return hash.toString(16).padStart(8, '0')
+}
+const HASHED_NAME_RE = /^\{([0-9a-f]{8})\}$/
+
+export const unhashVariables = (vars, desc) => {
+  const list = toNameValueArray(vars)
+  if (!list.some(v => HASHED_NAME_RE.test(v.name))) return list
+  const byHash = new Map()
+  for (const m of String(desc || '').matchAll(/@([^@*%]+)/g)) {
+    byHash.set(fnv1a(m[1].trim()), m[1].trim())
+  }
+  return list.map(v => {
+    const hashed = HASHED_NAME_RE.exec(v.name)
+    const name = hashed && byHash.get(hashed[1])
+    return name ? { ...v, name } : v
+  })
+}
 
 let championMap = new Map()
 let itemMap = new Map()
@@ -82,17 +135,12 @@ export const fetchAndCacheAssets = async () => {
   let cdChampions = []
   let cdTraits = []
   let setItemAllowlist = null // Set<apiName> — items relevant to the current set
-  if (cdData?.setData) {
-    // Find the set entry for the current set number
-    const setEntry = cdData.setData.find(s =>
-      s.champions?.some(c => c.apiName?.startsWith(SET_ID_PREFIX))
-    )
-    if (setEntry) {
-      cdChampions = setEntry.champions.filter(c => c.apiName?.startsWith(SET_ID_PREFIX))
-      cdTraits = (setEntry.traits || []).filter(t => t.apiName?.startsWith(SET_ID_PREFIX))
-      if (Array.isArray(setEntry.items) && setEntry.items.length > 0) {
-        setItemAllowlist = new Set(setEntry.items)
-      }
+  const setEntry = selectSetEntry(cdData?.setData)
+  if (setEntry) {
+    cdChampions = selectSetUnits(setEntry)
+    cdTraits = setEntry.traits || []
+    if (Array.isArray(setEntry.items) && setEntry.items.length > 0) {
+      setItemAllowlist = new Set(setEntry.items)
     }
   }
 
@@ -122,7 +170,7 @@ export const fetchAndCacheAssets = async () => {
         name: champ.ability.name || '',
         desc: cleanedDesc,
         iconUrl: toCDragonUrl(champ.ability.icon),
-        variables: toNameValueArray(champ.ability.variables),
+        variables: unhashVariables(champ.ability.variables, cleanedDesc),
       } : null
 
       const stats = champ.stats ? {
@@ -147,7 +195,7 @@ export const fetchAndCacheAssets = async () => {
     // Fallback: use Data Dragon, filter by ID prefix (no trait data available here)
     const champEntries = Object.values(champData.data || {})
     for (const champ of champEntries) {
-      if (!champ.id.startsWith(SET_ID_PREFIX)) continue
+      if (!isCurrentSetId(champ.id)) continue
       const iconUrl = champ.image
         ? `https://ddragon.leagueoflegends.com/cdn/${ddVersion}/img/tft-champion/${champ.image}`
         : ''
@@ -166,11 +214,23 @@ export const fetchAndCacheAssets = async () => {
   // Restrict to items the current set actually uses (via setEntry.items).
   itemMap.clear()
   const seenNames = new Set()
-  const itemEntries = Object.values(itemData.data || {})
+  // Dedupe key ignores punctuation/case: Riot names some Set 18 copies slightly
+  // differently ("Warmogs Armor" vs legacy "Warmog's Armor").
+  const nameKey = (name) => name.toLowerCase().replace(/[^a-z0-9]/g, '')
+  // The set allowlist carries both legacy and current-set copies of most items
+  // under the same display name (TFT_Item_Deathblade and DA_Deathblade), and
+  // de-duplication below keeps the first one seen. Set 18 match payloads report
+  // the DA_ ids, so visit current-set items first or match items won't resolve.
+  // DD keys current-set items by path ("TFTSet18/Set18_Items/DA_InfinityEdge");
+  // the id itself doesn't always carry the set number.
+  const isCurrentSetItem = ([key]) => key.startsWith(`TFTSet${CURRENT_SET}/`)
+  const itemEntries = Object.entries(itemData.data || {})
+    .sort((a, b) => Number(isCurrentSetItem(b)) - Number(isCurrentSetItem(a)))
+    .map(([, item]) => item)
   for (const item of itemEntries) {
     if (!item.name) continue
     if (setItemAllowlist && !setItemAllowlist.has(item.id)) continue
-    if (seenNames.has(item.name)) continue
+    if (seenNames.has(nameKey(item.name))) continue
 
     const imgFile = typeof item.image === 'object' ? item.image?.full : item.image
     const iconUrl = imgFile
@@ -191,16 +251,18 @@ export const fetchAndCacheAssets = async () => {
     // Drop items with any digit in the name (placeholder/test variants).
     if (/\d/.test(item.name)) continue
 
-    // CDragon composition entries are apiName strings — resolve to numeric IDs
+    // CDragon composition entries are apiName strings — resolve to the DD item IDs
     // so the client can look up component icons from the items array it already has.
+    // Legacy items have numeric CDragon ids; Set 18 DA_ items have id null and a DD
+    // id equal to their apiName.
     const compositionIds = (cdItem?.composition || [])
       .map(apiName => {
         const comp = cdItemByApiName.get(apiName)
-        return comp ? String(comp.id) : null
+        return comp ? String(comp.id ?? comp.apiName) : null
       })
       .filter(Boolean)
 
-    let effects = toNameValueArray(cdItem?.effects)
+    let effects = unhashVariables(cdItem?.effects, cdItem?.desc)
     // CDragon stores AD for these radiant items as a fraction (e.g. 0.50) rather
     // than a flat value — multiply by 100 to get the correct in-game number.
     if (item.name === 'Radiant Deathblade' || item.name === 'Silvermere Dawn') {
@@ -209,7 +271,7 @@ export const fetchAndCacheAssets = async () => {
       )
     }
 
-    seenNames.add(item.name)
+    seenNames.add(nameKey(item.name))
     itemMap.set(String(item.id), {
       id: String(item.id),
       name: item.name,
@@ -250,7 +312,7 @@ export const fetchAndCacheAssets = async () => {
       effects: (trait.effects || []).map(e => ({
         minUnits: e.minUnits,
         style: e.style,
-        variables: toNameValueArray(e.variables),
+        variables: unhashVariables(e.variables, trait.desc),
       })),
     })
   }

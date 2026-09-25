@@ -8,7 +8,7 @@ const FALLBACK_CHAMPION = (id) => ({ id, name: id, cost: 1, iconUrl: '', traits:
 // Thief's Gloves fills all three item slots but is stored alphabetically, which
 // lands it in the last (right-most) slot behind empty placeholders. Show it in
 // the first slot instead — purely a display-order tweak.
-const THIEFS_GLOVES = 'TFT_Item_ThiefsGloves'
+const THIEFS_GLOVES = 'DA_ThiefsGloves'
 
 function orderItemKeys(keys) {
   const list = keys || []

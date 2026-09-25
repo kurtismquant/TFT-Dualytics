@@ -12,8 +12,8 @@
 export const LANDING_SEED = {
   topComps: 12,
   gamesAnalyzed: 2500,
-  unitsTracked: 45,
+  unitsTracked: 60,
   patchGames: 2500,
   rankedPlayers: 200,
-  units: 58,
+  units: 70,
 }

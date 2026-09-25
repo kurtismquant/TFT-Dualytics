@@ -4,9 +4,10 @@ import { deduplicateUnits } from './unitUtils.js'
 import { toTeamPlacement } from './teamPlacement.js'
 // Pure patch math lives in patchFilters.js (shared with the Comps aggregator).
 // Re-exported here so existing importers of statsAggregator keep working.
-import { extractPatch, patchToNum, buildStatsMatchFilter } from './patchFilters.js'
+import { patchForTimestamp, patchToNum, buildStatsMatchFilter } from './patchFilters.js'
+import { SET_PATCH_SCHEDULE } from '../constants/game.js'
 
-export { extractPatch, patchToNum, buildStatsMatchFilter }
+export { patchForTimestamp, patchToNum, buildStatsMatchFilter }
 
 const VALID_TYPES = new Set(['units', 'items', 'traits'])
 const MAX_POPULAR = 5
@@ -190,23 +191,15 @@ export async function getAvailablePatches() {
     return patchesCache.value
   }
 
-  // distinct() computes the unique game_version values server-side and returns only
-  // those (~a handful of strings) instead of streaming every current-set Double Up
-  // match over the wire. The previous find().toArray() pulled all ~12k match docs
-  // just to derive the patch list — very slow against a remote (Atlas) cluster, and
-  // it runs on every /api/stats and /api/comps request.
-  const versions = await matches.distinct('info.game_version', buildStatsMatchFilter())
-
-  const patches = []
-  const seen = new Set()
-  for (const version of versions) {
-    const patch = extractPatch(version)
-    if (!patch || seen.has(patch)) continue
-    seen.add(patch)
-    patches.push(patch)
-  }
-  // Newest patch first (higher patch number = more recent). This matches the prior
-  // gameDatetime-desc ordering without pulling/sorting match documents.
+  // A patch is available when at least one stored match falls in its schedule
+  // window. One indexed findOne per scheduled patch (a handful) returns a single
+  // _id each — it never streams match documents over the slow Atlas link.
+  const candidates = SET_PATCH_SCHEDULE.map(entry => entry.patch)
+  const present = await Promise.all(candidates.map(patch =>
+    matches.findOne(buildStatsMatchFilter(patch), { projection: { _id: 1 } })
+  ))
+  const patches = candidates.filter((_, i) => present[i])
+  // Newest patch first (higher patch number = more recent).
   patches.sort((a, b) => patchToNum(b) - patchToNum(a))
   patchesCache = { at: Date.now(), value: patches }
   return patches

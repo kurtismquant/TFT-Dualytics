@@ -22,12 +22,14 @@ import {
   findRankSnapshots,
   recordRankSnapshotIfChanged,
 } from '../db/rankSnapshotsRepo.js'
-import { extractPatch, patchToNum } from './statsAggregator.js'
-import { CURRENT_SET as DEFAULT_CURRENT_SET } from '../constants/game.js'
+import { patchForTimestamp, patchToNum } from './statsAggregator.js'
+import { normalizeRiotMatch } from './riotMatchCompat.js'
+import { CURRENT_SET as DEFAULT_CURRENT_SET, SET_RELEASE_MS as DEFAULT_SET_RELEASE_MS } from '../constants/game.js'
 
 const USER_PRIORITY = 10
 const CURRENT_SET = Number(process.env.CURRENT_SET || DEFAULT_CURRENT_SET)
-const SET_RELEASE = Number(process.env.CURRENT_SET_RELEASE_TIMESTAMP)
+// Unix seconds. The env override wins; otherwise the set's first scheduled patch.
+const SET_RELEASE = Number(process.env.CURRENT_SET_RELEASE_TIMESTAMP) || Math.floor(DEFAULT_SET_RELEASE_MS / 1000)
 // Rank snapshots are not stored per-set, so clip them to the current set's
 // release. This prevents a previous-set snapshot (before the soft MMR reset)
 // from forming a huge artificial LP delta with the first current-set snapshot.
@@ -379,7 +381,7 @@ export async function getPlayerMatches(gameName, tagLine, region, signal, syncJo
       if (signal?.aborted) break
       let detail
       try {
-        detail = await riotRequest(detailUrl(matchId), priority, signal)
+        detail = normalizeRiotMatch(await riotRequest(detailUrl(matchId), priority, signal))
       } catch (err) {
         if (err?.name === 'AbortError' || err?.code === 'ERR_CANCELED') throw err
         console.error('[getPlayerMatches] failed to fetch match', matchId, err?.message)
@@ -389,7 +391,7 @@ export async function getPlayerMatches(gameName, tagLine, region, signal, syncJo
       // Sentinel early-stop: store the first older-patch game as a stub (so it
       // dedups and is never re-fetched) and stop.
       if (currentPatch) {
-        const pNum = patchToNum(extractPatch(detail.info?.game_version))
+        const pNum = patchToNum(patchForTimestamp(detail.info?.game_datetime))
         if (pNum == null || (patchThreshold != null && pNum < patchThreshold)) {
           await upsertMatch(buildMatchStub(detail)).catch(() => {})
           break
@@ -417,7 +419,7 @@ export async function getPlayerMatches(gameName, tagLine, region, signal, syncJo
     }
     const results = await Promise.allSettled(newIds.map(async (matchId) => {
       try {
-        const detail = await riotRequest(detailUrl(matchId), priority, detailAbort.signal)
+        const detail = normalizeRiotMatch(await riotRequest(detailUrl(matchId), priority, detailAbort.signal))
         await storeMatchDetail(detail, matchId, puuid)
       } catch (err) {
         if (err?.name !== 'AbortError' && err?.code !== 'ERR_CANCELED') {
