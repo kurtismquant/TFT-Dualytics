@@ -7,8 +7,8 @@
    Multiplies the root font-size, so every rem-based size scales with it.
    Hairline borders, outlines and shadows stay in px on purpose.
    Keep in sync with UI_SCALES in src/constants/uiScale.js. */
-:root                     { --ui-scale: 1; }    /* compact (default) */
-[data-ui-scale="standard"] { --ui-scale: 1.15; }
+:root                     { --ui-scale: 1.15; } /* standard (default) */
+[data-ui-scale="compact"]  { --ui-scale: 1; }
 [data-ui-scale="large"]    { --ui-scale: 1.3; }
 
 /* ── Layout tokens (theme-independent) ── */

@@ -7,4 +7,4 @@ export const UI_SCALES = {
   large: 1.3,
 }
 
-export const DEFAULT_UI_SCALE = 'compact'
+export const DEFAULT_UI_SCALE = 'standard'
