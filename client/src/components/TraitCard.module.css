@@ -1,8 +1,8 @@
 .card {
-  width: 320px;
+  width: 20rem;
   background: var(--bg-card);
   border: 1px solid var(--ghost-border);
-  padding: 14px;
+  padding: 0.875rem;
   pointer-events: none;
 }
 
@@ -10,22 +10,22 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
-  margin-bottom: 12px;
-  padding-bottom: 10px;
+  gap: 0.625rem;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.625rem;
   border-bottom: 1px solid var(--bg-border-muted);
 }
 
 .headerLeft {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 0.5rem;
   min-width: 0;
 }
 
 .traitIcon {
-  width: 28px;
-  height: 28px;
+  width: 1.75rem;
+  height: 1.75rem;
   object-fit: contain;
   flex-shrink: 0;
 }
@@ -43,7 +43,7 @@
 .breakpoints {
   display: inline-flex;
   align-items: center;
-  gap: 3px;
+  gap: 0.1875rem;
   font-family: var(--font-body);
   font-weight: var(--fw-bold);
   letter-spacing: var(--track-wider);
@@ -54,15 +54,15 @@
 .bpGroup {
   display: inline-flex;
   align-items: center;
-  gap: 3px;
+  gap: 0.1875rem;
 }
 
 .bp {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 18px;
-  padding: 2px 5px;
+  min-width: 1.125rem;
+  padding: 2px 0.3125rem;
   border: 1px solid transparent;
   font-size: var(--text-xs);
   color: var(--text-muted);
@@ -157,7 +157,7 @@
 
 /* ── Shared preamble (renders above tier rows) ──────────── */
 .preamble {
-  margin: 0 0 10px;
+  margin: 0 0 0.625rem;
   font-family: var(--font-body);
   font-size: var(--text-xs);
   letter-spacing: var(--track-base);
@@ -170,8 +170,8 @@
 .rows {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  margin-bottom: 10px;
+  gap: 0.5rem;
+  margin-bottom: 0.625rem;
 }
 
 .row {
@@ -206,8 +206,8 @@
 
 /* ── Rules footer (italic muted) ────────────────────────── */
 .rules {
-  margin: 0 0 10px;
-  padding-top: 10px;
+  margin: 0 0 0.625rem;
+  padding-top: 0.625rem;
   border-top: 1px solid var(--bg-border-muted);
   font-family: var(--font-body);
   font-size: var(--text-xs);
@@ -222,14 +222,14 @@
 .champions {
   display: flex;
   flex-wrap: wrap;
-  gap: 4px;
+  gap: 0.25rem;
   border-top: 1px solid var(--bg-border-muted);
-  padding-top: 10px;
+  padding-top: 0.625rem;
 }
 
 .champRing {
-  width: 32px;
-  height: 32px;
+  width: 2rem;
+  height: 2rem;
   border: 2px solid;
   flex-shrink: 0;
   overflow: hidden;

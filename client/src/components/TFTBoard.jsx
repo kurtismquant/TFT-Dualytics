@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react'
 import DroppableHex from "./DroppableHex.jsx";
 import DraggableUnit from "./DraggableUnit.jsx";
 import EquippedItems from "./EquippedItems.jsx";
+import { useUiScale } from "../contexts/useUiScale.js";
 import styles from "./TFTBoard.module.css";
 
 const ROWS = 4;
@@ -13,10 +14,12 @@ const MAX_HEX_SIZE = 90;
 // On mobile we shrink the gap and the min size so all 7 columns fit the
 // viewport without horizontal scroll while keeping the hexes as large as
 // possible (the per-hex ring is also thinned in DroppableHex.module.css).
-function calcHexSize(wrapperWidth, gap, minSize) {
-  const available = wrapperWidth - 20;
+// All px constants are Compact-size values, multiplied by the Interface Size
+// factor (`scale`) since the board is laid out in JS pixels, not rem.
+function calcHexSize(wrapperWidth, gap, minSize, scale) {
+  const available = wrapperWidth - 20 * scale;
   const size = (available - (COLS + 2) * gap) / (COLS + 0.5);
-  return Math.min(MAX_HEX_SIZE, Math.max(minSize, Math.floor(size)));
+  return Math.min(Math.round(MAX_HEX_SIZE * scale), Math.max(minSize, Math.floor(size)));
 }
 
 export default function TFTBoard({
@@ -33,20 +36,21 @@ export default function TFTBoard({
   overlay = null,
 }) {
   const wrapperRef = useRef(null);
+  const scale = useUiScale();
   const [hexSize, setHexSize] = useState(MAX_HEX_SIZE);
 
-  const HEX_GAP = isMobile ? 5 : 10;
-  const MIN_HEX_SIZE = isMobile ? 28 : 38;
+  const HEX_GAP = Math.round((isMobile ? 5 : 10) * scale);
+  const MIN_HEX_SIZE = Math.round((isMobile ? 28 : 38) * scale);
 
   useEffect(() => {
     const el = wrapperRef.current;
     if (!el) return;
     const ro = new ResizeObserver(([entry]) => {
-      setHexSize(calcHexSize(entry.contentRect.width, HEX_GAP, MIN_HEX_SIZE));
+      setHexSize(calcHexSize(entry.contentRect.width, HEX_GAP, MIN_HEX_SIZE, scale));
     });
     ro.observe(el);
     return () => ro.disconnect();
-  }, [HEX_GAP, MIN_HEX_SIZE]);
+  }, [HEX_GAP, MIN_HEX_SIZE, scale]);
 
   // Report the live hex size so the drag overlay can match it (otherwise a
   // dragged board unit renders at the fixed desktop size on small screens).
@@ -64,7 +68,7 @@ export default function TFTBoard({
     <div
       ref={wrapperRef}
       className={styles.boardWrapper}
-      style={{ height: boardHeight + 60 }}
+      style={{ height: boardHeight + 60 * scale }}
     >
       {overlay}
       <div className={styles.board} style={{ width: boardWidth, height: boardHeight }}>

@@ -20,6 +20,8 @@ export default function UnitIcon2({
 }) {
   if (!champion) return null
   const borderColor = COST_COLORS[champion.cost] || 'var(--bg-border)'
+  // rem (not px) so the icon follows the Interface Size setting.
+  const dim = `${size / 16}rem`
   const handleKeyDown = (event) => {
     if (!onClick || (event.key !== 'Enter' && event.key !== ' ')) return
     event.preventDefault()
@@ -59,7 +61,7 @@ export default function UnitIcon2({
   const iconEl = (
     <div
       className={styles.icon}
-      style={{ width: size, height: size, borderColor }}
+      style={{ width: dim, height: dim, borderColor }}
       onContextMenu={onContextMenu}
       {...interactiveProps}
     >
@@ -76,7 +78,7 @@ export default function UnitIcon2({
   if (!tier) return iconEl
 
   return (
-    <div className={`${styles.wrapper}${floatStars ? ` ${styles.floatStars}` : ''}`} style={{ width: size }}>
+    <div className={`${styles.wrapper}${floatStars ? ` ${styles.floatStars}` : ''}`} style={{ width: dim }}>
       <div className={styles.stars} data-tier={tier}>
         {Array.from({ length: tier }).map((_, i) => (
           <span key={i} className={styles.star}>★</span>

@@ -1,7 +1,7 @@
 .boardWrapper {
   position: relative;
   border-radius: 0;
-  padding: 10px;
+  padding: 0.625rem;
   z-index: 0;
   background: transparent;
   border: 3px solid var(--bg-border);
@@ -22,7 +22,7 @@
 
 .starBadge {
   position: absolute;
-  top: -5px;
+  top: -0.3125rem;
   left: 50%;
   transform: translateX(-50%);
   z-index: 100;
@@ -30,13 +30,13 @@
   display: flex;
   align-items: center;
   gap: 1px;
-  padding: 1px 4px;
+  padding: 1px 0.25rem;
   pointer-events: none;
   white-space: nowrap;
 }
 
 .badgeStar {
-  font-size: 8px;
+  font-size: 0.5rem;
   color: #000000;
   line-height: 1;
 }
@@ -47,7 +47,7 @@
   transform: translateX(-50%);
   background: var(--unit-label-bg);
   color: var(--unit-label-text);
-  padding: 1px 6px;
+  padding: 1px 0.375rem;
   border-radius: 0;
   font-family: var(--font-body);
   font-size: var(--text-2xs);

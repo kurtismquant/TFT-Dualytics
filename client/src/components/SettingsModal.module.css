@@ -1,16 +1,16 @@
 /* Overlay / panel / header / title / close-button chrome now lives in
    components/ui/Modal.module.css. This module only styles the settings body. */
 .body {
-  padding: 24px 20px;
+  padding: 1.5rem 1.25rem;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 1.25rem;
 }
 
 .row {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 0.5rem;
 }
 
 .label {
@@ -24,8 +24,8 @@
 
 .select {
   width: 100%;
-  min-height: 44px;
-  padding: 0 12px;
+  min-height: 2.75rem;
+  padding: 0 0.75rem;
   background: var(--bg-base);
   border: 1px solid var(--bg-border-muted);
   color: var(--text-primary);
@@ -38,9 +38,9 @@
   -webkit-appearance: none;
   background-image: var(--select-caret-down);
   background-repeat: no-repeat;
-  background-position: right 12px center;
-  background-size: 10px 7px;
-  padding-right: 32px;
+  background-position: right 0.75rem center;
+  background-size: 0.625rem 0.4375rem;
+  padding-right: 2rem;
   transition: border-color var(--t-fast);
 }
 
@@ -59,6 +59,6 @@
 
 @media (--bp-sm) {
   .body {
-    padding: 20px 16px;
+    padding: 1.25rem 1rem;
   }
 }

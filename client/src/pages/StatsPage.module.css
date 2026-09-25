@@ -2,8 +2,8 @@
   display: flex;
   align-items: end;
   justify-content: space-between;
-  gap: 16px;
-  margin-bottom: 20px;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
 }
 
 .eyebrow,
@@ -18,7 +18,7 @@
 }
 
 .eyebrow {
-  margin-bottom: 8px;
+  margin-bottom: 0.5rem;
   color: var(--text-muted);
   font-size: var(--text-xs);
 }
@@ -38,15 +38,15 @@
 .primaryControls {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 16px 0;
+  gap: 0.5rem;
+  padding: 1rem 0;
   border-top: 1px solid var(--bg-border-muted);
   border-bottom: 1px solid var(--bg-border-muted);
 }
 
 .select,
 .search {
-  min-height: 44px;
+  min-height: 2.75rem;
   border: 1px solid var(--bg-border-muted);
   background: var(--bg-card);
   color: var(--text-primary);
@@ -59,12 +59,12 @@
 }
 
 .select {
-  min-width: 92px;
-  padding: 0 34px 0 12px;
+  min-width: 5.75rem;
+  padding: 0 2.125rem 0 0.75rem;
   appearance: none;
   background-image: var(--select-caret-down);
-  background-position: right 12px center;
-  background-size: 12px 8px;
+  background-position: right 0.75rem center;
+  background-size: 0.75rem 0.5rem;
   background-repeat: no-repeat;
   cursor: pointer;
 }
@@ -75,8 +75,8 @@
 
 .search {
   margin-left: auto;
-  width: min(260px, 100%);
-  padding: 0 12px;
+  width: min(16.25rem, 100%);
+  padding: 0 0.75rem;
   text-transform: none;
   letter-spacing: 0;
 }
@@ -92,8 +92,8 @@
 .costFilters {
   display: flex;
   align-items: center;
-  gap: 6px;
-  margin-left: 8px;
+  gap: 0.375rem;
+  margin-left: 0.5rem;
 }
 
 .costLabel {
@@ -103,8 +103,8 @@
 }
 
 .costButton {
-  min-width: 44px;
-  min-height: 36px;
+  min-width: 2.75rem;
+  min-height: 2.25rem;
   border: 1px solid var(--cost-color);
   border-radius: 0;
   color: var(--text-secondary);
@@ -116,7 +116,7 @@
 
 .costButton::after {
   content: "g";
-  margin-left: 3px;
+  margin-left: 0.1875rem;
   color: currentColor;
   text-transform: lowercase;
 }
@@ -130,13 +130,13 @@
 
 .tabBar {
   display: flex;
-  gap: 8px;
-  margin: 16px 0;
+  gap: 0.5rem;
+  margin: 1rem 0;
 }
 
 .itemButton {
   min-width: unset;
-  padding: 0 10px;
+  padding: 0 0.625rem;
 }
 
 .itemButton::after {
@@ -159,7 +159,7 @@
 .table th,
 .table td {
   border-right: 1px solid var(--bg-border-muted);
-  padding: 7px 12px;
+  padding: 0.4375rem 0.75rem;
   vertical-align: middle;
   white-space: nowrap;
 }
@@ -170,7 +170,7 @@
 }
 
 .table th {
-  height: 34px;
+  height: 2.125rem;
   background: var(--bg-card);
   color: var(--text-primary);
   font-size: var(--text-xs);
@@ -179,11 +179,11 @@
 
 .sortButton {
   width: 100%;
-  min-height: 32px;
+  min-height: 2rem;
   display: inline-flex;
   align-items: center;
   justify-content: flex-start;
-  gap: 8px;
+  gap: 0.5rem;
   border: 0;
   background: transparent;
   color: inherit;
@@ -232,7 +232,7 @@
 
 .table tbody th.rowHeader {
   border-right: 1px solid var(--bg-border-muted);
-  padding: 7px 12px;
+  padding: 0.4375rem 0.75rem;
   vertical-align: middle;
   white-space: nowrap;
   background: transparent;
@@ -243,8 +243,8 @@
 .nameCell {
   display: flex;
   align-items: center;
-  gap: 9px;
-  min-width: 240px;
+  gap: 0.5625rem;
+  min-width: 15rem;
   color: var(--text-primary);
   text-align: left;
   text-transform: none;
@@ -259,8 +259,8 @@
 
 .icon,
 .fallbackIcon {
-  width: 34px;
-  height: 34px;
+  width: 2.125rem;
+  height: 2.125rem;
   border: 2px solid var(--bg-border);
   background: var(--bg-card);
   flex: 0 0 auto;
@@ -273,7 +273,7 @@
 .traitIcon {
   background: var(--icon-tile-bg);
   object-fit: contain;
-  padding: 5px;
+  padding: 0.3125rem;
 }
 
 .fallbackIcon.traitIcon {
@@ -300,7 +300,7 @@
 
 .frequency {
   display: inline-block;
-  margin-left: 6px;
+  margin-left: 0.375rem;
   color: var(--text-muted);
   font-size: var(--text-2xs);
 }
@@ -309,13 +309,13 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 5px;
-  min-width: 172px;
+  gap: 0.3125rem;
+  min-width: 10.75rem;
 }
 
 .smallIcon {
-  width: 26px;
-  height: 26px;
+  width: 1.625rem;
+  height: 1.625rem;
   border: 1px solid var(--bg-border-muted);
   object-fit: cover;
   background: var(--bg-card);
@@ -328,7 +328,7 @@
 }
 
 .message {
-  padding: 18px 0;
+  padding: 1.125rem 0;
 }
 
 @media (--bp-lg) {
@@ -374,7 +374,7 @@
   }
 
   .costButton {
-    min-height: 44px;
+    min-height: 2.75rem;
   }
 
   /* Mobile also drops Win Rate, leaving Name + Avg Placement + Frequency. */

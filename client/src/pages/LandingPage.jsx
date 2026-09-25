@@ -7,6 +7,7 @@ import { useTopComps } from '../hooks/useTopComps.js'
 import { useStats } from '../hooks/useStats.js'
 import { useLeaderboard } from '../hooks/useLeaderboard.js'
 import BookmarkStrip from '../components/BookmarkStrip.jsx'
+import { useUiScale } from '../contexts/useUiScale.js'
 import { CURRENT_SET } from '../constants/game.js'
 import { ROUTES } from '../constants/routes.js'
 import { LANDING_SEED } from '../constants/landingSeed.js'
@@ -14,7 +15,8 @@ import styles from './LandingPage.module.css'
 
 
 function HeroSign() {
-  const size = 150
+  const scale = useUiScale()
+  const size = 150 * scale
   const outside = size * 0.5
 
   // The corner dangos overhang the sign and get clipped by the window before the
@@ -37,7 +39,7 @@ function HeroSign() {
     check()
     window.addEventListener('resize', check)
     return () => window.removeEventListener('resize', check)
-  }, [])
+  }, [scale]) // re-measure when Interface Size changes the sign's size
 
   const dangoTRClass = `${styles.dangoTR}${hideDangos ? ` ${styles.dangoHidden}` : ''}`
   const dangoBLClass = `${styles.dangoBL}${hideDangos ? ` ${styles.dangoHidden}` : ''}`
@@ -63,7 +65,7 @@ function HeroSign() {
 
         <div
           className={dangoBLClass}
-          style={{ width: size, height: size, bottom: -outside-20, left: -outside-20 }}
+          style={{ width: size, height: size, bottom: -outside - 20 * scale, left: -outside - 20 * scale }}
         >
           <div className={styles.dangoMotionSlow}>
             <img

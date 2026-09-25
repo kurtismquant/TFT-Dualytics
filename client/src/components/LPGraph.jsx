@@ -11,6 +11,7 @@ import {
 import { getCSSVar } from '../utils/cssVars.js'
 import { estimateMatchLp } from '../utils/estimateMatchLp.js'
 import { useSettings } from '../contexts/useSettings.js'
+import { useUiScale } from '../contexts/useUiScale.js'
 import { useTranslation } from 'react-i18next'
 import { useIsMobile, useMediaQuery } from '../hooks/useMediaQuery.js'
 import styles from './LPGraph.module.css'
@@ -52,6 +53,7 @@ function CustomDot(props) {
 
 export default function LPGraph({ summoner, rankSnapshots, matches }) {
   const { theme } = useSettings()
+  const scale = useUiScale()
   const { t } = useTranslation()
   const isMobile = useIsMobile()
   // On really small screens the select shrinks, so drop the "Games" word (--bp-sm).
@@ -68,7 +70,7 @@ export default function LPGraph({ summoner, rankSnapshots, matches }) {
 
   const AXIS_STYLE = {
     fill: axisColor,
-    fontSize: 10,
+    fontSize: 10 * scale,
     fontFamily: 'D-DIN, Arial, sans-serif',
   }
 
@@ -166,7 +168,7 @@ export default function LPGraph({ summoner, rankSnapshots, matches }) {
             : t('lpGraph.emptyRange')}
         </div>
       ) : (
-        <ResponsiveContainer key={theme} width="100%" height={240}>
+        <ResponsiveContainer key={theme} width="100%" height={240 * scale}>
           <LineChart data={pointsWithDelta} margin={{ top: 8, right: 16, bottom: 0, left: 0 }}>
             <CartesianGrid vertical={false} stroke={gridColor} strokeDasharray="2 6" strokeOpacity={0.25} />
             <XAxis
@@ -214,7 +216,7 @@ export default function LPGraph({ summoner, rankSnapshots, matches }) {
                     dy={4}
                     textAnchor="end"
                     fill={fill}
-                    fontSize={10}
+                    fontSize={10 * scale}
                     fontFamily="D-DIN, Arial, sans-serif"
                     letterSpacing={letterSpacing}
                     opacity={opacity}
@@ -225,7 +227,7 @@ export default function LPGraph({ summoner, rankSnapshots, matches }) {
               }}
               axisLine={false}
               tickLine={false}
-              width={36}
+              width={36 * scale}
               interval={0}
             />
             {visibleThresholds.map(t => (
@@ -244,7 +246,7 @@ export default function LPGraph({ summoner, rankSnapshots, matches }) {
               stroke={lineColor}
               strokeWidth={1.5}
               dot={<CustomDot />}
-              activeDot={{ r: 5, fill: lineColor, stroke: cs.getPropertyValue('--chart-tooltip-bg').trim(), strokeWidth: 1 }}
+              activeDot={{ r: 5 * scale, fill: lineColor, stroke: cs.getPropertyValue('--chart-tooltip-bg').trim(), strokeWidth: 1 }}
               isAnimationActive={false}
             />
           </LineChart>

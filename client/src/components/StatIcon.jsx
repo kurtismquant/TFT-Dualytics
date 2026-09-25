@@ -25,12 +25,13 @@ const PNG_ICONS = {
 export default function StatIcon({ type, size = 13 }) {
   const src = PNG_ICONS[type]
   if (!src) return null
+  // rem (not px) so the icon follows the Interface Size setting.
+  const dim = `${size / 16}rem`
   return (
     <img
       className={styles.icon}
       src={src}
-      width={size}
-      height={size}
+      style={{ width: dim, height: dim }}
       alt=""
       aria-hidden="true"
       draggable={false}

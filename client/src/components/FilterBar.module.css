@@ -2,7 +2,7 @@
   display: flex;
   align-items: center;
   gap: 1.5rem;
-  padding: 12px 0;
+  padding: 0.75rem 0;
   background: transparent;
   border: none;
   border-bottom: 1px solid var(--bg-border);
@@ -13,22 +13,22 @@
 
 /* ── Search input — ghost surface (input styles in ui/SearchInput.module.css) ── */
 .searchWrap {
-  flex: 1 1 260px;
-  min-width: 200px;
-  max-width: 380px;
+  flex: 1 1 16.25rem;
+  min-width: 12.5rem;
+  max-width: 23.75rem;
 }
 
 /* ── Tab groups ─────────────────────────────────────────── */
 .tabGroup {
   display: flex;
-  gap: 4px;
+  gap: 0.25rem;
   align-items: center;
 }
 
 /* Units/Items switch — desktop shows both roster panels, so it's hidden there. */
 .modeToggle {
   display: none;
-  gap: 4px;
+  gap: 0.25rem;
   align-items: center;
 }
 
@@ -44,7 +44,7 @@
   }
 
   .searchWrap {
-    flex: 1 1 160px;
+    flex: 1 1 10rem;
     min-width: 0;
     max-width: 100%;
   }

@@ -42,6 +42,11 @@ html, body, #root {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Interface Size: all rem sizes scale off this (see --ui-scale in theme.css). */
+html {
+  font-size: calc(100% * var(--ui-scale));
+}
+
 /* Universal uppercase + positive tracking — the aerospace voice */
 body {
   text-transform: uppercase;
@@ -105,12 +110,12 @@ select option {
   input,
   select,
   textarea {
-    min-height: 44px;
+    min-height: 2.75rem;
   }
 
   button,
   [role="button"] {
-    min-width: 44px;
+    min-width: 2.75rem;
   }
 }
 
@@ -139,8 +144,8 @@ select option {
 
 /* Minimal scrollbar — near-invisible */
 ::-webkit-scrollbar { 
-  width: 4px; 
-  height: 4px; 
+  width: 0.25rem; 
+  height: 0.25rem; 
 }
 ::-webkit-scrollbar-track { 
   background: transparent; 
@@ -156,9 +161,9 @@ select option {
 /* Landing page — dango peek animations */
 @keyframes dangoPeek_tr {
   0%, 100% { transform: translate(0, 0); }
-  50%       { transform: translate(10px, -10px); }
+  50%       { transform: translate(0.625rem, -0.625rem); }
 }
 @keyframes dangoPeek_bl {
   0%, 100% { transform: translate(0, 0); }
-  50%       { transform: translate(-10px, 10px); }
+  50%       { transform: translate(-0.625rem, 0.625rem); }
 }

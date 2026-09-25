@@ -7,7 +7,7 @@
 
 .page {
   flex: 1;
-  scroll-margin-top: 72px;
+  scroll-margin-top: 4.5rem;
 }
 
 .page:focus {
@@ -16,10 +16,10 @@
 
 .skipLink {
   position: fixed;
-  top: 12px;
-  left: 12px;
+  top: 0.75rem;
+  left: 0.75rem;
   z-index: 2000;
-  padding: 10px 14px;
+  padding: 0.625rem 0.875rem;
   background: var(--bg-card);
   border: 1px solid var(--search-focus-border);
   color: var(--text-primary);
@@ -46,7 +46,7 @@
      gear) so they're pulled in from the edges instead of jammed against them. */
   justify-content: space-around;
   padding: 0 2rem;
-  height: 64px;
+  height: 4rem;
   background: transparent;
   border-bottom: none;
   /* Cap + center so the sections pull inward toward the content on wide
@@ -119,7 +119,7 @@
   position: absolute;
   left: 0;
   right: 0;
-  bottom: -8px;
+  bottom: -0.5rem;
   height: 2px;
   background: var(--text-link-hover);
   box-shadow: 0 0 8px var(--search-focus-glow);
@@ -161,7 +161,7 @@
   position: absolute;
   left: 0;
   right: 0;
-  bottom: -8px;
+  bottom: -0.5rem;
   height: 2px;
   background: var(--text-link-hover);
   box-shadow: 0 0 8px var(--search-focus-glow);
@@ -171,7 +171,7 @@
 .navRight {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 0.75rem;
   order: 2;
   flex-shrink: 0;
 }
@@ -186,8 +186,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  min-width: 40px;
-  min-height: 40px;
+  min-width: 2.5rem;
+  min-height: 2.5rem;
   background: transparent;
   border: 1px solid var(--bg-border-bright);
   color: var(--text-primary);
@@ -207,13 +207,13 @@
   display: none;
   flex-direction: column;
   justify-content: center;
-  gap: 5px;
+  gap: 0.3125rem;
   background: none;
   border: none;
   cursor: pointer;
-  min-width: 44px;
-  min-height: 44px;
-  padding: 10px;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+  padding: 0.625rem;
   margin-left: auto;
   z-index: 120;
   position: relative;
@@ -226,7 +226,7 @@
 
 .hamburgerBar {
   display: block;
-  width: 22px;
+  width: 1.375rem;
   height: 2px;
   background: var(--text-primary);
   border-radius: 1px;
@@ -235,13 +235,13 @@
 
 /* Animated X state */
 .barTop {
-  transform: translateY(7px) rotate(45deg);
+  transform: translateY(0.4375rem) rotate(45deg);
 }
 .barMid {
   opacity: 0;
 }
 .barBot {
-  transform: translateY(-7px) rotate(-45deg);
+  transform: translateY(-0.4375rem) rotate(-45deg);
 }
 
 /* ── Mobile nav ─────────────────────────────────────────── */
@@ -272,13 +272,13 @@
     bottom: 0;
     height: 100vh;
     width: 75%;
-    max-width: 320px;
+    max-width: 20rem;
     flex: none;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     align-items: flex-start;
-    padding: 80px 1.5rem 2rem;
+    padding: 5rem 1.5rem 2rem;
     gap: 1.25rem;
     background: var(--bg-base);
     border-right: 1px solid var(--bg-border);
@@ -318,8 +318,8 @@
     color: var(--text-secondary);
     cursor: pointer;
     font-size: var(--text-base);
-    min-height: 44px;
-    padding: 8px 0;
+    min-height: 2.75rem;
+    padding: 0.5rem 0;
     margin-top: auto;
     transition: color var(--t-fast);
   }
@@ -331,8 +331,8 @@
   .link,
   .activeLink {
     font-size: var(--text-2xl);
-    min-height: 44px;
-    padding: 12px 0;
+    min-height: 2.75rem;
+    padding: 0.75rem 0;
     display: inline-flex;
     align-items: center;
   }
@@ -367,7 +367,7 @@
   }
 
   .links {
-    width: min(86vw, 320px);
+    width: min(86vw, 20rem);
   }
 
   .footerLinkContainer {
@@ -376,7 +376,7 @@
   }
 
   .footerLink {
-    min-height: 44px;
+    min-height: 2.75rem;
     display: inline-flex;
     align-items: center;
   }
@@ -423,7 +423,7 @@
   align-items: center;
   gap: 1.5rem;
 
-  padding: 20px 16px 10px 16px;
+  padding: 1.25rem 1rem 0.625rem 1rem;
 
   /* visual separation */
   border-top: 1px solid var(--bg-border-muted);
@@ -447,7 +447,7 @@
   text-transform: uppercase;
   color: var(--text-secondary);
   text-decoration: none;
-  padding: 4px 14px;
+  padding: 0.25rem 0.875rem;
   background: transparent;
   transition: color 0.2s ease;
 }

@@ -43,7 +43,7 @@
   justify-content: center;
   gap: 1px;
   line-height: 1;
-  height: 10px;
+  height: 0.625rem;
 }
 
 /* floatStars: take the star row out of flow so 3-star units don't add to the
@@ -61,7 +61,7 @@
 }
 
 .star {
-  font-size: 9px;
+  font-size: 0.5625rem;
   color: var(--bronze-star-level);
 }
 
@@ -86,7 +86,7 @@
   letter-spacing: var(--track-wider);
   text-transform: uppercase;
   background: var(--unit-label-bg);
-  padding: 3px 2px 2px;
+  padding: 0.1875rem 2px 2px;
   color: var(--unit-label-text);
   white-space: nowrap;
   overflow: hidden;
@@ -104,8 +104,8 @@
 }
 
 .hexInner {
-  width: calc(100% - 10px);
-  height: calc(100% - 10px);
+  width: calc(100% - 0.625rem);
+  height: calc(100% - 0.625rem);
   clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
   overflow: hidden;
 }

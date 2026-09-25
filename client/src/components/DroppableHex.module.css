@@ -12,8 +12,8 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: calc(100% - 10px);
-  height: calc(100% - 10px);
+  width: calc(100% - 0.625rem);
+  height: calc(100% - 0.625rem);
   clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
   background: var(--bg-base);
   z-index: 0;
@@ -42,8 +42,8 @@
    larger within the same footprint — keeps 7 columns on-screen. */
 @media (--bp-md) {
   .hexFill {
-    width: calc(100% - 5px);
-    height: calc(100% - 5px);
+    width: calc(100% - 0.3125rem);
+    height: calc(100% - 0.3125rem);
   }
 }
 

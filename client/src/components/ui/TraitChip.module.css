@@ -5,8 +5,8 @@
   display: inline-flex;
   align-items: center;
   gap: 2px;
-  padding: 2px 5px 2px 3px;
-  border-radius: 3px;
+  padding: 2px 0.3125rem 2px 0.1875rem;
+  border-radius: 0.1875rem;
   background: var(--ghost-surface);
   border: 1px solid var(--bg-border);
   font-size: var(--text-xs);
@@ -16,8 +16,8 @@
 }
 
 .traitIcon {
-  width: 14px;
-  height: 14px;
+  width: 0.875rem;
+  height: 0.875rem;
   object-fit: contain;
   filter: brightness(1.05);
 }

@@ -4,6 +4,7 @@ import {
 } from 'recharts'
 import { lastRoundToStage } from '../utils/roundToStage.js'
 import { useSettings } from '../contexts/useSettings.js'
+import { useUiScale } from '../contexts/useUiScale.js'
 import { useTranslation } from 'react-i18next'
 import { useIsMobile } from '../hooks/useMediaQuery.js'
 import styles from './SummonerStatsCard.module.css'
@@ -41,6 +42,7 @@ function computeStats(matches, champions) {
 
 export default function SummonerStatsCard({ matches, resolvedChampions, syncProgress = null }) {
   const { theme } = useSettings()
+  const scale = useUiScale()
   const { t } = useTranslation()
   const isMobile = useIsMobile()
   const [activeBar, setActiveBar] = useState(null)
@@ -77,7 +79,7 @@ export default function SummonerStatsCard({ matches, resolvedChampions, syncProg
 
   const AXIS_STYLE = {
     fill: axisColor,
-    fontSize: 10,
+    fontSize: 10 * scale,
     fontFamily: 'D-DIN, Arial, sans-serif',
     textTransform: 'uppercase',
   }
@@ -133,7 +135,7 @@ export default function SummonerStatsCard({ matches, resolvedChampions, syncProg
                 {barData[activeBar].label} · {barData[activeBar].count} {t('statsCard.games')}
               </div>
             )}
-            <ResponsiveContainer key={theme} width="100%" height={180}>
+            <ResponsiveContainer key={theme} width="100%" height={180 * scale}>
               <BarChart
                 data={barData}
                 barCategoryGap="30%"
@@ -148,7 +150,7 @@ export default function SummonerStatsCard({ matches, resolvedChampions, syncProg
               >
                 <CartesianGrid vertical={false} stroke={gridColor} />
                 <XAxis dataKey="label" tick={AXIS_STYLE} axisLine={false} tickLine={false} />
-                <YAxis allowDecimals={false} tick={AXIS_STYLE} axisLine={false} tickLine={false} width={24} />
+                <YAxis allowDecimals={false} tick={AXIS_STYLE} axisLine={false} tickLine={false} width={24 * scale} />
                 {/* Tooltip renders nothing; it stays mounted so recharts keeps
                     computing activeTooltipIndex / activeCoordinate for the band
                     hover, which drives the glow and the anchored card above. */}

@@ -14,7 +14,7 @@ function GearIcon() {
 
 export default function SettingsModal({ onClose }) {
   const { t } = useTranslation()
-  const { theme, setTheme, language, setLanguage } = useSettings()
+  const { theme, setTheme, language, setLanguage, uiScale, setUiScale } = useSettings()
 
   return (
     <Modal
@@ -52,6 +52,22 @@ export default function SettingsModal({ onClose }) {
         >
           <option value="en">{t('settings.langEn')}</option>
           <option value="es">{t('settings.langEs')}</option>
+        </select>
+      </div>
+
+      <div className={styles.row}>
+        <label className={styles.label} htmlFor="setting-ui-scale">
+          {t('settings.uiScale')}
+        </label>
+        <select
+          id="setting-ui-scale"
+          className={styles.select}
+          value={uiScale}
+          onChange={e => setUiScale(e.target.value)}
+        >
+          <option value="compact">{t('settings.uiScaleCompact')}</option>
+          <option value="standard">{t('settings.uiScaleStandard')}</option>
+          <option value="large">{t('settings.uiScaleLarge')}</option>
         </select>
       </div>
     </Modal>

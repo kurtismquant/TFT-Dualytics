@@ -51,6 +51,8 @@ export default function LeaderboardPage() {
     check()
     const ro = new ResizeObserver(check)
     ro.observe(row)
+    // The pills also grow when Interface Size changes while the row stays put.
+    ro.observe(measure)
     return () => ro.disconnect()
   }, [])
 

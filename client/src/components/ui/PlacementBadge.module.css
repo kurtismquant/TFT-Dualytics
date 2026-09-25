@@ -12,14 +12,14 @@
 
 /* Default size — used in match card header */
 .badge {
-  min-width: 40px;
-  padding: 4px 6px;
+  min-width: 2.5rem;
+  padding: 0.25rem 0.375rem;
   font-size: var(--text-base);
 }
 
 /* Compact size — used in scoreboard participant rows */
 .sm {
-  min-width: 28px;
+  min-width: 1.75rem;
   font-size: var(--text-xs);
 }
 

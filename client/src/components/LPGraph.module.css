@@ -1,8 +1,8 @@
 .card {
   width: 100%;
   border: 1px solid var(--bg-border);
-  padding: 24px;
-  margin-bottom: 12px;
+  padding: 1.5rem;
+  margin-bottom: 0.75rem;
   background: transparent;
 }
 
@@ -10,14 +10,14 @@
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  gap: 12px;
-  margin-bottom: 14px;
+  gap: 0.75rem;
+  margin-bottom: 0.875rem;
 }
 
 .titleGroup {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 0.25rem;
   /* Hold the title at full size; the range select absorbs any shrink instead. */
   flex-shrink: 0;
 }
@@ -45,8 +45,8 @@
   color: var(--text-primary);
   border: 1px solid var(--bg-border);
   /* Match the refresh/bookmark button height (32px) in the card above. */
-  height: 32px;
-  padding: 0 34px 0 10px;
+  height: 2rem;
+  padding: 0 2.125rem 0 0.625rem;
   font-family: var(--font-body);
   font-size: var(--text-xs);
   letter-spacing: var(--track-wider);
@@ -55,8 +55,8 @@
   appearance: none;
   -webkit-appearance: none;
   background-image: var(--select-caret-down);
-  background-position: right 12px center;
-  background-size: 12px 8px;
+  background-position: right 0.75rem center;
+  background-size: 0.75rem 0.5rem;
   background-repeat: no-repeat;
   /* Allow the select to shrink on very small screens so it always fits the card. */
   min-width: 0;
@@ -71,7 +71,7 @@
 }
 
 .empty {
-  height: 220px;
+  height: 13.75rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -84,7 +84,7 @@
 .tooltip {
   background: var(--chart-tooltip-bg);
   border: 1px solid var(--chart-tooltip-border);
-  padding: 8px 10px;
+  padding: 0.5rem 0.625rem;
   font-family: var(--font-body);
   font-size: var(--text-xs);
   letter-spacing: var(--track-base);
@@ -92,7 +92,7 @@
   text-transform: uppercase;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 0.25rem;
 }
 
 .tooltipLabel {
@@ -115,7 +115,7 @@
 
 @media (--bp-md) {
   .card {
-    padding: 16px;
+    padding: 1rem;
   }
 }
 
@@ -123,7 +123,7 @@
    min-width on selects, and our min-width:0 would otherwise let it go smaller). */
 @media (pointer: coarse) {
   .select {
-    min-height: 44px;
-    min-width: 44px;
+    min-height: 2.75rem;
+    min-width: 2.75rem;
   }
 }

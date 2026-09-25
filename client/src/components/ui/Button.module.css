@@ -18,8 +18,8 @@
 
 /* ── Ghost — transparent bg, 1px border, text action ─────── */
 .ghost {
-  min-height: 44px;
-  padding: 0 16px;
+  min-height: 2.75rem;
+  padding: 0 1rem;
   background: transparent;
   border: 1px solid var(--bg-border-bright);
   color: var(--text-secondary);
@@ -41,8 +41,8 @@
 
 /* ── Tab — toggle button for filter / segmented groups ────── */
 .tab {
-  min-height: 44px;
-  padding: 0 14px;
+  min-height: 2.75rem;
+  padding: 0 0.875rem;
   background: transparent;
   border: 1px solid var(--bg-border-muted);
   color: var(--text-secondary);
@@ -58,9 +58,9 @@
 
 /* ── Icon — 44px square, icon-only ────────────────────────── */
 .icon {
-  width: 44px;
-  min-width: 44px;
-  min-height: 44px;
+  width: 2.75rem;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
   padding: 0;
   background: transparent;
   border: 1px solid var(--bg-border);
@@ -81,6 +81,6 @@
 @media (pointer: coarse) {
   /* Keep touch targets at 44px minimum even on small buttons */
   .btn {
-    min-height: 44px;
+    min-height: 2.75rem;
   }
 }

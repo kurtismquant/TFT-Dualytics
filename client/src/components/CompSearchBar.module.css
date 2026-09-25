@@ -6,7 +6,7 @@
 .searchLine {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 0.75rem;
   width: 100%;
 }
 
@@ -17,7 +17,7 @@
 }
 
 .clearButton {
-  min-height: 44px;
+  min-height: 2.75rem;
   padding: 0 1.1rem;
   border: 1px solid var(--ghost-border);
   background: transparent;
