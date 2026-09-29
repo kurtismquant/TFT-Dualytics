@@ -7,7 +7,7 @@ import { resolveUnits } from './comp-row/resolveUnits.js'
 import { generateCompName } from '../utils/compName.js'
 import styles from './CompRow.module.css'
 
-export default function CompRow({ comp, champions, items, traits, matchCount, uniqueTraitIds }) {
+export default function CompRow({ comp, champions, items, traits, matchCount, uniqueTraitIds, getUnitHref }) {
   const { t } = useTranslation()
   const reactId = useId()
   const [expanded, setExpanded] = useState(false)
@@ -28,32 +28,37 @@ export default function CompRow({ comp, champions, items, traits, matchCount, un
 
   return (
     <div className={styles.row}>
-      <button
-        type="button"
-        className={styles.rowButton}
-        onClick={toggleExpand}
-        aria-expanded={expanded}
-        aria-controls={panelId}
-        aria-label={expanded ? t('comp.collapseCompDetails') : t('comp.expandCompDetails')}
-        id={buttonId}
-      >
+      {/* The toggle is a sibling stretched over the compact row, not a wrapper, so
+          the unit links inside the row are valid (no <a> inside <button>). Clicks
+          on non-interactive parts of the row fall through to it (see CSS). */}
+      <div className={styles.compact}>
+        <button
+          type="button"
+          className={styles.rowButton}
+          onClick={toggleExpand}
+          aria-expanded={expanded}
+          aria-controls={panelId}
+          aria-label={expanded ? t('comp.collapseCompDetails') : t('comp.expandCompDetails')}
+          id={buttonId}
+        />
         <div className={styles.compactContent}>
-        <CompRowHeader
-          name={name}
-          comp={comp}
-          traits={traits}
-          champions={champions}
-          excludeTraitIds={uniqueTraitIds}
-        />
-        <CompUnitList
-          resolvedUnits={resolvedUnits}
-          items={items}
-          playRate={playRate}
-          winRate={comp.winRate}
-          avgPlacement={comp.avgPlacement}
-        />
+          <CompRowHeader
+            name={name}
+            comp={comp}
+            traits={traits}
+            champions={champions}
+            excludeTraitIds={uniqueTraitIds}
+          />
+          <CompUnitList
+            resolvedUnits={resolvedUnits}
+            items={items}
+            playRate={playRate}
+            winRate={comp.winRate}
+            avgPlacement={comp.avgPlacement}
+            getUnitHref={getUnitHref}
+          />
         </div>
-      </button>
+      </div>
 
       {expanded && (
         <div
@@ -70,6 +75,7 @@ export default function CompRow({ comp, champions, items, traits, matchCount, un
             traits={traits}
             parentGames={comp.playCount}
             uniqueTraitIds={uniqueTraitIds}
+            getUnitHref={getUnitHref}
           />
         </div>
       )}

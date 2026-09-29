@@ -1,0 +1,126 @@
+import { useCallback, useMemo, useState } from 'react'
+import { useParams, useSearchParams } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
+import { PageShell } from '../components/layout/PageShell.jsx'
+import UnitHeader from '../components/unit-stats/UnitHeader.jsx'
+import ItemFilterInput from '../components/unit-stats/ItemFilterInput.jsx'
+import ItemComboTable from '../components/unit-stats/ItemComboTable.jsx'
+import { useChampions } from '../hooks/useChampions.js'
+import { useItems } from '../hooks/useItems.js'
+import { useUnitItemCombos } from '../hooks/useUnitItemCombos.js'
+import {
+  buildItemCandidates,
+  buildItemLookup,
+  comboMatchesFilters,
+  DEFAULT_COMBO_SORT,
+  nextComboSort,
+  parseItemsParam,
+  serializeItemsParam,
+  sortCombos,
+} from '../utils/itemComboFilter.js'
+import statsStyles from './StatsPage.module.css'
+import styles from './UnitStatsPage.module.css'
+
+const DEFAULT_MIN_GAMES = 10
+
+// Per-unit stats: every 3-item combo with enough games, filterable by up to 3
+// items. Patch and item filters live in the URL (?patch=&items=) so views can be shared.
+export default function UnitStatsPage() {
+  const { t } = useTranslation()
+  const { unitId } = useParams()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const patchParam = searchParams.get('patch')
+  const itemsParam = searchParams.get('items')
+  const filterIds = useMemo(() => parseItemsParam(itemsParam), [itemsParam])
+  const [sort, setSort] = useState(DEFAULT_COMBO_SORT)
+
+  const { data: champions } = useChampions()
+  const { data: items } = useItems()
+  const { data, isLoading, isError } = useUnitItemCombos({ unitId, patch: patchParam })
+
+  const champion = useMemo(() => champions?.find(c => c.id === unitId) || null, [champions, unitId])
+  const itemLookup = useMemo(() => buildItemLookup(items), [items])
+  const combos = useMemo(() => data?.combos || [], [data?.combos])
+  const candidates = useMemo(
+    () => buildItemCandidates(items, combos.flatMap(combo => combo.items)),
+    [items, combos]
+  )
+  const rows = useMemo(
+    () => sortCombos(combos.filter(combo => comboMatchesFilters(combo.items, filterIds)), sort),
+    [combos, filterIds, sort]
+  )
+
+  // replace: filter/patch tweaks shouldn't each add a browser history entry.
+  const setParam = useCallback((key, value) => {
+    setSearchParams(prev => {
+      const next = new URLSearchParams(prev)
+      if (value) next.set(key, value)
+      else next.delete(key)
+      return next
+    }, { replace: true })
+  }, [setSearchParams])
+
+  const handleFiltersChange = useCallback(ids => setParam('items', serializeItemsParam(ids)), [setParam])
+  const handleSort = useCallback(columnKey => setSort(current => nextComboSort(current, columnKey)), [])
+
+  const unitName = champion?.name || unitId
+  const patches = data?.patches || []
+  const minGames = data?.minGames ?? DEFAULT_MIN_GAMES
+
+  return (
+    <PageShell>
+      <UnitHeader
+        champion={champion}
+        unitName={unitName}
+        games={data?.games ?? 0}
+        threeItemGames={data?.threeItemGames ?? 0}
+      />
+      <div className={styles.controls}>
+        <select
+          className={statsStyles.select}
+          value={data?.patch || patchParam || ''}
+          onChange={event => { setParam('patch', event.target.value); event.target.blur() }}
+          aria-label={t('stats.patchLabel')}
+        >
+          {patches.length === 0 && <option value="">{t('stats.noPatch')}</option>}
+          {patches.map(option => <option key={option} value={option}>{option}</option>)}
+        </select>
+        <ItemFilterInput
+          filterIds={filterIds}
+          candidates={candidates}
+          itemLookup={itemLookup}
+          onChange={handleFiltersChange}
+        />
+      </div>
+
+      <h2 className={styles.sectionTitle}>{t('unit.sectionTitle')}</h2>
+      {isLoading && <p className={statsStyles.message} role="status" aria-live="polite">{t('unit.loading')}</p>}
+      {isError && <p className={statsStyles.message} role="alert">{t('unit.error')}</p>}
+      {!isLoading && !isError && rows.length === 0 && (
+        <p className={styles.notEnough} role="status">
+          <strong>{t('unit.notEnoughData')}</strong>
+          <span>
+            {filterIds.length > 0
+              ? t('unit.notEnoughDataFiltered', { count: minGames })
+              : t('unit.notEnoughDataHelp', { count: minGames })}
+          </span>
+        </p>
+      )}
+      {rows.length > 0 && (
+        <>
+          <p className={`${statsStyles.meta} ${styles.tableMeta}`}>
+            {t('unit.comboCount', { count: rows.length, min: minGames })}
+          </p>
+          <ItemComboTable
+            combos={rows}
+            sort={sort}
+            onSort={handleSort}
+            itemLookup={itemLookup}
+            allItems={items}
+            unitName={unitName}
+          />
+        </>
+      )}
+    </PageShell>
+  )
+}

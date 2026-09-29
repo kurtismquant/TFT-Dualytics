@@ -8,10 +8,12 @@ import { toTeamPlacement as teamPlacement } from './teamPlacement.js'
 import { buildStatsMatchFilter } from './patchFilters.js'
 import { getAvailablePatches, aggregateStats } from './statsAggregator.js'
 import { replaceAggregatedStats } from '../db/aggregatedStatsRepo.js'
+import { aggregateUnitItemCombos } from './unitItemCombosAggregator.js'
+import { replaceAggregatedUnitItems } from '../db/aggregatedUnitItemsRepo.js'
+import { THIEVES_GLOVES } from '../constants/game.js'
 
 const TOP_PARTNERS_LIMIT = 3
 const COMP_MERGE_SHARED_UNITS = 6
-const THIEVES_GLOVES = 'DA_ThiefsGloves'
 
 function buildCompFingerprint(unitIds) {
   return unitIds.slice().sort().join('|')
@@ -479,6 +481,8 @@ export async function runCompAggregation() {
       traits: aggregateStats(docs, 'traits'),
     }
     await replaceAggregatedStats(patch, statsByType)
+    // Per-unit 3-item combo tables for the unit stats page, one stored doc per unit.
+    await replaceAggregatedUnitItems(patch, aggregateUnitItemCombos(docs))
   }
 
   console.log(`Comp aggregation: ${comps.length} comps + unit/item/trait stats from ${docs.length} Double Up matches on patch ${patch ?? 'unknown'}`)

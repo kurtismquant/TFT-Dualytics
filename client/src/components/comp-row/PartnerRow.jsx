@@ -5,7 +5,7 @@ import { resolveUnits } from './resolveUnits.js'
 import { generateCompName } from '../../utils/compName.js'
 import styles from '../CompRow.module.css'
 
-export default function PartnerRow({ partner, champions, items, traits, parentGames, uniqueTraitIds }) {
+export default function PartnerRow({ partner, champions, items, traits, parentGames, uniqueTraitIds, getUnitHref }) {
   const resolvedUnits = useMemo(
     () => resolveUnits(partner.units, champions, items),
     [partner.units, champions, items]
@@ -33,7 +33,7 @@ export default function PartnerRow({ partner, champions, items, traits, parentGa
             />
           </div>
           <div className={styles.partnerUnits}>
-            <UnitsGrid resolvedUnits={resolvedUnits} allItems={items} />
+            <UnitsGrid resolvedUnits={resolvedUnits} allItems={items} getUnitHref={getUnitHref} />
           </div>
         </div>
         <CompStatBlock playRate={playRate} winRate={partner.winRate} avgPlacement={partner.avgPlacement} />

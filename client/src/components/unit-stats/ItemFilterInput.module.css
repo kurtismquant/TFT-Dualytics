@@ -1,0 +1,126 @@
+.wrap {
+  position: relative;
+  flex: 1 1 22rem;
+  min-width: 0;
+}
+
+/* Chips sit inline before the input, wrapping onto new lines if needed. */
+.field {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  min-height: 2.75rem;
+  padding: 0 0 0 0.5rem;
+  border: 1px solid var(--bg-border-bright);
+  background: var(--ghost-surface);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  letter-spacing: var(--track-wide);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.chipRemove {
+  align-self: stretch;
+  min-width: 2.25rem;
+  border: 0;
+  border-left: 1px solid var(--bg-border-muted);
+  background: transparent;
+  color: var(--text-muted);
+  font-size: var(--text-xs);
+  cursor: pointer;
+  transition: color var(--t-fast), background var(--t-fast);
+}
+
+.chipRemove:hover,
+.chipRemove:focus-visible {
+  color: var(--text-primary);
+  background: var(--bg-hover);
+}
+
+.chipRemove:focus-visible {
+  outline: 2px solid var(--accent-gold);
+  outline-offset: -2px;
+}
+
+.input {
+  flex: 1 1 12rem;
+  min-width: 10rem;
+}
+
+.dropdown {
+  position: absolute;
+  top: calc(100% + 0.25rem);
+  left: 0;
+  right: 0;
+  max-height: 16rem;
+  overflow-y: auto;
+  background: var(--bg-card);
+  border: 1px solid var(--bg-border-bright);
+  z-index: 5;
+}
+
+.suggestion {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  width: 100%;
+  min-height: 2.75rem;
+  padding: 0.375rem 0.875rem;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--bg-border-muted);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  letter-spacing: var(--track-base);
+  text-align: left;
+  text-transform: none;
+  cursor: pointer;
+}
+
+.suggestion:last-child {
+  border-bottom: none;
+}
+
+.suggestion:hover,
+.suggestion:focus-visible {
+  background: var(--bg-hover);
+  outline: none;
+}
+
+.suggestionMeta {
+  margin-left: auto;
+  color: var(--text-muted);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--track-wide);
+  text-transform: uppercase;
+}
+
+@media (--bp-md) {
+  .wrap {
+    flex-basis: auto;
+    width: 100%;
+  }
+
+  .input {
+    flex-basis: 100%;
+  }
+}

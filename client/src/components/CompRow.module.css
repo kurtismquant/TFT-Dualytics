@@ -8,15 +8,21 @@
   font-family: var(--font-accent);
 }
 
+.compact {
+  position: relative;
+}
+
+/* Stretched over the whole compact row (behind the content) so a click anywhere
+   that isn't a unit link / hover target expands the row. */
 .rowButton {
-  display: block;
+  position: absolute;
+  inset: 0;
   width: 100%;
   min-height: 2.75rem;
   padding: 0;
   background: transparent;
   border: 0;
   color: inherit;
-  text-align: inherit;
   cursor: pointer;
 }
 
@@ -24,11 +30,20 @@
   outline: none;
 }
 
-.rowButton:focus-visible .compactContent {
-  background: var(--bg-card-hover);
+/* Content sits above the button but lets clicks through to it, except on the
+   interactive pieces (unit links, item and trait hover cards) opted back in. */
+.compactContent {
+  position: relative;
+  pointer-events: none;
 }
 
-.compactContent:hover {
+.compactContent .unitColumn,
+.compactContent .traitRow > * {
+  pointer-events: auto;
+}
+
+.compact:hover .compactContent,
+.rowButton:focus-visible + .compactContent {
   background: var(--bg-card-hover);
 }
 

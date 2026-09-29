@@ -17,6 +17,7 @@ export const getPlayersCollection = () => db?.collection('players') ?? null
 export const getMatchesCollection = () => db?.collection('matches') ?? null
 export const getAggregatedCompsCollection = () => db?.collection('aggregated_comps') ?? null
 export const getAggregatedStatsCollection = () => db?.collection('aggregated_stats') ?? null
+export const getAggregatedUnitItemsCollection = () => db?.collection('aggregated_unit_items') ?? null
 export const getLeaderboardsCollection = () => db?.collection('leaderboards') ?? null
 export const getRankSnapshotsCollection = () => db?.collection('rank_snapshots') ?? null
 export const getIngestionStateCollection = () => db?.collection('ingestion_state') ?? null
@@ -26,9 +27,10 @@ export async function createIndexes() {
   const matches = getMatchesCollection()
   const aggregatedComps = getAggregatedCompsCollection()
   const aggregatedStats = getAggregatedStatsCollection()
+  const aggregatedUnitItems = getAggregatedUnitItemsCollection()
   const leaderboards = getLeaderboardsCollection()
   const rankSnapshots = getRankSnapshotsCollection()
-  if (!players || !matches || !aggregatedComps || !aggregatedStats || !leaderboards || !rankSnapshots) return
+  if (!players || !matches || !aggregatedComps || !aggregatedStats || !aggregatedUnitItems || !leaderboards || !rankSnapshots) return
 
   await players.createIndex({ puuid: 1 }, { unique: true })
   await players.createIndex({ gameNameLower: 1, tagLineLower: 1 }, { unique: true })
@@ -49,6 +51,8 @@ export async function createIndexes() {
 
   // One stored stats doc per (patch, type) — read directly by getStats for the current patch.
   await aggregatedStats.createIndex({ patch: 1, type: 1 }, { unique: true })
+  // One stored 3-item combo table per (patch, unit) — read by the unit stats route.
+  await aggregatedUnitItems.createIndex({ patch: 1, unitId: 1 }, { unique: true })
 
   await leaderboards.createIndex({ region: 1 }, { unique: true })
 

@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useChampions } from "../hooks/useChampions.js";
 import { useTopComps } from "../hooks/useTopComps.js";
@@ -9,6 +9,7 @@ import CompSearchBar from "../components/CompSearchBar.jsx";
 import { filterComps } from "../utils/compSearch.js";
 import { getUniqueTraitIds } from "../utils/compName.js";
 import { PageShell } from '../components/layout/PageShell.jsx';
+import { buildUnitPath } from '../constants/routes.js';
 import styles from "./CompPage.module.css";
 
 const SORT_OPTIONS = ['placement', 'playRate', 'winRate'];
@@ -41,6 +42,9 @@ export default function CompPage() {
     () => filterComps(comps, champions || [], traits || [], compSearch),
     [comps, champions, traits, compSearch]
   );
+  // Only pin the patch in unit links when the user picked one; the default view
+  // follows the current patch.
+  const getUnitHref = useCallback(unitId => buildUnitPath(unitId, selectedPatch), [selectedPatch]);
   const sortedComps = useMemo(
     () => filteredComps.slice().sort(SORT_COMPARATORS[sortBy] || SORT_COMPARATORS.placement),
     [filteredComps, sortBy]
@@ -109,6 +113,7 @@ export default function CompPage() {
                   traits={traits || []}
                   matchCount={matchCount}
                   uniqueTraitIds={uniqueTraitIds}
+                  getUnitHref={getUnitHref}
                 />
               ))}
             </div>

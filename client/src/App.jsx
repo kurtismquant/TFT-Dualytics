@@ -7,6 +7,7 @@ import CompBuilderPage from "./pages/CompBuilderPage.jsx";
 import LeaderboardPage from "./pages/LeaderboardPage.jsx";
 import MatchHistoryPage from "./pages/MatchHistoryPage.jsx";
 import StatsPage from "./pages/StatsPage.jsx";
+import UnitStatsPage from "./pages/UnitStatsPage.jsx";
 import TermsOfService from "./pages/TermsOfService.jsx";
 import PrivacyPolicy from "./pages/PrivacyPolicy.jsx";
 import styles from "./App.module.css";
@@ -183,6 +184,7 @@ export default function App() {
           <Route path={ROUTES.home} element={<LandingPage />} />
           <Route path={ROUTES.comps} element={<CompPage />} />
           <Route path={ROUTES.stats} element={<StatsPage />} />
+          <Route path={ROUTES.unit} element={<UnitStatsPage />} />
           <Route path={ROUTES.builder} element={<CompBuilderPage />} />
           <Route path={ROUTES.leaderboard} element={<LeaderboardPage />} />
           <Route path={ROUTES.termsOfService} element={<TermsOfService />} />

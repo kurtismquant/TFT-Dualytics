@@ -18,3 +18,7 @@ export const SET_RELEASE_MS = SET_PATCH_SCHEDULE[0].startsAt
 // Riot queue id for Double Up. Set 18 payloads report tft_game_type "standard"
 // for Double Up games, so the queue id is the reliable signal (see riotMatchCompat.js).
 export const DOUBLE_UP_QUEUE_ID = 1160
+
+// Thief's Gloves fills all 3 item slots but the API reports it as a single item,
+// so a unit holding it never forms a 3-item combo.
+export const THIEVES_GLOVES = 'DA_ThiefsGloves'

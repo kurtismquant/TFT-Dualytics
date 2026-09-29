@@ -1,4 +1,6 @@
 import { createPortal } from 'react-dom'
+import { Link } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import UnitIcon from '../UnitIcon.jsx'
 import ItemIcon from '../ItemIcon.jsx'
 import UnitCard from '../UnitCard.jsx'
@@ -6,25 +8,39 @@ import TraitCard from '../TraitCard.jsx'
 import ItemCard from '../ItemCard.jsx'
 import { useHoverCard } from '../../hooks/useHoverCard.js'
 import chipStyles from '../ui/TraitChip.module.css'
+import pieceStyles from './HoverableBoardPieces.module.css'
 
-export function HoverableUnit({ unit, floatStars }) {
-  const { triggerProps, cardProps } = useHoverCard(unit.champion)
+// With `href`, the unit is a link to its stats page. Touch devices then open the
+// detail sheet on long-press instead of tap, since a tap now navigates.
+export function HoverableUnit({ unit, floatStars, href }) {
+  const { t } = useTranslation()
+  const { triggerProps, cardProps } = useHoverCard(unit.champion, { touchTrigger: href ? 'longpress' : 'tap' })
+  const icon = <UnitIcon champion={unit.champion} size={44} tier={unit.tier} floatStars={floatStars} />
   return (
     <>
-      <div {...triggerProps}>
-        <UnitIcon champion={unit.champion} size={44} tier={unit.tier} floatStars={floatStars} />
-      </div>
+      {href ? (
+        <Link
+          to={href}
+          className={pieceStyles.unitLink}
+          aria-label={t('unit.viewStats', { unit: unit.champion?.name })}
+          {...triggerProps}
+        >
+          {icon}
+        </Link>
+      ) : (
+        <div {...triggerProps}>{icon}</div>
+      )}
       {cardProps.isOpen && createPortal(<UnitCard {...cardProps} />, document.body)}
     </>
   )
 }
 
-export function HoverableItem({ item, allItems }) {
+export function HoverableItem({ item, allItems, size = 14 }) {
   const { triggerProps, cardProps } = useHoverCard(item)
   return (
     <>
       <div {...triggerProps}>
-        <ItemIcon item={item} size={14} />
+        <ItemIcon item={item} size={size} />
       </div>
       {cardProps.isOpen && createPortal(<ItemCard {...cardProps} allItems={allItems} />, document.body)}
     </>
@@ -64,10 +80,11 @@ export function TraitChips({ traitData, traits, filterOne, excludeTraitIds, allC
   ))
 }
 
-export function UnitsGrid({ resolvedUnits, allItems, styles, floatStars }) {
+// `getUnitHref(unitId)` is opt-in: when passed, each unit links to its stats page.
+export function UnitsGrid({ resolvedUnits, allItems, styles, floatStars, getUnitHref }) {
   return resolvedUnits.map((unit, i) => (
     <div key={i} className={styles.unitColumn}>
-      <HoverableUnit unit={unit} floatStars={floatStars} />
+      <HoverableUnit unit={unit} floatStars={floatStars} href={getUnitHref?.(unit.id)} />
       <div className={styles.itemRow}>
         {unit.resolvedItems.map((item, j) => (
           item

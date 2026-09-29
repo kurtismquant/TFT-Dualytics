@@ -1,7 +1,7 @@
 import PartnerRow from './PartnerRow.jsx'
 import styles from '../CompRow.module.css'
 
-export default function PartnerRows({ partners, champions, items, traits, parentGames, uniqueTraitIds }) {
+export default function PartnerRows({ partners, champions, items, traits, parentGames, uniqueTraitIds, getUnitHref }) {
   const hasPartners = partners && partners.length > 0
 
   return (
@@ -17,6 +17,7 @@ export default function PartnerRows({ partners, champions, items, traits, parent
               traits={traits}
               parentGames={parentGames}
               uniqueTraitIds={uniqueTraitIds}
+              getUnitHref={getUnitHref}
             />
           ))}
         </div>

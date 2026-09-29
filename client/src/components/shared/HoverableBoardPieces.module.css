@@ -1,0 +1,14 @@
+/* Unit icon wrapped as a link to its stats page. The icon keeps its own look;
+   the link only adds a keyboard focus ring (globals.css removes the default). */
+.unitLink {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+  /* Long-press opens the unit sheet on touch — suppress the iOS link preview. */
+  -webkit-touch-callout: none;
+}
+
+.unitLink:focus-visible {
+  outline: 2px solid var(--accent-gold);
+  outline-offset: 2px;
+}
