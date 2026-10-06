@@ -1,0 +1,18 @@
+/* Star slider | items slider | readout, side by side in the unit header. */
+.row {
+  display: flex;
+  align-items: flex-end;
+  gap: 1.75rem;
+}
+
+@media (--bp-md) {
+  /* Phones: the two sliders share a line; the readout wraps beneath them. */
+  .row {
+    flex-wrap: wrap;
+    gap: 1rem 1.25rem;
+  }
+
+  .row > :last-child {
+    flex-basis: 100%;
+  }
+}

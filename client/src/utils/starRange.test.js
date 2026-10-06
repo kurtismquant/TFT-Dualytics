@@ -3,9 +3,12 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import {
   combosForStarRange,
+  parseItemCountParam,
   parseStarsParam,
+  serializeItemCountParam,
   serializeStarsParam,
   starRangeSummary,
+  unitRangeSummary,
 } from './starRange.js'
 
 const unitByStar = {
@@ -78,4 +81,40 @@ test('combosForStarRange leaves combos alone for the full range or legacy docs',
   const combos = [{ items: ['a'], count: 12 }]
   assert.equal(combosForStarRange(combos, unitByStar, { min: 1, max: 3 }, 10), combos)
   assert.equal(combosForStarRange(combos, null, { min: 2, max: 2 }, 10), combos)
+})
+
+test('item count params cover 0-3 and omit the full range', () => {
+  assert.deepEqual(parseItemCountParam('0-2'), { min: 0, max: 2 })
+  assert.deepEqual(parseItemCountParam('3'), { min: 3, max: 3 })
+  assert.deepEqual(parseItemCountParam(''), { min: 0, max: 3 })
+  assert.equal(serializeItemCountParam({ min: 0, max: 3 }), null)
+  assert.equal(serializeItemCountParam({ min: 0, max: 0 }), '0')
+})
+
+test('unitRangeSummary sums star x item-count cells inside both ranges', () => {
+  const cell = (games, placementTotal, wins, top2) => ({ games, placementTotal, wins, top2 })
+  const empty = cell(0, 0, 0, 0)
+  const byStarItems = {
+    1: { 0: cell(4, 14, 0, 0), 1: empty, 2: cell(2, 6, 0, 1), 3: cell(4, 10, 1, 2) },
+    2: { 0: cell(2, 8, 0, 0), 1: cell(2, 6, 0, 1), 2: cell(6, 14, 1, 3), 3: cell(10, 16, 4, 6) },
+    3: { 0: empty, 1: empty, 2: empty, 3: cell(10, 16, 4, 8) },
+  }
+  const unit = { byStar: unitByStar, byStarItems }
+
+  // 2-3 star holding 2-3 items: cells (2,2), (2,3), (3,3).
+  assert.deepEqual(unitRangeSummary(unit, { min: 2, max: 3 }, { min: 2, max: 3 }), {
+    games: 26,
+    threeItemGames: 26,
+    avgPlacement: 46 / 26,
+    winRate: 9 / 26,
+    top2Rate: 17 / 26,
+  })
+  // Item range without 3 -> no 3-item builds.
+  assert.equal(unitRangeSummary(unit, { min: 1, max: 3 }, { min: 0, max: 1 }).threeItemGames, 0)
+  assert.equal(unitRangeSummary(unit, { min: 1, max: 3 }, { min: 0, max: 1 }).games, 8)
+  // Legacy docs without byStarItems ignore the item range.
+  assert.deepEqual(
+    unitRangeSummary({ byStar: unitByStar }, { min: 2, max: 3 }, { min: 0, max: 0 }),
+    starRangeSummary(unitByStar, { min: 2, max: 3 })
+  )
 })

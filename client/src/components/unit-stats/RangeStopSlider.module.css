@@ -1,9 +1,9 @@
-/* Compact star-level range slider + readout in the unit header's right column.
-   Star colours come from the --bronze/silver/gold-star-level theme tokens. */
+/* Compact discrete range slider (star level, items held) in the unit header.
+   Each stop's colour arrives as --stop-color. */
 .wrap {
   display: flex;
   flex-direction: column;
-  width: 14rem;
+  width: 10.5rem;
   font-family: var(--font-body);
 }
 
@@ -59,8 +59,8 @@
   height: 0.5rem;
   border-radius: 50%;
   transform: translate(-50%, -50%);
-  background: var(--star-color);
-  border: 2px solid var(--star-color);
+  background: var(--stop-color);
+  border: 2px solid var(--stop-color);
   pointer-events: none;
 }
 
@@ -81,9 +81,9 @@
   height: 1rem;
   border-radius: 50%;
   transform: translate(-50%, -50%);
-  background: var(--star-color);
+  background: var(--stop-color);
   border: 2px solid var(--bg-base);
-  box-shadow: 0 0 0 1px var(--star-color);
+  box-shadow: 0 0 0 1px var(--stop-color);
   transition: left var(--t-fast), background var(--t-fast);
 }
 
@@ -110,7 +110,7 @@
   padding: 0.125rem 0.25rem;
   border: 0;
   background: transparent;
-  color: var(--star-color);
+  color: var(--stop-color);
   font-size: var(--text-xs);
   line-height: 1;
   letter-spacing: 0;
@@ -164,43 +164,6 @@
   opacity: 1;
 }
 
-/* ── Readout ─────────────────────────────────────────── */
-.readout {
-  margin-top: 0.375rem;
-}
-
-.metrics {
-  display: flex;
-  gap: 1rem;
-}
-
-.metric {
-  display: inline-flex;
-  align-items: baseline;
-  gap: 0.375rem;
-}
-
-.metricLabel,
-.counts {
-  color: var(--text-muted);
-  font-size: var(--text-2xs);
-  letter-spacing: var(--track-wider);
-  text-transform: uppercase;
-}
-
-.metricValue {
-  color: var(--metric-color, var(--text-primary));
-  font-family: var(--font-accent);
-  font-size: var(--text-lg);
-  font-weight: var(--fw-bold);
-  line-height: 1;
-}
-
-.counts {
-  margin-top: 0.25rem;
-  white-space: nowrap;
-}
-
 @media (prefers-reduced-motion: reduce) {
   .thumb {
     transition: none;
@@ -209,7 +172,8 @@
 
 @media (--bp-md) {
   .wrap {
-    width: 100%;
-    max-width: 22rem;
+    width: auto;
+    flex: 1 1 8.5rem;
+    min-width: 0;
   }
 }

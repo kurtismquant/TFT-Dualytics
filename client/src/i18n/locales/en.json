@@ -179,7 +179,13 @@
     "showOnlyLevel": "Show only {{tip}}",
     "readoutAvg": "Avg",
     "readoutWin": "Win",
-    "widenStarRange": "Try widening the star range."
+    "itemRangeLabel": "Items held",
+    "itemLevel_one": "{{count}} item",
+    "itemLevel_other": "{{count}} items",
+    "minItems": "Minimum items held",
+    "maxItems": "Maximum items held",
+    "widenRanges": "Try widening the star or item range.",
+    "combosNeedThreeItems": "Item combos only include boards where the unit holds 3 items. Extend the items held range to 3 to see them."
   },
   "builder": {
     "title": "Team Builder",

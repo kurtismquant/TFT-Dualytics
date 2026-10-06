@@ -48,6 +48,23 @@ function byStarOf(makeEmpty) {
   return Object.fromEntries(STAR_LEVELS.map(star => [star, makeEmpty()]))
 }
 
+// Items a copy holds, 0-3. Thief's Gloves is reported as one item but fills all
+// three slots; the EmptyBag placeholder isn't a real item.
+const ITEM_COUNTS = ['0', '1', '2', '3']
+
+function itemCount(items) {
+  if (items.includes(THIEVES_GLOVES)) return '3'
+  return String(Math.min(3, items.filter(item => item !== EMPTY_BAG).length))
+}
+
+// byStarItems['2']['3'] = the unit's boards at 2 star holding 3 items.
+function emptyStarItems() {
+  return Object.fromEntries(STAR_LEVELS.map(star => [
+    star,
+    Object.fromEntries(ITEM_COUNTS.map(count => [count, { games: 0, placementTotal: 0, wins: 0, top2: 0 }])),
+  ]))
+}
+
 function addResult(bucket, teamPlacement) {
   bucket.placementTotal += teamPlacement
   if (teamPlacement === 1) bucket.wins += 1
@@ -57,7 +74,14 @@ function addResult(bucket, teamPlacement) {
 function ensureUnit(stats, unitId) {
   let entry = stats.get(unitId)
   if (!entry) {
-    entry = { unitId, games: 0, threeItemGames: 0, byStar: byStarOf(emptyUnitStar), combos: new Map() }
+    entry = {
+      unitId,
+      games: 0,
+      threeItemGames: 0,
+      byStar: byStarOf(emptyUnitStar),
+      byStarItems: emptyStarItems(),
+      combos: new Map(),
+    }
     stats.set(unitId, entry)
   }
   return entry
@@ -81,8 +105,9 @@ function recordCombo(entry, sortedItems, star, teamPlacement) {
 function recordBoard(stats, units, placement) {
   const teamPlacement = toTeamPlacement(placement)
   // A unit's board-level star is its highest copy (two copies of a champion can
-  // be fielded at different star levels); games count once per board per unit.
-  const boardStars = new Map()
+  // be fielded at different star levels; ties go to the copy holding more items).
+  // Games count once per board per unit.
+  const boardCopies = new Map()
   // A doubled unit that survives dedup with the same build must not count twice.
   const seenCombos = new Set()
   for (const unit of units) {
@@ -90,11 +115,13 @@ function recordBoard(stats, units, placement) {
     if (!unitId) continue
     const entry = ensureUnit(stats, unitId)
     const star = starLevel(unit)
-    if (!boardStars.has(unitId) || star > boardStars.get(unitId).star) {
-      boardStars.set(unitId, { entry, star })
+    const items = unit.itemNames || []
+    const held = itemCount(items)
+    const current = boardCopies.get(unitId)
+    if (!current || star > current.star || (star === current.star && held > current.held)) {
+      boardCopies.set(unitId, { entry, star, held })
     }
 
-    const items = unit.itemNames || []
     if (!isComboBuild(items)) continue
     const sortedItems = items.slice().sort()
     const boardKey = `${unitId}#${sortedItems.join('|')}`
@@ -103,10 +130,12 @@ function recordBoard(stats, units, placement) {
     recordCombo(entry, sortedItems, star, teamPlacement)
   }
 
-  for (const { entry, star } of boardStars.values()) {
+  for (const { entry, star, held } of boardCopies.values()) {
     entry.games += 1
     entry.byStar[star].games += 1
     addResult(entry.byStar[star], teamPlacement)
+    entry.byStarItems[star][held].games += 1
+    addResult(entry.byStarItems[star][held], teamPlacement)
   }
 }
 
@@ -131,6 +160,7 @@ function finalizeUnit(entry, minGames) {
     games: entry.games,
     threeItemGames: entry.threeItemGames,
     byStar: entry.byStar,
+    byStarItems: entry.byStarItems,
     combos,
   }
 }
@@ -159,7 +189,7 @@ export function isValidUnitId(unitId) {
 }
 
 function emptyResult(unitId, patch, patches) {
-  return { unitId, patch, patches, minGames: MIN_COMBO_GAMES, games: 0, threeItemGames: 0, byStar: null, combos: [], lastUpdated: null }
+  return { unitId, patch, patches, minGames: MIN_COMBO_GAMES, games: 0, threeItemGames: 0, byStar: null, byStarItems: null, combos: [], lastUpdated: null }
 }
 
 // Older patches aren't pre-stored, so aggregate every unit once per patch on
@@ -214,6 +244,7 @@ export async function getUnitItemCombos({ unitId, patch = null }) {
     games: row?.games ?? 0,
     threeItemGames: row?.threeItemGames ?? 0,
     byStar: row?.byStar ?? null,
+    byStarItems: row?.byStarItems ?? null,
     combos: row?.combos ?? [],
     lastUpdated,
   }

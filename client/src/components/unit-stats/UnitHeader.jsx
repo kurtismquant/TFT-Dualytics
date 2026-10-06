@@ -1,12 +1,12 @@
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import UnitIcon from '../UnitIcon.jsx'
-import StarRangeSlider from './StarRangeSlider.jsx'
+import UnitRangeFilters from './UnitRangeFilters.jsx'
 import { ROUTES } from '../../constants/routes.js'
 import statsStyles from '../../pages/StatsPage.module.css'
 import styles from '../../pages/UnitStatsPage.module.css'
 
-export default function UnitHeader({ champion, unitName, starRange, onStarRangeChange, byStar, fallback }) {
+export default function UnitHeader({ champion, unitName, rangeFilters }) {
   const { t } = useTranslation()
   const traits = champion?.traits || []
 
@@ -28,15 +28,7 @@ export default function UnitHeader({ champion, unitName, starRange, onStarRangeC
           )}
         </div>
       </div>
-      {/* Without per-star data (a doc stored before it existed) the slider is
-          disabled and the readout falls back to the all-stars game counts. */}
-      <StarRangeSlider
-        range={starRange}
-        onChange={onStarRangeChange}
-        byStar={byStar}
-        fallback={fallback}
-        disabled={!byStar}
-      />
+      <UnitRangeFilters {...rangeFilters} />
     </div>
   )
 }

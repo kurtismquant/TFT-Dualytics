@@ -23,6 +23,16 @@ function unitStars(levels = {}) {
   return Object.fromEntries(['1', '2', '3'].map(star => [star, { ...zero, ...levels[star] }]))
 }
 
+// Expected star x item-count buckets: all zero except the cells given as
+// { star: { itemCount: {...} } }.
+function starItems(cells = {}) {
+  const zero = { games: 0, placementTotal: 0, wins: 0, top2: 0 }
+  return Object.fromEntries(['1', '2', '3'].map(star => [
+    star,
+    Object.fromEntries(['0', '1', '2', '3'].map(count => [count, { ...zero, ...cells[star]?.[count] }])),
+  ]))
+}
+
 function comboStars(levels = {}) {
   const zero = { count: 0, placementTotal: 0, wins: 0, top2: 0 }
   return Object.fromEntries(['1', '2', '3'].map(star => [star, { ...zero, ...levels[star] }]))
@@ -62,6 +72,7 @@ describe('aggregateUnitItemCombos', () => {
       games: 19,
       threeItemGames: 19,
       byStar: unitStars({ 2: { games: 19, placementTotal: 19, wins: 19, top2: 19, threeItemGames: 19 } }),
+      byStarItems: starItems({ 2: { 3: { games: 19, placementTotal: 19, wins: 19, top2: 19 } } }),
       combos: [{
         items: [GS, IE, LW],
         count: 10,
@@ -109,6 +120,12 @@ describe('aggregateUnitItemCombos', () => {
       games: 4,
       threeItemGames: 0,
       byStar: unitStars({ 2: { games: 4, placementTotal: 6, wins: 2, top2: 4 } }),
+      // Thief's Gloves fills 3 slots; EmptyBag isn't an item.
+      byStarItems: starItems({ 2: {
+        0: { games: 1, placementTotal: 2, wins: 0, top2: 1 },
+        2: { games: 2, placementTotal: 3, wins: 1, top2: 2 },
+        3: { games: 1, placementTotal: 1, wins: 1, top2: 1 },
+      } }),
       combos: [],
     })
   })
@@ -185,6 +202,30 @@ describe('aggregateUnitItemCombos star levels', () => {
     const byItems = Object.fromEntries(row.combos.map(combo => [combo.items.join('|'), combo]))
     assert.equal(byItems[[GS, IE, LW].join('|')].byStar['1'].count, 1)
     assert.equal(byItems[[BT, BT, IE].join('|')].byStar['2'].count, 1)
+  })
+})
+
+describe('aggregateUnitItemCombos item counts', () => {
+  it('records each board once at its star level and item count', () => {
+    const rows = aggregateUnitItemCombos([
+      // Same star: the copy with more items represents the board.
+      match([participant(1, [unit('DA_18_Xayah', [IE], 2), unit('DA_18_Xayah', [IE, GS], 2)])]),
+      // Higher star wins even with fewer items.
+      match([participant(7, [unit('DA_18_Xayah', [IE, GS, LW], 1), unit('DA_18_Xayah', [], 3)])]),
+      match([participant(3, [unit('DA_18_Xayah', [BT], 1)])]),
+    ], { minGames: 1 })
+
+    const row = rowFor(rows, 'DA_18_Xayah')
+    assert.deepEqual(row.byStarItems, starItems({
+      1: { 1: { games: 1, placementTotal: 2, wins: 0, top2: 1 } },
+      2: { 2: { games: 1, placementTotal: 1, wins: 1, top2: 1 } },
+      3: { 0: { games: 1, placementTotal: 4, wins: 0, top2: 0 } },
+    }))
+    // Each star's item-count cells sum to that star's games.
+    for (const star of ['1', '2', '3']) {
+      const total = Object.values(row.byStarItems[star]).reduce((sum, cell) => sum + cell.games, 0)
+      assert.equal(total, row.byStar[star].games)
+    }
   })
 })
 

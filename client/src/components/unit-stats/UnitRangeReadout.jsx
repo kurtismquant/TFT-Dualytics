@@ -1,11 +1,12 @@
 import { useTranslation } from 'react-i18next'
 import { formatAvg, formatPercent } from '../../utils/statsFormatting.js'
 import { getAvgPlacementColor, getWinRateColor } from '../../utils/statsQuality.js'
-import styles from './StarRangeSlider.module.css'
+import styles from './UnitRangeReadout.module.css'
 
-// Avg placement / win rate / game counts for the selected star range.
-// Rates are null when the range has no games (or the doc predates star data).
-export default function StarRangeReadout({ summary }) {
+// Avg placement / win rate / game counts for the selected star + items-held
+// ranges. Rates are null when the ranges hold no games (or the doc predates
+// per-star data).
+export default function UnitRangeReadout({ summary }) {
   const { t } = useTranslation()
   const { games = 0, threeItemGames = 0, avgPlacement = null, winRate = null } = summary || {}
   const hasRates = avgPlacement != null

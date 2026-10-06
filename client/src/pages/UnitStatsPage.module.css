@@ -97,11 +97,15 @@
   font-size: var(--text-sm);
 }
 
-@media (--bp-md) {
+/* Sliders + readout need ~37rem beside the unit identity; below desktop width
+   they move under it. */
+@media (--bp-lg) {
   .header {
     grid-template-columns: 1fr;
   }
+}
 
+@media (--bp-md) {
   .controls {
     flex-direction: column;
     align-items: stretch;
