@@ -18,13 +18,20 @@ import {
   serializeItemsParam,
   sortCombos,
 } from '../utils/itemComboFilter.js'
+import {
+  combosForStarRange,
+  isFullStarRange,
+  parseStarsParam,
+  serializeStarsParam,
+} from '../utils/starRange.js'
 import statsStyles from './StatsPage.module.css'
 import styles from './UnitStatsPage.module.css'
 
 const DEFAULT_MIN_GAMES = 10
 
-// Per-unit stats: every 3-item combo with enough games, filterable by up to 3
-// items. Patch and item filters live in the URL (?patch=&items=) so views can be shared.
+// Per-unit stats: every 3-item combo with enough games, filterable by a star-level
+// range and up to 3 items. Patch, stars and items live in the URL
+// (?patch=&stars=&items=) so views can be shared.
 export default function UnitStatsPage() {
   const { t } = useTranslation()
   const { unitId } = useParams()
@@ -32,6 +39,8 @@ export default function UnitStatsPage() {
   const patchParam = searchParams.get('patch')
   const itemsParam = searchParams.get('items')
   const filterIds = useMemo(() => parseItemsParam(itemsParam), [itemsParam])
+  const starsParam = searchParams.get('stars')
+  const starRange = useMemo(() => parseStarsParam(starsParam), [starsParam])
   const [sort, setSort] = useState(DEFAULT_COMBO_SORT)
 
   const { data: champions } = useChampions()
@@ -40,7 +49,14 @@ export default function UnitStatsPage() {
 
   const champion = useMemo(() => champions?.find(c => c.id === unitId) || null, [champions, unitId])
   const itemLookup = useMemo(() => buildItemLookup(items), [items])
-  const combos = useMemo(() => data?.combos || [], [data?.combos])
+  const minGames = data?.minGames ?? DEFAULT_MIN_GAMES
+  const byStar = data?.byStar ?? null
+  // Combos re-scored within the star range (10+ games inside it); item filters
+  // and suggestions then apply on top of that.
+  const combos = useMemo(
+    () => combosForStarRange(data?.combos || [], byStar, starRange, minGames),
+    [data?.combos, byStar, starRange, minGames]
+  )
   const candidates = useMemo(
     () => buildItemCandidates(items, combos.flatMap(combo => combo.items)),
     [items, combos]
@@ -61,19 +77,22 @@ export default function UnitStatsPage() {
   }, [setSearchParams])
 
   const handleFiltersChange = useCallback(ids => setParam('items', serializeItemsParam(ids)), [setParam])
+  const handleStarRangeChange = useCallback(range => setParam('stars', serializeStarsParam(range)), [setParam])
   const handleSort = useCallback(columnKey => setSort(current => nextComboSort(current, columnKey)), [])
 
   const unitName = champion?.name || unitId
   const patches = data?.patches || []
-  const minGames = data?.minGames ?? DEFAULT_MIN_GAMES
+  const rangeLimited = Boolean(byStar) && !isFullStarRange(starRange)
 
   return (
     <PageShell>
       <UnitHeader
         champion={champion}
         unitName={unitName}
-        games={data?.games ?? 0}
-        threeItemGames={data?.threeItemGames ?? 0}
+        starRange={starRange}
+        onStarRangeChange={handleStarRangeChange}
+        byStar={byStar}
+        fallback={{ games: data?.games ?? 0, threeItemGames: data?.threeItemGames ?? 0 }}
       />
       <div className={styles.controls}>
         <select
@@ -103,6 +122,7 @@ export default function UnitStatsPage() {
             {filterIds.length > 0
               ? t('unit.notEnoughDataFiltered', { count: minGames })
               : t('unit.notEnoughDataHelp', { count: minGames })}
+            {rangeLimited && ` ${t('unit.widenStarRange')}`}
           </span>
         </p>
       )}

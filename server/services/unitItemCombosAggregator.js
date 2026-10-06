@@ -27,41 +27,71 @@ function isComboBuild(items) {
   return items.length === 3 && !items.includes(THIEVES_GLOVES) && !items.includes(EMPTY_BAG)
 }
 
+// Riot's `tier` is the star level. Clamp to 1-3 so every game lands in exactly one
+// bucket and the per-star totals always sum to the overall totals.
+const STAR_LEVELS = ['1', '2', '3']
+
+function starLevel(unit) {
+  const tier = Math.trunc(Number(unit.tier)) || 1
+  return String(Math.min(3, Math.max(1, tier)))
+}
+
+function emptyUnitStar() {
+  return { games: 0, placementTotal: 0, wins: 0, top2: 0, threeItemGames: 0 }
+}
+
+function emptyComboStar() {
+  return { count: 0, placementTotal: 0, wins: 0, top2: 0 }
+}
+
+function byStarOf(makeEmpty) {
+  return Object.fromEntries(STAR_LEVELS.map(star => [star, makeEmpty()]))
+}
+
+function addResult(bucket, teamPlacement) {
+  bucket.placementTotal += teamPlacement
+  if (teamPlacement === 1) bucket.wins += 1
+  if (teamPlacement <= 2) bucket.top2 += 1
+}
+
 function ensureUnit(stats, unitId) {
   let entry = stats.get(unitId)
   if (!entry) {
-    entry = { unitId, games: 0, threeItemGames: 0, combos: new Map() }
+    entry = { unitId, games: 0, threeItemGames: 0, byStar: byStarOf(emptyUnitStar), combos: new Map() }
     stats.set(unitId, entry)
   }
   return entry
 }
 
-function recordCombo(entry, sortedItems, placement) {
+function recordCombo(entry, sortedItems, star, teamPlacement) {
   const key = sortedItems.join('|')
   let combo = entry.combos.get(key)
   if (!combo) {
-    combo = { items: sortedItems, count: 0, placementTotal: 0, wins: 0, top2: 0 }
+    combo = { items: sortedItems, count: 0, placementTotal: 0, wins: 0, top2: 0, byStar: byStarOf(emptyComboStar) }
     entry.combos.set(key, combo)
   }
-  const teamPlacement = toTeamPlacement(placement)
   combo.count += 1
-  combo.placementTotal += teamPlacement
-  if (teamPlacement === 1) combo.wins += 1
-  if (teamPlacement <= 2) combo.top2 += 1
+  addResult(combo, teamPlacement)
+  combo.byStar[star].count += 1
+  addResult(combo.byStar[star], teamPlacement)
   entry.threeItemGames += 1
+  entry.byStar[star].threeItemGames += 1
 }
 
 function recordBoard(stats, units, placement) {
-  const seenUnits = new Set()
+  const teamPlacement = toTeamPlacement(placement)
+  // A unit's board-level star is its highest copy (two copies of a champion can
+  // be fielded at different star levels); games count once per board per unit.
+  const boardStars = new Map()
   // A doubled unit that survives dedup with the same build must not count twice.
   const seenCombos = new Set()
   for (const unit of units) {
     const unitId = unit.character_id
     if (!unitId) continue
     const entry = ensureUnit(stats, unitId)
-    if (!seenUnits.has(unitId)) {
-      seenUnits.add(unitId)
-      entry.games += 1
+    const star = starLevel(unit)
+    if (!boardStars.has(unitId) || star > boardStars.get(unitId).star) {
+      boardStars.set(unitId, { entry, star })
     }
 
     const items = unit.itemNames || []
@@ -70,11 +100,20 @@ function recordBoard(stats, units, placement) {
     const boardKey = `${unitId}#${sortedItems.join('|')}`
     if (seenCombos.has(boardKey)) continue
     seenCombos.add(boardKey)
-    recordCombo(entry, sortedItems, placement)
+    recordCombo(entry, sortedItems, star, teamPlacement)
+  }
+
+  for (const { entry, star } of boardStars.values()) {
+    entry.games += 1
+    entry.byStar[star].games += 1
+    addResult(entry.byStar[star], teamPlacement)
   }
 }
 
 function finalizeUnit(entry, minGames) {
+  // Combos below minGames overall can't reach it within any star range either,
+  // so pruning on the total is safe. byStar keeps raw totals so the client can
+  // sum any star range and re-derive the averages.
   const combos = [...entry.combos.values()]
     .filter(combo => combo.count >= minGames)
     .map(combo => ({
@@ -84,9 +123,16 @@ function finalizeUnit(entry, minGames) {
       winRate: combo.wins / combo.count,
       top2Rate: combo.top2 / combo.count,
       frequency: entry.threeItemGames > 0 ? combo.count / entry.threeItemGames : 0,
+      byStar: combo.byStar,
     }))
     .sort((a, b) => a.avgPlacement - b.avgPlacement || b.count - a.count)
-  return { unitId: entry.unitId, games: entry.games, threeItemGames: entry.threeItemGames, combos }
+  return {
+    unitId: entry.unitId,
+    games: entry.games,
+    threeItemGames: entry.threeItemGames,
+    byStar: entry.byStar,
+    combos,
+  }
 }
 
 // Pure reducer over raw Double Up match docs. Returns one row per unit seen,
@@ -113,7 +159,7 @@ export function isValidUnitId(unitId) {
 }
 
 function emptyResult(unitId, patch, patches) {
-  return { unitId, patch, patches, minGames: MIN_COMBO_GAMES, games: 0, threeItemGames: 0, combos: [], lastUpdated: null }
+  return { unitId, patch, patches, minGames: MIN_COMBO_GAMES, games: 0, threeItemGames: 0, byStar: null, combos: [], lastUpdated: null }
 }
 
 // Older patches aren't pre-stored, so aggregate every unit once per patch on
@@ -167,6 +213,7 @@ export async function getUnitItemCombos({ unitId, patch = null }) {
     ...emptyResult(unitId, selectedPatch, patches),
     games: row?.games ?? 0,
     threeItemGames: row?.threeItemGames ?? 0,
+    byStar: row?.byStar ?? null,
     combos: row?.combos ?? [],
     lastUpdated,
   }

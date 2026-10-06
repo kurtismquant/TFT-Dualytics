@@ -169,7 +169,17 @@
     "activeFilters": "Filtros de objetos activos",
     "removeFilter": "Quitar filtro {{item}}",
     "suggestions": "Sugerencias de objetos",
-    "notBuilt": "Sin datos"
+    "notBuilt": "Sin datos",
+    "starRangeLabel": "Nivel de estrellas",
+    "starLevel": "{{count}}★",
+    "minStar": "Nivel mínimo de estrellas",
+    "maxStar": "Nivel máximo de estrellas",
+    "levelTip": "{{level}} · Prom. {{avg}} · Victoria {{win}} · {{games}} partidas",
+    "levelNoGames": "{{level}} · Sin partidas",
+    "showOnlyLevel": "Mostrar solo {{tip}}",
+    "readoutAvg": "Prom.",
+    "readoutWin": "Victoria",
+    "widenStarRange": "Prueba a ampliar el rango de estrellas."
   },
   "builder": {
     "title": "Constructor de Equipo",

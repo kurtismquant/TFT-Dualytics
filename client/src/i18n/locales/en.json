@@ -169,7 +169,17 @@
     "activeFilters": "Active item filters",
     "removeFilter": "Remove {{item}} filter",
     "suggestions": "Item suggestions",
-    "notBuilt": "No data"
+    "notBuilt": "No data",
+    "starRangeLabel": "Star level",
+    "starLevel": "{{count}}★",
+    "minStar": "Minimum star level",
+    "maxStar": "Maximum star level",
+    "levelTip": "{{level}} · Avg {{avg}} · Win {{win}} · {{games}} games",
+    "levelNoGames": "{{level}} · No games",
+    "showOnlyLevel": "Show only {{tip}}",
+    "readoutAvg": "Avg",
+    "readoutWin": "Win",
+    "widenStarRange": "Try widening the star range."
   },
   "builder": {
     "title": "Team Builder",
