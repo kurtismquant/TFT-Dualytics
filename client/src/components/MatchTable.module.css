@@ -43,15 +43,21 @@
   transition: background var(--t-fast);
 }
 
+.compact {
+  position: relative;
+}
+
+/* Stretched over the whole compact summary (behind the content) so a click
+   anywhere that isn't a unit link / hover target expands the card. */
 .cardButton {
-  display: block;
+  position: absolute;
+  inset: 0;
   width: 100%;
   min-height: 2.75rem;
   padding: 0;
   background: transparent;
   border: 0;
   color: inherit;
-  text-align: inherit;
   cursor: pointer;
 }
 
@@ -59,11 +65,8 @@
   outline: none;
 }
 
-.cardButton:focus-visible .compactContent {
-  background: var(--bg-card-hover);
-}
-
-.compactContent:hover {
+.compact:hover .compactContent,
+.cardButton:focus-visible + .compactContent {
   background: var(--bg-card-hover);
 }
 
@@ -72,8 +75,18 @@
   background: var(--bg-card-hover);
 }
 /* ── Compact content wrapper — carries placement left-bar ── */
+/* Sits above the stretched toggle but lets clicks through to it, except on the
+   interactive pieces (unit links, item and trait hover cards) opted back in. */
 .compactContent {
+  position: relative;
   border-left: 3px solid transparent;
+  pointer-events: none;
+}
+
+.compactContent .unitColumn,
+.compactContent .traitRow > *,
+.compactContent .splitTraits > * {
+  pointer-events: auto;
 }
 
 /* Placement left-bar — only on compact content, not expanded scoreboard */

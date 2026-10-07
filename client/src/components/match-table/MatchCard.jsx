@@ -2,6 +2,7 @@ import { useId, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { DamageIcon, TraitChips, UnitsGrid } from './BoardDisplay.jsx'
 import ExpandedScoreboard from './ExpandedScoreboard.jsx'
+import ExpandableCardHeader from './ExpandableCardHeader.jsx'
 import PlacementBadge from '../ui/PlacementBadge.jsx'
 import { useIsMobile } from '../../hooks/useMediaQuery.js'
 import {
@@ -34,8 +35,14 @@ export default function MatchCard({ match, champions, items, traits, excludeTrai
   const resolvedPartnerUnits = resolveUnits(match.partnerUnits, champions, items)
 
   const isPartner = showPartnerBadge && match.wasPartnerWith
-
-  const toggleExpand = () => setExpanded(v => !v)
+  const headerProps = {
+    id: buttonId,
+    expanded,
+    onToggle: () => setExpanded(v => !v),
+    controls: panelId,
+    label: toggleLabel,
+    contentClassName: `${styles.compactContent} ${placementClass} ${expanded ? styles.compactContentActive : ''}`,
+  }
 
   const expandedScoreboard = expanded && (
     <ExpandedScoreboard
@@ -55,16 +62,7 @@ export default function MatchCard({ match, champions, items, traits, excludeTrai
   if (splitView) {
     return (
       <div className={`${styles.card} ${isPartner ? styles.partnerCard : ''}`} role="listitem">
-        <button
-          type="button"
-          className={styles.cardButton}
-          onClick={toggleExpand}
-          aria-expanded={expanded}
-          aria-controls={panelId}
-          aria-label={toggleLabel}
-          id={buttonId}
-        >
-          <div className={`${styles.compactContent} ${placementClass} ${expanded ? styles.compactContentActive : ''}`}>
+        <ExpandableCardHeader {...headerProps}>
           <div className={styles.splitBody}>
             {/* Left — user */}
             <div className={styles.splitCol}>
@@ -121,9 +119,7 @@ export default function MatchCard({ match, champions, items, traits, excludeTrai
               </div>
             </div>
           </div>
-          
-          </div>
-        </button>
+        </ExpandableCardHeader>
         {expandedScoreboard}
       </div>
     )
@@ -135,16 +131,7 @@ export default function MatchCard({ match, champions, items, traits, excludeTrai
 
   return (
     <div className={`${styles.card} ${isPartner ? styles.partnerCard : ''}`} role="listitem">
-      <button
-        type="button"
-        className={styles.cardButton}
-        onClick={toggleExpand}
-        aria-expanded={expanded}
-        aria-controls={panelId}
-        aria-label={toggleLabel}
-        id={buttonId}
-      >
-        <div className={`${styles.compactContent} ${placementClass} ${expanded ? styles.compactContentActive : ''}`}>
+      <ExpandableCardHeader {...headerProps}>
         <div className={styles.headerBar}>
           <div className={styles.headerLeft}>
             <span className={styles.modeLabel}>Double Up</span>
@@ -179,8 +166,7 @@ export default function MatchCard({ match, champions, items, traits, excludeTrai
             <UnitsGrid resolvedUnits={resolvedUnits} allItems={items} />
           </div>
         </div>
-        </div>
-      </button>
+      </ExpandableCardHeader>
 
       {expandedScoreboard}
     </div>

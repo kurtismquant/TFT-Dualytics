@@ -1,5 +1,6 @@
 import StatIcon from './StatIcon.jsx'
 import DetailCardShell from './shared/DetailCardShell.jsx'
+import UnitStatsSheetLink from './shared/UnitStatsSheetLink.jsx'
 import { tokenize } from '../utils/descriptionTokenizer.js'
 import styles from './UnitCard.module.css'
 
@@ -56,7 +57,14 @@ export default function UnitCard({ isOpen, data: champion, style, mode, onClose 
   const borderColor = COST_COLORS[champion.cost] || 'var(--ghost-border)'
 
   return (
-    <DetailCardShell mode={mode} style={style} onClose={onClose} cardClassName={styles.card} label={champion.name}>
+    <DetailCardShell
+      mode={mode}
+      style={style}
+      onClose={onClose}
+      cardClassName={styles.card}
+      label={champion.name}
+      sheetFooter={<UnitStatsSheetLink unitId={champion.id} onNavigate={onClose} />}
+    >
       <div className={styles.header}>
         <img
           src={champion.iconUrl}

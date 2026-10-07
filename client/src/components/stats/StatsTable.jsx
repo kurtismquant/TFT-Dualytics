@@ -11,6 +11,7 @@ export default function StatsTable({
   onSort,
   allItems,
   allChampions,
+  patch,
 }) {
   const { t } = useTranslation()
 
@@ -54,6 +55,7 @@ export default function StatsTable({
               emptyPopularLabel={emptyPopularLabel}
               allItems={allItems}
               allChampions={allChampions}
+              patch={patch}
             />
           ))}
         </tbody>

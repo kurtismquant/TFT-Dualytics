@@ -1,0 +1,23 @@
+/* Unit icons / names on the Stats page that link to the unit stats page. They
+   keep the look of the cell they replace; only the focus ring is added
+   (globals.css removes the default outline). */
+.link {
+  color: inherit;
+  text-decoration: none;
+  /* Long-press opens the unit sheet on touch — suppress the iOS link preview. */
+  -webkit-touch-callout: none;
+}
+
+.link:hover span:last-child {
+  text-decoration: underline;
+  text-underline-offset: 0.1875rem;
+}
+
+.link:focus-visible {
+  outline: 2px solid var(--accent-gold);
+  outline-offset: 2px;
+}
+
+.iconLink {
+  display: inline-flex;
+}

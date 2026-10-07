@@ -29,6 +29,7 @@ export default function TFTBoard({
   isMobile = false,
   selectedCellId = null,
   onUnitClick,
+  onUnitDoubleClick,
   onEmptyHexClick,
   onRemoveUnit,
   onRemoveItem,
@@ -115,6 +116,7 @@ export default function TFTBoard({
                           e.stopPropagation();
                           onUnitClick?.(cellId);
                         }}
+                        onDoubleClick={() => onUnitDoubleClick?.(cellId)}
                         onContextMenu={(e) => {
                           e.preventDefault();
                           onRemoveUnit?.(cellId);

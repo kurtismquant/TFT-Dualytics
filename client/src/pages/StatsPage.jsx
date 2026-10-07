@@ -123,6 +123,7 @@ export default function StatsPage() {
           onSort={handleSort}
           allItems={items}
           allChampions={champions}
+          patch={selectedPatch}
         />
       )}
     </PageShell>

@@ -1,7 +1,7 @@
 import styles from '../../pages/StatsPage.module.css'
 import HoverablePopularIcon from './HoverablePopularIcon.jsx'
 
-export default function PopularIcons({ entries, map, emptyLabel, popularCardType, allItems }) {
+export default function PopularIcons({ entries, map, emptyLabel, popularCardType, allItems, patch }) {
   if (!entries?.length) return <span className={styles.muted}>{emptyLabel}</span>
   return (
     <div className={styles.popularIcons}>
@@ -12,6 +12,7 @@ export default function PopularIcons({ entries, map, emptyLabel, popularCardType
           meta={map.get(entry.id)}
           cardType={popularCardType}
           allItems={allItems}
+          patch={patch}
         />
       ))}
     </div>

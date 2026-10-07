@@ -185,7 +185,8 @@
     "minItems": "Minimum items held",
     "maxItems": "Maximum items held",
     "widenRanges": "Try widening the star or item range.",
-    "combosNeedThreeItems": "Item combos only include boards where the unit holds 3 items. Extend the items held range to 3 to see them."
+    "combosNeedThreeItems": "Item combos only include boards where the unit holds 3 items. Extend the items held range to 3 to see them.",
+    "viewStatsLink": "View unit stats"
   },
   "builder": {
     "title": "Team Builder",

@@ -185,7 +185,8 @@
     "minItems": "Mínimo de objetos equipados",
     "maxItems": "Máximo de objetos equipados",
     "widenRanges": "Prueba a ampliar el rango de estrellas u objetos.",
-    "combosNeedThreeItems": "Las combinaciones solo incluyen partidas en las que la unidad lleva 3 objetos. Amplía el rango de objetos equipados hasta 3 para verlas."
+    "combosNeedThreeItems": "Las combinaciones solo incluyen partidas en las que la unidad lleva 3 objetos. Amplía el rango de objetos equipados hasta 3 para verlas.",
+    "viewStatsLink": "Ver estadísticas de la unidad"
   },
   "builder": {
     "title": "Constructor de Equipo",

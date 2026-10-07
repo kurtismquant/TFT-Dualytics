@@ -1,14 +1,29 @@
+import { useRef } from 'react'
 import { createPortal } from 'react-dom'
+import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import DraggableUnit from './DraggableUnit.jsx'
 import UnitCard from './UnitCard.jsx'
 import styles from './UnitRoster.module.css'
 import { useBoardStore } from '../store/boardStore'
 import { useHoverCard } from '../hooks/useHoverCard.js'
+import { buildUnitPath } from '../constants/routes.js'
 
+// Click places the unit; double-click opens its stats page instead, undoing the
+// placement its first click made.
 function RosterUnit({ champion, onPlace }) {
   // Long-press for the detail sheet on touch (tap already places the unit).
   const { triggerProps, cardProps } = useHoverCard(champion, { touchTrigger: 'longpress' })
+  const navigate = useNavigate()
+  const placedCellRef = useRef(null)
+
+  const handleDoubleClick = () => {
+    const cellId = placedCellRef.current
+    const { board, removeUnit } = useBoardStore.getState()
+    if (cellId && board[cellId]?.championId === champion.id) removeUnit(cellId)
+    navigate(buildUnitPath(champion.id))
+  }
+
   return (
     <>
       <div {...triggerProps}>
@@ -17,7 +32,8 @@ function RosterUnit({ champion, onPlace }) {
           champion={champion}
           size={56}
           staticDuringDrag
-          onClick={onPlace}
+          onClick={() => { placedCellRef.current = onPlace() }}
+          onDoubleClick={handleDoubleClick}
         />
       </div>
       {cardProps.isOpen && createPortal(

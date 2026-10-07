@@ -19,6 +19,7 @@ function StatsTableRow({
   emptyPopularLabel,
   allItems,
   allChampions,
+  patch,
 }) {
   const { t } = useTranslation()
 
@@ -37,6 +38,7 @@ function StatsTableRow({
           row={row}
           allItems={allItems}
           allChampions={allChampions}
+          patch={patch}
         />
       </th>
       <td
@@ -64,6 +66,7 @@ function StatsTableRow({
           emptyLabel={emptyPopularLabel}
           popularCardType={popularCardType}
           allItems={allItems}
+          patch={patch}
         />
       </td>
     </tr>

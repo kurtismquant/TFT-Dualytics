@@ -6,7 +6,10 @@ import styles from './DetailCardShell.module.css'
 //  - 'sheet':    a touch-friendly bottom sheet with a dismiss backdrop.
 // The caller (UnitCard / ItemCard / TraitCard) renders this around its content and
 // is itself rendered into document.body via a portal by the consumer.
-export default function DetailCardShell({ mode, style, onClose, cardClassName, label, children }) {
+// `sheetFooter` (e.g. a "View unit stats" link) only renders in the sheet: the
+// floating card closes as soon as the pointer leaves its trigger, so it can't
+// hold anything clickable.
+export default function DetailCardShell({ mode, style, onClose, cardClassName, label, sheetFooter, children }) {
   const isSheet = mode === 'sheet'
 
   // Escape closes the sheet (keyboard dismissal, alongside the close button).
@@ -31,6 +34,7 @@ export default function DetailCardShell({ mode, style, onClose, cardClassName, l
             <span aria-hidden="true">×</span>
           </button>
           {children}
+          {sheetFooter && <div className={styles.footer}>{sheetFooter}</div>}
         </div>
       </div>
     )

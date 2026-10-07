@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { DndContext, DragOverlay, PointerSensor, useSensor, useSensors } from '@dnd-kit/core'
 import { useChampions } from '../hooks/useChampions.js'
@@ -13,6 +14,7 @@ import UnitIcon from '../components/UnitIcon.jsx'
 import ItemIcon from '../components/ItemIcon.jsx'
 import { PageShell } from '../components/layout/PageShell.jsx'
 import { useIsMobile } from '../hooks/useMediaQuery.js'
+import { buildUnitPath } from '../constants/routes.js'
 import styles from './CompBuilderPage.module.css'
 
 const BOARD_UNIT_SIZE = 90
@@ -41,6 +43,7 @@ export default function CompBuilderPage() {
   const [draggedItem, setDraggedItem] = useState(null)
   const searchInputRef = useRef(null)
   const isMobile = useIsMobile()
+  const navigate = useNavigate()
   // Live hex size reported by the board, so the drag overlay matches it.
   const [boardHexSize, setBoardHexSize] = useState(BOARD_UNIT_SIZE)
 
@@ -64,6 +67,17 @@ export default function CompBuilderPage() {
       return
     }
     setSelected({ type: 'boardUnit', cellId })
+  }
+
+  // Double-click opens the unit's stats page. Its first click already ran
+  // handleUnitClick, so undo that: re-toggle 3★ on desktop, drop the selection
+  // on mobile.
+  const handleUnitDoubleClick = (cellId) => {
+    const championId = board[cellId]?.championId
+    if (!championId) return
+    if (isMobile) setSelected(null)
+    else toggleStars(cellId)
+    navigate(buildUnitPath(championId))
   }
 
   // Tap on an empty hex (occupied cells stopPropagation in TFTBoard).
@@ -218,6 +232,7 @@ export default function CompBuilderPage() {
                 isMobile={isMobile}
                 selectedCellId={selected?.type === 'boardUnit' ? selected.cellId : null}
                 onUnitClick={handleUnitClick}
+                onUnitDoubleClick={handleUnitDoubleClick}
                 onEmptyHexClick={handleEmptyHexClick}
                 onRemoveUnit={removeUnit}
                 onRemoveItem={removeItem}

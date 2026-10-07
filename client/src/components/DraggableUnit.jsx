@@ -11,6 +11,7 @@ export default function DraggableUnit({
   fillParent = false,
   staticDuringDrag = false,
   onClick,
+  onDoubleClick,
   onContextMenu,
 }) {
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({ id })
@@ -19,6 +20,13 @@ export default function DraggableUnit({
     if (event.defaultPrevented) return
     if (!onClick || (event.key !== 'Enter' && event.key !== ' ')) return
     event.preventDefault()
+    onClick(event)
+  }
+
+  // The second click of a double-click is skipped so a double-click runs the
+  // click action once, then onDoubleClick (which can undo it).
+  const handleClick = (event) => {
+    if (event.detail > 1) return
     onClick(event)
   }
 
@@ -36,7 +44,8 @@ export default function DraggableUnit({
       {...listeners}
       {...attributes}
       style={wrapperStyle}
-      onClick={onClick}
+      onClick={onClick ? handleClick : undefined}
+      onDoubleClick={onDoubleClick}
       onKeyDown={handleKeyDown}
       onContextMenu={onContextMenu}
       role={onClick ? 'button' : attributes.role}

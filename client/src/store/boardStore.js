@@ -36,7 +36,7 @@ function computeTraits(board, roster, allItems) {
   return traitCounts
 }
 
-export const useBoardStore = create((set) => ({
+export const useBoardStore = create((set, get) => ({
   board: {},
   roster: [],
   items: [],
@@ -106,18 +106,23 @@ export const useBoardStore = create((set) => ({
   clearBoard: () =>
     set({ board: {}, activeTraits: {} }),
 
-  placeInFirstAvailableHex: (championId) =>
-    set((state) => {
-      for (let row = 0; row <= 3; row++) {
-        for (let col = 0; col <= 6; col++) {
-          const cellId = `cell-${row}-${col}`
-          const cell = state.board[cellId]
-          if (!cell || !cell.championId) {
-            const board = { ...state.board, [cellId]: { championId, items: [], tier: 1, stars: false } }
-            return { board, activeTraits: computeTraits(board, state.roster, state.items) }
-          }
+  // Returns the cellId it filled (null when the board is full) so a caller can
+  // undo the placement, e.g. the roster's double-click.
+  placeInFirstAvailableHex: (championId) => {
+    const { board } = get()
+    for (let row = 0; row <= 3; row++) {
+      for (let col = 0; col <= 6; col++) {
+        const cellId = `cell-${row}-${col}`
+        const cell = board[cellId]
+        if (!cell || !cell.championId) {
+          set((state) => {
+            const next = { ...state.board, [cellId]: { championId, items: [], tier: 1, stars: false } }
+            return { board: next, activeTraits: computeTraits(next, state.roster, state.items) }
+          })
+          return cellId
         }
       }
-      return {}
-    }),
+    }
+    return null
+  },
 }))

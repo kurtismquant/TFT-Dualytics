@@ -9,6 +9,7 @@ import ItemCard from '../ItemCard.jsx'
 import { useHoverCard } from '../../hooks/useHoverCard.js'
 import chipStyles from '../ui/TraitChip.module.css'
 import pieceStyles from './HoverableBoardPieces.module.css'
+import { buildUnitPath } from '../../constants/routes.js'
 
 // With `href`, the unit is a link to its stats page. Touch devices then open the
 // detail sheet on long-press instead of tap, since a tap now navigates.
@@ -80,11 +81,15 @@ export function TraitChips({ traitData, traits, filterOne, excludeTraitIds, allC
   ))
 }
 
-// `getUnitHref(unitId)` is opt-in: when passed, each unit links to its stats page.
-export function UnitsGrid({ resolvedUnits, allItems, styles, floatStars, getUnitHref }) {
+// Each unit links to its stats page. `getUnitHref(unitId)` overrides the target
+// (e.g. the Comps page pins the selected patch). Callers must not render this
+// inside a <button> or another link.
+const defaultUnitHref = unitId => buildUnitPath(unitId)
+
+export function UnitsGrid({ resolvedUnits, allItems, styles, floatStars, getUnitHref = defaultUnitHref }) {
   return resolvedUnits.map((unit, i) => (
     <div key={i} className={styles.unitColumn}>
-      <HoverableUnit unit={unit} floatStars={floatStars} href={getUnitHref?.(unit.id)} />
+      <HoverableUnit unit={unit} floatStars={floatStars} href={getUnitHref(unit.id)} />
       <div className={styles.itemRow}>
         {unit.resolvedItems.map((item, j) => (
           item

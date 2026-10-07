@@ -41,6 +41,33 @@
   cursor: pointer;
 }
 
+.footer {
+  margin-top: 0.875rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--bg-border-muted);
+}
+
+/* Shared style for sheet footer links ("View unit stats →"). */
+.footerLink {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.75rem;
+  border: 1px solid var(--bg-border-bright);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  font-weight: var(--fw-bold);
+  letter-spacing: var(--track-wider);
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
+.footerLink:focus-visible {
+  outline: 2px solid var(--accent-gold);
+  outline-offset: 2px;
+}
+
 @keyframes sheetUp {
   from {
     transform: translateY(100%);

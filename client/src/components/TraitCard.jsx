@@ -1,7 +1,9 @@
 import { lookupBuffName } from '../data/buffNames.js'
 import { findVariable } from '../utils/descriptionTokenizer.js'
 import StatIcon from './StatIcon.jsx'
+import { Link } from 'react-router-dom'
 import DetailCardShell from './shared/DetailCardShell.jsx'
+import { buildUnitPath } from '../constants/routes.js'
 import styles from './TraitCard.module.css'
 
 const SCALE_TEXT = {
@@ -246,13 +248,8 @@ export default function TraitCard({ isOpen, data, style, allChampions, mode, onC
 
       {championsWithTrait.length > 0 && (
         <div className={`${styles.champions} ${activeStyle ? styles[`champTier_${activeStyle}`] : ''}`}>
-          {championsWithTrait.map(c => (
-            <div
-              key={c.id}
-              className={styles.champRing}
-              style={{ borderColor: COST_COLORS[c.cost] || 'var(--ghost-border)' }}
-              title={c.name}
-            >
+          {championsWithTrait.map(c => {
+            const portrait = (
               <img
                 src={c.iconUrl}
                 alt={c.name}
@@ -260,8 +257,20 @@ export default function TraitCard({ isOpen, data, style, allChampions, mode, onC
                 draggable={false}
                 loading="lazy"
               />
-            </div>
-          ))}
+            )
+            const ringProps = {
+              className: styles.champRing,
+              style: { borderColor: COST_COLORS[c.cost] || 'var(--ghost-border)' },
+              title: c.name,
+            }
+            // In the touch sheet the portraits link to each unit's stats page;
+            // the floating desktop card can't be clicked, so it keeps plain images.
+            return mode === 'sheet' ? (
+              <Link key={c.id} to={buildUnitPath(c.id)} onClick={onClose} {...ringProps}>{portrait}</Link>
+            ) : (
+              <div key={c.id} {...ringProps}>{portrait}</div>
+            )
+          })}
         </div>
       )}
     </DetailCardShell>
