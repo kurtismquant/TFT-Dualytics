@@ -23,15 +23,22 @@ const queryClient = new QueryClient({
 
 const persister = createSyncStoragePersister({ storage: window.localStorage })
 
+// The buster discards a persisted cache that may describe older data: a new TFT
+// set (no flashing last set's numbers on load) or a new deploy (server data
+// such as extracted ability/item text usually ships with one). In dev every
+// page load starts fresh — server data changes constantly there and a restored
+// copy would hide it until it went stale.
+const buster = import.meta.env.DEV
+  ? String(Date.now())
+  : `${CURRENT_SET}:${import.meta.env.VITE_BUILD_ID}`
+
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <SettingsProvider>
       <BrowserRouter>
         <PersistQueryClientProvider
           client={queryClient}
-          // buster = CURRENT_SET: a new TFT set invalidates stale persisted
-          // numbers instead of flashing last set's data on load.
-          persistOptions={{ persister, maxAge: ONE_DAY, buster: String(CURRENT_SET) }}
+          persistOptions={{ persister, maxAge: ONE_DAY, buster }}
         >
           <App />
         </PersistQueryClientProvider>
