@@ -14,6 +14,10 @@ const SCALE_ICON_TYPE = {
   dr: 'durability',
   manaregen: 'mana',
   da: 'amp',
+  // Item tooltips from the TFT client (server/services/clientItemData.js).
+  critchance: 'crit',
+  critdmg: 'critdmg',
+  omnivamp: 'omnivamp',
 }
 
 // Strip CDragon HTML tags and entities from a literal text segment.
@@ -66,14 +70,16 @@ export const round2 = (n) => Math.round(n * 100) / 100
 // Format a star-level value array into a display string. Applies rounding,
 // optional percent conversion, and collapses to a single value if all three
 // star levels are equal (common for fixed-percent scalings like 15% HP, or
-// for items which only ever have a single value).
-export function formatValues(rawValues, percent) {
+// for items which only ever have a single value). Values below 1 are assumed
+// to be percentages (CDragon stores 15% as 0.15) unless `plain` says the
+// source knows better (a 0.8 second stun).
+export function formatValues(rawValues, percent, plain = false) {
   const vals = [1, 2, 3].map(i => {
     const raw = rawValues?.[i] ?? rawValues?.[rawValues?.length - 1] ?? 0
     return round2(raw)
   })
   const display = vals.map(n => {
-    if (n < 1) {
+    if (n < 1 && !plain) {
       const rounded = round2(n)
       const percentage = Math.round(rounded * 100)
       return `${percentage}%`
@@ -137,7 +143,7 @@ export function tokenize(desc, variables, championId, stats, calculations) {
       }
       if (Array.isArray(part.values)) {
         if (firstValueEmitted) nodes.push({ type: 'plus' })
-        const formatted = formatValues(part.values, part.percent)
+        const formatted = formatValues(part.values, part.percent, part.plain)
         nodes.push({ type: 'var', content: formatted })
         if (part.icon) nodes.push({ type: 'icon', iconType: part.icon })
         firstValueEmitted = true

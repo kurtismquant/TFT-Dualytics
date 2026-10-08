@@ -1,48 +1,25 @@
-"""Extracts Set <N> ability values and icons from the local TFT (Unreal) client.
+"""Unit abilities: tooltip calculations, curve rows and ability icons.
 
-Since Set 18 the unit data lives in the Unreal client, not in the League-side
-files CommunityDragon exports (those only carry placeholder spells). Each unit
-is a data asset, Set_<N>/Content/Champions/<Unit>/DA_<apiName>, with:
+Each unit is a data asset, Set_<N>/Content/Champions/<Unit>/DA_<apiName>, with:
   - CalcComponent: the tooltip calculations ("MagicDamageCalc1") as Gameplay
     Ability System modifiers over curve-table rows and unit attributes;
   - AbilityComponent: base attributes (HealthMax, AttackDamage, …);
-  - ChampionSpellDataComponent: a soft path to the ability icon texture.
-Curve tables (CT_*) hold the per-star-level numbers. This script evaluates
-every calculation at 1★/2★/3★ the way GAS aggregates modifiers, collects the
-unit's curve rows, exports the icon as PNG and writes:
-  server/data/abilityData.set<N>.json
-  client/public/assets/abilities/set<N>/<apiName>.png
-The server merges the JSON into unit abilities (see services/clientAbilityData.js).
-
-Run from the repo root after each TFT patch, then commit the output:
-  python -I server/scripts/tft_client/extract_abilities.py
-Options: --install <TFT Live folder> (default C:\\Riot Games\\Teamfight Tactics\\Live),
-         --oodle <oodle-data-shared.dll> (default server/scripts/tft_client/.bin/).
-Requires Pillow (requirements.txt) and the pinned Oodle DLL (see iostore.py).
-
-Only the Live client is read: PBE content is unreleased and must not reach the
-site. The script only reads files; it never touches the running game.
+  - ChampionSpellDataComponent: a soft path to the ability icon texture;
+  - SpellDescriptionComponent: the client's own tooltip text.
+Curve tables (CT_*) hold the per-star-level numbers; every calculation is
+evaluated at 1★/2★/3★ the way GAS aggregates modifiers.
 """
 
-import argparse
 import collections
-import datetime
-import json
 import math
 import os
 import re
-import sys
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))  # sibling modules under python -I
-
-from iostore import Container, EncryptedContainerError, Oodle, OODLE_DLL_NAME  # noqa: E402
-from uasset import (  # noqa: E402
+from uasset import (
     Package, evaluate_curve, parse_base_attributes, parse_calc_component,
-    parse_curve_table, parse_soft_object_path_prop0, star_values, texture_to_png,
+    parse_soft_object_path_prop0, star_values, texture_to_png,
 )
 
-REPO = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..'))
-DEFAULT_INSTALL = r'C:\Riot Games\Teamfight Tactics\Live'
 STAR_HEALTH_TABLE = '/Set_Shared/UnitLevelUp/CT_UnitStatMultiplier_PerStarLevel'
 
 # EGameplayModOp as stored by Riot's GAS fork. 0–3 match Epic's enum. Epic
@@ -71,60 +48,8 @@ class Unsupported(Exception):
     pass
 
 
-class Game:
-    """All non-encrypted IoStore containers of an install, plus helpers to
-    resolve "/Plugin/Path/Asset" package paths and load curve tables."""
-
-    def __init__(self, install, oodle):
-        paks = os.path.join(install, 'TFT', 'Content', 'Paks')
-        self.containers = []
-        self.where = {}
-        for name in sorted(os.listdir(paks)):
-            if not name.endswith('.utoc') or name == 'global.utoc':
-                continue
-            try:
-                c = Container(os.path.join(paks, name[:-5]), oodle)
-            except EncryptedContainerError:
-                print(f'  skipping encrypted container {name}')
-                continue
-            self.containers.append(c)
-            for path in c.paths:
-                self.where.setdefault(path, c)
-        # "/Set_18/…" → "TFT/Plugins/GameFeatures/Set_18/Content/…"
-        self.mounts = {'/Game/': 'TFT/Content/'}
-        for path in self.where:
-            m = re.match(r'^(TFT/Plugins/(?:.+/)?([^/]+)/Content/)', path)
-            if m:
-                self.mounts.setdefault(f'/{m.group(2)}/', m.group(1))
-        self._tables = {}
-
-    def file_for(self, package_path, ext='.uasset'):
-        m = re.match(r'^(/[^/]+/)(.*)$', package_path or '')
-        if not m or m.group(1) not in self.mounts:
-            return None
-        path = self.mounts[m.group(1)] + m.group(2) + ext
-        return path if path in self.where else None
-
-    def read(self, path):
-        return self.where[path].read(path)
-
-    def curve_table(self, package_path):
-        if package_path not in self._tables:
-            path = self.file_for(package_path)
-            rows = None
-            if path:
-                pkg = Package(self.read(path))
-                rows = parse_curve_table(pkg.export_data(pkg.exports[0]), pkg)
-            self._tables[package_path] = rows
-        return self._tables[package_path]
-
-    def curve(self, package_path, row):
-        rows = self.curve_table(package_path)
-        return rows.get(row) if rows else None
-
-
 class UnitEvaluator:
-    """Evaluates GAS attributes for one unit at a star level."""
+    """Evaluates GAS attributes for one unit (or item holder) at a level."""
 
     def __init__(self, game, base, modifiers, health_curve):
         self.game = game
@@ -283,20 +208,13 @@ def extract_unit(game, path, health_curve):
         p for p in game.where
         if p.startswith(unit_dir) and re.search(r'/CT_[^/]+\.uasset$', p) and '/VFX/' not in p
     )
-    tables = [main_table] + [to_package_path(game, p) for p in folder_tables]
+    tables = [main_table] + [game.to_package_path(p) for p in folder_tables]
     entry['rows'] = unit_rows(game, [t for t in dict.fromkeys(tables) if t])
     if 'SpellDescriptionComponent' in exports:
         formats = tooltip_formats(pkg.export_data(exports['SpellDescriptionComponent']))
         if formats:
             entry['formats'] = formats
     return pkg, exports, entry, problems
-
-
-def to_package_path(game, file_path):
-    for mount, prefix in game.mounts.items():
-        if file_path.startswith(prefix):
-            return mount + file_path[len(prefix):-len('.uasset')]
-    return None
 
 
 def export_icon(game, pkg, exports, out_dir, api_name):
@@ -313,55 +231,16 @@ def export_icon(game, pkg, exports, out_dir, api_name):
     return texture, None
 
 
-def read_current_set():
-    with open(os.path.join(REPO, 'server', 'constants', 'game.js'), encoding='utf-8') as f:
-        return int(re.search(r'CURRENT_SET\s*=\s*(\d+)', f.read()).group(1))
-
-
-def read_build(install):
-    try:
-        with open(os.path.join(install, 'Engine', 'Build', 'Build.version'), encoding='utf-8') as f:
-            info = json.load(f)
-        return {'branch': info.get('BranchName'), 'changelist': info.get('Changelist')}
-    except (OSError, ValueError):
-        return {}
-
-
-def format_json(obj):
-    text = json.dumps(obj, indent=2, ensure_ascii=False)
-    # Keep star arrays on one line, like abilityOverrides.set<N>.json.
-    one_line = lambda m: '[' + ', '.join(v.strip() for v in m.group(1).split(',')) + ']'
-    return re.sub(r'\[\s+([-\d.e,\s]+?)\s+\]', one_line, text) + '\n'
-
-
-def main():
-    ap = argparse.ArgumentParser(description=__doc__.split('\n')[0])
-    ap.add_argument('--install', default=os.environ.get('TFT_INSTALL', DEFAULT_INSTALL))
-    ap.add_argument('--oodle', default=os.path.join(os.path.dirname(os.path.abspath(__file__)), '.bin', OODLE_DLL_NAME))
-    ap.add_argument('--set', type=int, default=None)
-    args = ap.parse_args()
-
-    if re.search(r'(^|[\\/])pbe([\\/]|$)', args.install, re.I):
-        sys.exit('Refusing to read the PBE client: its content is unreleased.')
-    set_number = args.set or read_current_set()
-    out_json = os.path.join(REPO, 'server', 'data', f'abilityData.set{set_number}.json')
-    icon_dir = os.path.join(REPO, 'client', 'public', 'assets', 'abilities', f'set{set_number}')
-    icon_url = f'/assets/abilities/set{set_number}'
-    os.makedirs(icon_dir, exist_ok=True)
-
-    game = Game(args.install, Oodle(args.oodle))
+def extract_units(game, set_number, icon_dir, icon_url, report):
+    """→ {apiName: entry} for every shop unit of the set, icons written to icon_dir."""
     health_curve = game.curve(STAR_HEALTH_TABLE, 'Health')
     unit_re = re.compile(rf'^TFT/Plugins/GameFeatures/Set_{set_number}/Content/Champions/.+/(DA_[^/]+)\.uasset$')
-    units = sorted((m.group(1), p) for p in game.where if (m := unit_re.match(p)))
-
-    out = {'_meta': {'source': 'TFT client (Live)', **read_build(args.install),
-                     'extractedAt': datetime.date.today().isoformat()}}
-    report = collections.defaultdict(list)
-    for api_name, path in units:
+    out = {}
+    for api_name, path in sorted((m.group(1), p) for p in game.where if (m := unit_re.match(p))):
         try:
             pkg, exports, entry, problems = extract_unit(game, path, health_curve)
         except Exception as err:  # malformed/unknown layout: report and keep going
-            report['failed'].append(f'{api_name}: {type(err).__name__}: {err}')
+            report['units failed'].append(f'{api_name}: {type(err).__name__}: {err}')
             continue
         if 'ChampionSpellDataComponent' not in exports:
             continue  # projectiles, trait helpers: not shop units
@@ -372,30 +251,7 @@ def main():
         if texture:
             entry['icon'] = f'{icon_url}/{api_name}.png'
         else:
-            report['no icon'].append(f'{api_name}: {why}')
-        report['unresolved'] += [f'{api_name}.{p}' for p in problems]
+            report['units without icon'].append(f'{api_name}: {why}')
+        report['unit values unresolved'] += [f'{api_name}.{p}' for p in problems]
         out[api_name] = entry
-
-    with open(out_json, 'w', encoding='utf-8', newline='\n') as f:
-        f.write(format_json(out))
-    # Drop icons of units that left the set (the folder is generated output).
-    current = {f'{k}.png' for k, v in out.items() if k != '_meta' and v['icon']}
-    for name in os.listdir(icon_dir):
-        if name.endswith('.png') and name not in current:
-            os.remove(os.path.join(icon_dir, name))
-            print(f'  removed stale icon {name}')
-    entries = [v for k, v in out.items() if k != '_meta']
-    print(f'Wrote {len(entries)} units to {os.path.relpath(out_json, REPO)} (build {out["_meta"].get("branch")})')
-    print(f'  icons: {sum(1 for e in entries if e["icon"])} -> {os.path.relpath(icon_dir, REPO)}')
-    print(f'  calculations: {sum(len(e["tokens"]) for e in entries)}, curve rows: {sum(len(e["rows"]) for e in entries)}')
-    for kind in ('failed', 'no icon', 'unresolved'):
-        if report[kind]:
-            print(f'  {kind} ({len(report[kind])}):')
-            for line in report[kind]:
-                print(f'    {line}')
-    if report['failed']:
-        sys.exit(1)  # a unit's layout no longer parses: the output is incomplete
-
-
-if __name__ == '__main__':
-    main()
+    return out

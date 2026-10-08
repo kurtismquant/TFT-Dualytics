@@ -20,6 +20,10 @@ const PNG_ICONS = {
   mana: manaIcon,
   range: rangeIcon,
   amp: 'https://raw.communitydragon.org/latest/game/assets/ux/traiticons/trait_icon_14_amp.tft_set14.png',
+  // Exported from the TFT client by server/scripts/tft_client/extract.py.
+  crit: '/assets/stat-icons/crit_chance.png',
+  critdmg: '/assets/stat-icons/crit_damage.png',
+  omnivamp: '/assets/stat-icons/omnivamp.png',
 }
 
 export default function StatIcon({ type, size = 13 }) {

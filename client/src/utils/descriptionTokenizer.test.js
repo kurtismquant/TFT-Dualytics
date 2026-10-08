@@ -35,6 +35,23 @@ test('matches calculations case-insensitively and applies *N (percent-of) multip
   assert.deepEqual(vars, ['10/15/20', '25%'])
 })
 
+test('item tooltips: plain values stay numbers, item stat icons resolve', () => {
+  // Shape of server/services/clientItemData.js output.
+  const nodes = tokenize('%i:scaleCritChance% Stun for @ItemValue0@ seconds and gain @ItemValue1@ %i:scaleOmnivamp%', [], null, null, {
+    ItemValue0: [{ values: [0, 0.8, 0.8, 0.8], plain: true }],
+    ItemValue1: [{ values: [0, 0.1, 0.1, 0.1], percent: true }],
+  })
+  assert.deepEqual(nodes, [
+    { type: 'icon', iconType: 'crit' },
+    { type: 'text', content: ' Stun for ' },
+    { type: 'var', content: '0.8' }, // not "80%"
+    { type: 'text', content: ' seconds and gain ' },
+    { type: 'var', content: '10%' },
+    { type: 'text', content: ' ' },
+    { type: 'icon', iconType: 'omnivamp' },
+  ])
+})
+
 test('without calculations, unresolved tokens drop along with their scale icons', () => {
   const nodes = tokenize('Deal @MagicDamageCalc1@ %i:scaleAP% magic damage.', [], 'X', {})
   assert.deepEqual(nodes, [

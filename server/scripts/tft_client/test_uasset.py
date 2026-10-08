@@ -9,7 +9,7 @@ import unittest
 
 from iostore import Container, EncryptedContainerError, TOC_MAGIC
 from uasset import (
-    FLT_MAX, parse_curve_table, read_unversioned_header, star_values, texture_mip0,
+    FLT_MAX, parse_curve_table, read_ftexts, read_unversioned_header, star_values, texture_mip0,
 )
 
 
@@ -108,6 +108,27 @@ class TextureTest(unittest.TestCase):
         self.assertEqual(texture_mip0(export, bulk)[3], bulk)
         with self.assertRaises(ValueError):
             texture_mip0(export)  # .ubulk needed but not given
+
+
+def ftext(source, wide=False):
+    """FText with a Base history: flags, history type, namespace, key, source."""
+    key = b'0BC684724B0A78626EC5B08208FB3DB2\0'
+    out = struct.pack('<iB', 0, 0) + struct.pack('<i', 1) + b'\0' + struct.pack('<i', len(key)) + key
+    if wide:
+        data = (source + '\0').encode('utf-16le')
+        return out + struct.pack('<i', -(len(data) // 2)) + data
+    data = source.encode('latin1') + b'\0'
+    return out + struct.pack('<i', len(data)) + data
+
+
+class FTextTest(unittest.TestCase):
+    def test_reads_source_strings_in_order(self):
+        buf = b'\x00\x0a' + ftext('Gain <Keyword>Precision</>.') + b'\x01\x02' + ftext('Ally’s shield', wide=True)
+        self.assertEqual(read_ftexts(buf), ['Gain <Keyword>Precision</>.', 'Ally’s shield'])
+
+    def test_repairs_windows_1252_punctuation(self):
+        # Riot stores some ’ as Latin-1 0x92 (a C1 control) in narrow strings.
+        self.assertEqual(read_ftexts(ftext('The holder\x92s attack')), ['The holder’s attack'])
 
 
 class ContainerTest(unittest.TestCase):

@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs'
 import { CURRENT_SET } from '../constants/game.js'
 
 // Ability values and icons extracted from the local TFT (Unreal) client by
-// scripts/tft_client/extract_abilities.py. Since Set 18 the League-side files
+// scripts/tft_client/extract.py. Since Set 18 the League-side files
 // CommunityDragon exports carry only placeholder spells for units; the real
 // numbers live in the Unreal client's data assets. Per unit:
 //   { icon: '/assets/abilities/set18/DA_18_Ahri.png',

@@ -21,6 +21,10 @@ const STAT_DISPLAY = {
   AS:           { label: 'Attack Speed', icon: 'as',         pct: true },
   Durability:   { label: 'Durability',   icon: 'durability', pct: true },
   Range:        { label: 'Range',        icon: 'range' },
+  CritChance:   { label: 'Crit Chance',  icon: 'crit',       pct: true },
+  CritDamage:   { label: 'Crit Damage',  icon: 'critdmg',    pct: true },
+  DamageAmp:    { label: 'Damage Amp',   icon: 'amp',        pct: true },
+  Omnivamp:     { label: 'Omnivamp',     icon: 'omnivamp',   pct: true },
 }
 
 const ITEM_KEYWORDS = {
@@ -34,18 +38,21 @@ const ITEM_KEYWORDS = {
 const round2 = (n) => Math.round(n * 100) / 100
 
 // Values < 1 are stored as fractions by CDragon (0.10 = 10%) — normalize to percent first.
-function formatStatValue(value, pct) {
+// Stats from the TFT client say outright whether they're a percentage (`isPercent`).
+function formatStatValue(value, pct, isPercent) {
   if (value == null) return null
+  if (isPercent) return `+${round2(value * 100)}%`
   const scaled = value > 0 && value < 1 ? round2(value * 100) : round2(value)
   return pct ? `+${scaled}%` : `+${scaled}`
 }
 
-function ItemDesc({ desc, effects }) {
+function ItemDesc({ desc, effects, calculations }) {
   const variables = (effects || []).map(e => {
     const v = e.value > 0 && e.value < 1 ? round2(e.value * 100) : e.value
     return { name: e.name, value: [v] }
   })
-  const nodes = tokenize(desc, variables)
+  // `calculations` carries the values of client-sourced tooltips (Set 18 items).
+  const nodes = tokenize(desc, variables, null, null, calculations)
   if (nodes.length === 0) return null
   return (
     <>
@@ -105,7 +112,7 @@ export default function ItemCard({ isOpen, data: item, style, allItems, mode, on
         <ul className={styles.statList}>
           {visibleEffects.map((e, i) => {
             const { label, icon, pct } = STAT_DISPLAY[e.name]
-            const val = formatStatValue(e.value, pct)
+            const val = formatStatValue(e.value, pct, e.percent)
             if (!val) return null
             return (
               <li key={i} className={styles.statRow}>
@@ -128,7 +135,7 @@ export default function ItemCard({ isOpen, data: item, style, allItems, mode, on
 
       {item.desc && (
         <p className={styles.desc}>
-          <ItemDesc desc={item.desc} effects={item.effects} />
+          <ItemDesc desc={item.desc} effects={item.effects} calculations={item.calculations} />
         </p>
       )}
 

@@ -7,6 +7,7 @@ names or sizes, in schema order, so only structs whose schema is known here
 (engine curve structs) can be decoded field by field.
 """
 
+import re
 import struct
 
 PACKAGE_FILE_TAG = 0x9E2A83C1
@@ -458,6 +459,43 @@ def texture_to_png(export_data, out_path, bulk_data=None):
     decoder, *_ = PIXEL_FORMATS[fmt]
     Image.frombytes('RGBA', (w, h), payload, *decoder).save(out_path, optimize=True)
     return fmt, w, h
+
+
+FTEXT_KEY = re.compile(rb'\x21\x00\x00\x00[0-9A-F]{32}\x00')
+
+
+def _fix_cp1252(s):
+    """Some Riot strings store Windows-1252 punctuation as Latin-1 C1 controls
+    (U+0092 for ’). Map those back; leave everything else untouched."""
+    out = []
+    for ch in s:
+        if '\x80' <= ch <= '\x9f':
+            try:
+                ch = ch.encode('latin1').decode('cp1252')
+            except UnicodeDecodeError:
+                pass
+        out.append(ch)
+    return ''.join(out)
+
+
+def read_ftexts(buf):
+    """Source strings of the FText properties in an export, in order.
+
+    A localized FText serializes as flags, history type, namespace, a
+    32-hex-digit key and the source string; the key is distinctive enough to
+    find the strings without the owning class's schema."""
+    texts = []
+    for m in FTEXT_KEY.finditer(buf):
+        p = m.end()
+        n = struct.unpack_from('<i', buf, p)[0]
+        p += 4
+        if n > 0:
+            texts.append(_fix_cp1252(buf[p:p + n - 1].decode('latin1')))
+        elif n < 0:
+            texts.append(buf[p:p + (-n - 1) * 2].decode('utf-16le'))
+        else:
+            texts.append('')
+    return texts
 
 
 def parse_soft_object_path_prop0(export_data, package):

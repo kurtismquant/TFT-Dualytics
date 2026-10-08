@@ -1,0 +1,1878 @@
+{
+  "_meta": {
+    "source": "TFT client (Live)",
+    "branch": "++tft+rls-18.4.0",
+    "changelist": 5663767,
+    "extractedAt": "2026-10-08"
+  },
+  "DA_AdaptiveHelm": {
+    "name": "Adaptive Helm",
+    "stats": "<TFTCurveTable row=\"MagicResistBase\" type=\"stat\" icon=\"Icon.MR\"/> <TFTCurveTable row=\"ManaRegenBase\" type=\"stat\" icon=\"Icon.ManaRegen\"/>",
+    "desc": "Gain an additional <TFTCurveTable row=\"ManaMultiplierFromAllSources\" format=\"percentMinusOne\"/> Mana from all sources. The wearer gains an additional bonus based on their Role:\r\n\r\nTanks and Fighters: Gain <TFTCurveTable row=\"ArmorForTanksAndFighters\"/> Armor and Magic Resistance.\r\n\r\nOther Roles: Gain <TFTCurveTable row=\"ADForOthers\" format=\"percent\"/> Attack Damage and Ability Power.",
+    "rows": {
+      "ManaMultiplierFromAllSources": 1.15,
+      "ManaRegenBase": 3,
+      "ArmorForTanksandFighters": 30,
+      "MRForTanksandFighters": 30,
+      "ADForOthers": 0.1,
+      "APForOthers": 0.1,
+      "MagicResistBase": 20
+    },
+    "tokens": {}
+  },
+  "DA_AdaptiveHelm_Radiant": {
+    "name": "Radiant Adaptive Helm",
+    "stats": "<TFTCurveTable row=\"MagicResistBase\" type=\"stat\" icon=\"Icon.MR\"/> <TFTCurveTable row=\"ManaRegenBase\" type=\"stat\" icon=\"Icon.ManaRegen\"/>",
+    "desc": "Gain an additional <TFTCurveTable row=\"ManaMultiplierFromAllSources\" format=\"percentMinusOne\" style=\"colorRadiant\"/> Mana from all sources. The wearer gains an additional bonus based on their Role:\r\n\r\nTanks and Fighters: Gain <TFTCurveTable row=\"ArmorForTanksAndFighters\" style=\"colorRadiant\"/> Armor and Magic Resistance.\r\n\r\nOther Roles: Gain <TFTCurveTable row=\"ADForOthers\" format=\"percent\" style=\"colorRadiant\"/> Attack Damage and Ability Power.",
+    "rows": {
+      "MagicResistBase": 40,
+      "ManaMultiplierFromAllSources": 1.3,
+      "ArmorForTanksAndFighters": 80,
+      "MRForTanksAndFighters": 80,
+      "ADForOthers": 0.4,
+      "APForOthers": 0.4,
+      "ManaRegenBase": 7
+    },
+    "tokens": {}
+  },
+  "DA_ArchangelsStaff": {
+    "name": "Archangel's Staff",
+    "stats": "<TFTCurveTable row=\"Base_AP\" icon=\"icon.AP\" format=\"percent\" type=\"stat\"/> <TFTCurveTable row=\"Base_ManaPerSecond\" icon=\"icon.ManaRegen\" type=\"stat\"/>",
+    "desc": "Combat start: Gain <TFTCurveTable row=\"APStack\"/>% Ability Power every <TFTCurveTable row=\"Period\"/> seconds in combat.",
+    "rows": {
+      "Period": 5,
+      "APStack": 20,
+      "Base_AP": 0.3,
+      "Base_ManaPerSecond": 1
+    },
+    "tokens": {}
+  },
+  "DA_ArchangelsStaffRadiant": {
+    "name": "Radiant Archangel's Staff",
+    "stats": "<TFTCurveTable row=\"Base_AP\" icon=\"icon.AP\" format=\"Percent\" type=\"stat\"/> <TFTCurveTable row=\"Base_ManaPerSecond\" icon=\"icon.ManaRegen\" type=\"stat\"/>",
+    "desc": "Combat start: Gain <TFTCurveTable row=\"APStack\" style=\"colorRadiant\"/><colorRadiant>%</> Ability Power every <TFTCurveTable row=\"Period\"/> seconds in combat.",
+    "rows": {
+      "Period": 5,
+      "APStack": 40,
+      "Base_AP": 0.6,
+      "Base_ManaPerSecond": 2
+    },
+    "tokens": {}
+  },
+  "DA_Artifact_AegisOfDawn": {
+    "name": "Aegis of Dawn",
+    "stats": "<TFTCurveTable row=\"BaseHealth\" icon=\"icon.Health\" type=\"stat\"/> <TFTCurveTable row=\"BaseArmor\" icon=\"icon.Armor\" type=\"stat\"/>",
+    "desc": "Every <TFTCurveTable row=\"AOEFrequency\"/> seconds, steal <TFTCurveTable row=\"ArmorSteal\"/> Armor from enemies within 1-hex and heal <TFTAttribute attributeID=\"TFTCalculationAttributes.GenericCalc1\" format=\"percent\"/> of the holder's Armor.\r\n\r\nIf Aegis of Dusk is also equipped, trigger this item's effect every <TFTCurveTable row=\"DuskBonusFrequency\"/> seconds instead.\r\n\r\n<Rules>Healing increases based on Stage.</>",
+    "rows": {
+      "BaseHealth": 400,
+      "BaseArmor": 50,
+      "AOEFrequency": 2.5,
+      "DuskBonusArmor": 15,
+      "DuskBonusFrequency": 1.25,
+      "ArmorSteal": 3,
+      "StageScalingMultiplier": 0.2
+    },
+    "tokens": {}
+  },
+  "DA_Artifact_AegisOfDusk": {
+    "name": "Aegis of Dusk",
+    "stats": "<TFTCurveTable row=\"BaseHealth\" icon=\"icon.Health\" type=\"stat\"/> <TFTCurveTable row=\"BaseMR\" icon=\"icon.MR\" type=\"stat\"/>",
+    "desc": "Every <TFTCurveTable row=\"Frequency\"/> seconds, steal <TFTCurveTable row=\"MRSteal\"/> Magic Resist from enemies within 1-hex and deal <TFTCurveTable row=\"MRDamagePercent\" format=\"percent\"/> of the holder's Magic Resist as magic damage.\r\n\r\nIf Aegis of Dawn is also equipped, trigger this item's effect every <TFTCurveTable row=\"DawnFrequency\"/> seconds instead.\r\n\r\n<Rules>Damage increases based on Stage.</>",
+    "rows": {
+      "MRSteal": 3,
+      "StageScalingModifier": 0.15,
+      "DawnFrequency": 1.25,
+      "BaseHealth": 400,
+      "BaseMR": 70,
+      "MRDamagePercent": 0.18,
+      "Frequency": 2.5
+    },
+    "tokens": {}
+  },
+  "DA_Artifact_BlightingJewel": {
+    "name": "Blighting Jewel",
+    "stats": "<TFTCurveTable row=\"AbilityPowerMultiplier\" icon=\"icon.AP\" format=\"percentMinusOne\" type=\"stat\"/>  <TFTCurveTable row=\"ManaRegenBase\" icon=\"icon.ManaRegen\" type=\"stat\"/>",
+    "desc": "Dealing magic damage reduces the target’s Magic Resist by <TFTCurveTable row=\"MagicResistShred\"/>. If their Magic Resist is 0, grant the holder <TFTCurveTable row=\"ManaGain\"/> Mana instead.\r\n\r\n<rules>Ability damage can only trigger on each enemy once every 0.5 seconds.</>",
+    "rows": {
+      "ManaGain": 4,
+      "MagicResistShred": 3,
+      "ManaRegenBase": 2,
+      "AbilityPowerMultiplier": 1.3,
+      "IndividualTargetCooldown": 0.5
+    },
+    "tokens": {}
+  },
+  "DA_Artifact_Dawncore": {
+    "name": "Dawncore",
+    "stats": "<TFTCurveTable row=\"AttackDamage\" icon=\"icon.AD\" format=\"percent\" type=\"stat\"/> <TFTCurveTable row=\"AbilityPower\" icon=\"icon.AP\" format=\"percent\" type=\"stat\"/> <TFTCurveTable row=\"ManaRegen\" icon=\"icon.ManaRegen\" type=\"stat\"/>",
+    "desc": "Reduce the holder's max Mana by <TFTCurveTable row=\"FlatMaxManaReduction\"/>. Subsequent spellcasts reduce max Mana by <TFTCurveTable row=\"ReductionOnSpellcastPercent\"/>%, to a minimum of <TFTCurveTable row=\"MinimumMana\"/>.",
+    "rows": {
+      "AttackDamage": 0.2,
+      "FlatMaxManaReduction": 10,
+      "AbilityPower": 0.2,
+      "ManaRegen": 1,
+      "ReductionOnSpellcastPercent": 5,
+      "MinimumMana": 15
+    },
+    "tokens": {}
+  },
+  "DA_Artifact_EternalPact": {
+    "name": "Eternal Pact",
+    "stats": "<TFTCurveTable row=\"Base_AP\" icon=\"icon.AP\" format=\"percent\" type=\"stat\"/> <TFTCurveTable row=\"Base_ManaPerSecond\" icon=\"icon.ManaRegen\" type=\"stat\"/>",
+    "desc": "Combat start: Form a pact with the highest Health allied champion, If they die, gain <TFTCurveTable row=\"ManaRegenOnDeath\"/> Mana regen and <TFTCurveTable row=\"APOnDeath\" format=\"percent\"/> Ability Power. \r\n\r\nWhen the ally uses their ability, gain <TFTCurveTable row=\"ManaOnAbilityUse\"/> Mana. Every <TFTCurveTable row=\"Frequency\"/> seconds, shield your ally for <TFTCurveTable row=\"ShieldPercentOfAP\" format=\"percent\"/> of the holder's Ability Power. ",
+    "rows": {
+      "Base_AP": 0.35,
+      "Base_ManaPerSecond": 1,
+      "Frequency": 6,
+      "ManaRegenOnDeath": 10,
+      "APOnDeath": 0.4,
+      "ManaOnAbilityUse": 10,
+      "ShieldPercentOfAP": 2
+    },
+    "tokens": {}
+  },
+  "DA_Artifact_Fishbones": {
+    "name": "Fishbones",
+    "stats": "<TFTCurveTable row=\"AttackDamage\" type=\"stat\" format=\"percent\" icon=\"Icon.AD\"/> <TFTCurveTable row=\"AttackSpeed\" type=\"stat\" format=\"percentMinusOne\" icon=\"Icon.AS\"/> ",
+    "desc": "The holder's attacks target random enemies. Gain +2 Attack Range.",
+    "rows": {
+      "AttackSpeed": 1.25,
+      "AttackDamage": 0.25,
+      "BaseRangeIncrease": 2
+    },
+    "tokens": {}
+  },
+  "DA_Artifact_ForbiddenIdol": {
+    "name": "Forbidden Idol",
+    "stats": "<TFTCurveTable row=\"Health\" icon=\"icon.Health\" type=\"stat\"/> <TFTCurveTable row=\"ManaRegen\" icon=\"Icon.Manaregen\" type=\"stat\"/>",
+    "desc": "Shields have <TFTCurveTable row=\"ShieldConversionPercent\" format=\"percent\"/> of their value converted to max Health instead.",
+    "rows": {
+      "ShieldConversionPercent": 0.4,
+      "Health": 500,
+      "ManaRegen": 2
+    },
+    "tokens": {}
+  },
+  "DA_Artifact_GamblersBlade": {
+    "name": "Gambler's Blade",
+    "stats": "<TFTCurveTable row=\"AttackSpeed\" icon=\"icon.AS\" format=\"percentMinusOne\" type=\"stat\"/>",
+    "desc": "Grant <TFTCurveTable row=\"ScalingAttackSpeed\" format=\"percent\"/> bonus Attack Speed per gold in your bank (up to <TFTCurveTable row=\"MaxCoinScaling\"/> gold).\r\n\r\nEach attack has a <TFTCurveTable row=\"ChanceToDropCoin\" format=\"percent\"/> chance to drop 1 gold.\r\n\r\nGold generated this game: <TFTAttribute attributeId=\"TFTItemAttributes.Stack\" icon=\"Icon.Coin\"/>\r\n\r\n<rules>Unique - only 1 per champion</>",
+    "rows": {
+      "AttackSpeed": 1.55,
+      "ScalingAttackSpeed": 0.01,
+      "ChanceToDropCoin": 0.06,
+      "MaxCoinScaling": 30,
+      "AverageAutosPerProc": 20,
+      "CashoutAveragingPeriod": 4
+    },
+    "tokens": {}
+  },
+  "DA_Artifact_GoldCollector": {
+    "name": "Gold Collector",
+    "stats": "<TFTCurveTable row=\"AttackDamage\" icon=\"icon.AD\" format=\"percent\" type=\"stat\"/> <TFTCurveTable row=\"CriticalStrikeChance\" icon=\"icon.CritChance\" format=\"percent\" type=\"stat\"/>",
+    "desc": "Attacks and Abilities execute enemies below <TFTCurveTable row=\"ExecuteThreshold\" format=\"percent\"/> of their maximum Health. Executions on champions have a <TFTCurveTable row=\"GoldDropChance\" format=\"percent\"/> chance to drop 1 gold.\r\n\r\nGold collected: <TFTAttribute attributeId=\"TFTItemAttributes.Stack\" icon=\"Icon.Coin\"/>\r\n\r\n<rules>Unique - only 1 per champion</>",
+    "rows": {
+      "ExecuteThreshold": 0.12,
+      "AttackDamage": 0.35,
+      "CriticalStrikeChance": 0.2,
+      "GoldDropChance": 0.33
+    },
+    "tokens": {}
+  },
+  "DA_Artifact_HellfireHatchet": {
+    "name": "Hellfire Hatchet",
+    "stats": "<TFTCurveTable row=\"BaseHP\" icon=\"icon.Health\" type=\"stat\"/> <TFTCurveTable row=\"BaseOmnivamp\" icon=\"icon.Omnivamp\" type=\"stat\" format=\"percent\"/>",
+    "desc": "Attacks deal <TFTCurveTable row=\"PercentHPDamage\" format=\"percent\"/> of the holder's max Health as bonus physical damage. For every <TFTCurveTable row=\"MissingHealthInterval\" format=\"percent\"/> missing Health, gain <TFTCurveTable row=\"AttackSpeedPerMissingHealthPercent\" format=\"percent\"/> Attack Speed.",
+    "rows": {
+      "BaseHP": 400,
+      "PercentHPDamage": 0.03,
+      "PercentHPInterval": 0.01,
+      "BaseOmnivamp": 0.2,
+      "AttackSpeedPerMissingHealthPercent": 0.015,
+      "MissingHealthInterval": 0.01
+    },
+    "tokens": {}
+  },
+  "DA_Artifact_HorizonFocus": {
+    "name": "Horizon Focus",
+    "stats": "<TFTCurveTable row=\"Base_Health\" icon=\"Icon.Health\" type=\"stat\"/> <TFTCurveTable row=\"Base_Armor\" icon=\"Icon.Armor\" type=\"stat\"/> <TFTCurveTable row=\"Base_MagicResist\" icon=\"Icon.MR\" type=\"stat\"/> <TFTCurveTable row=\"Base_ManaPerSecond\" icon=\"Icon.Manaregen\" type=\"stat\"/>",
+    "desc": "Stunning an enemy causes lightning to strike them, dealing <TFTCurveTable row=\"HealthPercentDamage\" format=\"percent\"/> of their max Health as magic damage.",
+    "rows": {
+      "Base_Health": 250,
+      "Base_Armor": 20,
+      "Base_ManaPerSecond": 2,
+      "Base_MagicResist": 20,
+      "HealthPercentDamage": 0.3
+    },
+    "tokens": {}
+  },
+  "DA_Artifact_Hullcrusher": {
+    "name": "Hullcrusher",
+    "stats": "<TFTCurveTable row=\"ArmorBase\" type=\"stat\" icon=\"Icon.Armor\"/> <TFTCurveTable row=\"MRBase\" type=\"stat\" icon=\"Icon.MR\"/> ",
+    "desc": "Combat Start: If there are no adjacent allies, gain <TFTCurveTable row=\"HealthBonus\"/> Health, <TFTCurveTable row=\"ADBonus\" format=\"percent\"/> Attack Damage, and <TFTCurveTable row=\"APBonus\" format=\"percent\"/> Ability Power.",
+    "rows": {
+      "ArmorBase": 60,
+      "MRBase": 60,
+      "HealthBonus": 400,
+      "ADBonus": 0.1,
+      "APBonus": 0.1
+    },
+    "tokens": {}
+  },
+  "DA_Artifact_InfinityForce": {
+    "name": "Infinity Force",
+    "stats": "<TFTCurveTable row=\"Health\" icon=\"Icon.Health\" type=\"stat\"/> <TFTCurveTable row=\"AttackDamage\" icon=\"Icon.AD\" type=\"stat\" format=\"percent\"/> <TFTCurveTable row=\"AbilityPower\" icon=\"Icon.AP\" type=\"stat\" format=\"percent\"/> <TFTCurveTable row=\"Armor\" icon=\"Icon.Armor\" type=\"stat\"/> <TFTCurveTable row=\"MagicResist\" icon=\"Icon.MR\" type=\"stat\"/> <TFTCurveTable row=\"AttackSpeed\" icon=\"Icon.AS\" type=\"stat\" format=\"PercentMinusOne\"/>",
+    "desc": "<Rules>Tons of EVERYTHING!</>",
+    "rows": {
+      "AbilityPower": 0.3,
+      "AttackDamage": 0.3,
+      "Armor": 30,
+      "Health": 300,
+      "AttackSpeed": 1.3,
+      "MagicResist": 30
+    },
+    "tokens": {}
+  },
+  "DA_Artifact_LichBane": {
+    "name": "Lich Bane",
+    "stats": "<TFTCurveTable row=\"AbilityPower\" type=\"stat\" format=\"percent\" icon=\"Icon.AP\"/> <TFTCurveTable row=\"AttackSpeed\" type=\"stat\" icon=\"Icon.AS\" format=\"percentMinusOne\"/>",
+    "desc": "The holder’s first attack after each Ability cast deals <TFTAttribute attributeID=\"TFTCalculationAttributes.GenericCalc1\"/> bonus magic damage.\r\n\r\n<Rules>Damage increases based on Stage.</>",
+    "rows": {
+      "AttackSpeed": 1.1,
+      "AbilityPower": 0.55,
+      "ProcDamage": 250
+    },
+    "tokens": {}
+  },
+  "DA_Artifact_LightshieldCrest": {
+    "name": "Lightshield Crest",
+    "stats": "<TFTCurveTable row=\"Armor\" icon=\"icon.Armor\" type=\"stat\"/> <TFTCurveTable row=\"MagicResist\" type=\"stat\" icon=\"icon.MR\"/>",
+    "desc": "Every <TFTCurveTable row=\"ShieldFrequency\"/> seconds, Shields the lowest percent Health ally for <TFTCurveTable row=\"PercentHealthShield\" format=\"percent\"/> of the holder’s combined Armor and Magic Resist for <TFTCurveTable row=\"AllyShieldDuration\"/> seconds.\r\n\r\nOn death grants this shield to all allies.",
+    "rows": {
+      "Armor": 55,
+      "MagicResist": 55,
+      "AllyShieldDuration": 5,
+      "PercentHealthShield": 0.7,
+      "ShieldFrequency": 3
+    },
+    "tokens": {}
+  },
+  "DA_Artifact_LudensTempest": {
+    "name": "Luden's Tempest",
+    "stats": "<TFTCurveTable row=\"AttackDamage\" icon=\"Icon.AD\" format=\"percent\" type=\"stat\"/> <TFTCurveTable row=\"AbilityPower\" type=\"stat\" icon=\"Icon.AP\" format=\"percent\"/>",
+    "desc": "<TFTCurveTable row=\"OverkillDamageRatio\" format=\"percent\"/> of overkill damage plus <TFTCurveTable row=\"BonusFlatDamage\"/> is dealt as magic damage to the two enemies nearest the target.",
+    "rows": {
+      "AttackDamage": 0.55,
+      "AbilityPower": 0.55,
+      "BonusFlatDamage": 130,
+      "OverkillDamageRatio": 1,
+      "NumProjectiles": 2
+    },
+    "tokens": {}
+  },
+  "DA_Artifact_Manazane": {
+    "name": "Manazane",
+    "stats": "<TFTCurveTable row=\"AttackDamage\" icon=\"icon.AD\" format=\"percent\" type=\"stat\"/> <TFTCurveTable row=\"AbilityPower\" icon=\"icon.AP\" format=\"percent\" type=\"stat\"/> <TFTCurveTable row=\"ManaRegen\" icon=\"icon.ManaRegen\" type=\"stat\"/>",
+    "desc": "After casting the first time in combat, gain <TFTCurveTable row=\"CastManaGain\"/> Mana over <TFTCurveTable row=\"CastManaGainDuration\"/> seconds.",
+    "rows": {
+      "AbilityPower": 0.15,
+      "AttackSpeed": 1,
+      "AttackDamage": 0.15,
+      "CastManaGain": 110,
+      "CastManaGainDuration": 5,
+      "ManaRegen": 1,
+      "ManaGainPeriod": 0.1
+    },
+    "tokens": {}
+  },
+  "DA_Artifact_Mittens": {
+    "name": "Mittens",
+    "stats": "<TFTCurveTable row=\"AttackSpeed\" type=\"stat\" format=\"percentMinusOne\" icon=\"icon.AS\"/> <TFTCurveTable row=\"DamageAmp\" icon=\"icon.DamageAmp\" format=\"percent\" type=\"stat\"/>",
+    "desc": "Shrinks the holder, granting them increased movement speed and immunity to Slow, Burn, and Wound.\r\n\r\n<rules>Slow: Reduces Attack Speed.</>\r\n<rules>Burn: Deals a percent of the target’s max Health as true damage every second.</>\r\n<rules>Wound: Reduces healing received.</>",
+    "rows": {
+      "Scale": 0.75,
+      "MovementSpeedIncrease": 1500,
+      "AttackSpeed": 1.65,
+      "DamageAmp": 0.15
+    },
+    "tokens": {}
+  },
+  "DA_Artifact_MogulsMail": {
+    "name": "Mogul's Mail",
+    "stats": "<TFTCurveTable row=\"Health\" type=\"stat\" icon=\"icon.Health\"/>",
+    "desc": "Grants <TFTCurveTable row=\"ArmorPerStack\"/> Armor, <TFTCurveTable row=\"MRPerStack\"/> Magic Resist, and <TFTCurveTable row=\"HealthPerStack\"/> Health when taking damage, stacking up to <TFTCurveTable row=\"MaxStacks\"/> times.\r\n\r\nAt full stacks, grant <img id=\"icon.Coin\"/> 1 gold and continue gaining <img id=\"icon.Coin\"/> 1 gold every <TFTCurveTable row=\"GoldFrequency\"/> seconds.\r\n\r\nGold generated this game: <TFTAttribute attributeId=\"TFTItemAttributes.Stack2\"/>\r\n\r\n<rules>Unique - only 1 per champion</>",
+    "rows": {
+      "GoldFrequency": 11,
+      "ArmorPerStack": 1,
+      "MRPerStack": 1,
+      "Health": 300,
+      "MaxStacks": 35,
+      "HealthPerStack": 5
+    },
+    "tokens": {}
+  },
+  "DA_Artifact_NavoriFlickerblade": {
+    "name": "Flickerblades",
+    "stats": "<TFTCurveTable row=\"AbilityPower\" icon=\"icon.AP\" format=\"percent\" type=\"stat\"/> <TFTCurveTable row=\"AttackSpeed\" icon=\"icon.AS\" format=\"percentMinusOne\" type=\"stat\"/>",
+    "desc": "Attacks grant <TFTCurveTable row=\"StackingAttackSpeed\" format=\"percentMinusOne\"/> stacking Attack Speed. Every <TFTCurveTable row=\"AttacksPerADAPBuff\"/> attacks also grant <TFTCurveTable row=\"StackingAttackDamage\" format=\"percent\"/> Attack Damage and <TFTCurveTable row=\"StackingAbilityPower\" format=\"percent\"/> Ability Power.",
+    "rows": {
+      "AbilityPower": 0.1,
+      "AttackSpeed": 1.2,
+      "StackingAttackSpeed": 1.04,
+      "StackingAttackDamage": 0.02,
+      "StackingAbilityPower": 0.02,
+      "AttacksPerADAPBuff": 3,
+      "StackCounter": 1
+    },
+    "tokens": {}
+  },
+  "DA_Artifact_RapidFireCannon": {
+    "name": "Rapid Firecannon",
+    "stats": "<TFTCurveTable row=\"AttackSpeed\" type=\"stat\" format=\"percentMinusOne\" icon=\"icon.AS\"/> <TFTCurveTable row=\"DamageAmp\" icon=\"icon.DamageAmp\" format=\"percentMinusOne\" type=\"stat\"/>",
+    "desc": "Gain +1 Attack Range, increased by 1 whenever the holder kills an enemy.",
+    "rows": {
+      "BaseRangeIncrease": 1,
+      "RangeIncreaseOnKill": 1,
+      "AttackSpeed": 1.55,
+      "DamageAmp": 1.05
+    },
+    "tokens": {}
+  },
+  "DA_Artifact_SeekersArmguard": {
+    "name": "Seeker's Armguard",
+    "stats": "<TFTCurveTable row=\"AbilityPower\" icon=\"icon.AP\" type=\"stat\" format=\"percent\"/> <TFTCurveTable row=\"Armor\" icon=\"icon.Armor\" type=\"stat\"/> <TFTCurveTable row=\"MagicResist\" icon=\"icon.MR\" type=\"stat\"/> <TFTCurveTable row=\"Omnivamp\" icon=\"icon.Omnivamp\" type=\"stat\" format=\"percent\"/>",
+    "desc": "Takedowns increase the holder’s Armor, Magic Resist, and Ability Power by <TFTCurveTable row=\"TakedownArmor\"/>.",
+    "rows": {
+      "Armor": 10,
+      "MagicResist": 10,
+      "AbilityPower": 0.25,
+      "TakedownArmor": 20,
+      "TakedownMagicResist": 20,
+      "TakedownAbilityPower": 0.2,
+      "KillArmor": 20,
+      "KillMagicResist": 20,
+      "KillAbilityPower": 0.2,
+      "Omnivamp": 0.2
+    },
+    "tokens": {}
+  },
+  "DA_Artifact_SilvermereDawn": {
+    "name": "Silvermere Dawn",
+    "stats": "",
+    "desc": "<TFTCurveTable row=\"AttackDamage\" format=\"percent\" type=\"stat\" icon=\"icon.AD\"/> <TFTCurveTable row=\"Armor\" type=\"stat\" icon=\"icon.Armor\"/> <TFTCurveTable row=\"MagicResist\" type=\"stat\" icon=\"icon.MR\"/> <TFTCurveTable row=\"Omnivamp\" icon=\"icon.Omnivamp\" type=\"stat\"/>%\r\n\r\nGrants immunity to Stuns and the holder's attacks Stun the target for <TFTCurveTable row=\"StunDuration\"/> seconds.\r\n\r\nThe holder’s Attack Speed is locked at <TFTCurveTable row=\"AttackSpeedCap\"/>.",
+    "rows": {
+      "StunDuration": 0.8,
+      "Armor": 30,
+      "AttackDamage": 1.5,
+      "AttackSpeedCap": 0.5,
+      "MagicResist": 30,
+      "Omnivamp": 30
+    },
+    "tokens": {}
+  },
+  "DA_Artifact_StatikkShiv": {
+    "name": "Statikk Shiv",
+    "stats": "<TFTCurveTable row=\"AbilityPower\" type=\"stat\" icon=\"icon.AP\" format=\"percent\"/> <TFTCurveTable row=\"AttackSpeed\" type=\"stat\" icon=\"icon.AS\" format=\"percentMinusOne\"/>",
+    "desc": "Every 3rd attack deals <TFTCurveTable row=\"BaseDamage\"/> + <TFTCurveTable row=\"APScalar\" format=\"percent\"/> of the holder's Ability Power as additional magic damage to <TFTCurveTable row=\"NumTargets\"/> enemies. ",
+    "rows": {
+      "BaseDamage": 15,
+      "AttackSpeed": 1.4,
+      "AbilityPower": 0.25,
+      "NumTargets": 6,
+      "APScalar": 0.35
+    },
+    "tokens": {}
+  },
+  "DA_Item_Artifact_TalismanOfAscension": {
+    "name": "Talisman of Ascension",
+    "stats": "<TFTCurveTable row=\"HealthBase\" type=\"stat\" icon=\"Icon.Health\"/> <TFTCurveTable row=\"ADBase\" type=\"stat\" format=\"percent\" icon=\"Icon.AD\"/> <TFTCurveTable row=\"APBase\" type=\"stat\" format=\"percent\" icon=\"Icon.AP\"/>",
+    "desc": "After <TFTCurveTable row=\"DelayBeforeBuff\"/> seconds gain <TFTCurveTable row=\"HealthMultiplierBuff\" format=\"percent\"/> max Health, <TFTCurveTable row=\"ManaGen\"/> Mana Regen, and <TFTCurveTable row=\"DamageAmpBuff\" format=\"percent\"/> Damage Amp for the rest of combat.",
+    "rows": {
+      "APBase": 0.2,
+      "ADBase": 0.2,
+      "HealthBase": 450,
+      "HealthMultiplierBuff": 1,
+      "DamageAmpBuff": 1.2,
+      "DelayBeforeBuff": 22,
+      "ManaGen": 12
+    },
+    "tokens": {}
+  },
+  "DA_Artifact_TheIndomitable": {
+    "name": "The Indomitable",
+    "stats": "<TFTCurveTable row=\"HealthMaxBase\" icon=\"icon.Health\" type=\"stat\"/> <TFTCurveTable row=\"ArmorBase\" type=\"stat\" icon=\"icon.Armor\"/> <TFTCurveTable row=\"MagicResistBase\" type=\"stat\" icon=\"icon.MR\"/>",
+    "desc": "The holder's Move Speed is drastically reduced.\r\n\r\nGain <TFTCurveTable row=\"HealthMaxPercent\" format=\"percentMinusOne\"/> max Health, become unstoppable, and pull the current target into melee range.",
+    "rows": {
+      "MagicResistBase": 20,
+      "HealthMaxBase": 500,
+      "ArmorBasE": 20,
+      "HealthMaxPercent": 1.15,
+      "MovementSlow": 0.2
+    },
+    "tokens": {}
+  },
+  "DA_Artifact_TitanicHydra": {
+    "name": "Titanic Hydra",
+    "stats": "<TFTCurveTable row=\"HealthMax\" type=\"stat\" icon=\"Icon.Health\"/> <TFTCurveTable row=\"AttackDamage\" type=\"stat\" icon=\"Icon.AD\" format=\"percent\"/> <TFTCurveTable row=\"AttackSpeed\" type=\"stat\" icon=\"Icon.AS\" format=\"percentMinusOne\"/>",
+    "desc": "Attacks deal <TFTCurveTable row=\"PercentHealthBonusDamage\" format=\"percent\"/> of the holder's max Health plus <TFTCurveTable row=\"PercentADBonusDamage\" format=\"percent\"/> of their Attack Damage as bonus physical damage to the target and adjacent enemies.",
+    "rows": {
+      "AttackDamage": 0.2,
+      "AttackSpeed": 1.2,
+      "HealthMax": 300,
+      "PercentHealthBonusDamage": 0.02,
+      "PercentADBonusDamage": 0.04
+    },
+    "tokens": {}
+  },
+  "DA_Artifact_VoidGauntlet": {
+    "name": "Void Gauntlet",
+    "stats": "<TFTCurveTable row=\"HealthBase\" type=\"stat\" icon=\"icon.Health\"/> <TFTCurveTable row=\"DurabilityBase\" type=\"stat\" icon=\"icon.Dura\" format=\"invertedPercent\"/>",
+    "desc": "Combat Start: Store <TFTCurveTable row=\"HealthStoreInitial\" format=\"percent\"/> max Health and <TFTCurveTable row=\"HealthStoreTickAmount\" format=\"percent\"/> more every second. On death, unleash the stored Health as magic damage split between enemies within 4 hexes.\r\n\r\n<rules>Unique - only 1 per champion</>",
+    "rows": {
+      "DurabilityBase": 0.9,
+      "HealthBase": 300,
+      "HealthStoreInitial": 0.3,
+      "HealthStoreTickAmount": 0.025,
+      "HealthStoreInterval": 1,
+      "MaxTime": 24
+    },
+    "tokens": {}
+  },
+  "DA_Artifact_WitsEnd": {
+    "name": "Wit's End",
+    "stats": "<TFTCurveTable row=\"Health\" type=\"stat\" icon=\"icon.Health\"/> <TFTCurveTable row=\"Armor\" type=\"stat\" icon=\"icon.Armor\"/> <TFTCurveTable row=\"MagicResist\" type=\"stat\" icon=\"icon.MR\"/> <TFTCurveTable row=\"AttackSpeed\" type=\"stat\" format=\"percentMinusOne\" icon=\"icon.AS\"/>",
+    "desc": "Attacks deal <TFTAttribute attributeID=\"TFTCalculationAttributes.GenericCalc1\"/> bonus magic damage.\r\nHeals the holder for <TFTCurveTable row=\"MagicVampPercent\"/>% of all magic damage dealt.\r\n\r\n<Rules>Damage increases based on Stage.</>",
+    "rows": {
+      "MagicResist": 20,
+      "AttackSpeed": 1.25,
+      "Health": 300,
+      "Armor": 20,
+      "MagicVampPercent": 25,
+      "OnHitDamage": 25
+    },
+    "tokens": {}
+  },
+  "DA_Artifact_ZhonyasParadox": {
+    "name": "Zhonya's Paradox",
+    "stats": "<TFTCurveTable row=\"AbilityPower\" type=\"stat\" icon=\"icon.AP\" format=\"percent\"/> <TFTCurveTable row=\"Armor\" type=\"stat\" icon=\"icon.Armor\"/> <TFTCurveTable row=\"MagicResist\" type=\"stat\" icon=\"icon.MR\"/>",
+    "desc": "Once per combat at <TFTCurveTable row=\"HealthRatioThreshold\" format=\"percent\"/> Health, become invulnerable and untargetable for <TFTCurveTable row=\"InvulnerableDuration\"/> seconds.\r\n\r\n<rules>Unique - only 1 per champion</>",
+    "rows": {
+      "MagicResist": 25,
+      "Armor": 25,
+      "AbilityPower": 0.25,
+      "HealthRatioThreshold": 0.4,
+      "InvulnerableDuration": 3
+    },
+    "tokens": {}
+  },
+  "DA_Bloodthirster": {
+    "name": "Bloodthirster",
+    "stats": "",
+    "desc": "<TFTCurveTable row=\"BaseAD\" icon=\"icon.AD\" type=\"stat\"/>% <TFTCurveTable row=\"BaseAP\" icon=\"icon.AP\" type=\"stat\"/>% <TFTCurveTable row=\"BaseMagicResist\" icon=\"icon.MR\" type=\"stat\"/> <TFTCurveTable row=\"BaseOmnivamp\" icon=\"icon.Omnivamp\" type=\"stat\"/>%\r\n\r\nOnce per combat at <TFTCurveTable row=\"ThresholdMaxHealthRatio\" format=\"percent\"/> Health, gain a <TFTCurveTable row=\"ShieldMaxHealthRatio\" format=\"percent\"/> max Health Shield that lasts up to <TFTCurveTable row=\"Duration\"/> seconds.",
+    "rows": {
+      "Duration": 5,
+      "ThresholdMaxHealthRatio": 0.5,
+      "ShieldMaxHealthRatio": 0.3,
+      "BaseAD": 18,
+      "BaseAP": 18,
+      "BaseMagicResist": 20,
+      "BaseOmnivamp": 20
+    },
+    "tokens": {}
+  },
+  "DA_BloodthirsterRadiant": {
+    "name": "Radiant Bloodthirster",
+    "stats": "",
+    "desc": "<TFTCurveTable row=\"BaseAD\" icon=\"icon.AD\" type=\"stat\"/>% <TFTCurveTable row=\"BaseAP\" icon=\"icon.AP\" type=\"stat\"/>% <TFTCurveTable row=\"BaseMagicResist\" icon=\"icon.MR\" type=\"stat\"/> <TFTCurveTable row=\"BaseOmnivamp\" icon=\"icon.Omnivamp\" type=\"stat\"/>%\r\n\r\nOnce per combat at <TFTCurveTable row=\"ThresholdMaxHealthRatio\" format=\"percent\"/> Health, gain a <TFTCurveTable row=\"ShieldMaxHealthRatio\" format=\"percent\" style=\"colorRadiant\"/> max Health Shield that lasts up to <TFTCurveTable row=\"Duration\"/> seconds.",
+    "rows": {
+      "Duration": 5,
+      "ThresholdMaxHealthRatio": 0.5,
+      "ShieldMaxHealthRatio": 0.6,
+      "BaseMagicResist": 40,
+      "BaseAD": 40,
+      "BaseOmnivamp": 40,
+      "BaseAP": 40
+    },
+    "tokens": {}
+  },
+  "DA_BlueBuff": {
+    "name": "Blue Buff",
+    "stats": "<TFTCurveTable row=\"Base_AD\" icon=\"icon.AD\" format=\"percent\" type=\"stat\"/> <TFTCurveTable row=\"Base_AP\" icon=\"icon.AP\" format=\"percent\" type=\"stat\"/> <TFTCurveTable row=\"ManaRegen\" icon=\"icon.ManaRegen\" type=\"stat\"/>",
+    "desc": "Gain <TFTCurveTable row=\"ADAPMultiplier\" format=\"percentMinusOne\"/> additional Attack Damage and Ability Power from all sources.",
+    "rows": {
+      "ManaRegen": 5,
+      "Base_AP": 0.15,
+      "Base_AD": 0.15,
+      "ADAPMultiplier": 1.1
+    },
+    "tokens": {}
+  },
+  "DA_BlueBuffRadiant": {
+    "name": "Radiant Blue Buff",
+    "stats": "<TFTCurveTable row=\"Base_AD\" icon=\"icon.AD\" format=\"percent\" type=\"stat\"/> <TFTCurveTable row=\"Base_AP\" icon=\"icon.AP\" format=\"percent\" type=\"stat\"/> <TFTCurveTable row=\"ManaRegen\" icon=\"icon.ManaRegen\" type=\"stat\"/>",
+    "desc": "Gain <TFTCurveTable row=\"ADAPMultiplier\" format=\"percentMinusOne\" style=\"colorRadiant\"/> additional Attack Damage and Ability Power from all sources.",
+    "rows": {
+      "Base_AD": 0.3,
+      "ManaRegen": 10,
+      "Base_AP": 0.3,
+      "ADAPMultiplier": 1.2
+    },
+    "tokens": {}
+  },
+  "DA_BrambleVest": {
+    "name": "Bramble Vest",
+    "stats": "<TFTCurveTable row=\"ArmorBase\" type=\"stat\" icon=\"Icon.Armor\"/>",
+    "desc": "Gain <TFTCurveTable row=\"MaxHealthMultiplier\" format=\"percentMinusOne\"/> max Health.\r\n\r\nTake <TFTCurveTable row=\"AADamageReduction\" format=\"invertedPercent\"/> reduced damage from attacks. When struck by any attack, deal <TFTCurveTable row=\"MagicDamageWhenHit\" style=\"colorMagic\"/> <colorMagic>magic damage</> to all adjacent enemies.\r\n\r\n<Rules>Cooldown: </><TFTCurveTable row=\"Cooldown\" style=\"Rules\"/> <Rules>seconds</>",
+    "rows": {
+      "ArmorBase": 50,
+      "MaxHealthMultiplier": 1.06,
+      "AADamageReduction": 0.95,
+      "MagicDamageWhenHit": 100,
+      "HexRange": 1,
+      "Cooldown": 2
+    },
+    "tokens": {}
+  },
+  "DA_BrambleVestRadiant": {
+    "name": "Radiant Bramble Vest",
+    "stats": "<TFTCurveTable row=\"ArmorBase\" type=\"stat\" icon=\"Icon.Armor\"/>",
+    "desc": "Gain <TFTCurveTable row=\"MaxHealthMultiplier\" format=\"percentMinusOne\" style=\"colorRadiant\"/> max Health.\r\n\r\nTake <TFTCurveTable row=\"AADamageReduction\" format=\"invertedPercent\" style=\"colorRadiant\"/> reduced damage from attacks. When struck by any attack, deal <TFTCurveTable row=\"MagicDamageWhenHit\" style=\"colorRadiant\"/> magic damage to all adjacent enemies.\r\n\r\n<Rules>Cooldown: </><TFTCurveTable row=\"Cooldown\" style=\"Rules\"/> <Rules>seconds</>",
+    "rows": {
+      "ArmorBase": 100,
+      "MaxHealthMultiplier": 1.12,
+      "AADamageReduction": 0.9,
+      "HexRange": 1,
+      "MagicDamageWhenHit": 200,
+      "Cooldown": 2
+    },
+    "tokens": {}
+  },
+  "DA_Component_BFSword": {
+    "name": "B.F. Sword",
+    "stats": "<TFTCurveTable row=\"AD%\" icon=\"icon.AD\" format=\"percent\" type=\"stat\"/>",
+    "desc": "<img id=\"Icon.AD\"/> +<TFTCurveTable row=\"AD%\" format=\"percent\"/> Attack Damage",
+    "rows": {
+      "AD%": 0.1
+    },
+    "tokens": {}
+  },
+  "DA_Component_ChainVest": {
+    "name": "Chain Vest",
+    "stats": "<TFTCurveTable row=\"Armor\" icon=\"icon.Armor\" type=\"stat\"/>",
+    "desc": "<img id=\"Icon.Armor\"/> +<TFTCurveTable row=\"Armor\"/> Armor",
+    "rows": {
+      "Armor": 20
+    },
+    "tokens": {}
+  },
+  "DA_Component_FryingPan": {
+    "name": "Frying Pan",
+    "stats": "",
+    "desc": "<rules>...why else would it be here?</>",
+    "rows": {},
+    "tokens": {}
+  },
+  "DA_Component_GiantsBelt": {
+    "name": "Giant's Belt",
+    "stats": "<TFTCurveTable row=\"Health\" icon=\"icon.Health\" type=\"stat\"/>",
+    "desc": "<img id=\"icon.Health\"/> +<TFTCurveTable row=\"Health\"/> Health",
+    "rows": {
+      "Health": 150
+    },
+    "tokens": {}
+  },
+  "DA_Component_NeedlesslyLargeRod": {
+    "name": "Needlessly Large Rod",
+    "stats": "<TFTCurveTable row=\"AP\" icon=\"icon.AP\" type=\"stat\" format=\"percent\"/>",
+    "desc": "<img id=\"icon.AP\"/> +<TFTCurveTable row=\"AP\" format=\"percent\"/> Ability Power",
+    "rows": {
+      "AP": 0.1
+    },
+    "tokens": {}
+  },
+  "DA_Component_NegatronCloak": {
+    "name": "Negatron Cloak",
+    "stats": "<TFTCurveTable row=\"MR\" icon=\"icon.MR\" type=\"stat\"/>",
+    "desc": "<img id=\"icon.MR\"/> +<TFTCurveTable row=\"MR\"/> Magic Resist",
+    "rows": {
+      "MR": 20
+    },
+    "tokens": {}
+  },
+  "DA_Component_RecurveBow": {
+    "name": "Recurve Bow",
+    "stats": "<TFTCurveTable row=\"AS\" icon=\"icon.AS\" type=\"stat\" format=\"percentMinusOne\"/>",
+    "desc": "<img id=\"icon.AS\"/> +<TFTCurveTable row=\"AS\" format=\"percentMinusOne\"/> Attack Speed",
+    "rows": {
+      "AS": 1.1
+    },
+    "tokens": {}
+  },
+  "DA_Component_SparringGloves": {
+    "name": "Sparring Gloves",
+    "stats": "<TFTCurveTable row=\"CritChance\" icon=\"icon.CritChance\" type=\"stat\" format=\"percent\"/>",
+    "desc": "<img id=\"icon.CritChance\"/> +<TFTCurveTable row=\"CritChance\" format=\"percent\"/> Critical Strike Chance",
+    "rows": {
+      "CritChance": 0.2
+    },
+    "tokens": {}
+  },
+  "DA_Component_Spatula": {
+    "name": "Spatula",
+    "stats": "",
+    "desc": "<rules>It must do something...</>",
+    "rows": {},
+    "tokens": {}
+  },
+  "DA_Component_TearOfTheGoddess": {
+    "name": "Tear Of The Goddess",
+    "stats": "<TFTCurveTable row=\"ManaRegen\" icon=\"icon.ManaRegen\" type=\"stat\"/>",
+    "desc": "<img id=\"icon.ManaRegen\"/> +<TFTCurveTable row=\"ManaRegen\"/> Mana Regeneration",
+    "rows": {
+      "ManaRegen": 1
+    },
+    "tokens": {}
+  },
+  "DA_Consumable_ChampionDuplicator": {
+    "name": "Champion Duplicator",
+    "stats": "",
+    "desc": "Use on a champion to create a 1-star copy on your bench.\r\n\r\n<Rules>Consumable - This item disappears when used.</>",
+    "rows": {},
+    "tokens": {}
+  },
+  "DA_Consumable_LesserChampionDuplicator": {
+    "name": "Lesser Champion Duplicator",
+    "stats": "",
+    "desc": "Use on a 3-cost champion or less to create a 1-star copy on your bench.\r\n\r\n<rules>Consumable: This item disappears when used.</>",
+    "rows": {},
+    "tokens": {}
+  },
+  "DA_Consumable_ItemRemover": {
+    "name": "Item Remover",
+    "stats": "",
+    "desc": "Use on a champion to unequip all items. \r\n\r\n<Rules>Cannot be used on champions in combat.</>\r\n<Rules>Consumable: This item disappears when used.</>",
+    "rows": {},
+    "tokens": {}
+  },
+  "DA_Consumable_GoldenItemRemover": {
+    "name": "Golden Item Remover",
+    "stats": "",
+    "desc": "Use on a champion to unequip all items as many times as you want. Converts all future Magnetic Removers to Reforgers. \r\n\r\n<Rules>Repeatable: This item can be infinitely reusable.</>",
+    "rows": {},
+    "tokens": {}
+  },
+  "DA_Crownguard": {
+    "name": "Crownguard",
+    "stats": "<TFTCurveTable row=\"Health\" icon=\"icon.Health\" type=\"stat\"/> <TFTCurveTable row=\"AbilityPower\" icon=\"icon.AP\" type=\"stat\"/> <TFTCurveTable row=\"Armor\" icon=\"icon.Armor\" type=\"stat\"/>",
+    "desc": "Combat start: Gain a <TFTCurveTable row=\"MaxHealthShieldPercent\"/>% max Health Shield for <TFTCurveTable row=\"ShieldDuration\"/> seconds.\r\nWhen the shield expires, gain <TFTCurveTable row=\"AbilityPowerOnShieldExpire\"/>% Ability Power.",
+    "rows": {
+      "Armor": 20,
+      "Health": 100,
+      "AbilityPower": 20,
+      "ShieldDuration": 8,
+      "AbilityPowerOnShieldExpire": 20,
+      "MaxHealthShieldPercent": 25
+    },
+    "tokens": {}
+  },
+  "DA_CrownguardRadiant": {
+    "name": "Radiant Crownguard",
+    "stats": "",
+    "desc": "<TFTCurveTable row=\"Health\" icon=\"icon.Health\" type=\"stat\"/> <TFTCurveTable row=\"AbilityPower\" icon=\"icon.AP\" type=\"stat\"/><Bright>%</> <TFTCurveTable row=\"Armor\" icon=\"icon.Armor\" type=\"stat\"/>\r\n\r\nCombat start: Gain a <TFTCurveTable row=\"MaxHealthShieldPercent\" style=\"colorRadiant\"/><colorRadiant>%</> max Health Shield for <TFTCurveTable row=\"ShieldDuration\"/> seconds.\r\nWhen the shield expires, gain <TFTCurveTable row=\"AbilityPowerOnShieldExpire\" style=\"colorRadiant\"/><colorRadiant>% Ability Power</>.",
+    "rows": {
+      "Armor": 40,
+      "Health": 200,
+      "AbilityPower": 40,
+      "ShieldDuration": 8,
+      "AbilityPowerOnShieldExpire": 50,
+      "MaxHealthShieldPercent": 50
+    },
+    "tokens": {}
+  },
+  "DA_Deathblade": {
+    "name": "Deathblade",
+    "stats": "<TFTCurveTable row=\"AttackDamage\" icon=\"icon.AD\" format=\"percent\" type=\"stat\" fallbackRow=\"AttackDamage\"/> <TFTCurveTable row=\"DamageAmp\" icon=\"icon.DamageAmp\" format=\"percent\" type=\"stat\"/>",
+    "desc": "<rules>Perfect peace and calm for the holder - and all who face it.</>{ItemTags.Deathblade.DeadlierBladeStacks}",
+    "rows": {
+      "DamageAmp": 0.1,
+      "AttackDamage": 0.55
+    },
+    "tokens": {}
+  },
+  "DA_DeathbladeRadiant": {
+    "name": "Radiant Deathblade",
+    "stats": "<TFTCurveTable row=\"AttackDamage\" icon=\"icon.AD\" format=\"percent\" type=\"stat\" fallbackRow=\"AttackDamage\"/> <TFTCurveTable row=\"DamageAmp\" icon=\"icon.DamageAmp\" format=\"percent\" type=\"stat\"/>",
+    "desc": "<rules>It glows in the presence of enemies. Or friends. Or anything alive, really.</>{ItemTags.Deathblade.DeadlierBladeStacks}",
+    "rows": {
+      "DamageAmp": 0.2,
+      "AttackDamage": 1
+    },
+    "tokens": {}
+  },
+  "DA_DragonsClaw": {
+    "name": "Dragon's Claw",
+    "stats": "<TFTCurveTable row=\"MagicResist\" icon=\"icon.MR\" type=\"stat\"/>",
+    "desc": "Gain <TFTCurveTable row=\"MaxHealthMultiplier\" format=\"percentMinusOne\"/> max Health. Every 2 seconds, heal <TFTCurveTable row=\"PercentHealthHeal\" format=\"percent\" precision=\"1\"/> max Health.",
+    "rows": {
+      "MaxHealthMultiplier": 1.06,
+      "MagicResist": 60,
+      "PercentHealthHeal": 0.025
+    },
+    "tokens": {}
+  },
+  "DA_DragonsClawRadiant": {
+    "name": "Radiant Dragon's Claw",
+    "stats": "<TFTCurveTable row=\"MagicResist\" icon=\"icon.MR\" type=\"stat\"/>",
+    "desc": "Gain <TFTCurveTable row=\"MaxHealthMultiplier\" format=\"percentMinusOne\" style=\"colorRadiant\"/> max Health.\r\n\r\nEvery 2 seconds, heal <TFTCurveTable row=\"PercentHealthHeal\" format=\"percent\" style=\"colorRadiant\"/> max Health.",
+    "rows": {
+      "MaxHealthMultiplier": 1.28,
+      "MagicResist": 120,
+      "PercentHealthHeal": 0.05
+    },
+    "tokens": {}
+  },
+  "DA_EdgeOfNight": {
+    "name": "Edge of Night",
+    "stats": "<TFTCurveTable row=\"AttackDamage\" icon=\"icon.AD\" format=\"percent\" type=\"stat\"/> <TFTCurveTable row=\"AbilityPower\" icon=\"icon.AP\" format=\"percent\" type=\"stat\"/> <TFTCurveTable row=\"Armor\" icon=\"icon.Armor\" type=\"stat\"/> <TFTCurveTable row=\"AttackSpeed\" icon=\"icon.AS\" format=\"percentMinusOne\" type=\"stat\"/>",
+    "desc": "At <TFTCurveTable row=\"HPPercentageToProcAt\" format=\"percent\"/> Health, briefly become untargetable, shed negative effects, and heal <TFTCurveTable row=\"MissingHPHeal\" format=\"percent\"/> missing health.",
+    "rows": {
+      "Armor": 20,
+      "AttackDamage": 0.1,
+      "UntargetableDuration": 1,
+      "HPPercentageToProcAt": 0.4,
+      "AbilityPower": 0.1,
+      "AttackSpeed": 1.15,
+      "MissingHPHeal": 0.15
+    },
+    "tokens": {}
+  },
+  "DA_EdgeOfNightRadiant": {
+    "name": "Radiant Edge of Night",
+    "stats": "<TFTCurveTable row=\"AttackDamage\" icon=\"icon.AD\" format=\"percent\" type=\"stat\"/> <TFTCurveTable row=\"AbilityPower\" icon=\"icon.AP\" format=\"percent\" type=\"stat\"/> <TFTCurveTable row=\"Armor\" icon=\"icon.Armor\" type=\"stat\"/> <TFTCurveTable row=\"AttackSpeed\" icon=\"icon.AS\" format=\"percentMinusOne\" type=\"stat\"/>",
+    "desc": "At <TFTCurveTable row=\"HPPercentageToProcAt\" format=\"percent\"/> Health, briefly become untargetable, shed negative effects, and <colorRadiant>heal all missing health</>.",
+    "rows": {
+      "Armor": 40,
+      "AttackDamage": 0.3,
+      "AttackSpeed": 1.3,
+      "AbilityPower": 0.3,
+      "HPPercentageToProcAt": 0.4
+    },
+    "tokens": {}
+  },
+  "DA_Evenshroud": {
+    "name": "Evenshroud",
+    "stats": "<TFTCurveTable row=\"MagicResist\" type=\"stat\" icon=\"Icon.MR\"/> <TFTCurveTable row=\"HealthMax\" type=\"stat\" icon=\"Icon.Health\"/>",
+    "desc": "<TFTCurveTable row=\"SunderPercent\"/>% <Keyword>Sunder</> enemies within <TFTCurveTable row=\"HexRange\"/> hexes. Gain <TFTCurveTable row=\"ArmorOnBattleStart\"/> Armor and Magic Resist for the first <TFTCurveTable row=\"OnBattleStartEffectDuration\"/> seconds of combat.\r\n\r\n<Rules>Sunder: Reduce Armor</>",
+    "rows": {
+      "MagicResist": 20,
+      "HealthMax": 250,
+      "OnBattleStartEffectDuration": 15,
+      "SunderPercent": 30,
+      "ArmorOnBattleStart": 15,
+      "MagicResistOnBattleStart": 15,
+      "HexRange": 2
+    },
+    "tokens": {}
+  },
+  "DA_EvenshroudRadiant": {
+    "name": "Radiant Evenshroud",
+    "stats": "<TFTCurveTable row=\"HealthMax\" type=\"stat\" icon=\"Icon.Health\"/> <TFTCurveTable row=\"MagicResist\" type=\"stat\" icon=\"Icon.MR\"/>",
+    "desc": "<TFTCurveTable row=\"SunderPercent\"/>% <Keyword>Sunder</> enemies within <TFTCurveTable row=\"HexRange\"/> hexes. Gain <TFTCurveTable row=\"ArmorOnBattleStart\" style=\"colorRadiant\"/> <colorRadiant>Armor and Magic Resist</> for the first <TFTCurveTable row=\"OnBattleStartEffectDuration\" style=\"colorRadiant\"/> <colorRadiant>seconds</> of combat.\r\n\r\n<Rules>Sunder: Reduce Armor</>",
+    "rows": {
+      "MagicResist": 40,
+      "HealthMax": 500,
+      "OnBattleStartEffectDuration": 20,
+      "SunderPercent": 30,
+      "ArmorOnBattleStart": 50,
+      "MagicResistOnBattleStart": 50,
+      "HexRange": 3
+    },
+    "tokens": {}
+  },
+  "DA_GargoyleStoneplate": {
+    "name": "Gargoyle Stoneplate",
+    "stats": "<TFTCurveTable row=\"HealthMax\" icon=\"icon.Health\" type=\"stat\"/> <TFTCurveTable row=\"Armor\" icon=\"icon.Armor\" type=\"stat\"/> <TFTCurveTable row=\"MagicResist\" icon=\"icon.MR\" type=\"stat\"/>",
+    "desc": "Gain <TFTCurveTable row=\"ArmorPerTargetingEnemy\"/> Armor and <TFTCurveTable row=\"MRPerTargetingEnemy\"/> Magic Resist for each enemy targeting the holder.",
+    "rows": {
+      "Armor": 25,
+      "MagicResist": 25,
+      "HealthMax": 100,
+      "ArmorPerTargetingEnemy": 10,
+      "MRPerTargetingEnemy": 10
+    },
+    "tokens": {}
+  },
+  "DA_GargoyleStoneplate_Radiant": {
+    "name": "Radiant Gargoyle Stoneplate",
+    "stats": "<TFTCurveTable row=\"HealthMax\" icon=\"icon.Health\" type=\"stat\"/> <TFTCurveTable row=\"Armor\" icon=\"icon.Armor\" type=\"stat\"/> <TFTCurveTable row=\"MagicResist\" icon=\"icon.MR\" type=\"stat\"/>",
+    "desc": "Gain <TFTCurveTable row=\"ArmorPerTargetingEnemy\" style=\"colorRadiant\"/> Armor and <TFTCurveTable row=\"MRPerTargetingEnemy\" style=\"colorRadiant\"/> Magic Resist for each enemy targeting the holder.",
+    "rows": {
+      "Armor": 50,
+      "MagicResist": 50,
+      "HealthMax": 400,
+      "MRPerTargetingEnemy": 20,
+      "ArmorPerTargetingEnemy": 20,
+      "MaxHealthHeal": 1.5
+    },
+    "tokens": {}
+  },
+  "DA_GiantSlayer": {
+    "name": "Giant Slayer",
+    "stats": "<TFTCurveTable row=\"AttackDamage\" icon=\"icon.AD\" format=\"percent\" type=\"stat\"/> <TFTCurveTable row=\"AbilityPower\" icon=\"icon.AP\" format=\"percent\" type=\"stat\"/> <TFTCurveTable row=\"AttackSpeed\" icon=\"icon.AS\" format=\"percentMinusOne\" type=\"stat\"/> <TFTCurveTable row=\"OutgoingDamageMultiplier\" icon=\"icon.DamageAmp\" format=\"percent\" type=\"stat\"/>",
+    "desc": "Gain <TFTCurveTable row=\"AmpRatioAgainstTanks\" format=\"percent\"/> additional Damage Amp against Tanks.",
+    "rows": {
+      "AttackSpeed": 1.15,
+      "AbilityPower": 0.15,
+      "AttackDamage": 0.15,
+      "OutgoingDamageMultiplier": 0.15,
+      "AmpRatioAgainstTanks": 0.15
+    },
+    "tokens": {}
+  },
+  "DA_GiantSlayer_Radiant": {
+    "name": "Radiant Giant Slayer",
+    "stats": "<TFTCurveTable row=\"AttackDamage\" icon=\"icon.AD\" format=\"percent\" type=\"stat\"/> <TFTCurveTable row=\"AbilityPower\" icon=\"icon.AP\" format=\"percent\" type=\"stat\"/> <TFTCurveTable row=\"AttackSpeed\" icon=\"icon.AS\" format=\"percentMinusOne\" type=\"stat\"/> <TFTCurveTable row=\"OutgoingDamageMultiplier\" icon=\"icon.DamageAmp\" format=\"percent\" type=\"stat\"/>",
+    "desc": "Gain <TFTCurveTable row=\"AmpRatioAgainstTanks\" format=\"percent\" style=\"colorRadiant\"/> additional Damage Amp against Tanks.",
+    "rows": {
+      "AttackSpeed": 1.3,
+      "AbilityPower": 0.3,
+      "AttackDamage": 0.3,
+      "OutgoingDamageMultiplier": 0.3,
+      "AmpRatioAgainstTanks": 0.3
+    },
+    "tokens": {}
+  },
+  "DA_GuinsoosRageblade": {
+    "name": "Guinsoo's Rageblade",
+    "stats": "<TFTCurveTable row=\"BaseAP\" icon=\"icon.AP\" type=\"stat\" format=\"percent\"/> <TFTCurveTable row=\"BaseAS\" icon=\"icon.AS\" type=\"stat\" format=\"percentMinusOne\"/>",
+    "desc": "Gain <TFTCurveTable row=\"ASCounter\"/>% stacking Attack Speed every second.",
+    "rows": {
+      "BaseAS": 1.1,
+      "BaseAP": 0.1,
+      "ASCounter": 7
+    },
+    "tokens": {}
+  },
+  "DA_GuinsoosRagebladeRadiant": {
+    "name": "Radiant Guinsoo's Rageblade",
+    "stats": "<TFTCurveTable row=\"BaseAP\" icon=\"icon.AP\" type=\"stat\" format=\"percent\"/> <TFTCurveTable row=\"BaseAS\" icon=\"icon.AS\" type=\"stat\" format=\"percentMinusOne\"/>",
+    "desc": "Gain <TFTCurveTable row=\"ASCounter\" style=\"colorRadiant\"/><colorRadiant>%</> stacking Attack Speed every second.",
+    "rows": {
+      "BaseAS": 1.25,
+      "BaseAP": 0.2,
+      "ASCounter": 16
+    },
+    "tokens": {}
+  },
+  "DA_HandOfJustice": {
+    "name": "Hand Of Justice",
+    "stats": "<TFTCurveTable row=\"CritChanceBase\" icon=\"icon.critchance\" format=\"percent\" type=\"stat\"/> <TFTCurveTable row=\"ManaRegenBase\" icon=\"icon.manaregen\" type=\"stat\"/>",
+    "desc": "Gain 2 effects:\r\n• <TFTCurveTable row=\"ADBase\" format=\"percent\"/> Attack Damage and <TFTCurveTable row=\"APBase\" format=\"percent\"/> Ability Power.\r\n• <TFTCurveTable row=\"OmnivampBase\" format=\"percent\"/> Omnivamp.\r\n\r\nWhile above <TFTCurveTable row=\"HealthThreshold\" format=\"percent\"/> health, double the Attack Damage and Ability Power. While below <TFTCurveTable row=\"HealthThreshold\" format=\"percent\"/> Health, double the Omnivamp.",
+    "rows": {
+      "CritChanceBase": 0.2,
+      "ManaRegenBase": 1,
+      "APBase": 0.18,
+      "ADBase": 0.18,
+      "HealthThreshold": 0.5,
+      "OmnivampBase": 0.15
+    },
+    "tokens": {}
+  },
+  "DA_HandOfJusticeRadiant": {
+    "name": "Radiant Hand of Justice",
+    "stats": "<TFTCurveTable row=\"CritChanceBase\" icon=\"icon.critchance\" format=\"percent\" type=\"stat\"/> <TFTCurveTable row=\"ManaRegenBase\" icon=\"icon.manaregen\" type=\"stat\"/>",
+    "desc": "Gain 2 effects:\r\n• <TFTCurveTable row=\"ADBase\" format=\"percent\" style=\"colorRadiant\"/> Attack Damage and <TFTCurveTable row=\"APBase\" format=\"percent\" style=\"colorRadiant\"/> Ability Power.\r\n• <TFTCurveTable row=\"OmnivampBase\" format=\"percent\" style=\"colorRadiant\"/> Omnivamp.\r\n\r\nWhile above <TFTCurveTable row=\"HealthThreshold\" format=\"percent\"/> health, double the Attack Damage and Ability Power. While below <TFTCurveTable row=\"HealthThreshold\" format=\"percent\"/> Health, double the Omnivamp.",
+    "rows": {
+      "CritChanceBase": 0.4,
+      "ManaRegenBase": 2,
+      "APBase": 0.35,
+      "ADBase": 0.35,
+      "HealthThreshold": 0.5,
+      "OmnivampBase": 0.3
+    },
+    "tokens": {}
+  },
+  "DA_HextechGunblade": {
+    "name": "Hextech Gunblade",
+    "stats": "<TFTCurveTable type=\"stat\" row=\"BaseAD\" format=\"percent\" icon=\"Icon.AD\"/> <TFTCurveTable type=\"stat\" row=\"BaseAP\" format=\"percent\" icon=\"Icon.AP\"/> <TFTCurveTable type=\"stat\" row=\"BaseOmnivamp\" format=\"percent\" icon=\"Icon.Omnivamp\"/> <TFTCurveTable type=\"stat\" row=\"BaseManaRegen\" icon=\"Icon.ManaRegen\"/>",
+    "desc": "Heal the lowest percent Health ally for <TFTCurveTable row=\"DamageToHealRatio\" format=\"percent\"/> of damage dealt.\r\n\r\nAlly Healing: <TFTAttribute attributeID=\"TFTCalculationAttributes.HealthCalc1\" precision=\"0\"/>",
+    "rows": {
+      "BaseAP": 0.2,
+      "BaseAD": 0.2,
+      "DamageToHealRatio": 0.2,
+      "BaseOmnivamp": 0.15,
+      "BaseManaRegen": 1
+    },
+    "tokens": {}
+  },
+  "DA_HextechGunbladeRadiant": {
+    "name": "Radiant Hextech Gunblade",
+    "stats": "<TFTCurveTable type=\"stat\" row=\"BaseAD\" format=\"percent\" icon=\"Icon.AD\"/> <TFTCurveTable type=\"stat\" row=\"BaseAP\" format=\"percent\" icon=\"Icon.AP\"/> <TFTCurveTable type=\"stat\" row=\"BaseOmnivamp\" format=\"percent\" icon=\"Icon.Omnivamp\"/> <TFTCurveTable type=\"stat\" row=\"BaseManaRegen\" icon=\"Icon.ManaRegen\"/>",
+    "desc": "Heal the lowest percent Health ally for <TFTCurveTable row=\"DamageToHealRatio\" format=\"percent\" style=\"colorRadiant\"/> of damage dealt.\r\n\r\nAlly Healing: <TFTAttribute attributeID=\"TFTCalculationAttributes.HealthCalc1\" precision=\"0\"/>",
+    "rows": {
+      "BaseAP": 0.4,
+      "BaseAD": 0.4,
+      "DamageToHealRatio": 0.4,
+      "BaseOmnivamp": 0.3,
+      "BaseManaRegen": 2
+    },
+    "tokens": {}
+  },
+  "DA_InfinityEdge": {
+    "name": "Infinity Edge",
+    "stats": "<TFTCurveTable row=\"AttackDamage\" icon=\"Icon.AD\" type=\"stat\" format=\"percent\"/> <TFTCurveTable row=\"CriticalStrikeChance\" icon=\"Icon.CritChance\" type=\"stat\" format=\"percent\"/>",
+    "desc": "Gain <Keyword>Precision</>. \r\n\r\n<Rules>Precision: Ability damage can critically strike. Extra Precision grants 10% Critical Strike Damage.</>",
+    "rows": {
+      "CriticalStrikeChance": 0.35,
+      "AttackDamage": 0.35
+    },
+    "tokens": {}
+  },
+  "DA_InfinityEdgeRadiant": {
+    "name": "Radiant Infinity Edge",
+    "stats": "<TFTCurveTable row=\"AttackDamage\" icon=\"Icon.AD\" type=\"stat\" format=\"percent\"/> <TFTCurveTable row=\"CriticalStrikeChance\" icon=\"Icon.CritChance\" type=\"stat\" format=\"percent\"/>",
+    "desc": "Gain <Keyword>Precision</>. \r\n\r\n<Rules>Precision: Ability damage can critically strike. Extra Precision grants 10% Critical Strike Damage.</>",
+    "rows": {
+      "CriticalStrikeChance": 0.75,
+      "AttackDamage": 0.75
+    },
+    "tokens": {}
+  },
+  "DA_IonicSpark": {
+    "name": "Ionic Spark",
+    "stats": "<TFTCurveTable row=\"Base_Health\" icon=\"icon.Health\" type=\"stat\"/> <TFTCurveTable row=\"Base_AP\" icon=\"icon.AP\" format=\"percent\" type=\"stat\"/> <TFTCurveTable row=\"Base_MR\" icon=\"icon.MR\" type=\"stat\"/>",
+    "desc": "<TFTCurveTable row=\"ShredPercent\" format=\"percent\"/> <Keyword>Shred</> enemies within <TFTCurveTable row=\"HexRange\"/> hexes. When enemies cast an Ability, deal magic damage equal to <TFTCurveTable row=\"EnemyCastManaAsDamagePercent\" format=\"percent\"/> of the Mana spent.\r\n\r\n<rules>Shred: Reduce Magic Resist</>",
+    "rows": {
+      "Base_MR": 35,
+      "Base_AP": 0.15,
+      "EnemyCastManaAsDamagePercent": 1.5,
+      "ShredPercent": 0.3,
+      "HexRange": 2,
+      "Base_Health": 250
+    },
+    "tokens": {}
+  },
+  "DA_IonicSparkRadiant": {
+    "name": "Radiant Ionic Spark",
+    "stats": "<TFTCurveTable row=\"Base_Health\" icon=\"icon.Health\" type=\"stat\"/> <TFTCurveTable row=\"Base_AP\" icon=\"icon.AP\" format=\"percent\" type=\"stat\"/> <TFTCurveTable row=\"Base_MR\" icon=\"icon.MR\" type=\"stat\"/>",
+    "desc": "<TFTCurveTable row=\"ShredPercent\" format=\"percent\"/> <Keyword>Shred</> enemies within <TFTCurveTable row=\"HexRange\"/> hexes. When enemies cast an Ability, deal magic damage equal to <TFTCurveTable row=\"EnemyCastManaAsDamagePercent\" format=\"percent\" style=\"colorRadiant\"/> of the Mana spent.\r\n\r\n<rules>Shred: Reduce Magic Resist</>",
+    "rows": {
+      "Base_MR": 70,
+      "Base_AP": 0.3,
+      "EnemyCastManaAsDamagePercent": 3,
+      "ShredPercent": 0.3,
+      "HexRange": 2,
+      "Base_Health": 500
+    },
+    "tokens": {}
+  },
+  "DA_JeweledGauntlet": {
+    "name": "Jeweled Gauntlet",
+    "stats": "<TFTCurveTable row=\"Base_AP\" icon=\"Icon.AP\" type=\"stat\" format=\"percent\"/> <TFTCurveTable row=\"Base_CritChance\" icon=\"Icon.CritChance\" type=\"stat\" format=\"percent\"/>",
+    "desc": "Gain <Keyword>Precision</>. \r\n\r\n<Rules>Precision: Ability damage can critically strike. Extra Precision grants 10% Critical Strike Damage.</>",
+    "rows": {
+      "Base_CritChance": 0.35,
+      "Base_AP": 0.35
+    },
+    "tokens": {}
+  },
+  "DA_JeweledGauntletRadiant": {
+    "name": "Radiant Jeweled Gauntlet",
+    "stats": "<TFTCurveTable row=\"Base_AP\" icon=\"Icon.AP\" type=\"stat\" format=\"percent\"/> <TFTCurveTable row=\"Base_CritChance\" icon=\"Icon.CritChance\" type=\"stat\" format=\"percent\"/>",
+    "desc": "Gain <Keyword>Precision</>. \r\n\r\n<Rules>Precision: Ability damage can critically strike. Extra Precision grants 10% Critical Strike Damage.</>",
+    "rows": {
+      "Base_AP": 0.75,
+      "Base_CritChance": 0.75
+    },
+    "tokens": {}
+  },
+  "DA_KrakensFury": {
+    "name": "Kraken's Fury",
+    "stats": "<TFTCurveTable row=\"Base_AD\" type=\"stat\" icon=\"Icon.AD\" format=\"percent\"/> <TFTCurveTable row=\"Base_MR\" type=\"stat\" icon=\"Icon.MR\"/> <TFTCurveTable row=\"Base_AS\" type=\"stat\" icon=\"Icon.AS\" format=\"percentMinusOne\"/>",
+    "desc": "Attacks grant <TFTCurveTable row=\"ADCounter\"/>% stacking Attack Damage, up to 15 attacks. After <TFTCurveTable row=\"MaxStacks\"/> attacks, gain <TFTCurveTable row=\"Bonus_AS\" format=\"percent\"/> Attack Speed.",
+    "rows": {
+      "ADCounter": 3.5,
+      "Base_AS": 1.1,
+      "Base_MR": 20,
+      "Base_AD": 0.1,
+      "StackCounter": 1,
+      "Bonus_AS": 0.15,
+      "MaxStacks": 15
+    },
+    "tokens": {}
+  },
+  "DA_KrakensFury_Radiant": {
+    "name": "Radiant Kraken's Fury",
+    "stats": "<TFTCurveTable row=\"Base_AD\" type=\"stat\" icon=\"Icon.AD\" format=\"percent\"/> <TFTCurveTable row=\"Base_MR\" type=\"stat\" icon=\"Icon.MR\"/> <TFTCurveTable row=\"Base_AS\" type=\"stat\" icon=\"Icon.AS\" format=\"percentMinusOne\"/>",
+    "desc": "Attacks grant <TFTCurveTable row=\"ADCounter\" style=\"colorRadiant\"/><colorRadiant>%</> stacking Attack Damage, up to 15 attacks. After <TFTCurveTable row=\"MaxStacks\"/> attacks, gain <TFTCurveTable row=\"Bonus_AS\" format=\"percent\" style=\"colorRadiant\"/> Attack Speed.",
+    "rows": {
+      "Base_AS": 1.2,
+      "Base_MR": 40,
+      "ADCounter": 7,
+      "Base_AD": 0.2,
+      "MaxStacks": 15,
+      "Bonus_AS": 0.3,
+      "StackCounter": 1
+    },
+    "tokens": {}
+  },
+  "DA_LastWhisper": {
+    "name": "Last Whisper",
+    "stats": "<TFTCurveTable row=\"AttackDamage\" icon=\"Icon.AD\" format=\"percent\" type=\"stat\"/> <TFTCurveTable row=\"AttackSpeed\" icon=\"Icon.AS\" format=\"percentMinusOne\" type=\"stat\"/> <TFTCurveTable row=\"CritChance\" icon=\"Icon.Critchance\" format=\"percent\" type=\"stat\"/>",
+    "desc": "Attacks and Ability damage <TFTCurveTable row=\"SunderPercent\"/>% <Keyword>Sunders</> the target for <TFTCurveTable row=\"SunderDuration\"/> seconds. This effect does not stack.\r\n\r\n<Rules>Sunder: Reduce Armor</>",
+    "rows": {
+      "AttackSpeed": 1.2,
+      "AttackDamage": 0.15,
+      "CritChance": 0.2,
+      "SunderPercent": 30,
+      "SunderDuration": 3
+    },
+    "tokens": {}
+  },
+  "DA_LastWhisperRadiant": {
+    "name": "Radiant Last Whisper",
+    "stats": "<TFTCurveTable row=\"AttackDamage\" icon=\"Icon.AD\" format=\"percent\" type=\"stat\"/> <TFTCurveTable row=\"AttackSpeed\" icon=\"Icon.AS\" format=\"percentMinusOne\" type=\"stat\"/> <TFTCurveTable row=\"CritChance\" icon=\"Icon.Critchance\" format=\"percent\" type=\"stat\"/>",
+    "desc": "Attacks and Ability damage <TFTCurveTable row=\"SunderPercent\"/>% <Keyword>Sunders</> the target for the <colorRadiant>rest of combat.</> This effect does not stack.\r\n\r\n<Rules>Sunder: Reduce Armor</>",
+    "rows": {
+      "AttackSpeed": 1.4,
+      "AttackDamage": 0.45,
+      "CritChance": 0.4,
+      "SunderPercent": 30,
+      "SunderDuration": 50
+    },
+    "tokens": {}
+  },
+  "DA_LuckyItemChest": {
+    "name": "Lucky Item Chest",
+    "stats": "",
+    "desc": "Use on a champion to open an armory of items especially suited for them.\r\n\r\n<Rules>These items are based on the champion's recommended items.</>",
+    "rows": {},
+    "tokens": {}
+  },
+  "DA_RadiantLuckyItemChest": {
+    "name": "Radiant Lucky Item Chest",
+    "stats": "",
+    "desc": "Use on a champion to open an armory of items especially suited for them.\r\n\r\n<Rules>These items are based on the champion's recommended items.</>",
+    "rows": {},
+    "tokens": {}
+  },
+  "DA_MasterworkUpgrade": {
+    "name": "Masterwork Upgrade",
+    "stats": "",
+    "desc": "Use on a champion to choose a Radiant version of that champion's craftable completed items. Upgrade the item you choose to its Radiant equivalent and unequip it.",
+    "rows": {},
+    "tokens": {}
+  },
+  "DA_Morellonomicon": {
+    "name": "Morellonomicon",
+    "stats": "<TFTCurveTable row=\"BaseHealth\" icon=\"Icon.Health\" type=\"stat\"/> <TFTCurveTable row=\"BaseAP\" icon=\"Icon.AP\" format=\"percent\" type=\"stat\"/> <TFTCurveTable row=\"BaseManaRegen\" icon=\"Icon.Manaregen\" type=\"stat\"/>",
+    "desc": "Attacks and Abilities deal <TFTCurveTable row=\"BurnPercent\"/>% <Keyword>Burn</> and <TFTCurveTable row=\"WoundPercent\"/>% <Keyword>Wound</> to enemies for <TFTCurveTable row=\"BurnAndWoundDuration\"/> seconds.\r\n\r\n<rules>Burn: Deals a percent of the target’s max Health as true damage every second.</>\r\n<rules>Wound: Reduces healing received.</>",
+    "rows": {
+      "BaseManaRegen": 1,
+      "BaseHealth": 150,
+      "BurnPercent": 1,
+      "BaseAP": 0.2,
+      "WoundPercent": 33,
+      "BurnAndWoundDuration": 10
+    },
+    "tokens": {}
+  },
+  "DA_MorellonomiconRadiant": {
+    "name": "Radiant Morellonomicon",
+    "stats": "<TFTCurveTable row=\"BaseHealth\" icon=\"Icon.Health\" type=\"stat\"/> <TFTCurveTable row=\"BaseAP\" icon=\"Icon.AP\" format=\"percent\" type=\"stat\"/> <TFTCurveTable row=\"BaseManaRegen\" icon=\"Icon.Manaregen\" type=\"stat\"/>",
+    "desc": "Attacks and Abilities deal <TFTCurveTable row=\"BurnPercent\" style=\"colorRadiant\"/><colorRadiant>%</> Burn and <TFTCurveTable row=\"WoundPercent\"/>% Wound to enemies for <TFTCurveTable row=\"BurnAndWoundDuration\"/> seconds.\r\n\r\n<rules>Burn: Deals a percent of the target’s max Health as true damage every second.</>\r\n<rules>Wound: Reduces healing received.</>",
+    "rows": {
+      "BaseManaRegen": 2,
+      "BaseHealth": 300,
+      "BurnPercent": 2,
+      "BaseAP": 0.35,
+      "WoundPercent": 33,
+      "BurnAndWoundDuration": 10
+    },
+    "tokens": {}
+  },
+  "DA_NashorsTooth": {
+    "name": "Nashor's Tooth",
+    "stats": "<TFTCurveTable row=\"HealthBase\" icon=\"Icon.Health\" type=\"stat\"/> <TFTCurveTable row=\"AbilityPowerBase\" icon=\"Icon.AP\" format=\"percent\" type=\"stat\"/> <TFTCurveTable row=\"AttackSpeedBase\" icon=\"Icon.AS\" format=\"percentMinusOne\" type=\"stat\"/> <TFTCurveTable row=\"CritChance\" icon=\"icon.Critchance\" format=\"percent\" type=\"stat\"/> ",
+    "desc": "Attacks grant <TFTCurveTable row=\"ManaPerAttack\"/> bonus Mana, increased to <TFTAttribute attributeID=\"TFTCalculationAttributes.GenericCalc1\" fallbackRow=\"Default_CritBonus\"/> if they critically strike.",
+    "rows": {
+      "HealthBase": 150,
+      "AttackSpeedBase": 1.1,
+      "AbilityPowerBase": 0.15,
+      "ManaPerAttack": 2,
+      "ManaPerAttack_BonusOnCrit": 2,
+      "CritChance": 0.2,
+      "Default_CritBonus": 4
+    },
+    "tokens": {
+      "GenericCalc1": 4
+    }
+  },
+  "DA_NashorsToothRadiant": {
+    "name": "Radiant Nashor's Tooth",
+    "stats": "<TFTCurveTable row=\"HealthBase\" icon=\"Icon.Health\" type=\"stat\"/> <TFTCurveTable row=\"AbilityPowerBase\" icon=\"Icon.AP\" format=\"percent\" type=\"stat\"/> <TFTCurveTable row=\"AttackSpeedBase\" icon=\"Icon.AS\" format=\"percentMinusOne\" type=\"stat\"/> <TFTCurveTable row=\"CritChance\" icon=\"icon.Critchance\" format=\"percent\" type=\"stat\"/> ",
+    "desc": "Attacks grant <TFTCurveTable row=\"ManaPerAttack\" style=\"colorRadiant\"/> bonus Mana, increased to <TFTAttribute attributeID=\"TFTCalculationAttributes.GenericCalc1\" fallbackRow=\"Default_CritBonus\" precision=\"0\" style=\"colorRadiant\"/> if they critically strike.",
+    "rows": {
+      "HealthBase": 300,
+      "AttackSpeedBase": 1.2,
+      "AbilityPowerBase": 0.3,
+      "ManaPerAttack": 4,
+      "CritChance": 0.4,
+      "ManaPerAttack_BonusCritical": 2,
+      "Default_CritBonus": 6
+    },
+    "tokens": {
+      "GenericCalc1": 6
+    }
+  },
+  "DA_ProtectorsVow": {
+    "name": "Protector's Vow",
+    "stats": "<TFTCurveTable row=\"Armor\" icon=\"Icon.Armor\" type=\"stat\"/> <TFTCurveTable row=\"MR\" icon=\"Icon.MR\" type=\"stat\"/> <TFTCurveTable row=\"ManaRegen\" icon=\"Icon.Manaregen\" type=\"stat\"/>",
+    "desc": "Combat Start: Gain <TFTCurveTable row=\"StartingMana\"/> Mana.\r\n\r\nAt <TFTCurveTable row=\"Proc%HealthThreshold\" format=\"percent\"/> Health, gain <TFTCurveTable row=\"ProcGainMana\"/> Mana and a Shield equal to <TFTCurveTable row=\"ProcShield%MaxHealth\" format=\"percent\"/> max Health.",
+    "rows": {
+      "MR": 25,
+      "StartingMana": 20,
+      "ManaRegen": 1,
+      "ProcGainMana": 15,
+      "ProcShield%MaxHealth": 0.2,
+      "Proc%HealthThreshold": 0.4,
+      "Armor": 25
+    },
+    "tokens": {}
+  },
+  "DA_ProtectorsVowRadiant": {
+    "name": "Radiant Protector's Vow",
+    "stats": "<TFTCurveTable row=\"Armor\" icon=\"Icon.Armor\" type=\"stat\"/> <TFTCurveTable row=\"MR\" icon=\"Icon.MR\" type=\"stat\"/> <TFTCurveTable row=\"ManaRegen\" icon=\"Icon.Manaregen\" type=\"stat\"/>",
+    "desc": "Combat Start: Gain <TFTCurveTable row=\"StartingMana\" style=\"colorRadiant\"/> Mana.\r\n\r\nAt <TFTCurveTable row=\"Proc%HealthThreshold\" format=\"percent\"/> Health, gain <TFTCurveTable row=\"ProcGainMana\" style=\"colorRadiant\"/> <colorRadiant>Mana</> and a Shield equal to <TFTCurveTable row=\"ProcShield%MaxHealth\" format=\"percent\" style=\"colorRadiant\"/> <colorRadiant>max Health</>",
+    "rows": {
+      "StartingMana": 40,
+      "ManaRegen": 2,
+      "ProcGainMana": 30,
+      "Armor": 50,
+      "ProcShield%MaxHealth": 0.5,
+      "Proc%HealthThreshold": 0.4,
+      "MR": 50
+    },
+    "tokens": {}
+  },
+  "DA_Quicksilver": {
+    "name": "Quicksilver",
+    "stats": "<TFTCurveTable row=\"Base_MagicResist\" icon=\"icon.MR\" type=\"stat\"/> <TFTCurveTable row=\"Base_AttackSpeed\" icon=\"icon.AS\" format=\"percentMinusOne\" type=\"stat\"/> <TFTCurveTable row=\"Base_CritChance\" icon=\"icon.CritChance\" format=\"percent\" type=\"stat\"/>",
+    "desc": "Combat Start: Unstoppable for <TFTCurveTable row=\"EffectDuration\"/> seconds. \r\n\r\nGain <TFTCurveTable row=\"StacksToAtkSpd\" format=\"percentMinusOne\"/> stacking Attack Speed every second.",
+    "rows": {
+      "Base_MagicResist": 20,
+      "Base_AttackSpeed": 1.15,
+      "EffectDuration": 18,
+      "StackFrequency": 1,
+      "Base_CritChance": 0.2,
+      "StacksToAtkSpd": 1.03
+    },
+    "tokens": {}
+  },
+  "DA_QuicksilverRadiant": {
+    "name": "Radiant Quicksilver",
+    "stats": "<TFTCurveTable row=\"Base_MagicResist\" icon=\"icon.MR\" type=\"stat\"/> <TFTCurveTable row=\"Base_AttackSpeed\" icon=\"icon.AS\" format=\"percentMinusOne\" type=\"stat\"/> <TFTCurveTable row=\"Base_CritChance\" icon=\"icon.CritChance\" format=\"percent\" type=\"stat\"/>",
+    "desc": "Combat Start: Unstoppable for <TFTCurveTable row=\"EffectDuration\" style=\"colorRadiant\"/> seconds. \r\n\r\nGain <TFTCurveTable row=\"StacksToAtkSpd\" format=\"percentMinusOne\" style=\"colorRadiant\"/> stacking Attack Speed every second.",
+    "rows": {
+      "Base_AttackSpeed": 1.4,
+      "EffectDuration": 45,
+      "StacksToAtkSpd": 1.06,
+      "StackFrequency": 1,
+      "Base_CritChance": 0.4,
+      "Base_MagicResist": 40
+    },
+    "tokens": {}
+  },
+  "DA_RabadonsDeathcap": {
+    "name": "Rabadon's Deathcap",
+    "stats": "<TFTCurveTable row=\"AbilityPower\" icon=\"icon.AP\" format=\"percent\" type=\"stat\" fallbackRow=\"AbilityPower\"/> <TFTCurveTable row=\"DamageAmp\" icon=\"icon.DamageAmp\" format=\"percent\" type=\"stat\"/>",
+    "desc": "<Rules>This humble hat can help you make, or unmake, the world itself.</>{ItemTags.RabadonsDeathcap.DeadlierCapsStacks}",
+    "rows": {
+      "DamageAmp": 0.15,
+      "AbilityPower": 0.55
+    },
+    "tokens": {}
+  },
+  "DA_RabadonsDeathcap_Radiant": {
+    "name": "Radiant Rabadon's Deathcap",
+    "stats": "<TFTCurveTable row=\"AbilityPower\" icon=\"icon.AP\" format=\"percent\" type=\"stat\" fallbackRow=\"AbilityPower\"/> <TFTCurveTable row=\"DamageAmp\" icon=\"icon.DamageAmp\" format=\"percent\" type=\"stat\"/>",
+    "desc": "<Rules>It's witnessed - and unleashed - miracles and calamities both.</>{ItemTags.RabadonsDeathcap.DeadlierCapsStacks}",
+    "rows": {
+      "DamageAmp": 0.3,
+      "AbilityPower": 1
+    },
+    "tokens": {
+      "MagicDamageCalc1": 1
+    }
+  },
+  "DA_RedBuff": {
+    "name": "Red Buff",
+    "stats": "<TFTCurveTable row=\"Base_AttackSpeed\" icon=\"icon.AS\" format=\"percentMinusOne\" type=\"stat\"/> <TFTCurveTable row=\"Base_DamageAmp\" icon=\"icon.DamageAmp\" format=\"percent\" type=\"stat\"/>",
+    "desc": "Attacks and Abilities <TFTCurveTable row=\"Burn\"/>% <Keyword>Burn</> and <TFTCurveTable row=\"Wound\"/>% <Keyword>Wound</> enemies for <TFTCurveTable row=\"Duration\"/> seconds.\r\n\r\n<rules>Burn: Deals a percent of the target’s max Health as true damage every second.</>\r\n<rules>Wound: Reduces healing received.</>",
+    "rows": {
+      "Duration": 5,
+      "Burn": 1,
+      "Wound": 33,
+      "Base_DamageAmp": 0.03,
+      "Base_AttackSpeed": 1.45
+    },
+    "tokens": {}
+  },
+  "DA_RedBuffRadiant": {
+    "name": "Radiant Red Buff",
+    "stats": "<TFTCurveTable row=\"Base_AttackSpeed\" icon=\"icon.AS\" format=\"percentMinusOne\" type=\"stat\"/> <TFTCurveTable row=\"Base_DamageAmp\" icon=\"icon.DamageAmp\" format=\"percent\" type=\"stat\"/>",
+    "desc": "Attacks and Abilities <TFTCurveTable row=\"Burn\" style=\"colorRadiant\"/><colorRadiant>%</> <Keyword>Burn</> and <TFTCurveTable row=\"Wound\"/>% <Keyword>Wound</> enemies for <TFTCurveTable row=\"Duration\"/> seconds.\r\n\r\n<rules>Burn: Deals a percent of the target’s max Health as true damage every second.</>\r\n<rules>Wound: Reduces healing received.</>",
+    "rows": {
+      "Duration": 5,
+      "Burn": 2,
+      "Wound": 33,
+      "Base_DamageAmp": 0.06,
+      "Base_AttackSpeed": 1.8
+    },
+    "tokens": {}
+  },
+  "DA_Reforger": {
+    "name": "Reforger",
+    "stats": "",
+    "desc": "Unequip all items and randomly transform them into new ones of a similar type and quality.\r\n\r\n<rules>[Consumable - This item disappears when used.]</>",
+    "rows": {},
+    "tokens": {}
+  },
+  "DA_SpearOfShojin": {
+    "name": "Spear of Shojin",
+    "stats": "<TFTCurveTable row=\"AttackDamage\" type=\"stat\" icon=\"Icon.AD\" format=\"percent\"/> <TFTCurveTable row=\"AbilityPower\" type=\"stat\" icon=\"Icon.AP\" format=\"percent\"/> <TFTCurveTable row=\"ManaPerSecond\" type=\"stat\" icon=\"Icon.ManaRegen\"/>",
+    "desc": "Attacks grant <TFTCurveTable row=\"ManaPerAttack\"/> bonus Mana.",
+    "rows": {
+      "AbilityPower": 0.15,
+      "ManaPerSecond": 1,
+      "AttackDamage": 0.15,
+      "ManaPerAttack": 5
+    },
+    "tokens": {}
+  },
+  "DA_SpearOfShojinRadiant": {
+    "name": "Radiant Spear of Shojin",
+    "stats": "<TFTCurveTable row=\"AttackDamage\" type=\"stat\" icon=\"Icon.AD\" format=\"percent\"/> <TFTCurveTable row=\"AbilityPower\" type=\"stat\" icon=\"Icon.AP\" format=\"percent\"/> <TFTCurveTable row=\"ManaPerSecond\" type=\"stat\" icon=\"Icon.ManaRegen\"/>",
+    "desc": "Attacks grant <TFTCurveTable row=\"ManaPerAttack\" style=\"colorRadiant\"/> <colorRadiant>bonus Mana</>.",
+    "rows": {
+      "AbilityPower": 0.3,
+      "ManaPerSecond": 2,
+      "AttackDamage": 0.3,
+      "ManaPerAttack": 10
+    },
+    "tokens": {}
+  },
+  "DA_SpiritVisage": {
+    "name": "Spirit Visage",
+    "stats": "<TFTCurveTable row=\"BaseHealth\" icon=\"icon.Health\" type=\"stat\"/> <TFTCurveTable row=\"IncomingDmgMod\" icon=\"icon.Dura\" format=\"invertedPercent\" type=\"stat\"/> <TFTCurveTable row=\"BaseManaRegen\" icon=\"icon.ManaRegen\" type=\"stat\"/>",
+    "desc": "Regenerate <TFTCurveTable row=\"MissingHealthRegen\"/>% of missing Health each second.",
+    "rows": {
+      "BaseHealth": 300,
+      "BaseManaRegen": 2,
+      "MissingHealthRegen": 2,
+      "RegenTickRate": 1,
+      "IncomingDmgMod": 0.9
+    },
+    "tokens": {}
+  },
+  "DA_SpiritVisage_Radiant": {
+    "name": "Radiant Spirit Visage",
+    "stats": "<TFTCurveTable row=\"BaseHealth\" icon=\"icon.Health\" type=\"stat\"/> <TFTCurveTable row=\"IncomingDmgMod\" icon=\"icon.Dura\" format=\"invertedPercent\" type=\"stat\"/> <TFTCurveTable row=\"BaseManaRegen\" icon=\"icon.ManaRegen\" type=\"stat\"/>",
+    "desc": "Regenerate <TFTCurveTable row=\"MissingHealthRegen\" style=\"colorRadiant\"/><colorRadiant>%</> of missing Health each second.",
+    "rows": {
+      "BaseHealth": 700,
+      "BaseManaRegen": 4,
+      "MissingHealthRegen": 4,
+      "RegenTickRate": 1,
+      "IncomingDmgMod": 0.82
+    },
+    "tokens": {}
+  },
+  "DA_SteadfastHeart": {
+    "name": "Steadfast Heart",
+    "stats": "<TFTAttribute attributeId=\"TFTCalculationAttributes.HealthCalc1\" icon=\"icon.Health\" type=\"stat\" fallbackRow=\"Base_Health\"/> <TFTCurveTable row=\"Base_Armor\" icon=\"icon.Armor\" type=\"stat\"/> <TFTCurveTable row=\"Base_CritChance\" icon=\"icon.CritChance\" type=\"stat\" format=\"percent\"/>",
+    "desc": "Gain <TFTCurveTable row=\"LowHealthIncDmgMod\"/>% Durability. While above <TFTCurveTable row=\"MaxHealthThreshold\" format=\"percent\"/> Health, instead gain <TFTCurveTable row=\"HighHealthIncomingDmgMod\"/>%  Durability.{Augment.Variant.HeartofSteel.Tooltip}",
+    "rows": {
+      "Base_Health": 250,
+      "LowHealthIncDmgMod": 5,
+      "Base_CritChance": 0.2,
+      "MaxHealthThreshold": 0.5,
+      "HighHealthIncomingDmgMod": 15,
+      "Base_Armor": 20
+    },
+    "tokens": {
+      "HealthCalc1": 250
+    }
+  },
+  "DA_SteadfastHeartRadiant": {
+    "name": "Radiant Steadfast Heart",
+    "stats": "<TFTAttribute attributeId=\"TFTCalculationAttributes.HealthCalc1\" icon=\"icon.Health\" type=\"stat\" fallbackRow=\"Base_Health\"/> <TFTCurveTable row=\"Base_Armor\" icon=\"icon.Armor\" type=\"stat\"/> <TFTCurveTable row=\"Base_CritChance\" icon=\"icon.CritChance\" type=\"stat\" format=\"percent\"/>",
+    "desc": "Gain <TFTCurveTable row=\"LowHealthIncDmgMod\" style=\"colorRadiant\"/>% Durability. While above <TFTCurveTable row=\"MaxHealthThreshold\" format=\"percent\"/> Health, instead gain <TFTCurveTable row=\"HighHealthIncDmgMod\" style=\"colorRadiant\"/>% Durability.{Augment.Variant.HeartofSteel.Tooltip}",
+    "rows": {
+      "Base_CritChance": 0.4,
+      "LowHealthIncDmgMod": 10,
+      "MaxHealthThreshold": 0.5,
+      "Base_Health": 500,
+      "HighHealthIncDmgMod": 30,
+      "Base_Armor": 40
+    },
+    "tokens": {
+      "HealthCalc1": 500
+    }
+  },
+  "DA_SteraksGage": {
+    "name": "Sterak's Gage",
+    "stats": "<TFTCurveTable row=\"BaseHealth\" icon=\"icon.Health\" type=\"stat\"/> <TFTCurveTable row=\"BaseAD\" icon=\"icon.AD\" format=\"percent\" type=\"stat\"/>",
+    "desc": "At <TFTCurveTable row=\"MaxHealthProcThreshold\" format=\"percent\"/> Health, gain a Shield equal to <TFTCurveTable row=\"ShieldMaxHealthRatio\" format=\"percent\"/> of the wearer's maximum Health that rapidly decays over <TFTCurveTable row=\"Duration\"/> seconds.",
+    "rows": {
+      "BaseAD": 0.45,
+      "BaseHealth": 300,
+      "ShieldMaxHealthRatio": 0.4,
+      "MaxHealthProcThreshold": 0.6,
+      "Duration": 4
+    },
+    "tokens": {}
+  },
+  "DA_SteraksGageRadiant": {
+    "name": "Radiant Sterak's Gage",
+    "stats": "<TFTCurveTable row=\"BaseHealth\" icon=\"icon.Health\" type=\"stat\"/> <TFTCurveTable row=\"BaseAD\" icon=\"icon.AD\" format=\"percent\" type=\"stat\"/>",
+    "desc": "At <TFTCurveTable row=\"MaxHealthProcThreshold\" format=\"percent\"/> Health, gain a Shield equal to <TFTCurveTable row=\"ShieldMaxHealthRatio\" format=\"percent\" style=\"colorRadiant\"/> of the wearer's maximum Health that rapidly decays over <TFTCurveTable row=\"Duration\" style=\"colorRadiant\"/> seconds.",
+    "rows": {
+      "BaseAD": 0.9,
+      "BaseHealth": 600,
+      "Duration": 6,
+      "ShieldMaxHealthRatio": 0.8,
+      "MaxHealthProcThreshold": 0.6
+    },
+    "tokens": {}
+  },
+  "DA_StrikersFlail": {
+    "name": "Striker's Flail",
+    "stats": "<TFTCurveTable row=\"Base_Health\" icon=\"icon.Health\" type=\"stat\"/> <TFTCurveTable row=\"Base_AttackSpeed\" icon=\"icon.AS\" format=\"percentMinusOne\" type=\"stat\"/> <TFTCurveTable row=\"Base_CritChance\" icon=\"icon.CritChance\" format=\"percent\" type=\"stat\"/> <TFTCurveTable row=\"Base_DamageAmp\" icon=\"icon.DamageAmp\" format=\"percent\" type=\"stat\"/>",
+    "desc": "Critical Strikes grant <TFTCurveTable row=\"DABuff\" format=\"percent\"/> Damage Amp for <TFTCurveTable row=\"BuffDuration\"/> seconds, stacking up to <TFTCurveTable row=\"MaxStacks\"/> times.",
+    "rows": {
+      "Base_CritChance": 0.2,
+      "Base_AttackSpeed": 1.1,
+      "Base_DamageAmp": 0.1,
+      "BuffDuration": 5,
+      "DABuff": 0.05,
+      "MaxStacks": 4,
+      "Base_Health": 150
+    },
+    "tokens": {}
+  },
+  "DA_StrikersFlailRadiant": {
+    "name": "Radiant Striker's Flail",
+    "stats": "<TFTCurveTable row=\"Base_Health\" icon=\"icon.Health\" type=\"stat\"/> <TFTCurveTable row=\"Base_AttackSpeed\" icon=\"icon.AS\" format=\"percentMinusOne\" type=\"stat\"/> <TFTCurveTable row=\"Base_CritChance\" icon=\"icon.CritChance\" format=\"percent\" type=\"stat\"/> <TFTCurveTable row=\"Base_DamageAmp\" icon=\"icon.DamageAmp\" format=\"percent\" type=\"stat\"/>",
+    "desc": "Critical Strikes grant <TFTCurveTable row=\"DABuff\" format=\"percent\" style=\"colorRadiant\"/> Damage Amp for <TFTCurveTable row=\"BuffDuration\"/> seconds, stacking up to <TFTCurveTable row=\"MaxStacks\"/> times.",
+    "rows": {
+      "Base_CritChance": 0.4,
+      "Base_AttackSpeed": 1.2,
+      "Base_DamageAmp": 0.2,
+      "BuffDuration": 5,
+      "DABuff": 0.1,
+      "MaxStacks": 4,
+      "Base_Health": 300
+    },
+    "tokens": {}
+  },
+  "DA_SunfireCape": {
+    "name": "Sunfire Cape",
+    "stats": "<TFTCurveTable row=\"MaxHealth\" icon=\"icon.Health\" type=\"stat\"/> <TFTCurveTable row=\"Armor\" icon=\"icon.Armor\" type=\"stat\"/>",
+    "desc": "Gain <TFTCurveTable row=\"MaxHealthMultiplier\" format=\"percentMinusOne\"/> max Health.\r\n\r\nEvery <TFTCurveTable row=\"BurnWoundFrequency\"/> seconds, deal <TFTCurveTable row=\"BurnPercent\"/>% <Keyword>Burn</> and <TFTCurveTable row=\"WoundPercent\"/>% <Keyword>Wound</> to an enemy within 2 hexes for <TFTCurveTable row=\"BurnWoundDuration\"/> seconds.\r\n\r\n<Rules>Burn: Deals a percent of the target’s max Health as true damage every second.</>\r\n<Rules>Wound: Reduces healing received.</>",
+    "rows": {
+      "BurnWoundFrequency": 2,
+      "Armor": 20,
+      "MaxHealth": 150,
+      "BurnWoundDuration": 10,
+      "MaxHealthMultiplier": 1.08,
+      "BurnWoundRange": 2,
+      "BurnPercent": 1,
+      "WoundPercent": 33
+    },
+    "tokens": {}
+  },
+  "DA_SunfireCape_Radiant": {
+    "name": "Radiant Sunfire Cape",
+    "stats": "<TFTCurveTable row=\"MaxHealth\" icon=\"icon.Health\" type=\"stat\"/> <TFTCurveTable row=\"Armor\" icon=\"icon.Armor\" type=\"stat\"/>",
+    "desc": "Gain <TFTCurveTable row=\"MaxHealthMultiplier\" format=\"percentMinusOne\" style=\"colorRadiant\"/> max Health.\r\n\r\nEvery <TFTCurveTable row=\"BurnWoundFrequency\"/> seconds, deal <TFTCurveTable row=\"BurnPercent\" style=\"colorRadiant\"/><colorRadiant>%</> <Keyword>Burn</> and <TFTCurveTable row=\"WoundPercent\"/>% <Keyword>Wound</> to an enemy within 2 hexes for <TFTCurveTable row=\"BurnWoundDuration\"/> seconds.\r\n\r\n<Rules>Burn: Deals a percent of the target’s max Health as true damage every second.</>\r\n<Rules>Wound: Reduces healing received.</>",
+    "rows": {
+      "BurnWoundFrequency": 2,
+      "Armor": 20,
+      "MaxHealth": 150,
+      "BurnWoundDuration": 10,
+      "MaxHealthMultiplier": 1.08,
+      "BurnWoundRange": 2,
+      "BurnPercent": 1,
+      "WoundPercent": 33
+    },
+    "tokens": {}
+  },
+  "DA_TacticiansCape": {
+    "name": "Tactician's Cape",
+    "stats": "",
+    "desc": "Your team gains +1 maximum team size.\r\n\r\n<TFTCurveTable row=\"%ChanceToDropGold\" format=\"percent\"/> chance to drop 1 gold after <TFTCurveTable row=\"DelayToTrigger\"/> seconds of combat.\r\n\r\n<Rules>...and a bit of Luck.</>",
+    "rows": {
+      "%ChanceToDropGold": 0.1,
+      "BonusTeamSize": 1,
+      "DelayToTrigger": 10
+    },
+    "tokens": {}
+  },
+  "DA_TacticiansCrown": {
+    "name": "Tacticians Crown",
+    "stats": "",
+    "desc": "Your team gains +<TFTCurveTable row=\"BonusTeamSize\"/> maximum team size.\r\n\r\n<TFTCurveTable row=\"%ChanceToDropGold\" format=\"percent\"/> chance to drop 1 gold when you win combat.\r\n\r\n<rules>...the Heart of a hero...</>",
+    "rows": {
+      "%ChanceToDropGold": 0.1,
+      "BonusTeamSize": 1
+    },
+    "tokens": {}
+  },
+  "DA_TacticiansShield": {
+    "name": "Tacticians Shield",
+    "stats": "",
+    "desc": "Your team gains +<TFTCurveTable row=\"BonusTeamSize\"/> maximum team size.\r\n\r\n<TFTCurveTable row=\"%ChanceToDropGold\" format=\"percent\"/> chance to drop 1 gold when the holder dies.\r\n\r\n<rules>Imbued with a Philosopher's wisdom...</>",
+    "rows": {
+      "%ChanceToDropGold": 0.1,
+      "BonusTeamSize": 1
+    },
+    "tokens": {}
+  },
+  "DA_ThiefsGloves": {
+    "name": "Thief's Gloves",
+    "stats": "<TFTCurveTable row=\"Base_Health\" icon=\"icon.Health\" type=\"stat\"/> <TFTCurveTable row=\"Base_CritChance\" icon=\"Icon.Critchance\" format=\"percent\" type=\"stat\"/>",
+    "desc": "Each round: Equip 2 random items\r\n\r\n<Rules>[Consumes 3 item slots.]</>",
+    "rows": {
+      "Base_CritChance": 0.2,
+      "Base_Health": 150
+    },
+    "tokens": {}
+  },
+  "DA_ThiefsGlovesRadiant": {
+    "name": "Radiant Thief's Gloves",
+    "stats": "<TFTCurveTable row=\"Base_Health\" icon=\"icon.Health\" type=\"stat\"/> <TFTCurveTable row=\"Base_CritChance\" icon=\"Icon.Critchance\" format=\"percent\" type=\"stat\"/>",
+    "desc": "Each round: Equip 2 random <colorRadiant>Radiant</> items\r\n\r\n<Rules>[Consumes 3 item slots.]</>",
+    "rows": {
+      "Base_CritChance": 0.2,
+      "Base_Health": 150
+    },
+    "tokens": {}
+  },
+  "DA_TitansResolve": {
+    "name": "Titan's Resolve",
+    "stats": "<TFTCurveTable row=\"Base_Armor\" icon=\"Icon.Armor\" type=\"stat\"/> <TFTCurveTable row=\"Base_AttackSpeed\" icon=\"Icon.AS\" format=\"percentMinusOne\" type=\"stat\"/>",
+    "desc": "Gain <TFTCurveTable row=\"ADAPPerStack\" format=\"percent\"/> Attack Damage and Ability Power when attacking or taking damage, stacking up to <TFTCurveTable row=\"MaxStacks\"/> times.\r\n\r\nAt full stacks, gain <TFTCurveTable row=\"DamageAmpFullStacks\"/>% Damage Amp and become unstoppable.",
+    "rows": {
+      "Base_AttackSpeed": 1.1,
+      "MaxStacks": 25,
+      "ADAPPerStack": 0.02,
+      "DamageAmpFullStacks": 10,
+      "Base_Armor": 20
+    },
+    "tokens": {}
+  },
+  "DA_TitansResolve_Radiant": {
+    "name": "Radiant Titan's Resolve",
+    "stats": "<TFTCurveTable row=\"Base_Armor\" icon=\"Icon.Armor\" type=\"stat\"/> <TFTCurveTable row=\"Base_AttackSpeed\" icon=\"Icon.AS\" format=\"percentMinusOne\" type=\"stat\"/>",
+    "desc": "Gain <TFTCurveTable row=\"ADAPPerStack\" format=\"percent\" style=\"colorRadiant\"/> Attack Damage and <TFTCurveTable row=\"ADAPPerStack\" format=\"percent\" style=\"colorRadiant\"/> Ability Power when attacking or taking damage, stacking up to <TFTCurveTable row=\"MaxStacks\"/> times.\r\n\r\nAt full stacks, gain <TFTCurveTable row=\"DamageAmpFullStacks\" style=\"colorRadiant\"/>% Damage Amp and unstoppable.",
+    "rows": {
+      "Base_AttackSpeed": 1.2,
+      "MaxStacks": 25,
+      "ADAPPerStack": 0.04,
+      "DamageAmpFullStacks": 20,
+      "Base_Armor": 40
+    },
+    "tokens": {}
+  },
+  "DA_VoidStaff": {
+    "name": "Void Staff",
+    "stats": "<TFTCurveTable row=\"Base_AP\" icon=\"icon.AP\" format=\"percent\" type=\"stat\"/> <TFTCurveTable row=\"Base_AttackSpeed\" icon=\"icon.AS\" format=\"percentMinusOne\" type=\"stat\"/> <TFTCurveTable row=\"Base_ManaPerSecond\" icon=\"icon.ManaRegen\" type=\"stat\"/>",
+    "desc": "Attacks and Ability damage <TFTCurveTable row=\"ShredPercent\"/>% <Keyword>Shred</> the target for <TFTCurveTable row=\"ShredDuration\"/> seconds. This effect does not stack.\r\n\r\n<rules>Shred: Reduce Magic Resist</>",
+    "rows": {
+      "Base_ManaPerSecond": 1,
+      "Base_AttackSpeed": 1.15,
+      "ShredDuration": 5,
+      "ShredPercent": 30,
+      "Base_AP": 0.35
+    },
+    "tokens": {}
+  },
+  "DA_VoidStaffRadiant": {
+    "name": "Radiant Void Staff",
+    "stats": "<TFTCurveTable row=\"Base_AP\" icon=\"icon.AP\" format=\"percent\" type=\"stat\"/> <TFTCurveTable row=\"Base_AttackSpeed\" icon=\"icon.AS\" format=\"percentMinusOne\" type=\"stat\"/> <TFTCurveTable row=\"Base_ManaPerSecond\" icon=\"icon.ManaRegen\" type=\"stat\"/>",
+    "desc": "Attacks and Ability damage <TFTCurveTable row=\"ShredPercent\"/>% <Keyword>Shred</> the target for the <colorRadiant>rest of combat.</> This effect does not stack.\r\n\r\n<rules>Shred: Reduce Magic Resist</>",
+    "rows": {
+      "Base_AttackSpeed": 1.3,
+      "ShredPercent": 30,
+      "Base_ManaPerSecond": 2,
+      "ShredDuration": 60,
+      "Base_AP": 0.75
+    },
+    "tokens": {}
+  },
+  "DA_WarmogsArmor": {
+    "name": "Warmog's Armor",
+    "stats": "<TFTCurveTable row=\"Base_Health\" icon=\"icon.Health\" type=\"stat\"/>",
+    "desc": "Gain <TFTCurveTable row=\"HealthMaxMultiplier\" format=\"percentMinusOne\"/> max Health.",
+    "rows": {
+      "HealthMaxMultiplier": 1.18,
+      "Base_Health": 500
+    },
+    "tokens": {}
+  },
+  "DA_WarmogsArmorRadiant": {
+    "name": "Radiant Warmog's Armor",
+    "stats": "<TFTCurveTable row=\"Base_Health\" icon=\"icon.Health\" type=\"stat\"/>",
+    "desc": "Gain <TFTCurveTable row=\"HealthMaxMultiplier\" format=\"percentMinusOne\" style=\"colorRadiant\"/> max Health.",
+    "rows": {
+      "HealthMaxMultiplier": 1.36,
+      "Base_Health": 1200
+    },
+    "tokens": {}
+  },
+  "DA_AbilityBooster18": {
+    "name": "Ability Power Booster",
+    "stats": "",
+    "desc": "Permanently grant <TFTCurveTable row=\"AbilityPower\" format=\"percent\"/> Ability Power. \r\n\r\n<Rules>[Consumable - This item disappears when used.]</>",
+    "rows": {
+      "AbilityPower": 0.08
+    },
+    "tokens": {}
+  },
+  "DA_ArmorMRBooster18": {
+    "name": "Armor and Magic Resist Booster",
+    "stats": "",
+    "desc": "Permanently grant <TFTCurveTable row=\"Armor\"/> Armor and <TFTCurveTable row=\"MR\"/> Magic Resist. \r\n\r\n<Rules>[Consumable - This item disappears when used.]</>",
+    "rows": {
+      "Armor": 8,
+      "MR": 8
+    },
+    "tokens": {}
+  },
+  "DA_AttackBooster18": {
+    "name": "Attack Damage Booster",
+    "stats": "",
+    "desc": "Permanently grant <TFTCurveTable row=\"AttackDamage\" format=\"percent\"/> Attack Damage. \r\n\r\n<Rules>[Consumable - This item disappears when used.]</>",
+    "rows": {
+      "AttackDamage": 0.08
+    },
+    "tokens": {}
+  },
+  "DA_HealthBooster18": {
+    "name": "Health Booster",
+    "stats": "",
+    "desc": "Permanently grant <TFTCurveTable row=\"MaxHealth\"/> max Health. \r\n\r\n<Rules>[Consumable - This item disappears when used.]</>",
+    "rows": {
+      "MaxHealth": 100
+    },
+    "tokens": {}
+  },
+  "DA_ManaRegenBooster18": {
+    "name": "Mana Regen Booster",
+    "stats": "",
+    "desc": "Permanently grant <TFTCurveTable row=\"ManaRegen\"/> Mana Regen. \r\n\r\n<Rules>[Consumable - This item disappears when used.]</>",
+    "rows": {
+      "ManaRegen": 1
+    },
+    "tokens": {}
+  },
+  "DA_SpeedBooster18": {
+    "name": "Attack Speed Booster",
+    "stats": "",
+    "desc": "Permanently grant <TFTCurveTable row=\"AttackSpeed\" format=\"PercentMinusOne\"/> Attack Speed. \r\n\r\n<Rules>[Consumable - This item disappears when used.]</>",
+    "rows": {
+      "AttackSpeed": 1.06
+    },
+    "tokens": {}
+  },
+  "DA_BlastPotion18": {
+    "name": "Blast Potion",
+    "stats": "",
+    "desc": "After <TFTCurveTable row=\"TimeIntoCombat\"/> seconds of combat, knock up enemies within <TFTCurveTable row=\"HexRadius\"/> hexes for <TFTCurveTable row=\"KnockupDuration\"/> seconds.\r\n\r\n<Rules>[Single Use - This item is destroyed after activating in combat.]</>",
+    "rows": {
+      "KnockupDuration": 1.75,
+      "TimeIntoCombat": 8,
+      "HexRadius": 3
+    },
+    "tokens": {}
+  },
+  "DA_BlastPotion18_Radiant": {
+    "name": "Radiant Blast Potion",
+    "stats": "",
+    "desc": "After <TFTCurveTable row=\"TimeIntoCombat\"/> seconds of combat, knock up enemies within <TFTCurveTable row=\"HexRadius\"/> hexes for <TFTCurveTable row=\"KnockupDuration\"/> seconds.\r\n\r\n<Rules>[Single Use - This item is destroyed after activating in combat.]</>",
+    "rows": {
+      "KnockupDuration": 2,
+      "TimeIntoCombat": 8,
+      "HexRadius": 4
+    },
+    "tokens": {}
+  },
+  "DA_HealthPotion18": {
+    "name": "Health Potion",
+    "stats": "",
+    "desc": "When the holder drops below <TFTCurveTable row=\"MaxHealthThreshold\" format=\"percent\"/> health, heal for <TFTCurveTable row=\"MaxHealthHeal\"/> Health over <TFTCurveTable row=\"Duration\"/> seconds.\r\n\r\n<Rules>[Single Use - This item is destroyed after activating in combat.]</>",
+    "rows": {
+      "MaxHealthThreshold": 0.5,
+      "Duration": 3,
+      "MaxHealthHeal": 750
+    },
+    "tokens": {}
+  },
+  "DA_HealthPotion18_Radiant": {
+    "name": "Radiant Health Potion",
+    "stats": "",
+    "desc": "When the holder drops below <TFTCurveTable row=\"MaxHealthThreshold\" format=\"percent\"/> health, heal for <TFTCurveTable row=\"MaxHealthHeal\"/> Health and heal allies for <TFTCurveTable row=\"TeamwideHeal\"/> Health over <TFTCurveTable row=\"Duration\"/> seconds. \r\n\r\n<Rules>[Single Use - This item is destroyed after activating in combat.]</>",
+    "rows": {
+      "MaxHealthThreshold": 0.5,
+      "TeamwideHeal": 150,
+      "Duration": 3,
+      "MaxHealthHeal": 850
+    },
+    "tokens": {}
+  },
+  "DA_ManaPotion18": {
+    "name": "Mana Potion",
+    "stats": "",
+    "desc": "The holder gains <TFTCurveTable row=\"StartingMana\"/> Mana. On cast, restore <TFTCurveTable row=\"ManaRestore\"/> Mana over <TFTCurveTable row=\"Duration\"/> seconds.\r\n\r\n<Rules>[Single Use - This item is destroyed after activating in combat.]</>",
+    "rows": {
+      "Duration": 5,
+      "ManaRestore": 70,
+      "StartingMana": 10
+    },
+    "tokens": {}
+  },
+  "DA_ManaPotion18_Radiant": {
+    "name": "Radiant Mana Potion",
+    "stats": "",
+    "desc": "The holder gains <TFTCurveTable row=\"UpgradeStartingMana\"/> Mana. On cast, restore <TFTCurveTable row=\"UpgradeManaRestore\"/> Mana to the holder and <TFTCurveTable row=\"UpgradeAllyManaRestore\"/> Mana to allies over <TFTCurveTable row=\"Duration\"/> seconds.\r\n\r\n<Rules>[Single Use - This item is destroyed after activating in combat.]</>",
+    "rows": {
+      "Duration": 5,
+      "UpgradeManaRestore": 80,
+      "UpgradeStartingMana": 10,
+      "UpgradeAllyManaRestore": 10
+    },
+    "tokens": {}
+  },
+  "DA_18_EmblemBlackthorn": {
+    "name": "Blackthorn Emblem",
+    "stats": "<TFTCurveTable row=\"Health\" icon=\"icon.Health\" type=\"stat\"/> <TFTCurveTable row=\"AttackDamage\" icon=\"icon.AD\" format=\"percent\" type=\"stat\"/> <TFTCurveTable row=\"AbilityPower\" icon=\"icon.AP\" format=\"percent\" type=\"stat\"/>",
+    "desc": "The holder gains the Blackthorn trait.",
+    "rows": {
+      "Health": 250,
+      "AbilityPower": 0.15,
+      "AttackDamage": 0.15
+    },
+    "tokens": {}
+  },
+  "DA_18_EmblemBlossom": {
+    "name": "Blossom Emblem",
+    "stats": "<TFTCurveTable row=\"Health\" icon=\"icon.Health\" type=\"stat\"/> <TFTCurveTable row=\"ADAP\" icon=\"icon.AD\" type=\"stat\" format=\"percent\"/> <TFTCurveTable row=\"ADAP\" icon=\"icon.AP\" type=\"stat\" format=\"percent\"/>",
+    "desc": "The holder gains the Blossom trait.",
+    "rows": {
+      "Health": 250,
+      "ADAP": 0.1
+    },
+    "tokens": {}
+  },
+  "DA_18_EmblemBrawler": {
+    "name": "Brawler Emblem",
+    "stats": "<TFTCurveTable row=\"HP\" icon=\"icon.Health\" type=\"stat\"/>",
+    "desc": "The holder gains the Brawler trait. \r\n\r\nAttacks deal <TFTCurveTable row=\"MaxHealthDamageRatio\" format=\"percent\"/> of the holder's max Health as magic damage.",
+    "rows": {
+      "HP": 150,
+      "MaxHealthDamageRatio": 0.025
+    },
+    "tokens": {}
+  },
+  "DA_18_EmblemCoven": {
+    "name": "Coven Emblem",
+    "stats": "<TFTCurveTable row=\"Health\" icon=\"icon.Health\" type=\"stat\"/>",
+    "desc": "The holder gains the Coven trait.",
+    "rows": {
+      "Health": 150
+    },
+    "tokens": {}
+  },
+  "DA_18_EmblemDefender": {
+    "name": "Defender Emblem",
+    "stats": "<TFTCurveTable row=\"ArmorMR\" icon=\"icon.Armor\" type=\"stat\"/> <TFTCurveTable row=\"ArmorMR\" icon=\"icon.MR\" type=\"stat\"/>",
+    "desc": "The holder gains the Defender trait. \r\n\r\nCombat Start: Gain <TFTCurveTable row=\"ASPerFrontlineAlly\" format=\"percent\"/> Attack Speed for every ally that starts in the front row.",
+    "rows": {
+      "ArmorMR": 30,
+      "ASPerFrontlineAlly": 0.06
+    },
+    "tokens": {}
+  },
+  "DA_18_EmblemElderwood": {
+    "name": "Elderwood Emblem",
+    "stats": "<TFTCurveTable row=\"AttackSpeed\" icon=\"icon.AS\" type=\"stat\" format=\"percentMinusOne\"/> <TFTCurveTable row=\"ArmorMR\" icon=\"icon.Armor\" type=\"stat\"/> <TFTCurveTable row=\"ArmorMR\" icon=\"icon.MR\" type=\"stat\"/>",
+    "desc": "The holder gains the Elderwood trait.",
+    "rows": {
+      "ArmorMR": 25,
+      "AttackSpeed": 1.25
+    },
+    "tokens": {}
+  },
+  "DA_18_EmblemExecutioner": {
+    "name": "Executioner Emblem",
+    "stats": "<TFTCurveTable row=\"CritChance\" icon=\"icon.CritChance\" type=\"stat\" format=\"percent\"/> <TFTCurveTable row=\"CritDamage\" icon=\"icon.Critdmg\" type=\"stat\" format=\"percent\"/>",
+    "desc": "The holder gains the Executioner trait. \r\n\r\nDamage executes enemies below <TFTCurveTable row=\"ExecuteThreshold\" format=\"percent\"/> of their max Health.",
+    "rows": {
+      "CritChance": 0.2,
+      "CritDamage": 0.08,
+      "ExecuteThreshold": 0.08
+    },
+    "tokens": {}
+  },
+  "DA_18_EmblemFae": {
+    "name": "Fae Emblem",
+    "stats": "<TFTCurveTable row=\"Health\" icon=\"icon.Health\" type=\"stat\"/> <TFTCurveTable row=\"ADAP\" icon=\"icon.AD\" type=\"stat\" format=\"percent\"/> <TFTCurveTable row=\"ADAP\" icon=\"icon.AP\" type=\"stat\" format=\"percent\"/>",
+    "desc": "The holder gains the Fae trait.",
+    "rows": {
+      "Health": 200,
+      "ADAP": 0.1
+    },
+    "tokens": {}
+  },
+  "DA_18_EmblemFloraFatalisAugment": {
+    "name": "Flora Fatalis Emblem",
+    "stats": "<TFTCurveTable row=\"Health\" icon=\"icon.Health\" type=\"stat\"/> <TFTCurveTable row=\"ManaRegen\" icon=\"icon.ManaRegen\" style=\"colorRadiant\" type=\"stat\"/>",
+    "desc": "The holder gains the Flora Fatalis trait. \r\n\r\n<bright>They gain</> <TFTCurveTable row=\"ExtraEffectiveness\" format=\"percent\" style=\"bright\"/> <bright>increased benefits from Flora Fatalis.</>",
+    "rows": {
+      "Health": 250,
+      "BonusManaRegen": 0,
+      "ManaRegen": 2,
+      "Gold": 3,
+      "PlusGold": 3,
+      "ExtraEffectiveness": 0.5
+    },
+    "tokens": {}
+  },
+  "DA_18_EmblemFloraFatalis": {
+    "name": "Flora Fatalis Emblem",
+    "stats": "<TFTCurveTable row=\"Health\" icon=\"icon.Health\" type=\"stat\"/> <TFTCurveTable row=\"ManaRegen\" icon=\"icon.ManaRegen\" type=\"stat\"/>",
+    "desc": "The holder gains the Flora Fatalis trait.",
+    "rows": {
+      "ManaRegen": 2,
+      "Health": 250
+    },
+    "tokens": {}
+  },
+  "DA_18_EmblemHunter": {
+    "name": "Hunter Emblem",
+    "stats": "<TFTCurveTable row=\"AttackDamage\" icon=\"icon.AD\" format=\"percent\" type=\"stat\"/>",
+    "desc": "The holder gains the Hunter trait. \r\n\r\nTakedowns grant <TFTCurveTable row=\"AttackDamagePerTakedown\" format=\"percent\"/> Attack Damage.",
+    "rows": {
+      "AttackDamage": 0.25,
+      "AttackDamagePerTakedown": 0.15
+    },
+    "tokens": {}
+  },
+  "DA_18_EmblemInferno": {
+    "name": "Inferno Emblem",
+    "stats": "<TFTCurveTable row=\"AttackSpeed\" icon=\"icon.AS\" type=\"stat\" format=\"percentMinusOne\"/>",
+    "desc": "The holder gains the Inferno trait.",
+    "rows": {
+      "AttackSpeed": 1.4
+    },
+    "tokens": {}
+  },
+  "DA_18_EmblemInvoker": {
+    "name": "Invoker Emblem",
+    "stats": "<TFTCurveTable row=\"ManaRegen\" icon=\"icon.ManaRegen\" type=\"stat\"/>",
+    "desc": "The holder gains the Invoker trait. \r\n\r\nOn cast, gain Ability Power equal to <TFTCurveTable row=\"APPerManaSpentRatio\" format=\"percent\"/> of Mana spent.",
+    "rows": {
+      "ManaRegen": 2,
+      "APPerManaSpentRatio": 0.08
+    },
+    "tokens": {}
+  },
+  "DA_18_EmblemJuggernaut": {
+    "name": "Juggernaut Emblem",
+    "stats": "<TFTCurveTable row=\"Health\" icon=\"icon.Health\" type=\"stat\"/>",
+    "desc": "The holder gains the Juggernaut trait. \r\n\r\nGain <TFTCurveTable row=\"ManaPerDeath\"/> mana whenever a Juggernaut dies.",
+    "rows": {
+      "Health": 250,
+      "ManaPerDeath": 10
+    },
+    "tokens": {}
+  },
+  "DA_18_EmblemLunar": {
+    "name": "Lunar Emblem",
+    "stats": "<TFTCurveTable row=\"AttackSpeed\" icon=\"icon.AS\" format=\"percentminusone\" type=\"stat\"/> <TFTCurveTable row=\"ManaRegen\" icon=\"icon.ManaRegen\" type=\"stat\"/>",
+    "desc": "The holder gains the Lunar trait.",
+    "rows": {
+      "ManaRegen": 3,
+      "AttackSpeed": 1.2
+    },
+    "tokens": {}
+  },
+  "DA_18_EmblemPrimal": {
+    "name": "Primal Emblem",
+    "stats": "<TFTCurveTable row=\"AttackSpeed\" icon=\"icon.AS\" format=\"percentminusone\" type=\"stat\"/> <TFTCurveTable row=\"Health\" icon=\"icon.Health\" type=\"stat\"/> <TFTCurveTable row=\"CriticalStrikeChance\" icon=\"icon.CritChance\" format=\"percent\" type=\"stat\"/>",
+    "desc": "The holder gains the Primal trait.",
+    "rows": {
+      "CriticalStrikeChance": 0.2,
+      "Health": 250,
+      "AttackSpeed": 1.35
+    },
+    "tokens": {}
+  },
+  "DA_18_EmblemRapidfire": {
+    "name": "Rapidfire Emblem",
+    "stats": "<TFTCurveTable row=\"AttackSpeed\" icon=\"icon.AS\" type=\"stat\" format=\"percentMinusOne\"/>",
+    "desc": "The holder gains the Rapidfire trait. \r\n\r\nAttacks deal <TFTCurveTable row=\"MaxHealthTrueDamageRatio\" format=\"percent\"/> of the target's max Health as true damage.",
+    "rows": {
+      "AttackSpeed": 1.2,
+      "MaxHealthTrueDamageRatio": 0.01
+    },
+    "tokens": {}
+  },
+  "DA_18_EmblemSlayer": {
+    "name": "Ravager Emblem",
+    "stats": "<TFTCurveTable row=\"Base_AD\" icon=\"Icon.AD\" type=\"stat\" format=\"percent\"/> <TFTCurveTable row=\"Base_AP\" icon=\"Icon.AP\" type=\"stat\" format=\"percent\"/> <TFTCurveTable row=\"ArmorMR\" icon=\"icon.Armor\" type=\"stat\"/> <TFTCurveTable row=\"ArmorMR\" icon=\"icon.MR\" type=\"stat\"/>",
+    "desc": "The holder gains the Ravager trait. \r\n\r\nGain <TFTCurveTable row=\"DamageAmpIncrease\" format=\"percent\"/> Damage Amp per <TFTCurveTable row=\"HealingAmount\"/> Health restored.",
+    "rows": {
+      "ArmorMR": 20,
+      "DamageAmpIncrease": 0.03,
+      "HealingAmount": 300,
+      "Base_AD": 0.2,
+      "Base_AP": 0.2
+    },
+    "tokens": {}
+  },
+  "DA_18_EmblemSpellweaver": {
+    "name": "Spellweaver Emblem",
+    "stats": "<TFTCurveTable row=\"AP\" icon=\"icon.AP\" format=\"percent\" type=\"stat\"/>",
+    "desc": "The holder gains the Spellweaver trait. \r\n\r\nGain <TFTCurveTable row=\"ManaGainPerTeamCast\"/> Mana whenever an ally casts their Ability.",
+    "rows": {
+      "AP": 0.25,
+      "ManaGainPerTeamCast": 2
+    },
+    "tokens": {}
+  },
+  "DA_18_EmblemSprykin": {
+    "name": "Sprykin Emblem",
+    "stats": "<TFTCurveTable row=\"BaseAttackSpeed\" icon=\"icon.AS\" type=\"stat\" format=\"percentMinusOne\"/> <TFTCurveTable row=\"BaseArmorMR\" icon=\"icon.Armor\" type=\"stat\"/> <TFTCurveTable row=\"BaseArmorMR\" icon=\"icon.MR\" type=\"stat\"/>",
+    "desc": "The holder gains the Sprykin trait.\r\n\r\nIf the holder is riding the BFF, gain an additional \r\n<TFTCurveTable row=\"RiderAttackSpeed\" icon=\"icon.AS\" type=\"stat\" format=\"percentMinusOne\"/> <TFTCurveTable row=\"RiderArmorMR\" icon=\"icon.Armor\" type=\"stat\"/> <TFTCurveTable row=\"RiderArmorMR\" icon=\"icon.MR\" type=\"stat\"/>",
+    "rows": {
+      "BaseAttackSpeed": 1.1,
+      "RiderAttackSpeed": 1.2,
+      "BaseArmorMR": 15,
+      "RiderArmorMR": 15
+    },
+    "tokens": {}
+  },
+  "DA_18_EmblemVanguard": {
+    "name": "Vanguard Emblem",
+    "stats": "<TFTCurveTable row=\"ArmorMR\" icon=\"icon.Armor\" type=\"stat\"/> <TFTCurveTable row=\"ArmorMR\" icon=\"icon.MR\" type=\"stat\"/>",
+    "desc": "The holder gains the Vanguard trait. \r\n\r\nIf the holder survives <TFTCurveTable row=\"SurviveTimeSeconds\"/> seconds in player combat, gain <TFTCurveTable row=\"PlayerHealthGain\"/> player health.",
+    "rows": {
+      "ArmorMR": 25,
+      "SurviveTimeSeconds": 22,
+      "PlayerHealthGain": 1
+    },
+    "tokens": {}
+  }
+}

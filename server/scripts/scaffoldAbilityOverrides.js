@@ -2,7 +2,7 @@
 // ability values used while CommunityDragon ships a set without them (Set 18:
 // every DA_ unit's spell data is a placeholder). Most values now come from the
 // TFT client itself (data/abilityData.set<N>.json, written by
-// scripts/tft_client/extract_abilities.py — run that first).
+// scripts/tft_client/extract.py — run that first).
 //
 // For each unit it lists every @Token@ its tooltip needs that neither CDragon
 // nor the client data resolve, as null, for you to fill in from the in-game

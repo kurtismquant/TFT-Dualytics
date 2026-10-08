@@ -2,6 +2,7 @@ import axios from 'axios'
 import { readFileSync } from 'node:fs'
 import { CURRENT_SET } from '../constants/game.js'
 import { loadClientAbilityData, resolveClientTokens } from './clientAbilityData.js'
+import { buildClientItem, loadClientItemData } from './clientItemData.js'
 import { evaluateCalculations, pickAbilitySpell } from './spellCalculations.js'
 
 // Riot apiNames stopped following one prefix scheme in Set 18. Sets up to 17 used
@@ -361,6 +362,8 @@ export const fetchAndCacheAssets = async () => {
   // Step 4: Build item map — DD for icons, CDragon for categorization.
   // Restrict to items the current set actually uses (via setEntry.items).
   itemMap.clear()
+  const clientItems = loadClientItemData()
+  let itemsFromClient = 0
   const seenNames = new Set()
   // Dedupe key ignores punctuation/case: Riot names some Set 18 copies slightly
   // differently ("Warmogs Armor" vs legacy "Warmog's Armor").
@@ -418,6 +421,10 @@ export const fetchAndCacheAssets = async () => {
         (e.name === 'AD' || e.name === 'AttackDamage') ? { ...e, value: e.value * 100 } : e
       )
     }
+    // Set 18 DA_ items have no CDragon description; the TFT client's own
+    // tooltip (stat line + text) is what the game shows, so it wins.
+    const fromClient = buildClientItem(clientItems[item.id])
+    if (fromClient) itemsFromClient++
 
     seenNames.add(nameKey(item.name))
     itemMap.set(String(item.id), {
@@ -425,13 +432,14 @@ export const fetchAndCacheAssets = async () => {
       name: item.name,
       iconUrl,
       category,
-      desc: cdItem?.desc || '',
-      effects,
+      desc: fromClient ? fromClient.desc : (cdItem?.desc || ''),
+      effects: fromClient ? fromClient.effects : effects,
+      ...(fromClient && { calculations: fromClient.calculations }),
       composition: compositionIds,
       apiName: cdItem?.apiName || '',
     })
   }
-  console.log(`Loaded ${itemMap.size} items`)
+  console.log(`Loaded ${itemMap.size} items (${itemsFromClient} with TFT client tooltips)`)
 
   // Step 5: Build augment map from Community Dragon
   augmentMap.clear()
