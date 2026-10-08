@@ -1,7 +1,6 @@
-import StatIcon from './StatIcon.jsx'
+import AbilityDescription from './shared/AbilityDescription.jsx'
 import DetailCardShell from './shared/DetailCardShell.jsx'
 import UnitStatsSheetLink from './shared/UnitStatsSheetLink.jsx'
-import { tokenize } from '../utils/descriptionTokenizer.js'
 import styles from './UnitCard.module.css'
 
 const COST_COLORS = {
@@ -10,31 +9,6 @@ const COST_COLORS = {
   3: 'var(--cost-3)',
   4: 'var(--cost-4)',
   5: 'var(--cost-5)',
-}
-
-function AbilityDesc({ desc, variables, championId, stats, calculations }) {
-  const nodes = tokenize(desc, variables, championId, stats, calculations)
-  if (nodes.length === 0) return null
-
-  return (
-    <>
-      {nodes.map((node, i) => {
-        if (node.type === 'var') {
-          return <strong key={i} className={styles.scaling}>{node.content}</strong>
-        }
-        if (node.type === 'icon') {
-          return <StatIcon key={i} type={node.iconType} />
-        }
-        if (node.type === 'buff') {
-          return <span key={i} className={styles.buffName}>{node.content}</span>
-        }
-        if (node.type === 'plus') {
-          return <span key={i} className={styles.opPlus}> + </span>
-        }
-        return <span key={i}>{node.content}</span>
-      })}
-    </>
-  )
 }
 
 function ManaBar({ initialMana, mana }) {
@@ -104,7 +78,7 @@ export default function UnitCard({ isOpen, data: champion, style, mode, onClose 
             <span className={styles.abilityName}>{champion.ability.name}</span>
           </div>
           <p className={styles.abilityDesc}>
-            <AbilityDesc
+            <AbilityDescription
               desc={champion.ability.desc}
               variables={champion.ability.variables}
               championId={champion.id}

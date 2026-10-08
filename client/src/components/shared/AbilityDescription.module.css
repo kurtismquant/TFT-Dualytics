@@ -1,0 +1,19 @@
+.scaling {
+  color: var(--cost-5);
+  font-weight: 700;
+  font-style: normal;
+}
+
+.opPlus {
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+.buffName {
+  font-weight: 700;
+  background: linear-gradient(90deg, #ff7ae0 0%, #7ad2ff 50%, #fff27a 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}

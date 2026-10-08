@@ -313,12 +313,16 @@ export const fetchAndCacheAssets = async () => {
         for (const t of built.shadowed) shadowedTokens.push(`${champ.apiName}.${t}`)
       }
 
+      // 1★ base stats (Set 18 CDragon values match the TFT client's own).
       const stats = champ.stats ? {
         mana: champ.stats.mana ?? 100,
         initialMana: champ.stats.initialMana ?? 0,
         armor: champ.stats.armor ?? 0,
         magicResist: champ.stats.magicResist ?? 0,
         attackSpeed: champ.stats.attackSpeed ?? 0,
+        hp: champ.stats.hp ?? null,
+        damage: champ.stats.damage ?? null,
+        range: champ.stats.range ?? null,
       } : null
 
       championMap.set(champ.apiName, {

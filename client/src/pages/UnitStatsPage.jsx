@@ -3,10 +3,12 @@ import { useParams, useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { PageShell } from '../components/layout/PageShell.jsx'
 import UnitHeader from '../components/unit-stats/UnitHeader.jsx'
+import UnitOverview from '../components/unit-stats/UnitOverview.jsx'
 import ItemFilterInput from '../components/unit-stats/ItemFilterInput.jsx'
 import ItemComboTable from '../components/unit-stats/ItemComboTable.jsx'
 import { useChampions } from '../hooks/useChampions.js'
 import { useItems } from '../hooks/useItems.js'
+import { useTraits } from '../hooks/useTraits.js'
 import { useUnitItemCombos } from '../hooks/useUnitItemCombos.js'
 import {
   buildItemCandidates,
@@ -50,6 +52,7 @@ export default function UnitStatsPage() {
 
   const { data: champions } = useChampions()
   const { data: items } = useItems()
+  const { data: traits } = useTraits()
   const { data, isLoading, isError } = useUnitItemCombos({ unitId, patch: patchParam })
 
   const champion = useMemo(() => champions?.find(c => c.id === unitId) || null, [champions, unitId])
@@ -109,6 +112,7 @@ export default function UnitStatsPage() {
           fallback: { games: data?.games ?? 0, threeItemGames: data?.threeItemGames ?? 0 },
         }}
       />
+      <UnitOverview champion={champion} traits={traits} />
       <div className={styles.controls}>
         <select
           className={statsStyles.select}
