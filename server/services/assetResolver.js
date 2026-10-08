@@ -393,7 +393,9 @@ export const fetchAndCacheAssets = async () => {
     const nameLower = item.name.toLowerCase()
 
     // Filter placeholder/junk items by category and name
-    if (category === 'artifact' && (nameLower === 'artifact item' || nameLower === 'god artifact anvil')) continue
+    // Anvils ("Artifact Anvil" from Ornn's quest, "God Artifact Anvil") are
+    // item-granting assists, not artifacts — their names just say "artifact".
+    if (category === 'artifact' && (nameLower === 'artifact item' || nameLower.includes('anvil'))) continue
     if (category === 'emblem' && nameLower === 'random emblem') continue
     if (category === 'radiant' && nameLower === 'radiant item lucky chest') continue
     if (category === 'other' && /gold|xp|quest|blessing|scissors|reroll|cost|anvil|dummy|remover|boon|mystery|mecha|dice|mini|lovers|shared|reforger|mode|better|upgrade|scuttle|armory|sentinel|seat|humility|orb|craft|slot|hard|cash|blood|smithing|damage amp|do you|sacrifice|roll|duplicator|critical hit|support|super|enemies|striker|semi|taunt|ace|reinforced|finalist|divine|hex|changing|chest|salvager|pain|augment|increase|pengu|missing|star|component|item/i.test(item.name)) continue
