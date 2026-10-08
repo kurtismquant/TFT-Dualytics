@@ -8,9 +8,13 @@ import styles from './RangeStopSlider.module.css'
 // levels: ascending stop values. range: { min, max } within them.
 // colorFor(level) -> CSS colour, stopContent(level) -> label node,
 // valueText(level) -> spoken value, tipFor(level) -> hover text for that level,
-// isEmpty(level) -> true when the level has no games (hollow stop).
+// isEmpty(level) -> true when the level has no games (hollow stop),
+// rangeText -> the current selection shown beside the label,
+// stopCaption(level) -> small text under a stop's label (e.g. its games).
 export default function RangeStopSlider({
   label,
+  rangeText,
+  stopCaption,
   levels,
   range,
   onChange,
@@ -114,7 +118,10 @@ export default function RangeStopSlider({
 
   return (
     <div className={`${styles.wrap} ${disabled ? styles.disabled : ''}`}>
-      <p className={styles.label}>{label}</p>
+      <p className={styles.label}>
+        <span>{label}</span>
+        {rangeText && <span className={styles.rangeValue}>{rangeText}</span>}
+      </p>
       <div
         ref={trackRef}
         className={styles.track}
@@ -146,6 +153,7 @@ export default function RangeStopSlider({
       <div className={styles.stopLabels}>
         {levels.map(level => {
           const tip = tipFor(level)
+          const caption = stopCaption?.(level)
           return (
             <button
               key={level}
@@ -155,8 +163,10 @@ export default function RangeStopSlider({
               onClick={() => onChange({ min: level, max: level })}
               disabled={disabled}
               aria-label={selectLabel(tip)}
+              data-active={level >= range.min && level <= range.max ? '' : undefined}
             >
-              <span aria-hidden="true">{stopContent(level)}</span>
+              <span className={styles.stopGlyph} aria-hidden="true">{stopContent(level)}</span>
+              {caption != null && <span className={styles.caption} aria-hidden="true">{caption}</span>}
               <span className={styles.tip} aria-hidden="true">{tip}</span>
             </button>
           )

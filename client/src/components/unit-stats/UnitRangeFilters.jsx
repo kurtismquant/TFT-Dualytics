@@ -24,7 +24,7 @@ const ITEM_COLORS = {
 // row. `unit` carries byStar / byStarItems; without them (docs stored before
 // that data existed) the sliders are disabled and the readout uses `fallback`.
 export default function UnitRangeFilters({ unit, starRange, itemRange, onStarRangeChange, onItemRangeChange, fallback }) {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const hasStars = Boolean(unit.byStar)
   const hasItems = Boolean(unit.byStarItems)
   const starText = star => t('unit.starLevel', { count: star })
@@ -43,10 +43,20 @@ export default function UnitRangeFilters({ unit, starRange, itemRange, onStarRan
   const itemSummary = count => unitRangeSummary(unit, starRange, { min: count, max: count })
   const selectLabel = text => t('unit.showOnlyLevel', { tip: text })
 
+  // The current selection beside each label: "All", "2★", "2★–3★", "1–3 items".
+  const rangeText = (range, levels, single, span) => {
+    if (range.min === levels[0] && range.max === levels[levels.length - 1]) return t('unit.rangeAll')
+    return range.min === range.max ? single(range.min) : span(range)
+  }
+  const compact = new Intl.NumberFormat(i18n.language, { notation: 'compact', maximumFractionDigits: 1 })
+  const gamesCaption = summary => (summary.games ? compact.format(summary.games) : '–')
+
   return (
     <div className={styles.row}>
       <RangeStopSlider
         label={t('unit.starRangeLabel')}
+        rangeText={rangeText(starRange, STAR_LEVELS, starText, r => t('unit.starRange', r))}
+        stopCaption={hasStars ? star => gamesCaption(starSummary(star)) : undefined}
         levels={STAR_LEVELS}
         range={starRange}
         onChange={onStarRangeChange}
@@ -62,6 +72,8 @@ export default function UnitRangeFilters({ unit, starRange, itemRange, onStarRan
       />
       <RangeStopSlider
         label={t('unit.itemRangeLabel')}
+        rangeText={rangeText(itemRange, ITEM_COUNT_LEVELS, itemText, r => t('unit.itemRange', r))}
+        stopCaption={hasItems ? count => gamesCaption(itemSummary(count)) : undefined}
         levels={ITEM_COUNT_LEVELS}
         range={itemRange}
         onChange={onItemRangeChange}
