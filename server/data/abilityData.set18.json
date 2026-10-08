@@ -1,0 +1,1930 @@
+{
+  "_meta": {
+    "source": "TFT client (Live)",
+    "branch": "++tft+rls-18.4.0",
+    "changelist": 5663767,
+    "extractedAt": "2026-10-08"
+  },
+  "DA_18_Ahri": {
+    "icon": "/assets/abilities/set18/DA_18_Ahri.png",
+    "tokens": {
+      "MagicDamageCalc1": [455, 685, 3500]
+    },
+    "rows": {
+      "HexPercentDamageFalloffTooltip": [0.21, 0.21, 0.21],
+      "AutoAttackDamage": [40, 60, 90],
+      "MaxDamageFalloffTooltip": [0.16, 0.16, 0.16],
+      "HexRadius": [3, 3, 3],
+      "OrbDamage": [455, 685, 3500],
+      "ChannelTime": [1.75, 1.75, 1.75],
+      "AbilityCenterHexRange": [4, 4, 4],
+      "HexDamageFalloffPercent": [0.79, 0.58, 0.37]
+    },
+    "formats": {
+      "HexPercentDamageFalloffTooltip": "percent"
+    }
+  },
+  "DA_18_Akali_AD": {
+    "icon": "/assets/abilities/set18/DA_18_Akali_AD.png",
+    "tokens": {
+      "PhysicalDamageCalc1": [155, 235, 405],
+      "PhysicalDamageCalc2": [35, 52, 80]
+    },
+    "rows": {
+      "MagicDamage": [140, 210, 365],
+      "PhysicalDamage": [145, 220, 380],
+      "AutoAttackDamage": [40, 60, 90],
+      "BonusPhysicalDamage": [35, 52, 80],
+      "ManaRefund": [40, 40, 40],
+      "RecastDamageReduction": [0.7, 0.7, 0.7],
+      "AutoAttackDamageAP": [30, 45, 67.5],
+      "PhysicalDamageAP": [10, 15, 25],
+      "TankDamageMultiplierAP": [1.5, 1.5, 1.5]
+    }
+  },
+  "DA_18_Akali_AP": {
+    "icon": "/assets/abilities/set18/DA_18_Akali_AP.png",
+    "tokens": {
+      "MagicDamageCalc1": [140, 210, 365]
+    },
+    "rows": {
+      "MagicDamage": [140, 210, 365],
+      "PhysicalDamage": [145, 220, 380],
+      "AutoAttackDamage": [40, 60, 90],
+      "BonusPhysicalDamage": [35, 52, 80],
+      "ManaRefund": [40, 40, 40],
+      "RecastDamageReduction": [0.7, 0.7, 0.7],
+      "AutoAttackDamageAP": [30, 45, 67.5],
+      "PhysicalDamageAP": [10, 15, 25],
+      "TankDamageMultiplierAP": [1.5, 1.5, 1.5]
+    },
+    "formats": {
+      "TankDamageMultiplierAP": "percentMinusOne",
+      "RecastDamageReduction": "percent"
+    }
+  },
+  "DA_18_Alistar": {
+    "icon": "/assets/abilities/set18/DA_18_Alistar.png",
+    "tokens": {
+      "MagicDamageCalc1": [180, 270, 420],
+      "HealthCalc3": [230, 300, 400],
+      "HealthCalc1": [306, 437, 646],
+      "HealthCalc2": [80, 105, 130]
+    },
+    "rows": {
+      "AutoAttackDamage": [50, 75, 112.5],
+      "HealBaseValue": [230, 300, 400],
+      "HealMaxHealthPercent": [0.08, 0.08, 0.08],
+      "StunDuration": [1.5, 1.5, 1.5],
+      "Damage": [180, 270, 420],
+      "AllyHeal": [80, 105, 130]
+    }
+  },
+  "DA_18_Alune": {
+    "icon": "/assets/abilities/set18/DA_18_Alune.png",
+    "tokens": {
+      "MagicDamageCalc1": [55, 83, 500],
+      "MagicDamageCalc2": [2350, 3600, 7500]
+    },
+    "rows": {
+      "NumMoonshards": [9, 9, 9],
+      "MoonDamage": [2350, 3600, 7500],
+      "NumEnemies": [3, 3, 3],
+      "AutoAttackDamage": [40, 60, 90],
+      "MoonshardDamage": [55, 83, 500],
+      "Durability": [0.93, 0.93, 0.93],
+      "DamageAmp": [0.07, 0.07, 0.07]
+    }
+  },
+  "DA_18_Aphelios": {
+    "icon": "/assets/abilities/set18/DA_18_Aphelios.png",
+    "tokens": {
+      "PhysicalDamageCalc1": [70, 105, 850],
+      "PhysicalDamageCalc2": [490, 735, 5225]
+    },
+    "rows": {
+      "AutoAttackDamage": [60, 90, 135],
+      "NumAttacksBase": [5, 5, 5],
+      "AS_NeededForExtraSwipe": [0.2, 0.2, 0.2],
+      "LunarBlastAPDamage": [40, 60, 225],
+      "SwipeDamage": [70, 105, 850],
+      "LunarBlastADDamage": [450, 675, 5000],
+      "PercentTargetHealthDamage": [0, 0, 0],
+      "Duration": [2, 2, 2],
+      "NumSwipesTriggerSimulatedAutos": [3, 3, 3]
+    }
+  },
+  "DA_18_Ashe": {
+    "icon": "/assets/abilities/set18/DA_18_Ashe.png",
+    "tokens": {
+      "PhysicalDamageCalc3": [2, 3, 20],
+      "PhysicalDamageCalc1": [465, 700, 1000],
+      "PhysicalDamageCalc2": [11, 17, 220]
+    },
+    "rows": {
+      "RiftDamagePerSecond": [9, 14, 200],
+      "RiftDuration": [3, 3, 20],
+      "ArrowDamage": [465, 700, 1000],
+      "AutoAttackDamage": [75, 112.5, 168.75],
+      "ChillPercent": [20, 20, 20],
+      "MoveSpeedMultiplier": [0.7, 0.7, 0.1],
+      "RiftDamagePerSecondAP": [2, 3, 20],
+      "DamageFalloffPerEnemy": [0.8, 0.8, 0.4],
+      "MinDamagePercent": [0.2, 0.2, 0.2],
+      "MaxHealthDamagePerSecond": [0.015, 0.015, 0.1],
+      "ManaRefund": [0.7, 0.7, 0.7],
+      "NumberOfEnemiesHit": [0, 0, 0]
+    },
+    "formats": {
+      "DamageFalloffPerEnemy": "percent",
+      "MinDamagePercent": "percent",
+      "ManaRefund": "percent",
+      "MaxHealthDamagePerSecond": "percent"
+    }
+  },
+  "DA_18_Azir": {
+    "icon": "/assets/abilities/set18/DA_18_Azir.png",
+    "tokens": {
+      "MagicDamageCalc1": [46, 69, 110]
+    },
+    "rows": {
+      "AutoAttackDamage": [30, 45, 67.5],
+      "SoldierDamage": [46, 69, 110],
+      "SoldiersToSpawn": [2, 2, 2],
+      "NumAttacks": [6, 6, 6],
+      "AttackSpeed": [2.5, 2.5, 2.5],
+      "DashSpeed": [1, 0.75, 0.5]
+    },
+    "formats": {
+      "AttackSpeed": "percentMinusOne"
+    }
+  },
+  "DA_18_AzirSoldier": {
+    "icon": "/assets/abilities/set18/DA_18_AzirSoldier.png",
+    "tokens": {},
+    "rows": {
+      "AutoAttackDamage": [30, 45, 67.5],
+      "SoldierDamage": [46, 69, 110],
+      "SoldiersToSpawn": [2, 2, 2],
+      "NumAttacks": [6, 6, 6],
+      "AttackSpeed": [2.5, 2.5, 2.5],
+      "DashSpeed": [1, 0.75, 0.5]
+    }
+  },
+  "DA_18_Caitlyn": {
+    "icon": "/assets/abilities/set18/DA_18_Caitlyn.png",
+    "tokens": {
+      "PhysicalDamageCalc1": [210, 315, 515],
+      "PhysicalDamageCalc2": [0, 0, 0],
+      "PhysicalDamageCalc3": [210, 315, 515]
+    },
+    "rows": {
+      "AutoAttackDamage": [50, 75, 112.5],
+      "SpellDamageAD": [190, 285, 470],
+      "SpellDamageAP": [20, 30, 45],
+      "RampingPercent": [0, 0, 0],
+      "AttacksBeforeHeadshot": [2, 2, 2]
+    }
+  },
+  "DA_18_Camille": {
+    "icon": "/assets/abilities/set18/DA_18_Camille.png",
+    "tokens": {
+      "PhysicalDamageCalc1": [160, 240, 425]
+    },
+    "rows": {
+      "AutoAttackDamage": [40, 60, 90],
+      "AbilityShield": [60, 90, 200],
+      "AbilityDamage": [150, 225, 400],
+      "ShieldDuration": [2, 2, 2],
+      "APDamage": [10, 15, 25]
+    }
+  },
+  "DA_18_Cassiopeia": {
+    "icon": "/assets/abilities/set18/DA_18_Cassiopeia.png",
+    "tokens": {
+      "MagicDamageCalc1": [420, 630, 1020]
+    },
+    "rows": {
+      "Damage": [420, 630, 1020],
+      "AutoAttackDamage": [30, 45, 67.5],
+      "Duration": [15, 15, 15]
+    }
+  },
+  "DA_18_CrimsonRaptor_Mini": {
+    "icon": null,
+    "tokens": {},
+    "rows": {
+      "AutoAttackDamage": [60, 90, 135],
+      "MiniDamagePerAttack": [22, 33, 52],
+      "MiniDuration": [5, 5, 5],
+      "NumMinisToSpawn": [4, 4, 4],
+      "ArmorReduc": [2, 2, 2],
+      "ProcDamage": [50, 50, 75],
+      "ArmorReducCountMax": [10, 10, 10],
+      "ArmorReducAmount": [2, 2, 2]
+    }
+  },
+  "DA_18_Diana": {
+    "icon": "/assets/abilities/set18/DA_18_Diana.png",
+    "tokens": {
+      "MagicDamageCalc1": [75, 115, 180],
+      "ShieldCalc1": [150, 275, 500]
+    },
+    "rows": {
+      "AutoAttackDamage": [30, 45, 67.5],
+      "OrbShieldPercentDamage": [0.4, 0.4, 0.4],
+      "ShieldDuration": [2, 2, 2],
+      "NumOrbs": [6, 6, 6],
+      "OrbDamage": [75, 115, 180],
+      "ShieldAmount": [150, 275, 500]
+    }
+  },
+  "DA_18_ElderDragon": {
+    "icon": "/assets/abilities/set18/DA_18_ElderDragon.png",
+    "tokens": {
+      "PhysicalDamageCalc2": [305, 465, 7200]
+    },
+    "rows": {
+      "AutoAttackDamage": [125, 187.5, 282],
+      "TraitExecuteThreshold": [0.12, 0.12, 0.12],
+      "StunDuration": [1.25, 1.25, 99],
+      "IgniteDuration": [3, 3, 99],
+      "IgniteMaxHealthDamage": [0.02, 0.02, 0.2],
+      "FireballDamage": [285, 435, 7000],
+      "AttackAoERatio": [0.75, 0.75, 1],
+      "Omnivamp": [0.15, 0.15, 1],
+      "FireballDamageAP": [20, 30, 200],
+      "DamageReductionPerHit": [0.2, 0.2, 0.2],
+      "MinimumDamageThreshold": [0.2, 0.2, 0.2]
+    },
+    "formats": {
+      "AttackAoERatio": "percent",
+      "Omnivamp": "percent",
+      "IgniteMaxHealthDamage": "percent",
+      "DamageReductionPerHit": "percent",
+      "MinimumDamageThreshold": "percent",
+      "TraitExecuteThreshold": "percent"
+    }
+  },
+  "DA_18_Elise": {
+    "icon": "/assets/abilities/set18/DA_18_Elise.png",
+    "tokens": {
+      "MagicDamageCalc1": [35, 50, 80],
+      "HealthCalc1": [55, 90, 170]
+    },
+    "rows": {
+      "AutoAttackDamage": [20, 30, 45],
+      "HealOnAttack": [55, 90, 170],
+      "DamageOnAttack": [35, 50, 80],
+      "SpiderHealthBuff": [375, 475, 725],
+      "DecayingAS": [2.75, 2.75, 2.75],
+      "ASBuffDuration": [4, 4, 4]
+    },
+    "formats": {
+      "DecayingAS": "percentMinusOne"
+    }
+  },
+  "DA_18_EliseSpider": {
+    "icon": "/assets/abilities/set18/DA_18_EliseSpider.png",
+    "tokens": {
+      "MagicDamageCalc1": [35, 50, 80],
+      "HealthCalc1": [55, 90, 170]
+    },
+    "rows": {
+      "AutoAttackDamage": [20, 30, 45],
+      "HealOnAttack": [55, 90, 170],
+      "DamageOnAttack": [35, 50, 80],
+      "SpiderHealthBuff": [375, 475, 725],
+      "DecayingAS": [2.75, 2.75, 2.75],
+      "ASBuffDuration": [4, 4, 4]
+    },
+    "formats": {
+      "DecayingAS": "percentMinusOne"
+    }
+  },
+  "DA_18_Ezreal": {
+    "icon": "/assets/abilities/set18/DA_18_Ezreal.png",
+    "tokens": {
+      "PhysicalDamageCalc1": [270, 405, 1200],
+      "PhysicalDamageCalc2": [385, 580, 2500],
+      "AttackSpeedCalc1": [0.3, 0.3, 1]
+    },
+    "rows": {
+      "NormalCastADDamage": [270, 405, 1200],
+      "BigCastADDamage": [385, 580, 2500],
+      "AutoAttackDamage": [45, 67.5, 101.25],
+      "AP_AttackSpeed": [0.3, 0.3, 1],
+      "NumCasts": [4, 4, 4],
+      "MinDamagePercent": [0.5, 0.5, 0.5],
+      "DamageReductionPerHit": [0.25, 0.25, 0.25],
+      "BigCastNumSafestHexesToConsider": [5, 5, 5]
+    },
+    "formats": {
+      "AttackSpeedCalc1": "percent",
+      "DamageReductionPerHit": "percent",
+      "MinDamagePercent": "percent"
+    }
+  },
+  "DA_18_GnarBig": {
+    "icon": "/assets/abilities/set18/DA_18_GnarBig.png",
+    "tokens": {
+      "PhysicalDamageCalc1": [380, 570, 9000],
+      "PhysicalDamageCalc2": [135, 205, 4500],
+      "GenericCalc1": [15, 20, 250],
+      "HealthCalc1": [400, 600, 15000],
+      "PhysicalDamageCalc3": [100, 150, 2000]
+    },
+    "rows": {
+      "AutoAttackDamageSmall": [100, 150, 225],
+      "AutoAttackDamageBig": [100, 150, 225],
+      "RagePerAttack": [5, 5, 20],
+      "ADPerRage": [0.05, 0.05, 0.5],
+      "TransformRangeReduction": [1, 1, 1],
+      "PrimaryTargetDamage": [380, 570, 9000],
+      "SecondaryTargetDamage": [135, 205, 4500],
+      "StunDuration": [1, 1, 15],
+      "ArmorMRReduction": [15, 20, 250],
+      "TransformHealth": [400, 600, 15000],
+      "RagePerSecond": [5, 5, 50],
+      "TransformHexRadius": [2, 2, 10],
+      "TransformSearchRadius": [3, 3, 3],
+      "TransformRageMax": [50, 50, 50],
+      "TransformDamage": [100, 150, 2000]
+    }
+  },
+  "DA_18_GnarSmall": {
+    "icon": "/assets/abilities/set18/DA_18_GnarSmall.png",
+    "tokens": {
+      "PhysicalDamageCalc1": [380, 570, 9000],
+      "PhysicalDamageCalc2": [135, 205, 4500],
+      "GenericCalc1": [15, 20, 250],
+      "HealthCalc1": [400, 600, 15000],
+      "PhysicalDamageCalc3": [100, 150, 2000]
+    },
+    "rows": {
+      "AutoAttackDamageSmall": [100, 150, 225],
+      "AutoAttackDamageBig": [100, 150, 225],
+      "RagePerAttack": [5, 5, 20],
+      "ADPerRage": [0.05, 0.05, 0.5],
+      "TransformRangeReduction": [1, 1, 1],
+      "PrimaryTargetDamage": [380, 570, 9000],
+      "SecondaryTargetDamage": [135, 205, 4500],
+      "StunDuration": [1, 1, 15],
+      "ArmorMRReduction": [15, 20, 250],
+      "TransformHealth": [400, 600, 15000],
+      "RagePerSecond": [5, 5, 50],
+      "TransformHexRadius": [2, 2, 10],
+      "TransformSearchRadius": [3, 3, 3],
+      "TransformRageMax": [50, 50, 50],
+      "TransformDamage": [100, 150, 2000]
+    }
+  },
+  "DA_18_Hecarim": {
+    "icon": "/assets/abilities/set18/DA_18_Hecarim.png",
+    "tokens": {
+      "MagicDamageCalc1": [80, 120, 195],
+      "HealthCalc1": [375, 475, 685]
+    },
+    "rows": {
+      "AutoAttackDamage": [50, 75, 112.5],
+      "SpellDamage": [80, 120, 195],
+      "StunDuration": [1.5, 1.5, 1.75],
+      "NumEnemies": [3, 3, 3],
+      "Resists": [50, 50, 50],
+      "Heal": [375, 475, 685]
+    }
+  },
+  "DA_18_Ivern": {
+    "icon": "/assets/abilities/set18/DA_18_Ivern.png",
+    "tokens": {
+      "ShieldCalc1": [185, 350, 3000],
+      "MagicDamageCalc1": [155, 235, 2000]
+    },
+    "rows": {
+      "AutoAttackDamage": [60, 90, 135],
+      "ShieldDuration": [6, 6, 6],
+      "NumAlliesToShield": [2, 2, 10],
+      "ShieldAmount": [185, 350, 3000],
+      "DamageAmpAmount": [0.1, 0.15, 1],
+      "CastThreshold": [6, 6, 6],
+      "AttackSpeed": [2, 2, 2],
+      "MagicDamage": [155, 235, 2000],
+      "WaterHexManaRegen": [1, 2, 30],
+      "BrushHexArmorMR": [10, 14, 500],
+      "SeedsToGrowHex": [5, 5, 5],
+      "TreeHexPercentHP": [1.06, 1.1, 3],
+      "TanglebarbHexShield": [300, 450, 3000],
+      "CombatStartSeeds": [3, 3, 30],
+      "SeedsPerCast": [1, 1, 10],
+      "SwampHexDurability": [0.95, 0.93, 0.1],
+      "FlowerHexAP": [0.08, 0.12, 2],
+      "MushroomHexDamageAmp": [0.06, 0.1, 2],
+      "MountainHexAS": [1.08, 1.12, 3],
+      "RockHexAD": [0.08, 0.12, 2],
+      "SandHexOmnivamp": [0.1, 0.15, 1],
+      "GodWillowFrequency": [4, 4, 4],
+      "GodWillowScale": [1.5, 1.5, 1.5],
+      "GodWillowFlatHealth": [2000, 2000, 2000],
+      "RockHexArmorMR": [8, 12, 500],
+      "FlowerHexAS": [1.1, 1.15, 3]
+    },
+    "formats": {
+      "DamageAmpAmount": "percent",
+      "AttackSpeed": "percentMinusOne"
+    }
+  },
+  "DA_18_Kayle": {
+    "icon": "/assets/abilities/set18/DA_18_Kayle.png",
+    "tokens": {
+      "MagicDamageCalc1": [65, 97, 110],
+      "MagicDamageCalc2": [35, 35, 35]
+    },
+    "rows": {
+      "MagicDamage": [65, 97, 110],
+      "ShredLevel": [20, 20, 20],
+      "SwordDamage": [35, 35, 35],
+      "ShredDuration": [2, 2, 2],
+      "AutoAttackDamage": [10, 15, 22.5],
+      "NumAttacksForBigWave4Star": [3, 3, 3]
+    }
+  },
+  "DA_18_Kennen": {
+    "icon": "/assets/abilities/set18/DA_18_Kennen.png",
+    "tokens": {
+      "MagicDamageCalc1": [80, 120, 1500],
+      "MagicDamageCalc2": [475, 715, 5000],
+      "ShieldCalc1": [230, 300, 3000]
+    },
+    "rows": {
+      "FirestormHexRadius": [2, 2, 2],
+      "DashDamage": [80, 120, 1500],
+      "FirestormDamage": [475, 715, 5000],
+      "FirestormDuration": [2, 2, 2],
+      "AutoAttackDamage": [50, 75, 112.5],
+      "ShieldAP": [230, 300, 3000],
+      "APPerBurningEnemy": [0.15, 0.15, 0.15],
+      "SearchRadius": [3, 3, 3],
+      "ShieldDuration": [2.5, 2.5, 2.5]
+    },
+    "formats": {
+      "APPerBurningEnemy": "percent"
+    }
+  },
+  "DA_18_KhaZix": {
+    "icon": "/assets/abilities/set18/DA_18_KhaZix.png",
+    "tokens": {
+      "MagicDamageCalc1": [265, 370, 535],
+      "MagicDamageCalc2": [285, 410, 605]
+    },
+    "rows": {
+      "AutoAttackDamage": [40, 60, 90],
+      "BaseDamage": [265, 370, 535],
+      "LeapRangeHexes": [3, 3, 3],
+      "IsolateManaGrant": [10, 10, 10],
+      "IsolateDamage": [285, 410, 605],
+      "RivalsAugment_ManaShare": [0.5, 0.5, 0.5]
+    }
+  },
+  "DA_18_Kobuko": {
+    "icon": "/assets/abilities/set18/DA_18_Kobuko.png",
+    "tokens": {
+      "HealthCalc1": [334, 423, 639],
+      "MagicDamageCalc1": [140, 231, 377]
+    },
+    "rows": {
+      "FlatHealAmount": [285, 335, 480],
+      "Duration": [2, 2, 2],
+      "EmpoweredAttackHPPercent": [0.1, 0.1, 0.1],
+      "AutoAttackDamage": [55, 82.5, 123.75],
+      "MaxHPHealAmount": [0.07, 0.07, 0.07],
+      "EmpoweredAttackAPPercent": [1, 1, 1],
+      "FlatDamageAmount": [70, 105, 150]
+    }
+  },
+  "DA_18_LeBlanc": {
+    "icon": "/assets/abilities/set18/DA_18_LeBlanc.png",
+    "tokens": {
+      "MagicDamageCalc1": [260, 390, 615],
+      "MagicDamageCalc2": [100, 150, 230]
+    },
+    "rows": {
+      "AutoAttackDamage": [30, 45, 67.5],
+      "SingleTargetDamage": [260, 390, 615],
+      "AOEDamage": [100, 150, 230],
+      "PercentChanceToPrint": [0.1, 0.15, 0.3],
+      "PercentChanceToPrintKillBonus": [0.04, 0.04, 0.04],
+      "PercentChanceToPrintIncreaseIfMiss": [0.1, 0.1, 0.1],
+      "PercentChanceToPrintRandom": [0.1, 0.15, 0.25],
+      "OddsToPrintNonLeBlancPerNonLeBlancIfTooMany3Stars": [0.33, 0.33, 0.33]
+    },
+    "formats": {
+      "PercentChanceToPrint": "percent",
+      "PercentChanceToPrintKillBonus": "percent"
+    }
+  },
+  "DA_18_Leona": {
+    "icon": "/assets/abilities/set18/DA_18_Leona.png",
+    "tokens": {
+      "GenericCalc1": [60, 80, 100],
+      "MagicDamageCalc1": [60, 108, 162]
+    },
+    "rows": {
+      "DecayingArmorAndMagicResist": [60, 80, 100],
+      "PercentArmorDamage": [1.5, 2.7, 4.05],
+      "StunDuration": [1.5, 1.5, 1.5],
+      "AutoAttackDamage": [50, 75, 112.5],
+      "DecayDuration": [12, 12, 12]
+    }
+  },
+  "DA_18_Lillia": {
+    "icon": "/assets/abilities/set18/DA_18_Lillia.png",
+    "tokens": {
+      "HealthCalc1": [350, 525, 800],
+      "MagicDamageCalc1": [90, 135, 2000]
+    },
+    "rows": {
+      "EnemyInitialDamage": [90, 135, 2000],
+      "HealAmount": [350, 525, 800],
+      "SleepDuration": [1.5, 1.75, 8],
+      "AutoAttackDamage": [40, 60, 90],
+      "DamageNeededToAwaken": [1000, 1000, 1000],
+      "NumEnemiesToFireAt": [4, 4, 4],
+      "WakeupDamage": [0.1, 0.1, 0.1]
+    },
+    "formats": {
+      "WakeupDamage": "percent"
+    }
+  },
+  "DA_18_Lux_Coven": {
+    "icon": "/assets/abilities/set18/DA_18_Lux_Coven.png",
+    "tokens": {
+      "ManaCalc1": [3, 3, 100],
+      "MagicDamageCalc1": [375, 565, 6500]
+    },
+    "rows": {
+      "AutoAttackDamage": [40, 60, 90],
+      "LaserDamage": [375, 565, 6500],
+      "ManaForAllies": [3, 3, 100],
+      "DamageReductionPerUnit": [0.25, 0.25, 0.1],
+      "FaeHealRatio": [0.18, 0.18, 0.18],
+      "LunarVulnerableDuration": [4, 4, 4],
+      "BlackthornStunDuration": [1, 1, 1],
+      "InfernoManaRestore": [10, 10, 10],
+      "CovenResistReduction": [8, 8, 8],
+      "PrimalAttackSpeed": [1.6, 1.6, 1.6],
+      "PrimalASDuration": [6, 6, 6],
+      "BlossomBonusDamageRatio": [0.1, 0.1, 0.1],
+      "LunarVulnerablePercent": [8, 8, 8],
+      "ElderwoodHealthIncrease": [1.025, 1.025, 1.025],
+      "MinimumFalloffDamageRatio": [0.4, 0.4, 0.4],
+      "SolarBonusDamagePer3StarRadio": [0.12, 0.12, 0.12],
+      "SolarBonusDamageRatio": [0.15, 0.15, 0.15],
+      "TailoredChoices": [2, 2, 2],
+      "ArmoryChoices": [3, 3, 3],
+      "MinLuxTraitsFreeToOfferAugment": [4, 4, 4]
+    },
+    "formats": {
+      "DamageReductionPerUnit": "percent",
+      "MinimumFalloffDamageRatio": "percent"
+    }
+  },
+  "DA_18_Lux_Elderwood": {
+    "icon": "/assets/abilities/set18/DA_18_Lux_Elderwood.png",
+    "tokens": {
+      "ManaCalc1": [3, 3, 100],
+      "MagicDamageCalc1": [375, 565, 6500]
+    },
+    "rows": {
+      "AutoAttackDamage": [40, 60, 90],
+      "LaserDamage": [375, 565, 6500],
+      "ManaForAllies": [3, 3, 100],
+      "DamageReductionPerUnit": [0.25, 0.25, 0.1],
+      "FaeHealRatio": [0.18, 0.18, 0.18],
+      "LunarVulnerableDuration": [4, 4, 4],
+      "BlackthornStunDuration": [1, 1, 1],
+      "InfernoManaRestore": [10, 10, 10],
+      "CovenResistReduction": [8, 8, 8],
+      "PrimalAttackSpeed": [1.6, 1.6, 1.6],
+      "PrimalASDuration": [6, 6, 6],
+      "BlossomBonusDamageRatio": [0.1, 0.1, 0.1],
+      "LunarVulnerablePercent": [8, 8, 8],
+      "ElderwoodHealthIncrease": [1.025, 1.025, 1.025],
+      "MinimumFalloffDamageRatio": [0.4, 0.4, 0.4],
+      "SolarBonusDamagePer3StarRadio": [0.12, 0.12, 0.12],
+      "SolarBonusDamageRatio": [0.15, 0.15, 0.15],
+      "TailoredChoices": [2, 2, 2],
+      "ArmoryChoices": [3, 3, 3],
+      "MinLuxTraitsFreeToOfferAugment": [4, 4, 4]
+    },
+    "formats": {
+      "DamageReductionPerUnit": "percent",
+      "MinimumFalloffDamageRatio": "percent",
+      "ElderwoodHealthIncrease": "percentMinusOne"
+    }
+  },
+  "DA_18_Lux_Fae": {
+    "icon": "/assets/abilities/set18/DA_18_Lux_Fae.png",
+    "tokens": {
+      "ManaCalc1": [3, 3, 100],
+      "MagicDamageCalc1": [375, 565, 6500]
+    },
+    "rows": {
+      "AutoAttackDamage": [40, 60, 90],
+      "LaserDamage": [375, 565, 6500],
+      "ManaForAllies": [3, 3, 100],
+      "DamageReductionPerUnit": [0.25, 0.25, 0.1],
+      "FaeHealRatio": [0.18, 0.18, 0.18],
+      "LunarVulnerableDuration": [4, 4, 4],
+      "BlackthornStunDuration": [1, 1, 1],
+      "InfernoManaRestore": [10, 10, 10],
+      "CovenResistReduction": [8, 8, 8],
+      "PrimalAttackSpeed": [1.6, 1.6, 1.6],
+      "PrimalASDuration": [6, 6, 6],
+      "BlossomBonusDamageRatio": [0.1, 0.1, 0.1],
+      "LunarVulnerablePercent": [8, 8, 8],
+      "ElderwoodHealthIncrease": [1.025, 1.025, 1.025],
+      "MinimumFalloffDamageRatio": [0.4, 0.4, 0.4],
+      "SolarBonusDamagePer3StarRadio": [0.12, 0.12, 0.12],
+      "SolarBonusDamageRatio": [0.15, 0.15, 0.15],
+      "TailoredChoices": [2, 2, 2],
+      "ArmoryChoices": [3, 3, 3],
+      "MinLuxTraitsFreeToOfferAugment": [4, 4, 4]
+    },
+    "formats": {
+      "DamageReductionPerUnit": "percent",
+      "MinimumFalloffDamageRatio": "percent",
+      "FaeHealRatio": "percent"
+    }
+  },
+  "DA_18_Lux_Inferno": {
+    "icon": "/assets/abilities/set18/DA_18_Lux_Inferno.png",
+    "tokens": {
+      "ManaCalc1": [3, 3, 100],
+      "MagicDamageCalc1": [375, 565, 6500]
+    },
+    "rows": {
+      "AutoAttackDamage": [40, 60, 90],
+      "LaserDamage": [375, 565, 6500],
+      "ManaForAllies": [3, 3, 100],
+      "DamageReductionPerUnit": [0.25, 0.25, 0.1],
+      "FaeHealRatio": [0.18, 0.18, 0.18],
+      "LunarVulnerableDuration": [4, 4, 4],
+      "BlackthornStunDuration": [1, 1, 1],
+      "InfernoManaRestore": [10, 10, 10],
+      "CovenResistReduction": [8, 8, 8],
+      "PrimalAttackSpeed": [1.6, 1.6, 1.6],
+      "PrimalASDuration": [6, 6, 6],
+      "BlossomBonusDamageRatio": [0.1, 0.1, 0.1],
+      "LunarVulnerablePercent": [8, 8, 8],
+      "ElderwoodHealthIncrease": [1.025, 1.025, 1.025],
+      "MinimumFalloffDamageRatio": [0.4, 0.4, 0.4],
+      "SolarBonusDamagePer3StarRadio": [0.12, 0.12, 0.12],
+      "SolarBonusDamageRatio": [0.15, 0.15, 0.15],
+      "TailoredChoices": [2, 2, 2],
+      "ArmoryChoices": [3, 3, 3],
+      "MinLuxTraitsFreeToOfferAugment": [4, 4, 4]
+    },
+    "formats": {
+      "DamageReductionPerUnit": "percent",
+      "MinimumFalloffDamageRatio": "percent"
+    }
+  },
+  "DA_18_Lux_Moonbeam": {
+    "icon": "/assets/abilities/set18/DA_18_Lux_Moonbeam.png",
+    "tokens": {
+      "ManaCalc1": [3, 3, 100],
+      "MagicDamageCalc1": [375, 565, 6500]
+    },
+    "rows": {
+      "AutoAttackDamage": [40, 60, 90],
+      "LaserDamage": [375, 565, 6500],
+      "ManaForAllies": [3, 3, 100],
+      "DamageReductionPerUnit": [0.25, 0.25, 0.1],
+      "FaeHealRatio": [0.18, 0.18, 0.18],
+      "LunarVulnerableDuration": [4, 4, 4],
+      "BlackthornStunDuration": [1, 1, 1],
+      "InfernoManaRestore": [10, 10, 10],
+      "CovenResistReduction": [8, 8, 8],
+      "PrimalAttackSpeed": [1.6, 1.6, 1.6],
+      "PrimalASDuration": [6, 6, 6],
+      "BlossomBonusDamageRatio": [0.1, 0.1, 0.1],
+      "LunarVulnerablePercent": [8, 8, 8],
+      "ElderwoodHealthIncrease": [1.025, 1.025, 1.025],
+      "MinimumFalloffDamageRatio": [0.4, 0.4, 0.4],
+      "SolarBonusDamagePer3StarRadio": [0.12, 0.12, 0.12],
+      "SolarBonusDamageRatio": [0.15, 0.15, 0.15],
+      "TailoredChoices": [2, 2, 2],
+      "ArmoryChoices": [3, 3, 3],
+      "MinLuxTraitsFreeToOfferAugment": [4, 4, 4]
+    },
+    "formats": {
+      "DamageReductionPerUnit": "percent",
+      "MinimumFalloffDamageRatio": "percent"
+    }
+  },
+  "DA_18_Lux_Primal": {
+    "icon": "/assets/abilities/set18/DA_18_Lux_Primal.png",
+    "tokens": {
+      "ManaCalc1": [3, 3, 100],
+      "MagicDamageCalc1": [375, 565, 6500]
+    },
+    "rows": {
+      "AutoAttackDamage": [40, 60, 90],
+      "LaserDamage": [375, 565, 6500],
+      "ManaForAllies": [3, 3, 100],
+      "DamageReductionPerUnit": [0.25, 0.25, 0.1],
+      "FaeHealRatio": [0.18, 0.18, 0.18],
+      "LunarVulnerableDuration": [4, 4, 4],
+      "BlackthornStunDuration": [1, 1, 1],
+      "InfernoManaRestore": [10, 10, 10],
+      "CovenResistReduction": [8, 8, 8],
+      "PrimalAttackSpeed": [1.6, 1.6, 1.6],
+      "PrimalASDuration": [6, 6, 6],
+      "BlossomBonusDamageRatio": [0.1, 0.1, 0.1],
+      "LunarVulnerablePercent": [8, 8, 8],
+      "ElderwoodHealthIncrease": [1.025, 1.025, 1.025],
+      "MinimumFalloffDamageRatio": [0.4, 0.4, 0.4],
+      "SolarBonusDamagePer3StarRadio": [0.12, 0.12, 0.12],
+      "SolarBonusDamageRatio": [0.15, 0.15, 0.15],
+      "TailoredChoices": [2, 2, 2],
+      "ArmoryChoices": [3, 3, 3],
+      "MinLuxTraitsFreeToOfferAugment": [4, 4, 4]
+    },
+    "formats": {
+      "DamageReductionPerUnit": "percent",
+      "MinimumFalloffDamageRatio": "percent",
+      "PrimalAttackSpeed": "percentMinusOne"
+    }
+  },
+  "DA_18_Lux_Sunbeam": {
+    "icon": "/assets/abilities/set18/DA_18_Lux_Sunbeam.png",
+    "tokens": {
+      "ManaCalc1": [3, 3, 100],
+      "MagicDamageCalc1": [375, 565, 6500]
+    },
+    "rows": {
+      "AutoAttackDamage": [40, 60, 90],
+      "LaserDamage": [375, 565, 6500],
+      "ManaForAllies": [3, 3, 100],
+      "DamageReductionPerUnit": [0.25, 0.25, 0.1],
+      "FaeHealRatio": [0.18, 0.18, 0.18],
+      "LunarVulnerableDuration": [4, 4, 4],
+      "BlackthornStunDuration": [1, 1, 1],
+      "InfernoManaRestore": [10, 10, 10],
+      "CovenResistReduction": [8, 8, 8],
+      "PrimalAttackSpeed": [1.6, 1.6, 1.6],
+      "PrimalASDuration": [6, 6, 6],
+      "BlossomBonusDamageRatio": [0.1, 0.1, 0.1],
+      "LunarVulnerablePercent": [8, 8, 8],
+      "ElderwoodHealthIncrease": [1.025, 1.025, 1.025],
+      "MinimumFalloffDamageRatio": [0.4, 0.4, 0.4],
+      "SolarBonusDamagePer3StarRadio": [0.12, 0.12, 0.12],
+      "SolarBonusDamageRatio": [0.15, 0.15, 0.15],
+      "TailoredChoices": [2, 2, 2],
+      "ArmoryChoices": [3, 3, 3],
+      "MinLuxTraitsFreeToOfferAugment": [4, 4, 4]
+    },
+    "formats": {
+      "DamageReductionPerUnit": "percent",
+      "MinimumFalloffDamageRatio": "percent",
+      "SolarBonusDamageRatio": "percent",
+      "SolarBonusDamagePer3StarRadio": "percent"
+    }
+  },
+  "DA_18_Malphite": {
+    "icon": "/assets/abilities/set18/DA_18_Malphite.png",
+    "tokens": {
+      "ShieldCalc1": [700, 850, 2000],
+      "MagicDamageCalc1": [82, 123, 3399]
+    },
+    "rows": {
+      "SpellDamageAP": [40, 60, 2000],
+      "SpellDamageRatioArmorMR": [0.3, 0.45, 9.99],
+      "ShieldDuration": [4, 4, 4],
+      "AutoAttackDamage": [70, 105, 157.5],
+      "AoEHexRange": [2, 2, 3],
+      "ShieldAP": [700, 850, 2000],
+      "ShieldRatioArmorMR": [2.75, 2.75, 16],
+      "SpellDamagePercentOfShield": [0.2, 0.2, 0.5]
+    }
+  },
+  "DA_18_Maokai": {
+    "icon": "/assets/abilities/set18/DA_18_Maokai.png",
+    "tokens": {
+      "MagicDamageCalc1": [81, 145, 2795],
+      "MagicDamageCalc2": [69, 124, 3726],
+      "HealthCalc1": [330, 400, 2000]
+    },
+    "rows": {
+      "AutoAttackDamage": [80, 120, 180],
+      "UniqueTraitHealthPerStack": [30, 30, 100],
+      "UniqueTraitHexRange": [3, 3, 10],
+      "DamageMitigatedPerSapling": [650, 650, 300],
+      "SaplingsOnDeath": [3, 5, 10],
+      "ActiveDamageHealthScalar": [0.06, 0.06, 1],
+      "ActiveBaseHeal": [330, 400, 2000],
+      "ActiveMissingHealthHeal": [0.1, 0.1, 1],
+      "SaplingDamageHealthScalar": [0.07, 0.07, 0.75],
+      "SizeScalePerStack": [0.006, 0.006, 0.006],
+      "3StarBigSaplingsOnCast": [0, 0, 5],
+      "BigSaplingAOEDamage": [1000, 1000, 1000]
+    },
+    "formats": {
+      "ActiveMissingHealthHeal": "percent"
+    }
+  },
+  "DA_18_Maokai_BigSapling": {
+    "icon": null,
+    "tokens": {},
+    "rows": {
+      "AutoAttackDamage": [80, 120, 180],
+      "UniqueTraitHealthPerStack": [30, 30, 100],
+      "UniqueTraitHexRange": [3, 3, 10],
+      "DamageMitigatedPerSapling": [650, 650, 300],
+      "SaplingsOnDeath": [3, 5, 10],
+      "ActiveDamageHealthScalar": [0.06, 0.06, 1],
+      "ActiveBaseHeal": [330, 400, 2000],
+      "ActiveMissingHealthHeal": [0.1, 0.1, 1],
+      "SaplingDamageHealthScalar": [0.07, 0.07, 0.75],
+      "SizeScalePerStack": [0.006, 0.006, 0.006],
+      "3StarBigSaplingsOnCast": [0, 0, 5],
+      "BigSaplingAOEDamage": [1000, 1000, 1000]
+    }
+  },
+  "DA_18_Maokai_Sapling": {
+    "icon": null,
+    "tokens": {},
+    "rows": {
+      "AutoAttackDamage": [80, 120, 180],
+      "UniqueTraitHealthPerStack": [30, 30, 100],
+      "UniqueTraitHexRange": [3, 3, 10],
+      "DamageMitigatedPerSapling": [650, 650, 300],
+      "SaplingsOnDeath": [3, 5, 10],
+      "ActiveDamageHealthScalar": [0.06, 0.06, 1],
+      "ActiveBaseHeal": [330, 400, 2000],
+      "ActiveMissingHealthHeal": [0.1, 0.1, 1],
+      "SaplingDamageHealthScalar": [0.07, 0.07, 0.75],
+      "SizeScalePerStack": [0.006, 0.006, 0.006],
+      "3StarBigSaplingsOnCast": [0, 0, 5],
+      "BigSaplingAOEDamage": [1000, 1000, 1000]
+    }
+  },
+  "DA_18_MasterYi_AD": {
+    "icon": "/assets/abilities/set18/DA_18_MasterYi_AD.png",
+    "tokens": {
+      "AttackSpeedCalc1": [0.15, 0.15, 0.15]
+    },
+    "rows": {
+      "AutoAttackDamage": [60, 90, 135],
+      "DoubleStrikeBonusMagicDamage": [125, 190, 285],
+      "APForm_HealPercent": [0.35, 0.35, 0.35],
+      "AutoAttackDamageAP": [15, 22.5, 33.75],
+      "DoubleStrikeASBuffFlat": [0.12, 0.12, 0.12],
+      "DoubleStrikeASBuffAP": [0.03, 0.03, 0.03],
+      "MovementSpeedIncrease": [500, 500, 500]
+    },
+    "formats": {
+      "AttackSpeedCalc1": "percent"
+    }
+  },
+  "DA_18_MasterYi_AP": {
+    "icon": "/assets/abilities/set18/DA_18_MasterYi_AP.png",
+    "tokens": {
+      "MagicDamageCalc1": [125, 190, 285]
+    },
+    "rows": {
+      "AutoAttackDamage": [60, 90, 135],
+      "DoubleStrikeBonusMagicDamage": [125, 190, 285],
+      "APForm_HealPercent": [0.35, 0.35, 0.35],
+      "AutoAttackDamageAP": [15, 22.5, 33.75],
+      "DoubleStrikeASBuffFlat": [0.12, 0.12, 0.12],
+      "DoubleStrikeASBuffAP": [0.03, 0.03, 0.03],
+      "MovementSpeedIncrease": [500, 500, 500]
+    },
+    "formats": {
+      "APForm_HealPercent": "percent"
+    }
+  },
+  "DA_18_Morgana": {
+    "icon": "/assets/abilities/set18/DA_18_Morgana.png",
+    "tokens": {
+      "MagicDamageCalc2": [33, 50, 500],
+      "MagicDamageCalc3": [22, 33, 240],
+      "MagicDamageCalc1": [60, 90, 500]
+    },
+    "rows": {
+      "AutoAttackDamage": [45, 67.5, 101.25],
+      "Omnivamp": [0.25, 0.25, 0.25],
+      "NumEnemiesCursed": [3, 3, 3],
+      "InitialDamageAP": [60, 90, 500],
+      "SpellDuration": [4, 4, 4],
+      "ZoneDPS": [33, 50, 500],
+      "AdditionalDamagePerCurse": [22, 33, 240],
+      "HexRangeAoE": [2, 2, 2],
+      "TickRate": [0.25, 0.25, 0.25]
+    },
+    "formats": {
+      "Omnivamp": "percent"
+    }
+  },
+  "DA_18_NunuWillump": {
+    "icon": null,
+    "tokens": {},
+    "rows": {}
+  },
+  "DA_18_Ornn": {
+    "icon": "/assets/abilities/set18/DA_18_Ornn.png",
+    "tokens": {
+      "MagicDamageCalc1": [200, 300, 450],
+      "ShieldCalc1": [400, 460, 550]
+    },
+    "rows": {
+      "MagicDamage": [200, 300, 450],
+      "ShieldAmount": [400, 460, 550],
+      "ShieldDuration": [4, 4, 4],
+      "AutoAttackDamage": [40, 60, 90],
+      "DamageTakenRewardThreshold": [90000, 90000, 90000],
+      "DamageTakenSecondThreshold": [140000, 140000, 140000],
+      "DamageTakenThirdThreshold": [180000, 180000, 180000],
+      "DamageTaken3StarScalar": [1.85, 1.85, 1.85]
+    },
+    "formats": {
+      "DamageTaken3StarScalar": "percentMinusOne"
+    }
+  },
+  "DA_18_Rakan": {
+    "icon": "/assets/abilities/set18/DA_18_Rakan.png",
+    "tokens": {
+      "ShieldCalc1": [290, 340, 435],
+      "AttackSpeedCalc1": [1.9, 2, 2.3]
+    },
+    "rows": {
+      "BasicAttackDamage": [45, 67.5, 101.25],
+      "ShieldAmount": [290, 340, 435],
+      "DecayingAttackSpeed": [1.9, 2, 2.3],
+      "AttackSpeedDuration": [4, 4, 4],
+      "ShieldDuration": [4, 4, 4]
+    },
+    "formats": {
+      "AttackSpeedCalc1": "percentMinusOne"
+    }
+  },
+  "DA_18_Rammus": {
+    "icon": "/assets/abilities/set18/DA_18_Rammus.png",
+    "tokens": {
+      "ArmorCalc1": [1, 1, 1],
+      "PhysicalDamageCalc1": [50, 75, 120],
+      "ShieldCalc1": [400, 550, 700]
+    },
+    "rows": {
+      "AutoAttackDamage": [50, 75, 112.5],
+      "Duration": [4, 4, 4],
+      "ArmorMRDamageRatio": [0.5, 0.75, 1.2],
+      "DamageHexRange": [2, 2, 2],
+      "ArmorMR": [60, 60, 60],
+      "Shield": [400, 550, 700]
+    }
+  },
+  "DA_18_RekSai": {
+    "icon": "/assets/abilities/set18/DA_18_RekSai.png",
+    "tokens": {
+      "MagicDamageCalc1": [70, 105, 160],
+      "HealthCalc1": [7, 13, 23],
+      "HealthCalc3": [17, 27, 43],
+      "HealthCalc2": [17, 27, 43]
+    },
+    "rows": {
+      "SpellDamage": [70, 105, 160],
+      "PassiveTickRate": [1, 1, 1],
+      "HealthRegenPercentPerSecond": [0.01, 0.01, 0.01],
+      "AutoAttackDamage": [50, 75, 112.5],
+      "KnockupDuration": [1, 1, 1],
+      "SpellMultiplierDuration": [3, 3, 3],
+      "SpellHealthRegenMultiplier": [3, 3, 3],
+      "HealthRegenFlat": [10, 14, 20]
+    }
+  },
+  "DA_18_Rengar": {
+    "icon": "/assets/abilities/set18/DA_18_Rengar.png",
+    "tokens": {
+      "PhysicalDamageCalc1": [255, 385, 650],
+      "HealthCalc1": [60, 90, 150],
+      "HealthCalc2": [120, 180, 300]
+    },
+    "rows": {
+      "HealPercent": [0.2, 0.2, 0.2],
+      "StabDamage": [255, 385, 650],
+      "AutoAttackDamage": [60, 90, 135],
+      "JumpDamage": [50, 75, 120],
+      "JumpHexRange": [3, 3, 3],
+      "HealMax": [120, 180, 300],
+      "HealMin": [60, 90, 150],
+      "RivalsAugment_HealShare": [0.25, 0.25, 0.25]
+    }
+  },
+  "DA_18_Sejuani": {
+    "icon": "/assets/abilities/set18/DA_18_Sejuani.png",
+    "tokens": {
+      "MagicDamageCalc1": [90, 135, 205],
+      "MagicDamageCalc2": [120, 180, 270],
+      "ShieldCalc1": [315, 412, 567],
+      "ShieldCalc2": [225, 250, 275]
+    },
+    "rows": {
+      "ConeDamage": [90, 135, 205],
+      "ShieldPercentHealth": [0.1, 0.1, 0.1],
+      "SlamDamage": [120, 180, 270],
+      "ShieldAP": [225, 250, 275],
+      "ShieldDuration": [4, 4, 4],
+      "AutoAttackDamage": [50, 75, 112.5]
+    }
+  },
+  "DA_18_Sentry": {
+    "icon": "/assets/abilities/set18/DA_18_Sentry.png",
+    "tokens": {
+      "MagicDamageCalc1": [160, 240, 360],
+      "GenericCalc2": [16, 16, 16],
+      "GenericCalc1": [0.125, 0.125, 0.125]
+    },
+    "rows": {
+      "AutoAttackDamage": [35, 52.5, 78.75],
+      "PercentManaPerSecond": [0.35, 0.35, 0.35],
+      "MRReduction": [3, 3, 3],
+      "SpellDamagePerSecond": [160, 240, 360],
+      "LaserTickFrequency": [0.25, 0.25, 0.25],
+      "TraitChannelSecondsTooltip": [4, 4, 4],
+      "TraitManaRegenTooltip": [2, 2, 2]
+    },
+    "formats": {
+      "PercentManaPerSecond": "percent"
+    }
+  },
+  "DA_18_Sett": {
+    "icon": "/assets/abilities/set18/DA_18_Sett.png",
+    "tokens": {
+      "HealthCalc1": [369, 534, 2467],
+      "HealthCalc2": [144, 259, 467],
+      "HealthCalc3": [225, 275, 2000],
+      "PhysicalDamageCalc1": [222, 355, 5233],
+      "ManaCalc1": [100, 100, 500]
+    },
+    "rows": {
+      "AutoAttackDamage": [80, 120, 180],
+      "ConeDamage": [150, 225, 5000],
+      "ManaGain": [100, 100, 500],
+      "ManaHPThreshold": [0.4, 0.4, 0.4],
+      "HealDuration": [0.5, 0.5, 0.5],
+      "HealPercent": [0.12, 0.12, 0.12],
+      "DamageHealthPercent": [0.06, 0.06, 0.06],
+      "BaseHeal": [225, 275, 2000]
+    },
+    "formats": {
+      "ManaHPThreshold": "percent"
+    }
+  },
+  "DA_18_Shen": {
+    "icon": "/assets/abilities/set18/DA_18_Shen.png",
+    "tokens": {
+      "ShieldCalc1": [375, 450, 575],
+      "MagicDamageCalc1": [35, 55, 80],
+      "ShieldCalc2": [225, 300, 400]
+    },
+    "rows": {
+      "AutoAttackDamage": [50, 75, 112.5],
+      "MagicShieldAmount": [375, 450, 575],
+      "MagicShieldDuration": [4, 4, 4],
+      "AttackSpeedBuff": [0.4, 0.4, 0.4],
+      "AttackMagicDamageBuff": [35, 55, 80],
+      "NumAttacksBuff": [3, 3, 3],
+      "AllyShieldAmount": [225, 300, 400]
+    },
+    "formats": {
+      "AttackSpeedBuff": "percent"
+    }
+  },
+  "DA_18_Sivir": {
+    "icon": "/assets/abilities/set18/DA_18_Sivir.png",
+    "tokens": {
+      "PhysicalDamageCalc1": [215, 320, 1150],
+      "PhysicalDamageCalc2": [43, 64, 460]
+    },
+    "rows": {
+      "NumBounces": [8, 8, 8],
+      "AutoAttackDamage": [50, 75, 112.5],
+      "BouncePercent": [0.2, 0.2, 0.4],
+      "InitialDamageAD": [200, 300, 1050],
+      "InitialDamageAP": [15, 20, 100],
+      "BounceHexRange": [3, 3, 3],
+      "BonusKillBounces": [3, 3, 6]
+    }
+  },
+  "DA_18_Soraka": {
+    "icon": "/assets/abilities/set18/DA_18_Soraka.png",
+    "tokens": {
+      "MagicDamageCalc1": [225, 335, 1000],
+      "MagicDamageCalc2": [100, 150, 1000]
+    },
+    "rows": {
+      "AutoAttackDamage": [30, 45, 67.5],
+      "AdditionalStarDamageAP": [100, 150, 1000],
+      "DamageAP": [225, 335, 1000],
+      "NumAdditionalStars": [3, 3, 3]
+    }
+  },
+  "DA_18_Teemo": {
+    "icon": "/assets/abilities/set18/DA_18_Teemo.png",
+    "tokens": {
+      "MagicDamageCalc1": [55, 82, 155],
+      "MagicDamageCalc2": [135, 200, 310]
+    },
+    "rows": {
+      "AutoAttackDamage": [35, 52.5, 78.75],
+      "NumEnemiesHit": [3, 3, 3],
+      "APDamage": [55, 82, 155],
+      "RedRerolls": [1, 1, 1],
+      "GreenHealth": [1, 1, 1],
+      "YellowXP": [2, 2, 2],
+      "PercentChanceOfForage": [0.1, 0.12, 0.15],
+      "RedChance": [0.33, 0.33, 0.33],
+      "GreenChance": [0.34, 0.34, 0.34],
+      "YellowChance": [0.33, 0.33, 0.33],
+      "MaxGreenShroomsPerGame": [8, 8, 8],
+      "BigMushroomDamage": [135, 200, 310]
+    },
+    "formats": {
+      "PercentChanceOfForage": "percent"
+    }
+  },
+  "DA_18_Tristana": {
+    "icon": "/assets/abilities/set18/DA_18_Tristana.png",
+    "tokens": {
+      "PhysicalDamageCalc1": [175, 265, 420],
+      "PhysicalDamageCalc2": [10, 15, 25],
+      "AttackSpeedCalc1": [0.6, 0.6, 0.6]
+    },
+    "rows": {
+      "AOEDamagePerStack": [10, 15, 25],
+      "AutoAttackDamage": [55, 82.5, 123.75],
+      "AttackSpeedBase": [0.4, 0.4, 0.4],
+      "AttackSpeedAP": [0.2, 0.2, 0.2],
+      "AOEDamageBase": [175, 265, 420],
+      "Duration": [4, 4, 4]
+    },
+    "formats": {
+      "AttackSpeedCalc1": "percent"
+    }
+  },
+  "DA_18_Varus": {
+    "icon": "/assets/abilities/set18/DA_18_Varus.png",
+    "tokens": {
+      "PhysicalDamageCalc1": [445, 670, 1070]
+    },
+    "rows": {
+      "ADDamage": [415, 625, 1000],
+      "DamageReductionPerHit": [0.4, 0.4, 0.4],
+      "APDamage": [30, 45, 70],
+      "AutoAttackDamage": [40, 60, 90],
+      "MinDamagePercent": [0.4, 0.4, 0.4],
+      "SpellDuration": [2, 2, 2]
+    },
+    "formats": {
+      "DamageReductionPerHit": "percent",
+      "MinDamagePercent": "percent"
+    }
+  },
+  "DA_18_Veigar": {
+    "icon": "/assets/abilities/set18/DA_18_Veigar.png",
+    "tokens": {
+      "MagicDamageCalc1": [190, 285, 430],
+      "MagicDamageCalc2": [285, 430, 640]
+    },
+    "rows": {
+      "LowHPSpellDamage": [285, 430, 640],
+      "AutoAttackDamage": [25, 37.5, 56.25],
+      "HPThreshold": [0.3, 0.3, 0.3],
+      "HighHPSpellDamage": [190, 285, 430],
+      "APOnKill": [2, 2, 2],
+      "KillBuffer": [0.2, 0.2, 0.2]
+    },
+    "formats": {
+      "HPThreshold": "percent"
+    }
+  },
+  "DA_18_Warwick": {
+    "icon": "/assets/abilities/set18/DA_18_Warwick.png",
+    "tokens": {
+      "PhysicalDamageCalc1": [230, 345, 535],
+      "GenericCalc1": [0.25, 0.25, 0.25]
+    },
+    "rows": {
+      "AutoAttackDamage": [45, 67.5, 101.25],
+      "BiteDamage": [230, 345, 535],
+      "AttackSpeedBuff": [1.2, 1.2, 1.2],
+      "HealPercent": [0.25, 0.25, 0.25]
+    },
+    "formats": {
+      "GenericCalc1": "percent",
+      "AttackSpeedBuff": "percentMinusOne"
+    }
+  },
+  "DA_18_Xayah": {
+    "icon": "/assets/abilities/set18/DA_18_Xayah.png",
+    "tokens": {
+      "PhysicalDamageCalc1": [73, 108, 165],
+      "GenericCalc1": [2, 2, 2]
+    },
+    "rows": {
+      "FeatherADRatio": [73, 108, 165],
+      "NumAttacks": [5, 5, 5],
+      "ArmorReduction": [2, 2, 2],
+      "AbilityLevel": [1, 2, 3],
+      "AutoAttackDamage": [45, 67.5, 101.25],
+      "AttackSpeed": [1.5, 1.5, 1.5],
+      "ASToCastTime": [0.8, 0.678, 0.5561]
+    },
+    "formats": {
+      "AttackSpeed": "percentMinusOne"
+    }
+  },
+  "DA_18_Yorick": {
+    "icon": "/assets/abilities/set18/DA_18_Yorick.png",
+    "tokens": {
+      "PhysicalDamageCalc1": [150, 225, 340],
+      "HealthCalc1": [280, 325, 435],
+      "HealthCalc2": [330, 634, 1171]
+    },
+    "rows": {
+      "AutoAttackDamage": [50, 75, 112.5],
+      "StrikeDamage": [150, 225, 340],
+      "StrikeHeal": [280, 325, 435],
+      "GhoulHealthBase": [200, 400, 750],
+      "GhoulPercentHealth": [0.2, 0.2, 0.2],
+      "SpawnInvulnerableTime": [1, 1, 1]
+    }
+  },
+  "DA_18_Yorick_Spirit": {
+    "icon": "/assets/abilities/set18/DA_18_Yorick_Spirit.png",
+    "tokens": {},
+    "rows": {
+      "AutoAttackDamage": [50, 75, 112.5],
+      "StrikeDamage": [150, 225, 340],
+      "StrikeHeal": [280, 325, 435],
+      "GhoulHealthBase": [200, 400, 750],
+      "GhoulPercentHealth": [0.2, 0.2, 0.2],
+      "SpawnInvulnerableTime": [1, 1, 1]
+    }
+  },
+  "DA_18_Yunara": {
+    "icon": "/assets/abilities/set18/DA_18_Yunara.png",
+    "tokens": {
+      "PhysicalDamageCalc1": [170, 255, 395],
+      "PhysicalDamageCalc2": [59, 89, 138],
+      "PhysicalDamageCalc3": [10, 15, 25]
+    },
+    "rows": {
+      "AutoAttackDamage": [42, 63, 94.5],
+      "SecondaryDamagePercentOfBase": [0.35, 0.35, 0.35],
+      "DashDistanceHexes": [3, 3, 3],
+      "PrimaryDamage": [160, 240, 370],
+      "NumSecondaryTargets": [2, 2, 2],
+      "SecondaryDamageAP": [10, 15, 25]
+    }
+  },
+  "DA_18_Zyra": {
+    "icon": "/assets/abilities/set18/DA_18_Zyra.png",
+    "tokens": {
+      "MagicDamageCalc1": [35, 53, 225]
+    },
+    "rows": {
+      "AutoAttackDamage": [40, 60, 90],
+      "NumPlantsToSpawn": [2, 2, 4],
+      "ThornSpitterNumAttacks": [10, 10, 10],
+      "ThornSpitterDamagePerAttack": [35, 53, 225],
+      "BaseDurability": [0.95, 0.95, 0.95],
+      "IncreasedDurability": [0.9, 0.9, 0.9],
+      "PlantNumThreshold": [6, 6, 6]
+    }
+  },
+  "DA_18_Zyra_ThornSpitter": {
+    "icon": null,
+    "tokens": {},
+    "rows": {
+      "AutoAttackDamage": [40, 60, 90],
+      "NumPlantsToSpawn": [2, 2, 4],
+      "ThornSpitterNumAttacks": [10, 10, 10],
+      "ThornSpitterDamagePerAttack": [35, 53, 225],
+      "BaseDurability": [0.95, 0.95, 0.95],
+      "IncreasedDurability": [0.9, 0.9, 0.9],
+      "PlantNumThreshold": [6, 6, 6]
+    }
+  },
+  "DA_Amumu18": {
+    "icon": "/assets/abilities/set18/DA_Amumu18.png",
+    "tokens": {
+      "HealthCalc2": [20, 25, 100],
+      "HealthCalc1": [53, 83, 268],
+      "MagicDamageCalc1": [12, 18, 150],
+      "MagicDamageCalc3": [100, 150, 2000],
+      "GenericCalc2": [0.5, 0.5, 3],
+      "GenericCalc1": [1.5, 1.5, 9]
+    },
+    "rows": {
+      "Damage": [70, 105, 320],
+      "AutoAttackDamage": [70, 105, 157.5],
+      "StunDuration": [1, 1, 6],
+      "DamageBig": [100, 150, 2000],
+      "PassiveHeal": [20, 25, 100],
+      "PassiveDamage": [12, 18, 150],
+      "PassiveHealPercent": [0.025, 0.025, 0.04],
+      "PassiveTickRate": [1, 1, 1],
+      "BurnDamageStunIncrease": [0.4, 0.4, 0.4],
+      "BigHexRadius": [2, 2, 2],
+      "PassiveHexRadius": [1, 1, 1],
+      "IncreasedStunDurationPercent": [0.5, 0.5, 0.5]
+    }
+  },
+  "DA_Brambleback18": {
+    "icon": "/assets/abilities/set18/DA_Brambleback18.png",
+    "tokens": {
+      "PhysicalDamageCalc1": [135, 205, 1000],
+      "GenericCalc1": [0.45, 0.45, 0.9],
+      "GenericCalc2": [0.25, 0.25, 0.7],
+      "GenericCalc3": [0.55, 0.55, 0.1]
+    },
+    "rows": {
+      "AutoAttackDamage": [120, 180, 270],
+      "PassiveBurnRatio": [1, 1, 1],
+      "FrenzyADPercent": [1, 1, 3],
+      "FrenzyArmorIgnorePercent": [0.25, 0.25, 0.7],
+      "BurnAmount": [1, 1, 1],
+      "Durability": [0.9, 0.9, 0.9],
+      "TraitBurnDuration": [4, 4, 4],
+      "DamageAmp": [0.1, 0.1, 0.1],
+      "TargetChangeDamage": [135, 205, 1000],
+      "FrenzyArmorIgnoreFlat": [0.2, 0.2, 0.2],
+      "TraitMaxHealthHeal": [0.04, 0.04, 0.04],
+      "Duration": [8, 8, 8]
+    },
+    "formats": {
+      "FrenzyADPercent": "percent",
+      "GenericCalc1": "percent",
+      "TraitMaxHealthHeal": "percent"
+    }
+  },
+  "DA_Cinderling18": {
+    "icon": "/assets/abilities/set18/DA_Cinderling18.png",
+    "tokens": {
+      "PhysicalDamageCalc1": [340, 510, 770]
+    },
+    "rows": {
+      "AutoAttackDamage": [40, 60, 90],
+      "WoundDuration": [4, 4, 4],
+      "RiftbeastBuffCrit": [50, 10, 10],
+      "WoundLevel": [20, 20, 20],
+      "TraitDurabilityVsWound": [0.9, 0.9, 0.9],
+      "TraitDamageAmpVsWound": [0.1, 0.1, 0.1],
+      "BurnAmount": [1, 1, 1],
+      "BurnDuration": [4, 4, 4],
+      "TraitADOnCast": [0.22, 0.22, 0.22],
+      "SpellDamageAD": [310, 465, 700],
+      "SpellDamageAP": [30, 45, 70]
+    },
+    "formats": {
+      "TraitADOnCast": "percent"
+    }
+  },
+  "DA_CrimsonRaptor18": {
+    "icon": "/assets/abilities/set18/DA_CrimsonRaptor18.png",
+    "tokens": {
+      "GenericCalc1": [5, 5, 5],
+      "PhysicalDamageCalc1": [22, 33, 52]
+    },
+    "rows": {
+      "AutoAttackDamage": [60, 90, 135],
+      "MiniDamagePerAttack": [22, 33, 52],
+      "MiniDuration": [5, 5, 5],
+      "NumMinisToSpawn": [4, 4, 4],
+      "ArmorReduc": [2, 2, 2],
+      "ProcDamage": [50, 50, 75],
+      "ArmorReducCountMax": [10, 10, 10],
+      "ArmorReducAmount": [2, 2, 2]
+    }
+  },
+  "DA_Draven18": {
+    "icon": "/assets/abilities/set18/DA_Draven18.png",
+    "tokens": {
+      "PhysicalDamageCalc1": [150, 225, 3000],
+      "GenericCalc1": [0.12, 0.12, 0.12],
+      "PhysicalDamageCalc2": [72, 108, 1080],
+      "PhysicalDamageCalc3": [100, 150, 400],
+      "GenericCalc2": [30, 45, 100]
+    },
+    "rows": {
+      "AutoAttackDamage": [48, 72, 108],
+      "BleedDamage": [150, 225, 3000],
+      "BleedDuration": [12, 12, 12],
+      "ChanceForSpinningAxe": [0.12, 0.12, 0.12],
+      "SpinningAxeDamageRatio": [1.5, 1.5, 10],
+      "SpinningAxeBleedStacks": [2, 2, 2],
+      "GiantAxeDamage": [100, 150, 400],
+      "ChanceforAttackToHitRandomInRange": [0.7, 0.7, 0.7],
+      "NumDravenClones": [0, 0, 15],
+      "CloneProjectileDamage": [99999, 99999, 99999],
+      "3StarStunDuration": [15, 15, 15],
+      "GiantAxeReturnDamage": [30, 45, 100],
+      "NumOfEnemiesHitForRefund": [0, 0, 0],
+      "ManaRefund": [0.5, 0.5, 0.5],
+      "CastAmount_CastsRequired": [6, 6, 6],
+      "DamageAmount_DamageRequired": [10000, 10000, 10000],
+      "CastAmount_NumRandom4Costs": [2, 2, 2],
+      "CastAmountHard_CastsRequired": [8, 8, 8],
+      "CastAmountHard_NumRerolls": [6, 6, 6],
+      "AttackAmount_AttacksRequired": [60, 60, 60],
+      "AttackAmount_NumRandom5Costs": [1, 1, 1],
+      "Kills_GoldReward": [12, 12, 12],
+      "DamageAmount_GoldReward": [7, 7, 7],
+      "DamageAmountHard_DamageRequired": [35000, 35000, 35000],
+      "DamageAmountHard_GoldReward": [15, 15, 15],
+      "DamageAmountSingleCombat_DamageRequired": [10000, 10000, 10000],
+      "DamageAmountSingleCombat_NumBFSwordReward": [1, 1, 1],
+      "KillsHard_NumRandomCompletedItemsReward": [1, 1, 1],
+      "Kills_KillsRequired": [8, 8, 8],
+      "SurviveHard_NumRandomComponentsReward": [2, 2, 2],
+      "KillsHard_KillsRequired": [15, 15, 15],
+      "MostDamage_RerollsReward": [2, 2, 2],
+      "Takedowns_TakedownsRequired": [14, 14, 14],
+      "SurviveHard_NumCombats": [3, 3, 3],
+      "Takedowns_XPReward": [10, 10, 10],
+      "DamageAmountHard_NumBFSwordReward": [1, 1, 1]
+    },
+    "formats": {
+      "GenericCalc1": "percent",
+      "SpinningAxeDamageRatio": "percentMinusOne",
+      "ManaRefund": "percent"
+    }
+  },
+  "DA_Fiddlesticks18": {
+    "icon": "/assets/abilities/set18/DA_Fiddlesticks18.png",
+    "tokens": {
+      "MagicDamageCalc1": [70, 105, 170],
+      "HealthCalc1": [410, 485, 850]
+    },
+    "rows": {
+      "AutoAttackDamage": [50, 75, 112.5],
+      "MRReduction": [10, 10, 10],
+      "DamageTickFrequency": [0.25, 0.25, 0.25],
+      "CastDuration": [2, 2, 2],
+      "Healing": [410, 485, 850],
+      "NumTargets": [3, 3, 3],
+      "TotalDamage": [70, 105, 170]
+    }
+  },
+  "DA_Gromp18_AD": {
+    "icon": "/assets/abilities/set18/DA_Gromp18_AD.png",
+    "tokens": {
+      "PhysicalDamageCalc1": [335, 505, 795],
+      "PhysicalDamageCalc2": [100, 150, 240]
+    },
+    "rows": {
+      "AutoAttackDamage": [50, 75, 112.5],
+      "SecondaryDamageAP": [180, 270, 435],
+      "SlowDurationAD": [3, 3, 3],
+      "TraitAllyAP": [0.08, 0.08, 0.08],
+      "TraitTimedAD": [0.3, 0.3, 0.3],
+      "TraitTimedAP": [0.3, 0.3, 0.3],
+      "TraitAllyAD": [0.08, 0.08, 0.08],
+      "TraitTimer": [5, 5, 5],
+      "SlowAmountAd": [30, 30, 30],
+      "MainTargetDamageAP": [225, 340, 535],
+      "PoisonDurationAP": [3, 3, 3],
+      "SecondaryDamageAD": [100, 150, 240],
+      "MainTargetDamageAD": [305, 460, 725],
+      "AutoAttackDamageAP": [30, 45, 67.5],
+      "ADSpellAP": [30, 45, 70]
+    },
+    "formats": {
+      "TraitTimedAD": "percent"
+    }
+  },
+  "DA_Gromp18_AP": {
+    "icon": "/assets/abilities/set18/DA_Gromp18_AP.png",
+    "tokens": {
+      "MagicDamageCalc1": [225, 340, 535],
+      "MagicDamageCalc2": [180, 270, 435]
+    },
+    "rows": {
+      "AutoAttackDamage": [50, 75, 112.5],
+      "SecondaryDamageAP": [180, 270, 435],
+      "SlowDurationAD": [3, 3, 3],
+      "TraitAllyAP": [0.08, 0.08, 0.08],
+      "TraitTimedAD": [0.3, 0.3, 0.3],
+      "TraitTimedAP": [0.3, 0.3, 0.3],
+      "TraitAllyAD": [0.08, 0.08, 0.08],
+      "TraitTimer": [5, 5, 5],
+      "SlowAmountAd": [30, 30, 30],
+      "MainTargetDamageAP": [225, 340, 535],
+      "PoisonDurationAP": [3, 3, 3],
+      "SecondaryDamageAD": [100, 150, 240],
+      "MainTargetDamageAD": [305, 460, 725],
+      "AutoAttackDamageAP": [30, 45, 67.5],
+      "ADSpellAP": [30, 45, 70]
+    },
+    "formats": {
+      "TraitTimedAP": "percent"
+    }
+  },
+  "DA_Karma18": {
+    "icon": "/assets/abilities/set18/DA_Karma18.png",
+    "tokens": {
+      "MagicDamageCalc1": [280, 420, 630],
+      "MagicDamageCalc2": [125, 185, 300],
+      "GenericCalc1": [6, 6, 6]
+    },
+    "rows": {
+      "AutoAttackDamage": [25, 37.5, 56.25],
+      "AoESecondaryDamagePercent": [1, 1, 1],
+      "DamageTetherAP": [280, 420, 630],
+      "TetherDuration": [1.5, 1.5, 1.5],
+      "SlowPercent": [30, 30, 30],
+      "DamageAoEAP": [125, 185, 300],
+      "AoEHexRange": [1, 1, 1],
+      "SlowDuration": [2, 2, 2],
+      "TetherTickRate": [0.25, 0.25, 0.25]
+    }
+  },
+  "DA_KogMaw18_AD": {
+    "icon": "/assets/abilities/set18/DA_KogMaw18_AD.png",
+    "tokens": {
+      "PhysicalDamageCalc1": [165, 250, 425],
+      "PhysicalDamageCalc2": [231, 350, 595]
+    },
+    "rows": {
+      "AutoAttackDamage": [40, 60, 90],
+      "ADSpellDamage": [145, 220, 375],
+      "APSpellDamage": [160, 240, 415],
+      "NumTargets": [2, 2, 2],
+      "ADBonusDamageThreshold": [0.5, 0.5, 0.5],
+      "ADBonusDamageScalar": [1.4, 1.4, 1.4],
+      "BaseCastModifier": [0.1, 0.1, 0.1],
+      "APBonusDOTDuration": [3, 3, 3],
+      "ManaIncreasePerCast": [5, 5, 5],
+      "AutoAttackDamageAP": [30, 45, 67.5],
+      "ADSpellDamageAP": [20, 30, 50],
+      "APFormDOTDamage": [48, 72, 115]
+    },
+    "formats": {
+      "ADBonusDamageThreshold": "percent"
+    }
+  },
+  "DA_KogMaw18_AP": {
+    "icon": "/assets/abilities/set18/DA_KogMaw18_AP.png",
+    "tokens": {
+      "MagicDamageCalc1": [160, 240, 415],
+      "MagicDamageCalc2": [48, 72, 115]
+    },
+    "rows": {
+      "AutoAttackDamage": [40, 60, 90],
+      "ADSpellDamage": [145, 220, 375],
+      "APSpellDamage": [160, 240, 415],
+      "NumTargets": [2, 2, 2],
+      "ADBonusDamageThreshold": [0.5, 0.5, 0.5],
+      "ADBonusDamageScalar": [1.4, 1.4, 1.4],
+      "BaseCastModifier": [0.1, 0.1, 0.1],
+      "APBonusDOTDuration": [3, 3, 3],
+      "ManaIncreasePerCast": [5, 5, 5],
+      "AutoAttackDamageAP": [30, 45, 67.5],
+      "ADSpellDamageAP": [20, 30, 50],
+      "APFormDOTDamage": [48, 72, 115]
+    }
+  },
+  "DA_Krug18": {
+    "icon": "/assets/abilities/set18/DA_Krug18.png",
+    "tokens": {
+      "HealthCalc1": [182, 338, 608],
+      "HealthCalc2": [175, 225, 325],
+      "PhysicalDamageCalc1": [223, 358, 620]
+    },
+    "rows": {
+      "StunDuration": [1.5, 1.5, 1.5],
+      "HigherHealthMultiplier": [2, 2, 2],
+      "AutoAttackDamage": [55, 82.5, 123.75],
+      "ADDamage": [135, 200, 335],
+      "APDamage": [50, 75, 120],
+      "AutoAttackDamageMini": [40, 60, 90],
+      "HPPercentMini": [0.12, 0.12, 0.12],
+      "TraitSelfHealthPercent": [1.03, 1.03, 1.03],
+      "TraitSelfHealthInterval": [4.99, 4.99, 4.99],
+      "TraitAlliesHealthPercent": [1.1, 1.1, 1.1],
+      "HPBaseMini": [50, 100, 180],
+      "SpellHealthIncrease": [175, 225, 325],
+      "HealthDamageRatio": [0.08, 0.08, 0.08],
+      "TraitShieldHealth": [0.08, 0.08, 0.08],
+      "TraitShieldDuration": [5, 5, 5]
+    },
+    "formats": {
+      "TraitShieldHealth": "percent"
+    }
+  },
+  "DA_Krug18_MiniKrug": {
+    "icon": "/assets/abilities/set18/DA_Krug18_MiniKrug.png",
+    "tokens": {},
+    "rows": {
+      "StunDuration": [1.5, 1.5, 1.5],
+      "HigherHealthMultiplier": [2, 2, 2],
+      "AutoAttackDamage": [55, 82.5, 123.75],
+      "ADDamage": [135, 200, 335],
+      "APDamage": [50, 75, 120],
+      "AutoAttackDamageMini": [40, 60, 90],
+      "HPPercentMini": [0.12, 0.12, 0.12],
+      "TraitSelfHealthPercent": [1.03, 1.03, 1.03],
+      "TraitSelfHealthInterval": [4.99, 4.99, 4.99],
+      "TraitAlliesHealthPercent": [1.1, 1.1, 1.1],
+      "HPBaseMini": [50, 100, 180],
+      "SpellHealthIncrease": [175, 225, 325],
+      "HealthDamageRatio": [0.08, 0.08, 0.08],
+      "TraitShieldHealth": [0.08, 0.08, 0.08],
+      "TraitShieldDuration": [5, 5, 5]
+    }
+  },
+  "DA_Lux18_Base": {
+    "icon": "/assets/abilities/set18/DA_Lux18_Base.png",
+    "tokens": {
+      "ManaCalc1": [3, 3, 100],
+      "MagicDamageCalc1": [375, 565, 6500]
+    },
+    "rows": {
+      "AutoAttackDamage": [40, 60, 90],
+      "LaserDamage": [375, 565, 6500],
+      "ManaForAllies": [3, 3, 100],
+      "DamageReductionPerUnit": [0.25, 0.25, 0.1],
+      "FaeHealRatio": [0.18, 0.18, 0.18],
+      "LunarVulnerableDuration": [4, 4, 4],
+      "BlackthornStunDuration": [1, 1, 1],
+      "InfernoManaRestore": [10, 10, 10],
+      "CovenResistReduction": [8, 8, 8],
+      "PrimalAttackSpeed": [1.6, 1.6, 1.6],
+      "PrimalASDuration": [6, 6, 6],
+      "BlossomBonusDamageRatio": [0.1, 0.1, 0.1],
+      "LunarVulnerablePercent": [8, 8, 8],
+      "ElderwoodHealthIncrease": [1.025, 1.025, 1.025],
+      "MinimumFalloffDamageRatio": [0.4, 0.4, 0.4],
+      "SolarBonusDamagePer3StarRadio": [0.12, 0.12, 0.12],
+      "SolarBonusDamageRatio": [0.15, 0.15, 0.15],
+      "TailoredChoices": [2, 2, 2],
+      "ArmoryChoices": [3, 3, 3],
+      "MinLuxTraitsFreeToOfferAugment": [4, 4, 4]
+    },
+    "formats": {
+      "DamageReductionPerUnit": "percent"
+    }
+  },
+  "DA_Lux18_Blackthorn": {
+    "icon": "/assets/abilities/set18/DA_Lux18_Blackthorn.png",
+    "tokens": {
+      "ManaCalc1": [3, 3, 100],
+      "MagicDamageCalc1": [375, 565, 6500]
+    },
+    "rows": {
+      "AutoAttackDamage": [40, 60, 90],
+      "LaserDamage": [375, 565, 6500],
+      "ManaForAllies": [3, 3, 100],
+      "DamageReductionPerUnit": [0.25, 0.25, 0.1],
+      "FaeHealRatio": [0.18, 0.18, 0.18],
+      "LunarVulnerableDuration": [4, 4, 4],
+      "BlackthornStunDuration": [1, 1, 1],
+      "InfernoManaRestore": [10, 10, 10],
+      "CovenResistReduction": [8, 8, 8],
+      "PrimalAttackSpeed": [1.6, 1.6, 1.6],
+      "PrimalASDuration": [6, 6, 6],
+      "BlossomBonusDamageRatio": [0.1, 0.1, 0.1],
+      "LunarVulnerablePercent": [8, 8, 8],
+      "ElderwoodHealthIncrease": [1.025, 1.025, 1.025],
+      "MinimumFalloffDamageRatio": [0.4, 0.4, 0.4],
+      "SolarBonusDamagePer3StarRadio": [0.12, 0.12, 0.12],
+      "SolarBonusDamageRatio": [0.15, 0.15, 0.15],
+      "TailoredChoices": [2, 2, 2],
+      "ArmoryChoices": [3, 3, 3],
+      "MinLuxTraitsFreeToOfferAugment": [4, 4, 4]
+    },
+    "formats": {
+      "DamageReductionPerUnit": "percent",
+      "MinimumFalloffDamageRatio": "percent"
+    }
+  },
+  "DA_Lux18_Blossom": {
+    "icon": "/assets/abilities/set18/DA_Lux18_Blossom.png",
+    "tokens": {
+      "ManaCalc1": [3, 3, 100],
+      "MagicDamageCalc1": [375, 565, 6500]
+    },
+    "rows": {
+      "AutoAttackDamage": [40, 60, 90],
+      "LaserDamage": [375, 565, 6500],
+      "ManaForAllies": [3, 3, 100],
+      "DamageReductionPerUnit": [0.25, 0.25, 0.1],
+      "FaeHealRatio": [0.18, 0.18, 0.18],
+      "LunarVulnerableDuration": [4, 4, 4],
+      "BlackthornStunDuration": [1, 1, 1],
+      "InfernoManaRestore": [10, 10, 10],
+      "CovenResistReduction": [8, 8, 8],
+      "PrimalAttackSpeed": [1.6, 1.6, 1.6],
+      "PrimalASDuration": [6, 6, 6],
+      "BlossomBonusDamageRatio": [0.1, 0.1, 0.1],
+      "LunarVulnerablePercent": [8, 8, 8],
+      "ElderwoodHealthIncrease": [1.025, 1.025, 1.025],
+      "MinimumFalloffDamageRatio": [0.4, 0.4, 0.4],
+      "SolarBonusDamagePer3StarRadio": [0.12, 0.12, 0.12],
+      "SolarBonusDamageRatio": [0.15, 0.15, 0.15],
+      "TailoredChoices": [2, 2, 2],
+      "ArmoryChoices": [3, 3, 3],
+      "MinLuxTraitsFreeToOfferAugment": [4, 4, 4]
+    },
+    "formats": {
+      "DamageReductionPerUnit": "percent",
+      "MinimumFalloffDamageRatio": "percent",
+      "BlossomBonusDamageRatio": "percent"
+    }
+  },
+  "DA_Murkwolf18": {
+    "icon": "/assets/abilities/set18/DA_Murkwolf18.png",
+    "tokens": {
+      "PhysicalDamageCalc3": [100, 150, 225],
+      "GenericCalc1": [20, 30, 45],
+      "PhysicalDamageCalc1": [120, 180, 270],
+      "PhysicalDamageCalc2": [65, 100, 160]
+    },
+    "rows": {
+      "EmpoweredDamageAD": [65, 100, 160],
+      "AutoAttackDamage": [50, 75, 112.5],
+      "RiftbeastTakedownAttackSpeed": [1.25, 1.25, 1.25],
+      "RiftbeastAlliesAttackSpeed": [1.1, 1.1, 1.1],
+      "NumEmpoweredAttacks": [2, 2, 2],
+      "LeapDamageAD": [100, 150, 225],
+      "NumEmpoweredAttacksGainedOnKill": [2, 2, 2],
+      "LeapHexRadius": [3, 3, 3],
+      "LeapDamageAP": [20, 30, 45],
+      "TraitBaseCrit": [0.25, 0.25, 0.25],
+      "TraitBonusCrit": [0.75, 0.75, 0.75],
+      "EmpowerAspd": [2.75, 2.75, 2.75]
+    },
+    "formats": {
+      "EmpowerAspd": "percentMinusOne",
+      "TraitBaseCrit": "percent",
+      "TraitBonusCrit": "percent"
+    }
+  },
+  "DA_Nidalee18_AP": {
+    "icon": "/assets/abilities/set18/DA_Nidalee18_AP.png",
+    "tokens": {
+      "MagicDamageCalc1": [185, 275, 2000],
+      "MagicDamageCalc2": [330, 500, 3000]
+    },
+    "rows": {
+      "TrapDuration": [50, 50, 50],
+      "AutoAttackDamage": [35, 52.5, 78.75],
+      "TrapTickDamage": [12, 18, 80],
+      "TrapApplyDamage": [50, 75, 450],
+      "NumEmpoweredAttacks": [3, 3, 3],
+      "BonusAttackSpeed": [2.5, 2.5, 2.5],
+      "EmpoweredDamage": [185, 275, 2000],
+      "ThirdAttackEmpoweredDamage": [330, 500, 3000],
+      "AdditionalAttackRange": [4, 4, 4],
+      "ASToCastTime": [0.6, 0.5268, 0.4537],
+      "LeapHexRange": [4, 4, 4],
+      "SwipeDamage": [200, 300, 3000],
+      "NumCastsEmpowered": [3, 3, 3],
+      "ThirdAttackHeal": [300, 450, 2000],
+      "ThirdAttackBonusDamageMissingHealth": [1.25, 1.25, 1.25],
+      "ArmorIgnoreRatio": [0.6, 0.6, 0.8],
+      "AbilityDamageBonus_Nidalee": [1.2, 1.2, 1.2],
+      "AbilityDamageBonus": [1.1, 1.1, 1.1]
+    },
+    "formats": {
+      "BonusAttackSpeed": "percentMinusOne"
+    }
+  },
+  "DA_NidaleeCougar18_AD": {
+    "icon": "/assets/abilities/set18/DA_NidaleeCougar18_AD.png",
+    "tokens": {
+      "PhysicalDamageCalc1": [200, 300, 3000],
+      "GenericCalc1": [300, 450, 2000],
+      "GenericCalc3": [0.6, 0.6, 0.8],
+      "GenericCalc2": [0.4, 0.4, 0.2]
+    },
+    "rows": {
+      "AutoAttackDamage": [60, 90, 135],
+      "LeapHexRange": [4, 4, 4],
+      "SwipeDamage": [200, 300, 3000],
+      "NumCastsEmpowered": [3, 3, 3],
+      "ThirdAttackHeal": [300, 450, 2000],
+      "ThirdAttackBonusDamageMissingHealth": [1.25, 1.25, 1.25],
+      "ArmorIgnoreRatio": [0.6, 0.6, 0.8],
+      "TrapDuration": [50, 50, 50],
+      "TrapTickDamage": [12, 18, 80],
+      "TrapApplyDamage": [50, 75, 450],
+      "NumEmpoweredAttacks": [3, 3, 3],
+      "BonusAttackSpeed": [2.5, 2.5, 2.5],
+      "EmpoweredDamage": [185, 275, 2000],
+      "ThirdAttackEmpoweredDamage": [330, 500, 3000],
+      "AdditionalAttackRange": [4, 4, 4],
+      "ASToCastTime": [0.6, 0.5268, 0.4537],
+      "AbilityDamageBonus_Nidalee": [1.2, 1.2, 1.2],
+      "AbilityDamageBonus": [1.1, 1.1, 1.1]
+    },
+    "formats": {
+      "ArmorIgnoreRatio": "percent",
+      "ThirdAttackBonusDamageMissingHealth": "percent"
+    }
+  },
+  "DA_Scuttlecrab18": {
+    "icon": "/assets/abilities/set18/DA_Scuttlecrab18.png",
+    "tokens": {
+      "PhysicalDamageCalc1": [50, 75, 113],
+      "HealthCalc1": [325, 400, 675],
+      "DurabilityCalc1": [0.85, 0.85, 0.85]
+    },
+    "rows": {
+      "AutoAttackDamage": [50, 75, 112.5],
+      "HealPercentInitial": [0.3, 0.3, 0.3],
+      "BurrowDuration": [3, 3, 3],
+      "BurrowFindCoinsPercent": [3, 5, 8],
+      "BurrowHealTickRate": [0.25, 0.25, 0.25],
+      "TraitHealthThreshold": [0.5, 0.5, 0.5],
+      "TraitPercentHeal": [0.15, 0.15, 0.15],
+      "BurrowDurability": [0.15, 0.15, 0.15],
+      "BurrowTotalHeal": [325, 400, 675],
+      "CoinsOnFind": [1, 1, 1],
+      "TraitHealDuration": [3, 3, 3]
+    },
+    "formats": {
+      "BurrowDurability": "percent",
+      "TraitHealthThreshold": "percent",
+      "TraitPercentHeal": "percent"
+    }
+  },
+  "DA_Sentinel18": {
+    "icon": "/assets/abilities/set18/DA_Sentinel18.png",
+    "tokens": {
+      "ShieldCalc1": [480, 684, 2421],
+      "MagicDamageCalc1": [100, 150, 3500]
+    },
+    "rows": {
+      "AutoAttackDamage": [75, 112.5, 168.75],
+      "TraitBuffChillAmount": [5, 5, 5],
+      "TraitBuffChillDuration": [3, 3, 3],
+      "ShieldAmount": [350, 450, 2000],
+      "SlamDamage": [100, 150, 3500],
+      "ShieldDuration": [4, 4, 4],
+      "TraitSelfManaRegen": [5, 5, 5],
+      "TraitAlliesManaRegen": [2, 2, 2],
+      "KnockupDuration": [1, 1.25, 8],
+      "ShieldHealthRatio": [0.1, 0.1, 0.1],
+      "ManaReaveFlat": [10, 10, 10]
+    }
+  },
+  "DA_Taric18": {
+    "icon": "/assets/abilities/set18/DA_Taric18.png",
+    "tokens": {
+      "ShieldCalc1": [270, 501, 14212],
+      "HealthCalc1": [275, 450, 3000],
+      "MagicDamageCalc1": [100, 150, 1000]
+    },
+    "rows": {
+      "AutoAttackDamage": [55, 82.5, 123.75],
+      "HealAmount": [275, 450, 3000],
+      "PassivePercentHealthThreshold": [0.5, 0.5, 0.5],
+      "PassiveShield": [75, 150, 10000],
+      "PassiveShieldHealthScalar": [0.15, 0.15, 1],
+      "ShatterBonusDamage": [100, 150, 1000],
+      "PassiveShieldDuration": [3, 3, 99],
+      "PassiveHexRadius": [3, 3, 3],
+      "NumAttacks": [2, 2, 2],
+      "3StarPercentHPDamage": [0.25, 0.25, 0.25]
+    },
+    "formats": {
+      "PassivePercentHealthThreshold": "percent"
+    }
+  },
+  "DA_Vi18": {
+    "icon": "/assets/abilities/set18/DA_Vi18.png",
+    "tokens": {
+      "DurabilityCalc1": [0.85, 0.85, 0.85],
+      "HealthCalc3": [200, 265, 360],
+      "HealthCalc1": [22, 40, 71]
+    },
+    "rows": {
+      "AutoAttackDamage": [45, 67.5, 101.25],
+      "PassiveHeal": [0, 0, 0],
+      "SpellDuration": [3, 3, 3],
+      "SpellAS": [1.85, 2, 2.25],
+      "SpellHealMultiplier": [2, 2, 2],
+      "SpellDurability": [0.15, 0.15, 0.15],
+      "SpellInstantHeal": [200, 265, 360],
+      "PassivePercentHeal": [0.02, 0.02, 0.02]
+    },
+    "formats": {
+      "SpellAS": "percentMinusOne",
+      "SpellDurability": "percent"
+    }
+  }
+}

@@ -7,3 +7,7 @@ dist/
 server/scripts/.ingest-paused
 client/test-results/
 scripts/shots/
+
+# Local TFT client extractor: Oodle DLL (downloaded, never committed) and Python caches
+server/scripts/tft_client/.bin/
+__pycache__/

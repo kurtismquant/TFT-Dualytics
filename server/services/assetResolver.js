@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { readFileSync } from 'node:fs'
 import { CURRENT_SET } from '../constants/game.js'
+import { loadClientAbilityData, resolveClientTokens } from './clientAbilityData.js'
 import { evaluateCalculations, pickAbilitySpell } from './spellCalculations.js'
 
 // Riot apiNames stopped following one prefix scheme in Set 18. Sets up to 17 used
@@ -136,10 +137,12 @@ const DD_SPELL_ICON_BASE = 'https://ddragon.leagueoflegends.com/cdn'
 const hasValues = (calcs) => calcs && Object.keys(calcs).length > 0
 
 // Resolves a CDragon champion's ability for the client. Token values come from
-// the unit's character bin when CDragon has real data, otherwise from the
-// curated override. Icon: real CDragon art, else the League spell icon named in
-// the override, else the unit portrait.
-export const buildAbility = (champ, { bin = null, override = null, ddVersion = null, portraitUrl = '' } = {}) => {
+// the unit's character bin when CDragon has real data, then from the values
+// extracted from the Unreal client (Set 18+: what the game itself uses, so they
+// win over the bin), then from the curated override for anything still
+// missing. Icon: the client's ability art, else CDragon's, else the League
+// spell icon named in the override, else the unit portrait.
+export const buildAbility = (champ, { bin = null, client = null, override = null, ddVersion = null, portraitUrl = '' } = {}) => {
   if (!champ?.ability) return null
   // <rules>...</rules> blocks are CDragon tooltip rule annotations — drop them.
   const desc = (champ.ability.desc || '').replace(/<rules>[\s\S]*?<\/rules>/gi, '')
@@ -149,12 +152,16 @@ export const buildAbility = (champ, { bin = null, override = null, ddVersion = n
   const calculations = Object.fromEntries(
     unhashVariables(evaluated, desc).map(({ name, value }) => [name, value]),
   )
-  const fromBin = new Set(Object.keys(calculations).map(k => k.toLowerCase()))
+  const fromBin = Object.keys(calculations).length > 0
+  const clientTokens = resolveClientTokens(desc, client)
+  Object.assign(calculations, clientTokens)
+
+  const supplied = new Set(Object.keys(calculations).map(k => k.toLowerCase()))
   const shadowed = []
   for (const [token, entry] of Object.entries(override?.tokens || {})) {
     const parts = normalizeOverrideToken(entry)
     if (!parts) continue
-    if (fromBin.has(token.toLowerCase())) shadowed.push(token)
+    if (supplied.has(token.toLowerCase())) shadowed.push(token)
     else calculations[token] = parts
   }
 
@@ -166,12 +173,13 @@ export const buildAbility = (champ, { bin = null, override = null, ddVersion = n
   const ability = {
     name: champ.ability.name || '',
     desc,
-    iconUrl: cdIcon || spellIcon || portraitUrl,
+    iconUrl: client?.icon || cdIcon || spellIcon || portraitUrl,
     variables: unhashVariables(champ.ability.variables, desc),
   }
   if (hasValues(calculations)) ability.calculations = calculations
-  // `shadowed` = override tokens CDragon now supplies itself (stale after a patch).
-  return { ability, fromBin: fromBin.size > 0, shadowed }
+  // `shadowed` = override tokens now supplied by CDragon or the client data
+  // (stale after a patch — prune them).
+  return { ability, fromBin, fromClient: Object.keys(clientTokens).length > 0, shadowed }
 }
 
 // True when every @Token@ in the description has a value to show. Mirrors the
@@ -279,8 +287,9 @@ export const fetchAndCacheAssets = async () => {
     // en_us.json leaves calculated tooltip tokens (@MagicDamageCalc1@)
     // unresolved; their formulas live in each unit's character bin.
     const bins = await fetchCharacterBins(cdChampions.map(c => c.apiName))
+    const clientData = loadClientAbilityData()
     const overrides = loadAbilityOverrides()
-    const coverage = { resolved: 0, fromBin: 0, fromOverride: 0 }
+    const coverage = { resolved: 0, fromBin: 0, fromClient: 0, fromOverride: 0 }
     const shadowedTokens = []
 
     // Use Community Dragon data (has traits and better icons)
@@ -289,6 +298,7 @@ export const fetchAndCacheAssets = async () => {
 
       const built = buildAbility(champ, {
         bin: bins.get(champ.apiName),
+        client: clientData[champ.apiName],
         override: overrides[champ.apiName],
         ddVersion,
         portraitUrl: iconUrl,
@@ -296,6 +306,7 @@ export const fetchAndCacheAssets = async () => {
       const ability = built?.ability || null
       if (built) {
         if (built.fromBin) coverage.fromBin++
+        else if (built.fromClient) coverage.fromClient++
         else if (ability.calculations) coverage.fromOverride++
         if (isAbilityResolved(ability)) coverage.resolved++
         for (const t of built.shadowed) shadowedTokens.push(`${champ.apiName}.${t}`)
@@ -319,12 +330,14 @@ export const fetchAndCacheAssets = async () => {
         stats,
       })
     }
+    const clientBuild = clientData._meta?.branch ? ` (${clientData._meta.branch}, extracted ${clientData._meta.extractedAt})` : ''
     console.log(
       `Abilities: ${coverage.resolved}/${cdChampions.length} units fully resolved ` +
-      `(values from CDragon bins: ${coverage.fromBin}, from curated overrides: ${coverage.fromOverride})`,
+      `(values from CDragon bins: ${coverage.fromBin}, from TFT client data${clientBuild}: ${coverage.fromClient}, ` +
+      `from curated overrides only: ${coverage.fromOverride})`,
     )
     if (shadowedTokens.length > 0) {
-      console.warn(`Ability overrides now supplied by CDragon — prune from abilityOverrides.set${CURRENT_SET}.json: ${shadowedTokens.join(', ')}`)
+      console.warn(`Ability overrides now supplied by CDragon or client data — prune from abilityOverrides.set${CURRENT_SET}.json: ${shadowedTokens.join(', ')}`)
     }
   } else {
     // Fallback: use Data Dragon, filter by ID prefix (no trait data available here)

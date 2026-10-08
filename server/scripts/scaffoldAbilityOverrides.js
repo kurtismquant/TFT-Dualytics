@@ -1,9 +1,12 @@
 // Creates / refreshes data/abilityOverrides.set<N>.json — the hand-curated
 // ability values used while CommunityDragon ships a set without them (Set 18:
-// every DA_ unit's spell data is a placeholder).
+// every DA_ unit's spell data is a placeholder). Most values now come from the
+// TFT client itself (data/abilityData.set<N>.json, written by
+// scripts/tft_client/extract_abilities.py — run that first).
 //
-// For each unit it lists every @Token@ its tooltip needs that CDragon can't
-// resolve, as null, for you to fill in from the in-game tooltip:
+// For each unit it lists every @Token@ its tooltip needs that neither CDragon
+// nor the client data resolve, as null, for you to fill in from the in-game
+// tooltip:
 //   "MagicDamageCalc1": [160, 240, 360]      ← 1★/2★/3★
 //   "PercentManaPerSecond": [10]             ← same at every star level
 //   "SomeRatio": { "values": [0.2], "percent": true }   ← shown as 20%
@@ -27,6 +30,7 @@ import {
   selectSetEntry,
   selectSetUnits,
 } from '../services/assetResolver.js'
+import { loadClientAbilityData } from '../services/clientAbilityData.js'
 
 const OUT = new URL(`../data/abilityOverrides.set${CURRENT_SET}.json`, import.meta.url)
 const TIMEOUT = { timeout: 60_000 }
@@ -63,6 +67,7 @@ async function main() {
   const units = selectSetUnits(selectSetEntry(cdData.setData))
   if (units.length === 0) throw new Error(`No units found for set ${CURRENT_SET}`)
   const bins = await fetchCharacterBins(units.map(u => u.apiName))
+  const clientData = loadClientAbilityData()
   const existing = readExisting()
 
   const out = {}
@@ -71,8 +76,9 @@ async function main() {
   let unitsResolved = 0
   for (const unit of units) {
     const prev = existing[unit.apiName] || {}
-    // What CDragon resolves on its own, without any override.
-    const { ability } = buildAbility(unit, { bin: bins.get(unit.apiName) })
+    // What CDragon and the client data resolve on their own, without any override.
+    const client = clientData[unit.apiName]
+    const { ability } = buildAbility(unit, { bin: bins.get(unit.apiName), client })
     const known = new Set([
       ...Object.keys(ability.calculations || {}),
       ...ability.variables.map(v => v.name),
@@ -97,7 +103,7 @@ async function main() {
       tokens,
     }
 
-    const withOverride = buildAbility(unit, { bin: bins.get(unit.apiName), override: out[unit.apiName] }).ability
+    const withOverride = buildAbility(unit, { bin: bins.get(unit.apiName), client, override: out[unit.apiName] }).ability
     if (isAbilityResolved(withOverride)) unitsResolved++
   }
 
