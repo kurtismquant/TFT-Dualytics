@@ -65,6 +65,35 @@ describe('aggregateStats', () => {
     ])
   })
 
+  it('counts alternate Riot unit ids (forms, summons, old prefixes) as the real unit', () => {
+    const results = aggregateStats([
+      match([
+        participant({
+          placement: 1,
+          units: [
+            unit('TFT18_Akali', ['DA_ItemA', 'DA_ItemB', 'DA_ItemC']),
+            unit('DA_18_Lux_Inferno'),
+            unit('DA_18_Elise', ['DA_ItemA']),
+            unit('DA_18_EliseSpider'),
+            unit('DA_18_EliseSpider'),
+          ],
+        }),
+        participant({
+          placement: 3,
+          units: [unit('DA_18_Akali_AD'), unit('DA_Lux18_Base'), unit('DA_Lux18_Blossom'), unit('DA_Lux18_Blossom')],
+        }),
+      ]),
+    ], 'units')
+
+    assert.deepEqual(
+      results.rows.map(row => [row.id, row.count]).sort(),
+      [['DA_18_Akali_AD', 2], ['DA_18_Elise', 1], ['DA_Lux18_Base', 2]]
+    )
+    const akali = results.rows.find(row => row.id === 'DA_18_Akali_AD')
+    assert.equal(akali.avgPlacement, 1.5)
+    assert.deepEqual(akali.popularItems.map(item => item.id), ['DA_ItemA', 'DA_ItemB', 'DA_ItemC'])
+  })
+
   it('aggregates item and trait stats with popular units', () => {
     const docs = [
       match([

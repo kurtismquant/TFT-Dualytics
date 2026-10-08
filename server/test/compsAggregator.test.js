@@ -272,6 +272,35 @@ describe('aggregateComps', () => {
     assert.equal(main.topPartners.some(p => p.fingerprint === partnerVariantIds.slice().sort().join('|')), false)
   })
 
+  it('builds comps from real unit ids, not alternate Riot ids', () => {
+    const carryItems = ['DA_ArchangelsStaff', 'DA_GiantSlayer', 'DA_SteraksGage']
+    const board = [
+      unit('TFT18_Akali', { tier: 3, itemNames: carryItems }),
+      unit('DA_Lux18_Base'),
+      ...Array.from({ length: 3 }, () => unit('DA_Lux18_Blossom')),
+      unit('DA_18_Elise'),
+      ...Array.from({ length: 3 }, () => unit('DA_18_EliseSpider')),
+      ...Array.from({ length: 5 }, (_, index) => unit(`DA_18_FILLER_${index + 1}`)),
+    ]
+
+    const results = aggregateComps([
+      match([participant({ puuid: 'alias-1', placement: 1, units: board })]),
+      match([participant({ puuid: 'alias-2', placement: 2, units: board })]),
+    ])
+
+    const comp = results[0]
+    const ids = comp.units.map(u => u.id)
+    for (const alias of ['TFT18_Akali', 'DA_Lux18_Blossom', 'DA_18_EliseSpider']) {
+      assert.equal(ids.includes(alias), false, alias)
+      assert.equal(comp.fingerprint.includes(alias), false, alias)
+    }
+    assert.deepEqual(
+      ids.filter(id => !id.startsWith('DA_18_FILLER')).sort(),
+      ['DA_18_Akali_AD', 'DA_18_Elise', 'DA_Lux18_Base']
+    )
+    assert.deepEqual(comp.units.find(u => u.id === 'DA_18_Akali_AD').items, carryItems.slice().sort())
+  })
+
   it('returns an empty result for empty input, non-Double-Up matches, and participants without comps', () => {
     assert.deepEqual(aggregateComps([]), [])
     assert.deepEqual(aggregateComps([match([], { info: { tft_game_type: 'standard' } })]), [])
