@@ -90,7 +90,12 @@ export function formatValues(rawValues, percent) {
 //  { type: 'icon', iconType }  — stat icon for %I:ScaleX% references
 //  { type: 'buff', content }   — buff name for {{TFT_*}} references (rainbow text)
 //  { type: 'plus' }            — " + " separator between formula segments
-export function tokenize(desc, variables, championId, stats) {
+//
+// `calculations` (units only) is the server-resolved map of token name →
+// [{ values, percent? }]: evaluated CDragon spell calculations plus curated
+// overrides. It carries no icons — the description's own %i:scaleX% refs after
+// the token stay in place, matching the in-game tooltip.
+export function tokenize(desc, variables, championId, stats, calculations) {
   if (!desc) return []
   // Three capture groups: (1) buff ref {{...}}, (2) scale/amp icon %i:...%, (3) variable @...@
   const TOKEN_RE = /(\{\{[^}]+\}\})|(%i:scale[a-z]+%|%i:set14ampicon%)|@([^@]+)@/gi
@@ -110,6 +115,8 @@ export function tokenize(desc, variables, championId, stats) {
 
   const nodes = []
   let last = 0
+  // findVariable works on [{ name, value }] lists.
+  const calcList = Object.entries(calculations || {}).map(([name, value]) => ({ name, value }))
 
   const pushText = (raw) => {
     const cleaned = stripMarkup(raw).replace(/\s+/g, ' ')
@@ -193,6 +200,13 @@ export function tokenize(desc, variables, championId, stats) {
           last += m2[0].length
           TOKEN_RE.lastIndex = last
         }
+        continue
+      }
+
+      // Server-resolved calculation (CDragon bin or curated override).
+      const calc = findVariable(calcList, rawName)
+      if (calc && Array.isArray(calc.value)) {
+        emitFormulaParts(calc.value.map(p => ({ ...p, values: p.values.map(x => x * multiplier) })))
         continue
       }
 

@@ -12,8 +12,8 @@ const COST_COLORS = {
   5: 'var(--cost-5)',
 }
 
-function AbilityDesc({ desc, variables, championId, stats }) {
-  const nodes = tokenize(desc, variables, championId, stats)
+function AbilityDesc({ desc, variables, championId, stats, calculations }) {
+  const nodes = tokenize(desc, variables, championId, stats, calculations)
   if (nodes.length === 0) return null
 
   return (
@@ -109,6 +109,7 @@ export default function UnitCard({ isOpen, data: champion, style, mode, onClose 
               variables={champion.ability.variables}
               championId={champion.id}
               stats={champion.stats}
+              calculations={champion.ability.calculations}
             />
           </p>
         </div>

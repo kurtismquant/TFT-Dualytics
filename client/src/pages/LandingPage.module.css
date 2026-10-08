@@ -6,19 +6,6 @@
   flex-direction: column;
 }
 
-
-.scanline {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-  background: repeating-linear-gradient(
-    180deg,
-    transparent 0 0.1875rem,
-    var(--bg-row-even) 0.1875rem 0.25rem
-  );
-}
-
 .main {
   flex: 1;
   padding-bottom: 3rem;
@@ -617,10 +604,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .scanline {
-    display: none;
-  }
-
   .dangoTR,
   .dangoBL,
   .dangoMotionFast,

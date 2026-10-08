@@ -17,7 +17,7 @@ export default function SortHeader({ columnKey, label, sort, onSort, className }
         aria-label={t('stats.sortBy', { column: label })}
       >
         <span>{label}</span>
-        {isActive && <span className={styles.sortMark}>{sort.direction === 'asc' ? 'ASC' : 'DESC'}</span>}
+        {isActive && <span className={styles.sortMark} aria-hidden="true">{sort.direction === 'asc' ? '▲' : '▼'}</span>}
       </button>
     </th>
   )

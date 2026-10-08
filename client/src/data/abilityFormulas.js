@@ -9,9 +9,11 @@
 // so 'DA_18_Kha\'Zix', 'DA_18_KhaZix', 'DA_18_Khazix' all collapse to the
 // same key.
 //
-// Set 18 note: CDragon currently ships Set 18 abilities with empty `variables`
-// and computed tokens (@PhysicalDamageCalc1@, @ShieldCalc1@, …), so there is
-// nothing to build formulas from yet. Once values are published, add entries as:
+// Most tokens no longer need an entry here: the server evaluates CDragon spell
+// calculations and ships them as `ability.calculations`, and Set 18 values
+// (which CDragon doesn't publish yet) come from the curated
+// server/data/abilityOverrides.set18.json. Use this registry only for a token
+// that needs custom rendering (e.g. several separately-iconed segments):
 //
 //   DA_18_Caitlyn: {
 //     PhysicalDamageCalc1: ({ vars, stats }) => [

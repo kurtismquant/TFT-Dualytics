@@ -424,7 +424,6 @@ export default function LandingPage() {
   const [region, setRegion] = useState('na')
   return (
     <div className={styles.page}>
-      <div className={styles.scanline} />
       <div className={styles.main}>
         <HeroSign />
         <Tagline />

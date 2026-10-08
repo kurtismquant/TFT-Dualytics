@@ -206,7 +206,7 @@
 .sortMark {
   color: var(--text-muted);
   font-size: var(--text-2xs);
-  letter-spacing: var(--track-wide);
+  line-height: 1;
 }
 
 .table th:not(:first-child),

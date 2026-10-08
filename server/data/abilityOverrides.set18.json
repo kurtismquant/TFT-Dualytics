@@ -1,0 +1,797 @@
+{
+  "DA_Gromp18_AP": {
+    "_unit": "Gromp (2-cost) — Belchy Bubble",
+    "iconSpell": null,
+    "tokens": {
+      "MagicDamageCalc1": null,
+      "MagicDamageCalc2": null,
+      "PoisonDurationAP": null,
+      "TraitTimer": null,
+      "TraitTimedAP": null
+    }
+  },
+  "DA_Murkwolf18": {
+    "_unit": "Murkwolf (2-cost) — Rending Claws",
+    "iconSpell": null,
+    "tokens": {
+      "LeapHexRadius": null,
+      "PhysicalDamageCalc1": null,
+      "NumEmpoweredAttacks": null,
+      "EmpowerAspd": null,
+      "PhysicalDamageCalc2": null,
+      "TraitBaseCrit": null,
+      "TraitBonusCrit": null
+    }
+  },
+  "DA_18_Sentry": {
+    "_unit": "Pebbles (1-cost) — Azure Laser",
+    "iconSpell": null,
+    "tokens": {
+      "PercentManaPerSecond": null,
+      "MagicDamageCalc1": null,
+      "MRReduction": null,
+      "TraitManaRegenTooltip": null,
+      "TraitChannelSecondsTooltip": null
+    }
+  },
+  "DA_Cinderling18": {
+    "_unit": "Cinderling (1-cost) — Razor Leaves",
+    "iconSpell": null,
+    "tokens": {
+      "PhysicalDamageCalc1": null,
+      "WoundLevel": null,
+      "BurnAmount": null,
+      "WoundDuration": null,
+      "TraitADOnCast": null
+    }
+  },
+  "DA_Scuttlecrab18": {
+    "_unit": "Scuttlecrab (2-cost) — Can You Dig It?",
+    "iconSpell": null,
+    "tokens": {
+      "PhysicalDamageCalc1": null,
+      "BurrowDurability": null,
+      "BurrowDuration": null,
+      "HealthCalc1": null,
+      "TraitHealthThreshold": null,
+      "TraitPercentHeal": null
+    }
+  },
+  "DA_Krug18": {
+    "_unit": "Krug (3-cost) — Rock and Roll",
+    "iconSpell": null,
+    "tokens": {
+      "HealthCalc1": null,
+      "HealthCalc2": null,
+      "PhysicalDamageCalc1": null,
+      "TraitShieldHealth": null
+    }
+  },
+  "DA_Sentinel18": {
+    "_unit": "Sentinel (4-cost) — Azure Shockwave",
+    "iconSpell": null,
+    "tokens": {
+      "ShieldCalc1": null,
+      "ShieldDuration": null,
+      "MagicDamageCalc1": null,
+      "ManaReaveFlat": null,
+      "TraitAlliesManaRegen": null
+    }
+  },
+  "DA_Brambleback18": {
+    "_unit": "Brambleback (4-cost) — Crimson Fury",
+    "iconSpell": null,
+    "tokens": {
+      "PhysicalDamageCalc1": null,
+      "FrenzyADPercent": null,
+      "Duration": null,
+      "GenericCalc1": null,
+      "BurnAmount": null,
+      "TraitMaxHealthHeal": null
+    }
+  },
+  "DA_18_Xayah": {
+    "_unit": "Xayah (1-cost) — Deadly Plumage",
+    "iconSpell": "XayahR.png",
+    "tokens": {
+      "AttackSpeed": null,
+      "NumAttacks": null,
+      "PhysicalDamageCalc1": null,
+      "GenericCalc1": null
+    }
+  },
+  "DA_18_Ornn": {
+    "_unit": "Ornn (1-cost) — Bellows Breath",
+    "iconSpell": "OrnnR.png",
+    "tokens": {
+      "ShieldCalc1": null,
+      "ShieldDuration": null,
+      "MagicDamageCalc1": null,
+      "DamageTaken3StarScalar": null,
+      "Stack": null,
+      "GenericCalc1": null
+    }
+  },
+  "DA_Nidalee18_AP": {
+    "_unit": "Nidalee (4-cost) — Javelin Toss",
+    "iconSpell": "AspectOfTheCougar.png",
+    "tokens": {
+      "BonusAttackSpeed": null,
+      "NumEmpoweredAttacks": null,
+      "MagicDamageCalc1": null,
+      "MagicDamageCalc2": null
+    }
+  },
+  "DA_18_Hecarim": {
+    "_unit": "Hecarim (3-cost) — Spirit of Dread",
+    "iconSpell": "HecarimUlt.png",
+    "tokens": {
+      "Resists": null,
+      "HealthCalc1": null,
+      "NumEnemies": null,
+      "MagicDamageCalc1": null,
+      "StunDuration": null
+    }
+  },
+  "DA_18_Ezreal": {
+    "_unit": "Ezreal (4-cost) — Forest's Flurry",
+    "iconSpell": "EzrealR.png",
+    "tokens": {
+      "PhysicalDamageCalc1": null,
+      "AttackSpeedCalc1": null,
+      "PhysicalDamageCalc2": null,
+      "DamageReductionPerHit": null,
+      "MinDamagePercent": null
+    }
+  },
+  "DA_18_Azir": {
+    "_unit": "Azir (3-cost) — Arise!",
+    "iconSpell": "AzirR.png",
+    "tokens": {
+      "AttackSpeed": null,
+      "SoldiersToSpawn": null,
+      "NumAttacks": null,
+      "MagicDamageCalc1": null
+    }
+  },
+  "DA_18_RekSai": {
+    "_unit": "Rek'Sai (1-cost) — Uproot",
+    "iconSpell": "RekSaiR.png",
+    "tokens": {
+      "HealthCalc2": null,
+      "SpellMultiplierDuration": null,
+      "KnockupDuration": null,
+      "MagicDamageCalc1": null
+    }
+  },
+  "DA_18_Veigar": {
+    "_unit": "Veigar (1-cost) — Primordial Burst",
+    "iconSpell": "VeigarR.png",
+    "tokens": {
+      "MagicDamageCalc1": null,
+      "MagicDamageCalc2": null,
+      "HPThreshold": null,
+      "APOnKill": null,
+      "Stack": null
+    }
+  },
+  "DA_18_Maokai": {
+    "_unit": "Maokai (5-cost) — Sow the Seeds",
+    "iconSpell": "MaokaiR.png",
+    "tokens": {
+      "DamageMitigatedPerSapling": null,
+      "MagicDamageCalc1": null,
+      "SaplingsOnDeath": null,
+      "MagicDamageCalc2": null,
+      "HealthCalc1": null,
+      "ActiveMissingHealthHeal": null
+    }
+  },
+  "DA_18_Malphite": {
+    "_unit": "Malphite (4-cost) — Petrified Bark",
+    "iconSpell": "UFSlash.png",
+    "tokens": {
+      "ShieldCalc1": null,
+      "ShieldDuration": null,
+      "MagicDamageCalc1": null,
+      "AoEHexRange": null
+    }
+  },
+  "DA_18_Yorick": {
+    "_unit": "Yorick (1-cost) — Last Rites",
+    "iconSpell": "YorickR.png",
+    "tokens": {
+      "HealthCalc2": null,
+      "HealthCalc1": null,
+      "PhysicalDamageCalc1": null
+    }
+  },
+  "DA_18_Yunara": {
+    "_unit": "Yunara (2-cost) — Cultivation of Spirit",
+    "iconSpell": "YunaraR.png",
+    "tokens": {
+      "PhysicalDamageCalc1": null,
+      "PhysicalDamageCalc2": null,
+      "NumSecondaryTargets": null
+    }
+  },
+  "DA_18_Sett": {
+    "_unit": "Sett (4-cost) — Haymaker",
+    "iconSpell": "SettR.png",
+    "tokens": {
+      "ManaHPThreshold": null,
+      "HealthCalc1": null,
+      "PhysicalDamageCalc1": null
+    }
+  },
+  "DA_18_Ahri": {
+    "_unit": "Ahri (4-cost) — Spirit Bomb",
+    "iconSpell": "AhriR.png",
+    "tokens": {
+      "AbilityCenterHexRange": null,
+      "MagicDamageCalc1": null,
+      "HexRadius": null,
+      "HexPercentDamageFalloffTooltip": null
+    }
+  },
+  "DA_18_Ashe": {
+    "_unit": "Ashe (5-cost) — Spirit Rift",
+    "iconSpell": "EnchantedCrystalArrow.png",
+    "tokens": {
+      "PhysicalDamageCalc1": null,
+      "DamageFalloffPerEnemy": null,
+      "MinDamagePercent": null,
+      "RiftDuration": null,
+      "PhysicalDamageCalc2": null,
+      "MaxHealthDamagePerSecond": null,
+      "ChillPercent": null
+    }
+  },
+  "DA_18_Elise": {
+    "_unit": "Elise (2-cost) — Spider Queen",
+    "iconSpell": "EliseR.png",
+    "tokens": {
+      "SpiderHealthBuff": null,
+      "MagicDamageCalc1": null,
+      "HealthCalc1": null,
+      "DecayingAS": null,
+      "ASBuffDuration": null
+    }
+  },
+  "DA_18_Caitlyn": {
+    "_unit": "Caitlyn (2-cost) — Headshot",
+    "iconSpell": "CaitlynR.png",
+    "tokens": {
+      "PhysicalDamageCalc1": null
+    }
+  },
+  "DA_18_Cassiopeia": {
+    "_unit": "Cassiopeia (3-cost) — Noxious Blast",
+    "iconSpell": "CassiopeiaR.png",
+    "tokens": {
+      "MagicDamageCalc1": null,
+      "Duration": null
+    }
+  },
+  "DA_18_Morgana": {
+    "_unit": "Morgana (4-cost) — Withering Curse",
+    "iconSpell": "MorganaR.png",
+    "tokens": {
+      "Omnivamp": null,
+      "NumEnemiesCursed": null,
+      "MagicDamageCalc1": null,
+      "SpellDuration": null,
+      "HexRangeAOE": null,
+      "MagicDamageCalc2": null,
+      "MagicDamageCalc3": null
+    }
+  },
+  "DA_18_Rakan": {
+    "_unit": "Rakan (1-cost) — Entrancing Dance",
+    "iconSpell": "RakanR.png",
+    "tokens": {
+      "ShieldCalc1": null,
+      "ShieldDuration": null,
+      "AttackSpeedCalc1": null,
+      "AttackSpeedDuration": null
+    }
+  },
+  "DA_18_Lillia": {
+    "_unit": "Lillia (4-cost) — Lilting Lullaby",
+    "iconSpell": "LilliaR.png",
+    "tokens": {
+      "HealthCalc1": null,
+      "NumEnemiesToFireAt": null,
+      "MagicDamageCalc1": null,
+      "SleepDuration": null,
+      "DamageNeededToAwaken": null,
+      "WakeupDamage": null
+    }
+  },
+  "DA_18_Kobuko": {
+    "_unit": "Kobuko (1-cost) — Dance of Life",
+    "iconSpell": null,
+    "tokens": {
+      "HealthCalc1": null,
+      "MagicDamageCalc1": null
+    }
+  },
+  "DA_18_Teemo": {
+    "_unit": "Teemo (2-cost) — Fungus Among Us",
+    "iconSpell": "TeemoR.png",
+    "tokens": {
+      "MagicDamageCalc1": null,
+      "NumEnemiesHit": null,
+      "MagicDamageCalc2": null,
+      "PercentChanceOfForage": null,
+      "RedRerolls": null,
+      "Stack": null,
+      "GreenHealth": null,
+      "GenericCalc1": null,
+      "YellowXP": null,
+      "GenericCalc2": null
+    }
+  },
+  "DA_18_Rammus": {
+    "_unit": "Rammus (3-cost) — Defensive Ball Curl",
+    "iconSpell": "Tremors2.png",
+    "tokens": {
+      "Duration": null,
+      "ShieldCalc1": null,
+      "ArmorMR": null,
+      "PhysicalDamageCalc1": null,
+      "DamageHexRange": null
+    }
+  },
+  "DA_18_GnarSmall": {
+    "_unit": "Gnar (5-cost) — Rage Gene",
+    "iconSpell": "GnarR.png",
+    "tokens": {
+      "RagePerSecond": null,
+      "RagePerAttack": null,
+      "TransformSearchRadius": null,
+      "PhysicalDamageCalc3": null,
+      "TransformHexRadius": null,
+      "GenericCalc1": null,
+      "StunDuration": null,
+      "HealthCalc1": null,
+      "PhysicalDamageCalc1": null,
+      "PhysicalDamageCalc2": null
+    }
+  },
+  "DA_18_Tristana": {
+    "_unit": "Tristana (3-cost) — Explosive Charge",
+    "iconSpell": "TristanaR.png",
+    "tokens": {
+      "Duration": null,
+      "AttackSpeedCalc1": null,
+      "PhysicalDamageCalc1": null,
+      "PhysicalDamageCalc2": null
+    }
+  },
+  "DA_18_Sivir": {
+    "_unit": "Sivir (4-cost) — Boomerang Blade",
+    "iconSpell": "SivirR.png",
+    "tokens": {
+      "PhysicalDamageCalc1": null,
+      "NumBounces": null,
+      "PhysicalDamageCalc2": null,
+      "BonusKillBounces": null
+    }
+  },
+  "DA_Vi18": {
+    "_unit": "Vi (3-cost) — Furious Fists",
+    "iconSpell": "ViR.png",
+    "tokens": {
+      "HealthCalc1": null,
+      "HealthCalc3": null,
+      "SpellAS": null,
+      "SpellDurability": null,
+      "SpellDuration": null
+    }
+  },
+  "DA_18_Akali_AD": {
+    "_unit": "Akali (1-cost) — Kunai Strike",
+    "iconSpell": "AkaliR.png",
+    "tokens": {
+      "PhysicalDamageCalc1": null,
+      "PhysicalDamageCalc2": null
+    }
+  },
+  "DA_18_Varus": {
+    "_unit": "Varus (1-cost) — Piercing Arrow",
+    "iconSpell": "VarusR.png",
+    "tokens": {
+      "PhysicalDamageCalc1": null,
+      "DamageReductionPerHit": null,
+      "MinDamagePercent": null
+    }
+  },
+  "DA_Amumu18": {
+    "_unit": "Amumu (4-cost) — Tantrum",
+    "iconSpell": "CurseoftheSadMummy.png",
+    "tokens": {
+      "HealthCalc1": null,
+      "MagicDamageCalc1": null,
+      "PassiveHexRadius": null,
+      "MagicDamageCalc3": null,
+      "BigHexRadius": null,
+      "StunDuration": null,
+      "GenericCalc1": null
+    }
+  },
+  "DA_18_Kennen": {
+    "_unit": "Kennen (5-cost) — Firestorm",
+    "iconSpell": "KennenShurikenStorm.png",
+    "tokens": {
+      "APPerBurningEnemy": null,
+      "ShieldCalc1": null,
+      "ShieldDuration": null,
+      "MagicDamageCalc1": null,
+      "FirestormHexRadius": null,
+      "MagicDamageCalc2": null,
+      "FirestormDuration": null
+    }
+  },
+  "DA_18_Aphelios": {
+    "_unit": "Aphelios (4-cost) — Moonlight's Onslaught",
+    "iconSpell": "ApheliosR.png",
+    "tokens": {
+      "GenericCalc1": null,
+      "Duration": null,
+      "PhysicalDamageCalc1": null,
+      "PhysicalDamageCalc2": null
+    }
+  },
+  "DA_18_Diana": {
+    "_unit": "Diana (3-cost) — Pale Barrier",
+    "iconSpell": "DianaR.png",
+    "tokens": {
+      "ShieldCalc1": null,
+      "ShieldDuration": null,
+      "NumOrbs": null,
+      "MagicDamageCalc1": null
+    }
+  },
+  "DA_18_Alune": {
+    "_unit": "Alune (5-cost) — Moonfall",
+    "iconSpell": null,
+    "tokens": {
+      "NumMoonshards": null,
+      "NumEnemies": null,
+      "MagicDamageCalc1": null,
+      "MagicDamageCalc2": null
+    }
+  },
+  "DA_18_Leona": {
+    "_unit": "Leona (1-cost) — Shield Bash",
+    "iconSpell": "LeonaSolarFlare.png",
+    "tokens": {
+      "GenericCalc1": null,
+      "DecayDuration": null,
+      "MagicDamageCalc1": null,
+      "StunDuration": null
+    }
+  },
+  "DA_18_Kayle": {
+    "_unit": "Kayle (2-cost) — Solar Judgement",
+    "iconSpell": "KayleR.png",
+    "tokens": {
+      "MagicDamageCalc1": null,
+      "ShredLevel": null,
+      "ShredDuration": null,
+      "MagicDamageCalc2": null,
+      "NumAttacksForBigWave4Star": null
+    }
+  },
+  "DA_18_Sejuani": {
+    "_unit": "Sejuani (2-cost) — Sun's Wrath",
+    "iconSpell": "SejuaniR.png",
+    "tokens": {
+      "ShieldCalc1": null,
+      "ShieldDuration": null,
+      "MagicDamageCalc1": null,
+      "MagicDamageCalc2": null
+    }
+  },
+  "DA_18_KhaZix": {
+    "_unit": "Kha'Zix (3-cost) — Taste Their Fear",
+    "iconSpell": "KhazixR.png",
+    "tokens": {
+      "LeapRangeHexes": null,
+      "MagicDamageCalc1": null,
+      "MagicDamageCalc2": null,
+      "IsolateManaGrant": null
+    }
+  },
+  "DA_18_Rengar": {
+    "_unit": "Rengar (3-cost) — Savagery",
+    "iconSpell": "RengarR.png",
+    "tokens": {
+      "JumpHexRange": null,
+      "PhysicalDamageCalc1": null,
+      "HealthCalc1": null,
+      "HealthCalc2": null
+    }
+  },
+  "DA_KogMaw18_AD": {
+    "_unit": "Kog'Maw (3-cost) — Raining Artillery",
+    "iconSpell": "KogMawLivingArtillery.png",
+    "tokens": {
+      "PhysicalDamageCalc1": null,
+      "ADBonusDamageThreshold": null,
+      "PhysicalDamageCalc2": null
+    }
+  },
+  "DA_18_Zyra": {
+    "_unit": "Zyra (4-cost) — Rampant Growth",
+    "iconSpell": "ZyraR.png",
+    "tokens": {
+      "NumPlantsToSpawn": null,
+      "ThornSpitterNumAttacks": null,
+      "MagicDamageCalc1": null
+    }
+  },
+  "DA_Fiddlesticks18": {
+    "_unit": "Fiddlesticks (3-cost) — Harvest",
+    "iconSpell": "FiddleSticksR.png",
+    "tokens": {
+      "NumTargets": null,
+      "MRReduction": null,
+      "CastDuration": null,
+      "HealthCalc1": null,
+      "MagicDamageCalc1": null
+    }
+  },
+  "DA_18_Soraka": {
+    "_unit": "Soraka (4-cost) — Starcall",
+    "iconSpell": "SorakaR.png",
+    "tokens": {
+      "MagicDamageCalc1": null,
+      "NumAdditionalStars": null,
+      "MagicDamageCalc2": null
+    }
+  },
+  "DA_Taric18": {
+    "_unit": "Taric (5-cost) — Emerald Radiance",
+    "iconSpell": "TaricR.png",
+    "tokens": {
+      "PassivePercentHealthThreshold": null,
+      "ShieldCalc1": null,
+      "PassiveHexRadius": null,
+      "PassiveShieldDuration": null,
+      "HealthCalc1": null,
+      "MagicDamageCalc1": null,
+      "NumAttacks": null
+    }
+  },
+  "DA_18_Ivern": {
+    "_unit": "Ivern (5-cost) — Triggerseed",
+    "iconSpell": "IvernR.png",
+    "tokens": {
+      "NumAlliesToShield": null,
+      "ShieldCalc1": null,
+      "DamageAmpAmount": null,
+      "ShieldDuration": null,
+      "MagicDamageCalc1": null,
+      "CastThreshold": null,
+      "AttackSpeed": null
+    }
+  },
+  "DA_Lux18_Base": {
+    "_unit": "Lux (5-cost) — Final Spark",
+    "iconSpell": "LuxR.png",
+    "tokens": {
+      "ManaCalc1": null,
+      "MagicDamageCalc1": null,
+      "DamageReductionPerUnit": null
+    }
+  },
+  "DA_18_Alistar": {
+    "_unit": "Alistar (2-cost) — Triumphant Roar",
+    "iconSpell": "FerociousHowl.png",
+    "tokens": {
+      "HealthCalc1": null,
+      "HealthCalc2": null,
+      "MagicDamageCalc1": null,
+      "StunDuration": null
+    }
+  },
+  "DA_Draven18": {
+    "_unit": "Draven (5-cost) — Whirling Death",
+    "iconSpell": "DravenRCast.png",
+    "tokens": {
+      "PhysicalDamageCalc1": null,
+      "BleedDuration": null,
+      "GenericCalc1": null,
+      "SpinningAxeDamageRatio": null,
+      "SpinningAxeBleedStacks": null,
+      "PhysicalDamageCalc3": null,
+      "GenericCalc2": null
+    }
+  },
+  "DA_18_ElderDragon": {
+    "_unit": "Elder Dragon (5-cost) — Heat Without Equal",
+    "iconSpell": null,
+    "tokens": {
+      "AttackAoERatio": null,
+      "StunDuration": null,
+      "Omnivamp": null,
+      "IgniteDuration": null,
+      "IgniteMaxHealthDamage": null,
+      "PhysicalDamageCalc2": null,
+      "DamageReductionPerHit": null,
+      "MinimumDamageThreshold": null,
+      "TraitExecuteThreshold": null
+    }
+  },
+  "DA_Karma18": {
+    "_unit": "Karma (1-cost) — Karmic Bond",
+    "iconSpell": "KarmaMantra.png",
+    "tokens": {
+      "MagicDamageCalc1": null,
+      "TetherDuration": null,
+      "MagicDamageCalc2": null,
+      "AoEHexRange": null,
+      "SlowPercent": null,
+      "SlowDuration": null
+    }
+  },
+  "DA_18_LeBlanc": {
+    "_unit": "LeBlanc (2-cost) — Mirror Image",
+    "iconSpell": "LeblancR.png",
+    "tokens": {
+      "PercentChanceToPrint": null,
+      "PercentChanceToPrintKillBonus": null,
+      "MagicDamageCalc1": null,
+      "MagicDamageCalc2": null
+    }
+  },
+  "DA_18_MasterYi_AD": {
+    "_unit": "Master Yi (3-cost) — Wuju Style",
+    "iconSpell": "Highlander.png",
+    "tokens": {
+      "AttackSpeedCalc1": null
+    }
+  },
+  "DA_18_Shen": {
+    "_unit": "Shen (2-cost) — Ki Barrier",
+    "iconSpell": "ShenR.png",
+    "tokens": {
+      "ShieldCalc1": null,
+      "ShieldCalc2": null,
+      "MagicShieldDuration": null,
+      "NumAttacksBuff": null,
+      "AttackSpeedBuff": null,
+      "MagicDamageCalc1": null
+    }
+  },
+  "DA_18_Warwick": {
+    "_unit": "Warwick (2-cost) — Jaws of The Beast",
+    "iconSpell": "WarwickR.png",
+    "tokens": {
+      "PhysicalDamageCalc1": null,
+      "GenericCalc1": null,
+      "AttackSpeedBuff": null
+    }
+  },
+  "DA_18_Camille": {
+    "_unit": "Camille (1-cost) — Defensive Sweep",
+    "iconSpell": "CamilleR.png",
+    "tokens": {
+      "PhysicalDamageCalc1": null,
+      "AbilityShield": null,
+      "ShieldDuration": null
+    }
+  },
+  "DA_Lux18_Blackthorn": {
+    "_unit": "Lux (Blackthorn) (5-cost) — Final Spark",
+    "iconSpell": "LuxR.png",
+    "tokens": {
+      "ManaCalc1": null,
+      "MagicDamageCalc1": null,
+      "DamageReductionPerUnit": null,
+      "MinimumFalloffDamageRatio": null,
+      "BlackthornStunDuration": null
+    }
+  },
+  "DA_Lux18_Blossom": {
+    "_unit": "Lux (Blossom) (5-cost) — Final Spark",
+    "iconSpell": "LuxR.png",
+    "tokens": {
+      "ManaCalc1": null,
+      "MagicDamageCalc1": null,
+      "DamageReductionPerUnit": null,
+      "MinimumFalloffDamageRatio": null,
+      "BlossomBonusDamageRatio": null
+    }
+  },
+  "DA_18_Lux_Coven": {
+    "_unit": "Lux (Coven) (5-cost) — Final Spark",
+    "iconSpell": "LuxR.png",
+    "tokens": {
+      "ManaCalc1": null,
+      "MagicDamageCalc1": null,
+      "DamageReductionPerUnit": null,
+      "MinimumFalloffDamageRatio": null,
+      "CovenResistReduction": null
+    }
+  },
+  "DA_18_Lux_Elderwood": {
+    "_unit": "Lux (Elderwood) (5-cost) — Final Spark",
+    "iconSpell": "LuxR.png",
+    "tokens": {
+      "ManaCalc1": null,
+      "MagicDamageCalc1": null,
+      "DamageReductionPerUnit": null,
+      "MinimumFalloffDamageRatio": null,
+      "ElderwoodHealthIncrease": null
+    }
+  },
+  "DA_18_Lux_Fae": {
+    "_unit": "Lux (Fae) (5-cost) — Final Spark",
+    "iconSpell": "LuxR.png",
+    "tokens": {
+      "ManaCalc1": null,
+      "MagicDamageCalc1": null,
+      "DamageReductionPerUnit": null,
+      "MinimumFalloffDamageRatio": null,
+      "FaeHealRatio": null
+    }
+  },
+  "DA_18_Lux_Inferno": {
+    "_unit": "Lux (Inferno) (5-cost) — Final Spark",
+    "iconSpell": "LuxR.png",
+    "tokens": {
+      "ManaCalc1": null,
+      "MagicDamageCalc1": null,
+      "DamageReductionPerUnit": null,
+      "MinimumFalloffDamageRatio": null,
+      "InfernoManaRestore": null
+    }
+  },
+  "DA_18_Lux_Moonbeam": {
+    "_unit": "Lux (Lunar) (5-cost) — Final Spark",
+    "iconSpell": "LuxR.png",
+    "tokens": {
+      "ManaCalc1": null,
+      "MagicDamageCalc1": null,
+      "DamageReductionPerUnit": null,
+      "MinimumFalloffDamageRatio": null,
+      "LunarVulnerablePercent": null,
+      "LunarVulnerableDuration": null
+    }
+  },
+  "DA_18_Lux_Primal": {
+    "_unit": "Lux (Primal) (5-cost) — Final Spark",
+    "iconSpell": "LuxR.png",
+    "tokens": {
+      "ManaCalc1": null,
+      "MagicDamageCalc1": null,
+      "DamageReductionPerUnit": null,
+      "MinimumFalloffDamageRatio": null,
+      "PrimalAttackSpeed": null,
+      "PrimalASDuration": null
+    }
+  },
+  "DA_18_Lux_Sunbeam": {
+    "_unit": "Lux (Solar) (5-cost) — Final Spark",
+    "iconSpell": "LuxR.png",
+    "tokens": {
+      "ManaCalc1": null,
+      "MagicDamageCalc1": null,
+      "DamageReductionPerUnit": null,
+      "MinimumFalloffDamageRatio": null,
+      "SolarBonusDamagePer3StarRadio": null
+    }
+  },
+  "DA_CrimsonRaptor18": {
+    "_unit": "Mama Beak (3-cost) — Flock Family",
+    "iconSpell": null,
+    "tokens": {
+      "GenericCalc1": null,
+      "PhysicalDamageCalc1": null,
+      "ArmorReduc": null
+    }
+  }
+}

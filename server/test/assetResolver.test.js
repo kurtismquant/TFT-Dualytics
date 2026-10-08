@@ -2,7 +2,10 @@ import assert from 'node:assert/strict'
 import { describe, it } from 'node:test'
 
 import {
+  buildAbility,
+  isAbilityResolved,
   isCurrentSetId,
+  normalizeOverrideToken,
   selectSetEntry,
   selectSetUnits,
   unhashVariables,
@@ -73,5 +76,79 @@ describe('unhashVariables', () => {
   it('returns plain variables unchanged in array form', () => {
     assert.deepEqual(unhashVariables([{ name: 'Damage', value: [0, 1, 2, 3] }], ''), [{ name: 'Damage', value: [0, 1, 2, 3] }])
     assert.deepEqual(unhashVariables(null, 'x'), [])
+  })
+})
+
+// Shape of a Set 18 unit in CDragon's en_us.json: no variables, icon "None".
+const sentry = {
+  apiName: 'DA_18_Sentry',
+  stats: { damage: 35, hp: 500, armor: 25, magicResist: 25, attackSpeed: 0.8 },
+  ability: {
+    name: 'Azure Laser',
+    icon: 'None',
+    variables: [],
+    desc: 'Each second, deal @MagicDamageCalc1@ %i:scaleAP% magic damage and reduce Magic Resist by @MRReduction@.<rules>Burn: x</rules>',
+  },
+}
+const realBin = {
+  'Characters/DA_18_Sentry/Spells/TFT18_SentrySpell': {
+    __type: 'SpellObject',
+    mSpell: {
+      DataValues: [{ name: 'MagicDamage', values: [0, 100, 150, 225] }],
+      mSpellCalculations: {
+        MagicDamageCalc1: {
+          mFormulaParts: [{ mSubpart: { mDataValue: 'MagicDamage', __type: 'NamedDataValueCalculationPart' }, mRatio: 0.01, __type: 'SubPartScaledProportionalToStat' }],
+          __type: 'GameCalculation',
+        },
+      },
+    },
+  },
+}
+const portraitUrl = 'https://cdn/tft18_sentry_square.png'
+
+describe('buildAbility', () => {
+  it('fills tokens from the curated override when CDragon has no data', () => {
+    const override = { iconSpell: 'AhriR.png', tokens: { MagicDamageCalc1: [160, 240, 360], MRReduction: [10], Unfilled: null } }
+    const { ability } = buildAbility(sentry, { override, ddVersion: '16.19.1', portraitUrl })
+    assert.deepEqual(ability.calculations, {
+      MagicDamageCalc1: [{ values: [0, 160, 240, 360] }],
+      MRReduction: [{ values: [0, 10, 10, 10] }],
+    })
+    assert.equal(ability.iconUrl, 'https://ddragon.leagueoflegends.com/cdn/16.19.1/img/spell/AhriR.png')
+    assert.equal(ability.desc.includes('<rules>'), false)
+    assert.equal(isAbilityResolved(ability), true)
+  })
+
+  it('prefers real CDragon bin values over the override and reports the stale token', () => {
+    const override = { tokens: { MagicDamageCalc1: [1, 2, 3], MRReduction: [10] } }
+    const { ability, fromBin, shadowed } = buildAbility(sentry, { bin: realBin, override, portraitUrl })
+    assert.deepEqual(ability.calculations.MagicDamageCalc1, [{ values: [0, 100, 150, 225] }])
+    assert.deepEqual(ability.calculations.MRReduction, [{ values: [0, 10, 10, 10] }])
+    assert.equal(fromBin, true)
+    assert.deepEqual(shadowed, ['MagicDamageCalc1'])
+  })
+
+  it('never links the "None" icon; falls back to the unit portrait', () => {
+    const { ability } = buildAbility(sentry, { portraitUrl })
+    assert.equal(ability.iconUrl, portraitUrl)
+    assert.equal(ability.calculations, undefined)
+    assert.equal(isAbilityResolved(ability), false)
+  })
+
+  it('keeps a real CDragon ability icon when present', () => {
+    const tristana = { ...sentry, ability: { ...sentry.ability, icon: 'ASSETS/Characters/TFT18_Tristana/HUD/Icons2D/TFT18_Tristana_E.tex' } }
+    const { ability } = buildAbility(tristana, { override: { iconSpell: 'TristanaR.png' }, ddVersion: '16.19.1', portraitUrl })
+    assert.equal(ability.iconUrl, 'https://raw.communitydragon.org/latest/game/assets/characters/tft18_tristana/hud/icons2d/tft18_tristana_e.png')
+  })
+})
+
+describe('normalizeOverrideToken', () => {
+  it('accepts hand-typed shorthands and rejects malformed entries', () => {
+    assert.deepEqual(normalizeOverrideToken([5]), [{ values: [0, 5, 5, 5] }])
+    assert.deepEqual(normalizeOverrideToken({ values: [0.2], percent: true }), [{ values: [0, 0.2, 0.2, 0.2], percent: true }])
+    assert.deepEqual(normalizeOverrideToken([{ values: [1, 2, 3] }]), [{ values: [0, 1, 2, 3] }])
+    assert.equal(normalizeOverrideToken(null), null)
+    assert.equal(normalizeOverrideToken([1, 2]), null)
+    assert.equal(normalizeOverrideToken({ values: ['x'] }), null)
   })
 })
