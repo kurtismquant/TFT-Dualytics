@@ -392,5 +392,73 @@
   "privacy": {
     "title": "Política de Privacidad",
     "languageNotice": "Este documento solo está disponible en inglés."
+  },
+  "explorer": {
+    "label": "Explorador de tableros",
+    "intro": "Elige unidades, rasgos y objetos para ver cómo quedan los tableros de Dobles que los usan todos este parche, y qué otras unidades, rasgos y objetos rinden mejor junto a ellos.",
+    "searchPlaceholder": "Añade una unidad, rasgo u objeto…",
+    "searchLabel": "Añade un filtro de unidad, rasgo u objeto (hasta {{count}} de cada uno)",
+    "suggestions": "Unidades, rasgos y objetos que coinciden",
+    "kind": {
+      "unit": "Unidad",
+      "trait": "Rasgo",
+      "item": "Objeto"
+    },
+    "activeFilters": "Filtros activos",
+    "clearAll": "Quitar todo",
+    "emptyHint": "Sin filtros: se muestran todos los tableros del parche.",
+    "starLabel": "Nivel de estrellas de {{name}}",
+    "stars": {
+      "any": "Cualquier ★",
+      "1": "1★",
+      "2": "2★",
+      "3": "3★",
+      "twoPlus": "2★+"
+    },
+    "holding": "+ Con objeto",
+    "addHeldItem": "Exigir un objeto equipado en {{name}}",
+    "removeHeldItem": "Dejar de exigir {{item}} en {{name}}",
+    "tierLabel": "Umbral de {{name}}",
+    "anyActive": "Cualquier activo",
+    "atLeastUnits": "{{count}}+ unidades",
+    "onAnyUnit": "En cualquier unidad",
+    "removeFilter": "Quitar el filtro {{name}}",
+    "loading": "Explorando tableros…",
+    "error": "No se pudo cargar el explorador. ¿Está el servidor en marcha?",
+    "notReady": "El explorador se está preparando; estará disponible unos minutos después de iniciar el servidor.",
+    "noMatch": "Ningún tablero de este parche cumple todos estos filtros.",
+    "matchingBoards": "Tableros que coinciden",
+    "allBoards": "Todos los tableros",
+    "ofBoards": "{{share}} del parche {{patch}}",
+    "distributionLabel": "Posición del equipo: 1.º {{first}}, 2.º {{second}}, 3.º {{third}}, 4.º {{fourth}}",
+    "place": {
+      "1": "1.º",
+      "2": "2.º",
+      "3": "3.º",
+      "4": "4.º"
+    },
+    "panel": {
+      "unit": "Unidades",
+      "trait": "Rasgos",
+      "item": "Objetos"
+    },
+    "sortLabel": "Ordenar",
+    "sort": {
+      "played": "Más jugados",
+      "best": "Mejor prom."
+    },
+    "col": {
+      "unit": "Unidad",
+      "trait": "Rasgo",
+      "item": "Objeto",
+      "playRate": "Uso",
+      "avg": "Prom.",
+      "delta": "Δ",
+      "add": "Añadir como filtro"
+    },
+    "panelEmpty": "Nada llega a {{count}} tableros aquí.",
+    "addFilter": "Añadir {{name}} como filtro",
+    "showAll": "Ver los {{count}}",
+    "showLess": "Ver menos"
   }
 }

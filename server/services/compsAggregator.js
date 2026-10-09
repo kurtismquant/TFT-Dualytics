@@ -10,6 +10,7 @@ import { getAvailablePatches, aggregateStats } from './statsAggregator.js'
 import { replaceAggregatedStats } from '../db/aggregatedStatsRepo.js'
 import { aggregateUnitItemCombos } from './unitItemCombosAggregator.js'
 import { replaceAggregatedUnitItems } from '../db/aggregatedUnitItemsRepo.js'
+import { buildBoardIndex, setBoardIndex } from './boardExplorer.js'
 import { THIEVES_GLOVES } from '../constants/game.js'
 
 const TOP_PARTNERS_LIMIT = 3
@@ -469,6 +470,8 @@ export async function runCompAggregation() {
 
   const comps = aggregateComps(docs)
   await replaceAggregatedComps(comps, docs.length)
+  // The board explorer answers from an in-memory index of these same boards.
+  if (patch) setBoardIndex(patch, buildBoardIndex(docs))
 
   // Compute the Stats tables (units/items/traits) from the SAME docs we just pulled,
   // then store them so getStats serves the current patch without re-streaming ~20MB of

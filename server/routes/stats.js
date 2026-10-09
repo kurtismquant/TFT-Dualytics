@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import { getStats } from '../services/statsAggregator.js'
 import { getUnitItemCombos, MIN_COMBO_GAMES } from '../services/unitItemCombosAggregator.js'
+import { exploreCurrentPatch } from '../services/boardExplorer.js'
 
 const router = Router()
 
@@ -46,6 +47,18 @@ router.get('/units/:unitId/combos', async (req, res) => {
       lastUpdated: null,
       error: status === 400 ? err.message : 'Failed to load unit item combos',
     })
+  }
+})
+
+// Board explorer over the current patch: ?units=ID:1-3:ITEM+ITEM&traits=ID:2&items=ID
+router.get('/explorer', (req, res) => {
+  try {
+    const result = exploreCurrentPatch(req.query)
+    res.status(result.ready ? 200 : 503).json(result)
+  } catch (err) {
+    const status = err.status || 500
+    if (status >= 500) console.error('Board explorer failed:', err.message)
+    res.status(status).json({ ready: false, error: status === 400 ? err.message : 'Board explorer failed' })
   }
 })
 

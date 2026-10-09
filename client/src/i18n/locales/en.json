@@ -392,5 +392,73 @@
   "privacy": {
     "title": "Privacy Policy",
     "languageNotice": "This document is only available in English."
+  },
+  "explorer": {
+    "label": "Board explorer",
+    "intro": "Pick units, traits and items to see how Double Up boards running all of them place this patch — and which other units, traits and items do best alongside them.",
+    "searchPlaceholder": "Add a unit, trait or item…",
+    "searchLabel": "Add a unit, trait or item filter (up to {{count}} of each)",
+    "suggestions": "Matching units, traits and items",
+    "kind": {
+      "unit": "Unit",
+      "trait": "Trait",
+      "item": "Item"
+    },
+    "activeFilters": "Active filters",
+    "clearAll": "Clear all",
+    "emptyHint": "No filters yet — showing every board this patch.",
+    "starLabel": "{{name}} star level",
+    "stars": {
+      "any": "Any ★",
+      "1": "1★",
+      "2": "2★",
+      "3": "3★",
+      "twoPlus": "2★+"
+    },
+    "holding": "+ Holding item",
+    "addHeldItem": "Require an item held by {{name}}",
+    "removeHeldItem": "Stop requiring {{item}} on {{name}}",
+    "tierLabel": "{{name}} breakpoint",
+    "anyActive": "Any active",
+    "atLeastUnits": "{{count}}+ units",
+    "onAnyUnit": "On any unit",
+    "removeFilter": "Remove {{name}} filter",
+    "loading": "Exploring boards…",
+    "error": "Could not load the explorer. Is the server running?",
+    "notReady": "The explorer is warming up — it's available a few minutes after the server starts.",
+    "noMatch": "No board this patch matches all of these filters.",
+    "matchingBoards": "Matching boards",
+    "allBoards": "All boards",
+    "ofBoards": "{{share}} of patch {{patch}}",
+    "distributionLabel": "Team placement: 1st {{first}}, 2nd {{second}}, 3rd {{third}}, 4th {{fourth}}",
+    "place": {
+      "1": "1st",
+      "2": "2nd",
+      "3": "3rd",
+      "4": "4th"
+    },
+    "panel": {
+      "unit": "Units",
+      "trait": "Traits",
+      "item": "Items"
+    },
+    "sortLabel": "Sort",
+    "sort": {
+      "played": "Most played",
+      "best": "Best avg"
+    },
+    "col": {
+      "unit": "Unit",
+      "trait": "Trait",
+      "item": "Item",
+      "playRate": "Play",
+      "avg": "Avg",
+      "delta": "Δ",
+      "add": "Add as filter"
+    },
+    "panelEmpty": "Nothing reaches {{count}} boards here.",
+    "addFilter": "Add {{name}} as a filter",
+    "showAll": "Show all {{count}}",
+    "showLess": "Show less"
   }
 }
