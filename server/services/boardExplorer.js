@@ -239,11 +239,13 @@ export function exploreBoards(boards, filters, compResults = []) {
 }
 
 // ── Current-patch index, kept in memory ─────────────────────────────────────
-let current = null // { patch, boards, comps, builtAt }
+let current = null // { patch, boards, comps, games, builtAt }
 const resultCache = new Map()
 
-export function setBoardIndex(patch, boards, comps = []) {
-  current = { patch, boards, comps, builtAt: new Date().toISOString() }
+// `games`: Double Up games on the patch — the Comps page's play-rate
+// denominator, so explorer comp play rates read the same way.
+export function setBoardIndex(patch, boards, comps = [], games = 0) {
+  current = { patch, boards, comps, games, builtAt: new Date().toISOString() }
   resultCache.clear()
 }
 
@@ -259,7 +261,7 @@ export function exploreCurrentPatch(query) {
   const key = cacheKey(filters)
   const cached = resultCache.get(key)
   if (cached && Date.now() - cached.at < CACHE_TTL_MS) return cached.value
-  const value = { ready: true, patch: current.patch, builtAt: current.builtAt, filters, ...exploreBoards(current.boards, filters, current.comps) }
+  const value = { ready: true, patch: current.patch, builtAt: current.builtAt, totalGames: current.games, filters, ...exploreBoards(current.boards, filters, current.comps) }
   resultCache.set(key, { at: Date.now(), value })
   return value
 }

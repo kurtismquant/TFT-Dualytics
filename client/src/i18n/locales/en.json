@@ -480,7 +480,7 @@
     "note": {
       "boards": "Play: share of the matching boards. Δ: avg place vs the matching boards (negative is better).",
       "unitItems": "Play: share of that unit's boards with the item on it. Δ: avg place vs that unit's average.",
-      "comps": "Comps as grouped on the Comps page, rated within the matching boards. Δ: avg place vs the matching boards."
+      "comps": "Comps as grouped on the Comps page, rated within the matching boards. Play rate: times played per game this patch. Δ: avg place vs the matching boards."
     },
     "itemsOn": "Items on",
     "anyUnit": "Any unit",

@@ -477,7 +477,7 @@ export async function runCompAggregation() {
   await replaceAggregatedComps(comps, docs.length)
   // The board explorer answers from an in-memory index of these same boards,
   // each filed under the comp it counts toward on the Comps page.
-  if (patch) setBoardIndex(patch, buildBoardIndex(docs, aliases), comps)
+  if (patch) setBoardIndex(patch, buildBoardIndex(docs, aliases), comps, docs.length)
 
   // Compute the Stats tables (units/items/traits) from the SAME docs we just pulled,
   // then store them so getStats serves the current patch without re-streaming ~20MB of

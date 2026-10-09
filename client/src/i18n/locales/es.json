@@ -480,7 +480,7 @@
     "note": {
       "boards": "Uso: porcentaje de los tableros que coinciden. Δ: posición media frente a esos tableros (negativo es mejor).",
       "unitItems": "Uso: porcentaje de los tableros de esa unidad con el objeto. Δ: posición media frente a la media de esa unidad.",
-      "comps": "Composiciones agrupadas como en la página de Composiciones, valoradas dentro de los tableros que coinciden. Δ: posición media frente a esos tableros."
+      "comps": "Composiciones agrupadas como en la página de Composiciones, valoradas dentro de los tableros que coinciden. Uso: veces jugada por partida este parche. Δ: posición media frente a esos tableros."
     },
     "itemsOn": "Objetos en",
     "anyUnit": "Cualquier unidad",

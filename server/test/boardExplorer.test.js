@@ -5,8 +5,10 @@ import { aggregateCompsWithAliases } from '../services/compsAggregator.js'
 import {
   buildBoardIndex,
   exploreBoards,
+  exploreCurrentPatch,
   MIN_BREAKDOWN_GAMES,
   parseExplorerQuery,
+  setBoardIndex,
 } from '../services/boardExplorer.js'
 
 const IE = 'DA_InfinityEdge'
@@ -124,6 +126,17 @@ describe('exploreBoards', () => {
       { boards: empty.boards, avg: empty.avgPlacement, units: empty.units },
       { boards: 0, avg: null, units: [] },
     )
+  })
+})
+
+describe('exploreCurrentPatch', () => {
+  it('reports the patch game count for comp play rates', () => {
+    const docs = boards(10, 1, [unit(AHRI), unit(SETT)])
+    const { comps, aliases } = aggregateCompsWithAliases(docs)
+    setBoardIndex('18.3', buildBoardIndex(docs, aliases), comps, docs.length)
+    const result = exploreCurrentPatch({ units: AHRI })
+    assert.equal(result.totalGames, 10)
+    assert.equal(result.comps[0].count, 10)
   })
 })
 

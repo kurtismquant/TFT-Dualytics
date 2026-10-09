@@ -12,7 +12,7 @@ import compRowStyles from '../CompRow.module.css'
 import compStyles from '../../pages/CompPage.module.css'
 import styles from './DataExplorer.module.css'
 
-function ExplorerCompRow({ row, champions, items, traits, uniqueTraitIds }) {
+function ExplorerCompRow({ row, totalGames, champions, items, traits, uniqueTraitIds }) {
   const { t } = useTranslation()
   const resolvedUnits = useMemo(() => resolveUnits(row.units, champions, items), [row.units, champions, items])
   const name = useMemo(
@@ -26,7 +26,8 @@ function ExplorerCompRow({ row, champions, items, traits, uniqueTraitIds }) {
         <CompUnitList
           resolvedUnits={resolvedUnits}
           items={items}
-          playRate={row.frequency}
+          // Times played per game on the patch, as on the Comps page.
+          playRate={totalGames > 0 ? row.count / totalGames : 0}
           winRate={row.winRate}
           avgPlacement={row.avgPlacement}
           getUnitHref={id => buildUnitPath(id)}
@@ -69,6 +70,7 @@ export default function ExplorerCompsView({ data, champions, items, traits }) {
                 <ExplorerCompRow
                   key={row.id}
                   row={row}
+                  totalGames={data.totalGames}
                   champions={champions || []}
                   items={items || []}
                   traits={traits || []}
