@@ -402,7 +402,7 @@
     "label": "Explorador de tableros",
     "intro": "Elige unidades, rasgos y objetos para ver cómo quedan los tableros de Dobles que los usan todos este parche, y qué otras unidades, rasgos, objetos y composiciones rinden mejor junto a ellos.",
     "searchPlaceholder": "Añade una unidad, rasgo u objeto…",
-    "searchLabel": "Añade un filtro de unidad, rasgo u objeto (hasta {{count}} de cada uno)",
+    "searchLabel": "Añade un filtro de unidad, rasgo u objeto",
     "suggestions": "Unidades, rasgos y objetos que coinciden",
     "kind": {
       "unit": "Unidad",

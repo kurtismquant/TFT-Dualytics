@@ -9,7 +9,6 @@ import { toTeamPlacement } from './teamPlacement.js'
 
 const EMPTY_BAG = 'TFT_Item_EmptyBag'
 const ID_PATTERN = /^[A-Za-z0-9_]{1,64}$/
-export const MAX_FILTERS = 6
 // Breakdown rows need this many matching boards; below it the averages are noise.
 // Every row that reaches it is returned (the client lists them in scrollable tables).
 export const MIN_BREAKDOWN_GAMES = 10
@@ -70,11 +69,19 @@ function parseId(value) {
   return value
 }
 
+// No cap on the number of filters: boardMatches stops at a board's first
+// unmet filter, and a board only has ~10 units / ~15 traits to meet, so the
+// work per board stays small however many arrive (the URL length bounds the
+// rest). Repeated ids are dropped.
 function splitList(value) {
   if (value == null || value === '') return []
-  const list = String(value).split(',').filter(Boolean)
-  if (list.length > MAX_FILTERS) throw badRequest(`At most ${MAX_FILTERS} filters of each kind`)
-  return list
+  const seen = new Set()
+  return String(value).split(',').filter(entry => {
+    const id = entry.split(':')[0]
+    if (!entry || seen.has(id)) return false
+    seen.add(id)
+    return true
+  })
 }
 
 // Query string → filters. Same format the client keeps in its URL:

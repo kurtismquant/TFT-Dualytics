@@ -9,7 +9,7 @@ import { useChampions } from '../../hooks/useChampions.js'
 import { useItems } from '../../hooks/useItems.js'
 import { useTraits } from '../../hooks/useTraits.js'
 import { makeMap } from '../../utils/statsFormatting.js'
-import { EXPLORER_VIEWS, filtersToSearch, MAX_EXPLORER_FILTERS, MAX_UNIT_ITEMS, parseExplorerParams } from '../../utils/explorerParams.js'
+import { EXPLORER_VIEWS, filtersToSearch, MAX_UNIT_ITEMS, parseExplorerParams } from '../../utils/explorerParams.js'
 import statsStyles from '../../pages/StatsPage.module.css'
 import styles from './DataExplorer.module.css'
 
@@ -50,7 +50,6 @@ export default function DataExplorer() {
   const addFilter = useCallback((kind, id, extra = {}) => {
     const key = `${kind}s`
     const current = filters[key]
-    if (current.length >= MAX_EXPLORER_FILTERS) return
     if (current.some(entry => (kind === 'item' ? entry : entry.id) === id)) return
     const entry = kind === 'item' ? id : kind === 'unit' ? { id, items: [], ...extra } : { id, ...extra }
     setFilters({ ...filters, [key]: [...current, entry] })

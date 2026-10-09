@@ -154,8 +154,13 @@ describe('parseExplorerQuery', () => {
     assert.deepEqual(parseExplorerQuery({}), { units: [], traits: [], items: [] })
   })
 
-  it('rejects bad ids and too many filters', () => {
+  it('rejects bad ids', () => {
     assert.throws(() => parseExplorerQuery({ units: 'DA_18_Ahri;drop' }), err => err.status === 400)
-    assert.throws(() => parseExplorerQuery({ items: Array(7).fill(IE).join(',') }), err => err.status === 400)
+  })
+
+  it('takes any number of filters, dropping repeated ids', () => {
+    const ids = Array.from({ length: 20 }, (_, i) => `DA_Item_${i}`)
+    assert.equal(parseExplorerQuery({ items: ids.join(',') }).items.length, 20)
+    assert.deepEqual(parseExplorerQuery({ units: `${AHRI}:2-3,${AHRI},${SETT}` }).units, [{ id: AHRI, minStar: 2, maxStar: 3 }, { id: SETT }])
   })
 })

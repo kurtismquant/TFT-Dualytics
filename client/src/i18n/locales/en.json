@@ -402,7 +402,7 @@
     "label": "Board explorer",
     "intro": "Pick units, traits and items to see how Double Up boards running all of them place this patch — and which other units, traits, items and comps do best alongside them.",
     "searchPlaceholder": "Add a unit, trait or item…",
-    "searchLabel": "Add a unit, trait or item filter (up to {{count}} of each)",
+    "searchLabel": "Add a unit, trait or item filter",
     "suggestions": "Matching units, traits and items",
     "kind": {
       "unit": "Unit",

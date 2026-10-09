@@ -3,14 +3,13 @@
 //   units:  DA_18_Ahri:2-3:DA_InfinityEdge+DA_GiantSlayer,DA_18_Sett
 //   traits: DA_18_Blossom:2        (minimum active tier)
 //   items:  DA_RabadonsDeathcap
-export const MAX_EXPLORER_FILTERS = 6
 export const MAX_UNIT_ITEMS = 3
 export const EMPTY_FILTERS = { units: [], traits: [], items: [] }
 
 const ID = /^[A-Za-z0-9_]{1,64}$/
 const star = value => (Number.isInteger(value) && value >= 1 && value <= 3 ? value : null)
 
-const list = value => (value ? String(value).split(',').filter(Boolean).slice(0, MAX_EXPLORER_FILTERS) : [])
+const list = value => (value ? String(value).split(',').filter(Boolean) : [])
 
 function parseUnit(entry) {
   const [id, stars = '', items = ''] = entry.split(':')

@@ -4,7 +4,7 @@ import SearchInput from '../ui/SearchInput.jsx'
 import ExplorerChip from './ExplorerChip.jsx'
 import { rankItemMatches } from '../../utils/itemComboFilter.js'
 import { formatPercent } from '../../utils/statsFormatting.js'
-import { EMPTY_FILTERS, hasFilters, MAX_EXPLORER_FILTERS } from '../../utils/explorerParams.js'
+import { EMPTY_FILTERS, hasFilters } from '../../utils/explorerParams.js'
 import styles from './DataExplorer.module.css'
 
 const MAX_SUGGESTIONS = 8
@@ -33,14 +33,13 @@ export default function ExplorerFilters({ filters, setFilters, addFilter, lookup
       .slice().sort((a, b) => a.name.localeCompare(b.name)),
     [items]
   )
-  const canAddUnit = filters.units.length < MAX_EXPLORER_FILTERS
-  const picks = useMemo(() => (canAddUnit ? recommended : []).map(row => ({
+  const picks = useMemo(() => recommended.map(row => ({
     id: row.id,
     kind: 'unit',
     name: lookups.unit.get(row.id)?.name || row.id,
     iconUrl: lookups.unit.get(row.id)?.iconUrl,
     note: formatPercent(row.frequency),
-  })), [canAddUnit, recommended, lookups])
+  })), [recommended, lookups])
 
   const typing = text.trim() !== ''
   const suggestions = useMemo(
@@ -93,7 +92,7 @@ export default function ExplorerFilters({ filters, setFilters, addFilter, lookup
             onClick={() => setOpen(true)}
             onKeyDown={handleKeyDown}
             placeholder={t('explorer.searchPlaceholder')}
-            aria-label={t('explorer.searchLabel', { count: MAX_EXPLORER_FILTERS })}
+            aria-label={t('explorer.searchLabel')}
             aria-controls={showSuggestions ? `${baseId}-suggestions` : undefined}
             aria-expanded={showSuggestions}
             autoComplete="off"
