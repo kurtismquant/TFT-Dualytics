@@ -1,9 +1,9 @@
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import CompRowHeader from '../comp-row/CompRowHeader.jsx'
 import CompUnitList from '../comp-row/CompUnitList.jsx'
-import { SortToggle } from './ExplorerTable.jsx'
-import { EXPLORER_SORTS } from '../../utils/explorerParams.js'
+import { SortButtons } from './ExplorerTable.jsx'
+import { useExplorerSort } from '../../hooks/useExplorerSort.js'
 import { resolveUnits } from '../../utils/resolveUnits.js'
 import { formatDelta } from '../../utils/statsFormatting.js'
 import { generateCompName, getUniqueTraitIds } from '../../utils/compName.js'
@@ -48,15 +48,15 @@ function ExplorerCompRow({ row, totalGames, champions, items, traits, uniqueTrai
 // rated within those boards.
 export default function ExplorerCompsView({ data, champions, items, traits }) {
   const { t } = useTranslation()
-  const [sort, setSort] = useState('played')
   const uniqueTraitIds = useMemo(() => getUniqueTraitIds(champions || [], traits || []), [champions, traits])
-  const rows = useMemo(() => (data.comps || []).slice().sort(EXPLORER_SORTS[sort]), [data.comps, sort])
+  const comps = useMemo(() => data.comps || [], [data.comps])
+  const { sort, sorted: rows, onSort } = useExplorerSort(comps)
 
   return (
     <section className={styles.panel} aria-label={t('explorer.panel.comp')}>
       <header className={styles.panelHeader}>
         <p className={styles.viewNote}>{t('explorer.note.comps')}</p>
-        <SortToggle sort={sort} setSort={setSort} />
+        <SortButtons sort={sort} onSort={onSort} />
       </header>
       {rows.length === 0
         ? <p className={styles.panelEmpty}>{t('explorer.panelEmpty', { count: data.minGames })}</p>

@@ -449,10 +449,6 @@
       "comp": "Comps"
     },
     "sortLabel": "Sort",
-    "sort": {
-      "played": "Most played",
-      "best": "Best avg"
-    },
     "col": {
       "unit": "Unit",
       "trait": "Trait",

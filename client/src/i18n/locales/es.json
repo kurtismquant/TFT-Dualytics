@@ -449,10 +449,6 @@
       "comp": "Composiciones"
     },
     "sortLabel": "Ordenar",
-    "sort": {
-      "played": "Más jugados",
-      "best": "Mejor prom."
-    },
     "col": {
       "unit": "Unidad",
       "trait": "Rasgo",

@@ -539,19 +539,13 @@
   background: var(--bg-row-odd);
 }
 
-.groupRow th {
-  padding-top: 0.875rem;
-  background: var(--bg-row-even);
-}
-
-.groupName {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  color: var(--text-primary);
-  font-weight: var(--fw-bold);
-  letter-spacing: var(--track-wide);
-  text-transform: uppercase;
+/* Sortable headers (stats SortHeader): labels sit over their right-aligned numbers. */
+.breakdown thead th button {
+  min-height: 1.75rem;
+  justify-content: flex-end;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
 }
 
 .rowName {
@@ -600,12 +594,6 @@
   display: block;
   color: var(--text-muted);
   font-size: var(--text-2xs);
-}
-
-.groupName .rowGames {
-  display: inline;
-  margin-left: 0.25rem;
-  font-weight: var(--fw-regular);
 }
 
 .deltaGood {

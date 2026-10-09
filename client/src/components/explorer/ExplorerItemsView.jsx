@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import ExplorerTable from './ExplorerTable.jsx'
 import styles from './DataExplorer.module.css'
@@ -15,9 +15,9 @@ function ItemOnUnit({ item, unit }) {
   )
 }
 
-// Items on the matching boards: on any unit (optionally split by the unit
-// holding them) or on one chosen unit. Per-unit rows are rated within that
-// unit's boards.
+// Items on the matching boards: on any unit, split by the unit holding them
+// (one row per item + unit, rated like the overall list), or on one chosen
+// unit (rated within that unit's boards).
 export default function ExplorerItemsView({ data, lookups, onAddItem, onAddUnitItem }) {
   const { t } = useTranslation()
   const [unitId, setUnitId] = useState(ANY_UNIT)
@@ -31,24 +31,20 @@ export default function ExplorerItemsView({ data, lookups, onAddItem, onAddUnitI
     return [...counts].sort((a, b) => b[1] - a[1]).map(([id, count]) => ({ id, count }))
   }, [unitItems])
   const selected = units.some(unit => unit.id === unitId) ? unitId : ANY_UNIT
-  const perUnit = selected !== ANY_UNIT || byUnit
+  const perUnit = selected !== ANY_UNIT
 
   const rows = useMemo(() => {
     if (selected !== ANY_UNIT) return unitItems.filter(row => row.unit === selected)
     if (!byUnit) return data.items || []
-    const order = new Map(units.map((unit, index) => [unit.id, index]))
-    return unitItems.slice().sort((a, b) => order.get(a.unit) - order.get(b.unit))
-  }, [selected, byUnit, unitItems, units, data.items])
+    // Split rows read like the overall list: share of all matching boards, Δ vs their avg.
+    return unitItems.map(row => ({
+      ...row,
+      frequency: data.boards ? row.count / data.boards : 0,
+      delta: row.avgPlacement - data.avgPlacement,
+    }))
+  }, [selected, byUnit, unitItems, data.items, data.boards, data.avgPlacement])
 
   const nameOf = (kind, id) => lookups[kind].get(id)?.name || id
-  const groupOf = useCallback(row => row.unit, [])
-  const renderGroup = (id, list) => (
-    <span className={styles.groupName}>
-      {lookups.unit.get(id)?.iconUrl && <img src={lookups.unit.get(id).iconUrl} alt="" className={styles.rowIcon} />}
-      {nameOf('unit', id)}
-      <span className={styles.rowGames}>{t('explorer.boardCount', { count: list[0]?.unitCount ?? 0, formatted: (list[0]?.unitCount ?? 0).toLocaleString() })}</span>
-    </span>
-  )
 
   const controls = (
     <>
@@ -81,8 +77,6 @@ export default function ExplorerItemsView({ data, lookups, onAddItem, onAddUnitI
         rows={rows}
         minGames={data.minGames}
         controls={controls}
-        groupOf={selected === ANY_UNIT && byUnit ? groupOf : null}
-        renderGroup={renderGroup}
         getKey={row => `${row.unit ?? ''}|${row.id}`}
         renderName={row => (
           <>
@@ -91,7 +85,11 @@ export default function ExplorerItemsView({ data, lookups, onAddItem, onAddUnitI
               : lookups.item.get(row.id)?.iconUrl && <img src={lookups.item.get(row.id).iconUrl} alt="" className={styles.rowIcon} />}
             <span>
               {nameOf('item', row.id)}
-              {row.unit && <span className="sr-only"> {t('explorer.onUnit', { name: nameOf('unit', row.unit) })}</span>}
+              {row.unit && (
+                <span className={selected === ANY_UNIT ? styles.rowGames : 'sr-only'}>
+                  {' '}{t('explorer.onUnit', { name: nameOf('unit', row.unit) })}
+                </span>
+              )}
             </span>
           </>
         )}

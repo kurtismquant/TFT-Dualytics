@@ -68,9 +68,5 @@ export function filtersToSearch(filters) {
 
 export const hasFilters = filters => filters.units.length + filters.traits.length + filters.items.length > 0
 
-// Breakdown views (?v=) and the sort orders their tables offer.
+// Breakdown views (?v=).
 export const EXPLORER_VIEWS = ['units', 'traits', 'items', 'comps']
-export const EXPLORER_SORTS = {
-  played: (a, b) => b.count - a.count || a.avgPlacement - b.avgPlacement,
-  best: (a, b) => a.avgPlacement - b.avgPlacement || b.count - a.count,
-}

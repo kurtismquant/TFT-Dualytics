@@ -1,9 +1,21 @@
-import { Fragment, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import SortHeader from '../stats/SortHeader.jsx'
+import { useExplorerSort } from '../../hooks/useExplorerSort.js'
 import { formatAvg, formatDelta, formatPercent } from '../../utils/statsFormatting.js'
 import { getAvgPlacementColor, getWinRateColor } from '../../utils/statsQuality.js'
-import { EXPLORER_SORTS } from '../../utils/explorerParams.js'
+import { EXPLORER_SORT_KEYS } from '../../utils/explorerSort.js'
 import styles from './DataExplorer.module.css'
+
+// Column labels, by sort key.
+const COLUMN_LABEL_KEYS = {
+  count: 'explorer.col.playRate',
+  avgPlacement: 'explorer.col.avg',
+  winRate: 'explorer.col.win',
+  top2Rate: 'explorer.col.top2',
+  delta: 'explorer.col.delta',
+}
+// Hidden on phones.
+const OPTIONAL_COLUMNS = new Set(['winRate', 'top2Rate'])
 
 // Green when boards with it place better, red when worse, plain when ~equal.
 function deltaClass(delta) {
@@ -11,98 +23,76 @@ function deltaClass(delta) {
   return delta < 0 ? styles.deltaGood : styles.deltaBad
 }
 
-export function SortToggle({ sort, setSort }) {
+// Sort buttons for lists that aren't tables (the comps view).
+export function SortButtons({ sort, onSort }) {
   const { t } = useTranslation()
   return (
     <div className={styles.sortToggle} role="group" aria-label={t('explorer.sortLabel')}>
-      {Object.keys(EXPLORER_SORTS).map(key => (
-        <button key={key} type="button" aria-pressed={sort === key} onClick={() => setSort(key)}>
-          {t(`explorer.sort.${key}`)}
+      {EXPLORER_SORT_KEYS.map(key => (
+        <button key={key} type="button" aria-pressed={sort.key === key} onClick={() => onSort(key)}>
+          {t(COLUMN_LABEL_KEYS[key])}
+          {sort.key === key && <span aria-hidden="true"> {sort.direction === 'asc' ? '▲' : '▼'}</span>}
         </button>
       ))}
     </div>
   )
 }
 
-// Rows sorted within each group; groups keep the order they first appear in.
-function arrange(rows, sort, groupOf) {
-  if (!groupOf) return [{ key: null, rows: rows.slice().sort(EXPLORER_SORTS[sort]) }]
-  const groups = new Map()
-  for (const row of rows) {
-    const key = groupOf(row)
-    if (!groups.has(key)) groups.set(key, [])
-    groups.get(key).push(row)
-  }
-  return [...groups].map(([key, list]) => ({ key, rows: list.sort(EXPLORER_SORTS[sort]) }))
-}
-
 // One scrollable breakdown table listing every row the server returned (each
-// has at least `minGames` boards). `renderName(row)` → the name cell content;
-// `groupOf` + `renderGroup` split the rows under group headings.
-export default function ExplorerTable({
-  label, nameHeader, rows, getKey, renderName, onAdd, addLabel, groupOf, renderGroup, minGames, controls,
-}) {
+// has at least `minGames` boards), sortable by any stat column; Play sorts by
+// times played. `renderName(row)` → the name cell content.
+export default function ExplorerTable({ label, nameHeader, rows, getKey, renderName, onAdd, addLabel, minGames, controls }) {
   const { t } = useTranslation()
-  const [sort, setSort] = useState('played')
-  const groups = useMemo(() => arrange(rows, sort, groupOf), [rows, sort, groupOf])
+  const { sort, sorted, onSort } = useExplorerSort(rows)
 
   return (
     <section className={styles.panel} aria-label={label}>
-      <header className={styles.panelHeader}>
-        <div className={styles.panelControls}>{controls}</div>
-        <SortToggle sort={sort} setSort={setSort} />
-      </header>
+      {controls && <header className={styles.panelHeader}>{controls}</header>}
       {rows.length === 0
         ? <p className={styles.panelEmpty}>{t('explorer.panelEmpty', { count: minGames })}</p>
         : (
-          // Focusable so keyboard users can scroll it (it holds no other focus targets but the + buttons).
+          // Focusable so keyboard users can scroll it.
           // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
           <div className={styles.tableScroll} tabIndex={0} role="region" aria-label={t('explorer.tableScroll', { label })}>
             <table className={styles.breakdown}>
               <thead>
                 <tr>
                   <th scope="col">{nameHeader}</th>
-                  <th scope="col">{t('explorer.col.playRate')}</th>
-                  <th scope="col">{t('explorer.col.avg')}</th>
-                  <th scope="col" className={styles.optionalCol}>{t('explorer.col.win')}</th>
-                  <th scope="col" className={styles.optionalCol}>{t('explorer.col.top2')}</th>
-                  <th scope="col">{t('explorer.col.delta')}</th>
+                  {EXPLORER_SORT_KEYS.map(key => (
+                    <SortHeader
+                      key={key}
+                      columnKey={key}
+                      label={t(COLUMN_LABEL_KEYS[key])}
+                      sort={sort}
+                      onSort={onSort}
+                      className={OPTIONAL_COLUMNS.has(key) ? styles.optionalCol : undefined}
+                    />
+                  ))}
                   <th scope="col"><span className="sr-only">{t('explorer.col.add')}</span></th>
                 </tr>
               </thead>
               <tbody>
-                {groups.map(group => (
-                  <Fragment key={group.key ?? 'all'}>
-                    {group.key != null && (
-                      <tr className={styles.groupRow}>
-                        <th scope="colgroup" colSpan={7}>{renderGroup(group.key, group.rows)}</th>
-                      </tr>
-                    )}
-                    {group.rows.map(row => (
-                      <tr key={getKey(row)}>
-                        <th scope="row"><span className={styles.rowName}>{renderName(row)}</span></th>
-                        <td>
-                          {formatPercent(row.frequency)}
-                          <span className={styles.rowGames}>{row.count.toLocaleString()}</span>
-                        </td>
-                        <td className={styles.colored} style={{ '--metric-color': getAvgPlacementColor(row.avgPlacement) }}>
-                          {formatAvg(row.avgPlacement)}
-                        </td>
-                        <td className={`${styles.colored} ${styles.optionalCol}`} style={{ '--metric-color': getWinRateColor(row.winRate) }}>
-                          {formatPercent(row.winRate)}
-                        </td>
-                        <td className={styles.optionalCol}>{formatPercent(row.top2Rate)}</td>
-                        <td className={deltaClass(row.delta)}>
-                          {formatDelta(row.delta)}
-                        </td>
-                        <td>
-                          <button type="button" className={styles.addButton} onClick={() => onAdd(row)} aria-label={addLabel(row)}>
-                            +
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </Fragment>
+                {sorted.map(row => (
+                  <tr key={getKey(row)}>
+                    <th scope="row"><span className={styles.rowName}>{renderName(row)}</span></th>
+                    <td>
+                      {formatPercent(row.frequency)}
+                      <span className={styles.rowGames}>{row.count.toLocaleString()}</span>
+                    </td>
+                    <td className={styles.colored} style={{ '--metric-color': getAvgPlacementColor(row.avgPlacement) }}>
+                      {formatAvg(row.avgPlacement)}
+                    </td>
+                    <td className={`${styles.colored} ${styles.optionalCol}`} style={{ '--metric-color': getWinRateColor(row.winRate) }}>
+                      {formatPercent(row.winRate)}
+                    </td>
+                    <td className={styles.optionalCol}>{formatPercent(row.top2Rate)}</td>
+                    <td className={deltaClass(row.delta)}>{formatDelta(row.delta)}</td>
+                    <td>
+                      <button type="button" className={styles.addButton} onClick={() => onAdd(row)} aria-label={addLabel(row)}>
+                        +
+                      </button>
+                    </td>
+                  </tr>
                 ))}
               </tbody>
             </table>
