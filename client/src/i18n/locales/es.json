@@ -420,7 +420,7 @@
       "3": "3★",
       "twoPlus": "2★+"
     },
-    "holding": "+ Con objeto",
+    "holding": "+ Objeto",
     "addHeldItem": "Exigir un objeto equipado en {{name}}",
     "removeHeldItem": "Dejar de exigir {{item}} en {{name}}",
     "tierLabel": "Umbral de {{name}}",
@@ -473,10 +473,6 @@
       "comps": "Composiciones"
     },
     "tableScroll": "Tabla de {{label}} (desplazable)",
-    "note": {
-      "unitItems": "Tasa de uso: porcentaje de los tableros de esa unidad con el objeto. Delta: posición media frente a la media de esa unidad.",
-      "comps": "Composiciones agrupadas como en la página de Composiciones, valoradas dentro de los tableros que coinciden. Tasa de uso: veces jugada por partida este parche. Delta: posición media frente a esos tableros."
-    },
     "itemsOn": "Objetos en",
     "anyUnit": "Cualquier unidad",
     "groupByUnit": "Separar por unidad",

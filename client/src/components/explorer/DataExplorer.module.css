@@ -215,6 +215,11 @@
   cursor: pointer;
 }
 
+/* Sized to its "+ Item" label, not its longest item name (the open list still shows them in full). */
+.addItemSelect {
+  width: 5.5rem;
+}
+
 .heldItem {
   width: 1.5rem;
   height: 1.5rem;
@@ -416,19 +421,6 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 0.75rem;
-}
-
-.viewNote {
-  margin: 0;
-  padding-top: 1rem;
-  color: var(--text-muted);
-  font-size: var(--text-xs);
-  letter-spacing: var(--track-base);
-}
-
-.panelControls .viewNote,
-.panelHeader .viewNote {
-  padding-top: 0;
 }
 
 .controlLabel {

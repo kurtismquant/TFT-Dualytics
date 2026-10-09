@@ -54,7 +54,6 @@ export default function ExplorerCompsView({ data, champions, items, traits }) {
   return (
     <section className={styles.panel} aria-label={t('explorer.panel.comp')}>
       <header className={styles.panelHeader}>
-        <p className={styles.viewNote}>{t('explorer.note.comps')}</p>
         <SortButtons sort={sort} onSort={onSort} />
       </header>
       {rows.length === 0

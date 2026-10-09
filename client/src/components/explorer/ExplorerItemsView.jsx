@@ -60,7 +60,6 @@ export default function ExplorerItemsView({ data, lookups, filteredUnitIds, onAd
 
   return (
     <>
-      {selected !== ANY_UNIT && <p className={styles.viewNote}>{t('explorer.note.unitItems')}</p>}
       <ExplorerTable
         label={t('explorer.panel.item')}
         nameHeader={t('explorer.col.item')}

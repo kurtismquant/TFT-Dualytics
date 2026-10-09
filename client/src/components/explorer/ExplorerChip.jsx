@@ -70,7 +70,7 @@ export default function ExplorerChip({ kind, entry, lookups, heldItemOptions, on
           })}
           {entry.items.length < MAX_UNIT_ITEMS && (
             <select
-              className={styles.chipSelect}
+              className={`${styles.chipSelect} ${styles.addItemSelect}`}
               value=""
               onChange={event => event.target.value && onChange({ ...entry, items: [...entry.items, event.target.value] })}
               aria-label={t('explorer.addHeldItem', { name })}

@@ -420,7 +420,7 @@
       "3": "3★",
       "twoPlus": "2★+"
     },
-    "holding": "+ Holding item",
+    "holding": "+ Item",
     "addHeldItem": "Require an item held by {{name}}",
     "removeHeldItem": "Stop requiring {{item}} on {{name}}",
     "tierLabel": "{{name}} breakpoint",
@@ -473,10 +473,6 @@
       "comps": "Comps"
     },
     "tableScroll": "{{label}} table (scrollable)",
-    "note": {
-      "unitItems": "Play rate: share of that unit's boards with the item on it. Delta: avg placement vs that unit's average.",
-      "comps": "Comps as grouped on the Comps page, rated within the matching boards. Play rate: times played per game this patch. Delta: avg placement vs the matching boards."
-    },
     "itemsOn": "Items on",
     "anyUnit": "Any unit",
     "groupByUnit": "Split by unit",
