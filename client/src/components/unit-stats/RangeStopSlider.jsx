@@ -11,7 +11,10 @@ import styles from './RangeStopSlider.module.css'
 // isEmpty(level) -> true when the level has no games (hollow stop),
 // rangeText -> the current selection shown beside the label,
 // stopCaption(level) -> small text under a stop's label (e.g. its games).
+// compact -> a small inline version (label kept for screen readers only, no
+// captions or hover tips), e.g. inside an explorer filter chip.
 export default function RangeStopSlider({
+  compact = false,
   label,
   rangeText,
   stopCaption,
@@ -117,10 +120,10 @@ export default function RangeStopSlider({
   })
 
   return (
-    <div className={`${styles.wrap} ${disabled ? styles.disabled : ''}`}>
-      <p className={styles.label}>
+    <div className={`${styles.wrap} ${compact ? styles.compact : ''} ${disabled ? styles.disabled : ''}`}>
+      <p className={compact ? 'sr-only' : styles.label}>
         <span>{label}</span>
-        {rangeText && <span className={styles.rangeValue}>{rangeText}</span>}
+        {rangeText && <span className={compact ? undefined : styles.rangeValue}>{rangeText}</span>}
       </p>
       <div
         ref={trackRef}
@@ -142,7 +145,7 @@ export default function RangeStopSlider({
         {levels.map(level => (
           <span
             key={level}
-            className={`${styles.stop} ${level < range.min || level > range.max ? styles.outside : ''} ${isEmpty(level) ? styles.empty : ''}`}
+            className={`${styles.stop} ${level < range.min || level > range.max ? styles.outside : ''} ${isEmpty?.(level) ? styles.empty : ''}`}
             style={{ left: toPercent(level), '--stop-color': colorFor(level) }}
           />
         ))}
@@ -153,7 +156,7 @@ export default function RangeStopSlider({
       <div className={styles.stopLabels}>
         {levels.map(level => {
           const tip = tipFor(level)
-          const caption = stopCaption?.(level)
+          const caption = compact ? null : stopCaption?.(level)
           return (
             <button
               key={level}
@@ -167,7 +170,7 @@ export default function RangeStopSlider({
             >
               <span className={styles.stopGlyph} aria-hidden="true">{stopContent(level)}</span>
               {caption != null && <span className={styles.caption} aria-hidden="true">{caption}</span>}
-              <span className={styles.tip} aria-hidden="true">{tip}</span>
+              {!compact && <span className={styles.tip} aria-hidden="true">{tip}</span>}
             </button>
           )
         })}

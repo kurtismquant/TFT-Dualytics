@@ -413,13 +413,6 @@
     "clearAll": "Clear all",
     "emptyHint": "No filters yet — showing every board this patch.",
     "starLabel": "{{name}} star level",
-    "stars": {
-      "any": "Any ★",
-      "1": "1★",
-      "2": "2★",
-      "3": "3★",
-      "twoPlus": "2★+"
-    },
     "holding": "+ Item",
     "addHeldItem": "Require an item held by {{name}}",
     "removeHeldItem": "Stop requiring {{item}} on {{name}}",
@@ -484,6 +477,8 @@
     "unitPicker": {
       "inFilters": "In your filters",
       "allUnits": "All units"
-    }
+    },
+    "minStar": "{{name}} minimum star level",
+    "maxStar": "{{name}} maximum star level"
   }
 }

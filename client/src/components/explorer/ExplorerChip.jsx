@@ -1,21 +1,16 @@
 import { useTranslation } from 'react-i18next'
+import RangeStopSlider from '../unit-stats/RangeStopSlider.jsx'
 import { getTraitTierInfo } from '../../utils/traitTier.js'
+import { STAR_COLORS, STAR_LEVELS } from '../../utils/starRange.js'
 import { MAX_UNIT_ITEMS } from '../../utils/explorerParams.js'
 import styles from './DataExplorer.module.css'
 
-// Star choices for a unit filter → { minStar, maxStar }.
-const STAR_OPTIONS = {
-  any: {},
-  1: { minStar: 1, maxStar: 1 },
-  2: { minStar: 2, maxStar: 2 },
-  3: { minStar: 3, maxStar: 3 },
-  '2+': { minStar: 2 },
-}
+// Slider range ↔ a unit filter's { minStar, maxStar } (1★–3★ = any, so neither is kept).
+const starRangeOf = entry => ({ min: entry.minStar || 1, max: entry.maxStar || 3 })
 
-function starKey({ minStar, maxStar }) {
-  if (!minStar && !maxStar) return 'any'
-  if (minStar && minStar === maxStar) return String(minStar)
-  return '2+'
+function withStarRange(entry, { min, max }) {
+  const { minStar: _min, maxStar: _max, ...rest } = entry
+  return { ...rest, ...(min > 1 ? { minStar: min } : {}), ...(max < 3 ? { maxStar: max } : {}) }
 }
 
 // Breakpoints of a trait as minimum active tiers ("3+ Blossom").
@@ -43,16 +38,20 @@ export default function ExplorerChip({ kind, entry, lookups, heldItemOptions, on
 
       {kind === 'unit' && (
         <>
-          <select
-            className={styles.chipSelect}
-            value={starKey(entry)}
-            onChange={event => onChange({ id: entry.id, items: entry.items, ...STAR_OPTIONS[event.target.value] })}
-            aria-label={t('explorer.starLabel', { name })}
-          >
-            {Object.keys(STAR_OPTIONS).map(key => (
-              <option key={key} value={key}>{t(`explorer.stars.${key === '2+' ? 'twoPlus' : key}`)}</option>
-            ))}
-          </select>
+          <RangeStopSlider
+            compact
+            label={t('explorer.starLabel', { name })}
+            levels={STAR_LEVELS}
+            range={starRangeOf(entry)}
+            onChange={range => onChange(withStarRange(entry, range))}
+            minLabel={t('explorer.minStar', { name })}
+            maxLabel={t('explorer.maxStar', { name })}
+            colorFor={star => STAR_COLORS[star]}
+            stopContent={star => '★'.repeat(star)}
+            valueText={star => t('unit.starLevel', { count: star })}
+            tipFor={star => t('unit.starLevel', { count: star })}
+            selectLabel={text => t('unit.showOnlyLevel', { tip: text })}
+          />
           {entry.items.map(itemId => {
             const item = lookups.item.get(itemId)
             return (

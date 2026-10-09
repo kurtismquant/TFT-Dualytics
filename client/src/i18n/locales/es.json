@@ -413,13 +413,6 @@
     "clearAll": "Quitar todo",
     "emptyHint": "Sin filtros: se muestran todos los tableros del parche.",
     "starLabel": "Nivel de estrellas de {{name}}",
-    "stars": {
-      "any": "Cualquier ★",
-      "1": "1★",
-      "2": "2★",
-      "3": "3★",
-      "twoPlus": "2★+"
-    },
     "holding": "+ Objeto",
     "addHeldItem": "Exigir un objeto equipado en {{name}}",
     "removeHeldItem": "Dejar de exigir {{item}} en {{name}}",
@@ -484,6 +477,8 @@
     "unitPicker": {
       "inFilters": "En tus filtros",
       "allUnits": "Todas las unidades"
-    }
+    },
+    "minStar": "Nivel de estrellas mínimo de {{name}}",
+    "maxStar": "Nivel de estrellas máximo de {{name}}"
   }
 }

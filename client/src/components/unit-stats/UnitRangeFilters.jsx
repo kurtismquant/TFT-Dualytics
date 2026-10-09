@@ -1,15 +1,9 @@
 import { useTranslation } from 'react-i18next'
 import RangeStopSlider from './RangeStopSlider.jsx'
 import UnitRangeReadout from './UnitRangeReadout.jsx'
-import { ITEM_COUNT_LEVELS, STAR_LEVELS, unitRangeSummary } from '../../utils/starRange.js'
+import { ITEM_COUNT_LEVELS, STAR_COLORS, STAR_LEVELS, unitRangeSummary } from '../../utils/starRange.js'
 import { formatAvg, formatPercent } from '../../utils/statsFormatting.js'
 import styles from './UnitRangeFilters.module.css'
-
-const STAR_COLORS = {
-  1: 'var(--bronze-star-level)',
-  2: 'var(--silver-star-level)',
-  3: 'var(--gold-star-level)',
-}
 
 // Items held has no game meaning to colour by, so it ramps a neutral tone from
 // faint (0 items) to full text colour (3 items).

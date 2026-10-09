@@ -244,6 +244,50 @@
   opacity: 1;
 }
 
+/* ── Compact (explorer chips) ────────────────────────── */
+.compact {
+  width: 5.5rem;
+}
+
+.compact .track {
+  height: 1rem;
+  margin: 0 0.4375rem;
+}
+
+.compact .track::before,
+.compact .fill {
+  height: 0.25rem;
+}
+
+.compact .stop {
+  width: 0.4375rem;
+  height: 0.4375rem;
+  border-width: 1px;
+}
+
+.compact .thumb {
+  width: 0.875rem;
+  height: 0.875rem;
+  border-width: 2px;
+}
+
+.compact .thumb::after {
+  inset: 0.125rem;
+}
+
+.compact .stopLabels {
+  height: 0.75rem;
+  margin: 0.0625rem 0.4375rem 0;
+}
+
+.compact .stopButton {
+  padding: 0 0.125rem;
+}
+
+.compact .stopGlyph {
+  font-size: 0.5rem;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .thumb,
   .fill,
@@ -257,5 +301,13 @@
     width: auto;
     flex: 1 1 9.5rem;
     min-width: 0;
+  }
+}
+
+/* The phone rule above stretches .wrap; the compact slider keeps its size. */
+@media (--bp-md) {
+  .wrap.compact {
+    flex: 0 0 auto;
+    width: 5.5rem;
   }
 }

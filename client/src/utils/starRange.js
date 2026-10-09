@@ -4,6 +4,12 @@
 // re-derived here.
 
 export const STAR_LEVELS = [1, 2, 3]
+// Star-level colours (theme tokens) for sliders and readouts.
+export const STAR_COLORS = {
+  1: 'var(--bronze-star-level)',
+  2: 'var(--silver-star-level)',
+  3: 'var(--gold-star-level)',
+}
 export const FULL_STAR_RANGE = { min: 1, max: 3 }
 export const ITEM_COUNT_LEVELS = [0, 1, 2, 3]
 export const FULL_ITEM_RANGE = { min: 0, max: 3 }
