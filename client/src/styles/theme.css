@@ -78,6 +78,8 @@
   --bg-scrim:          rgba(0, 0, 0, 0.55);
   --bg-hero-sign:      #000000;
   --bg-shine:          rgba(255, 255, 255, 0.06);
+  --cursor-glow:       rgba(255, 255, 255, 0.08);
+  --cursor-glow-soft:  rgba(255, 255, 255, 0.03);
   --landing-card-hover: rgba(255, 255, 255, 0.04);
   --landing-card-shine: rgba(255, 255, 255, 0.06);
   --unit-label-bg:     rgba(0, 0, 0, 0.72);
@@ -203,6 +205,8 @@
   --bg-scrim:          rgba(10, 15, 25, 0.38);
   --bg-hero-sign:      #ffffff;
   --bg-shine:          rgba(0, 0, 0, 0.05);
+  --cursor-glow:       transparent;  /* edge glow is dark-mode only */
+  --cursor-glow-soft:  transparent;
   --landing-card-hover: rgba(255, 255, 255, 0.82);
   --landing-card-shine: rgba(255, 255, 255, 0.92);
   --unit-label-bg:     rgba(255, 255, 255, 0.78);

@@ -9,7 +9,7 @@ import { useHoverCard } from '../../hooks/useHoverCard.js'
 import styles from '../../pages/StatsPage.module.css'
 import StatsRowIcon from './StatsRowIcon.jsx'
 import linkStyles from './UnitLink.module.css'
-import { buildUnitPath } from '../../constants/routes.js'
+import { buildItemPath, buildUnitPath } from '../../constants/routes.js'
 
 const CARDS = {
   units: UnitCard,
@@ -20,16 +20,21 @@ const CARDS = {
 export default function HoverableNameCell({ type, row, allItems, allChampions, patch }) {
   const { t } = useTranslation()
   const isUnit = type === 'units'
+  // Units and items each have a stats page; traits don't.
+  const href = isUnit ? buildUnitPath(row.id, patch)
+    : type === 'items' ? buildItemPath(row.id, patch)
+    : null
+  const linkLabel = isUnit ? t('unit.viewStats', { unit: row.name }) : t('item.viewStats', { item: row.name })
   const hoverData = type === 'traits'
     ? { meta: row.meta, count: row.tierMin ?? Math.round(row.avgUnits || 0) }
     : row.meta
   // Anchor the card to the icon, not the full-width cell, so it opens next to it.
   const anchorRef = useRef(null)
-  // Unit cells link to the unit page, so on touch a tap navigates and a
-  // long-press opens the detail sheet instead.
+  // Linked cells navigate on tap, so on touch a long-press opens the detail
+  // sheet instead.
   const { triggerProps, cardProps } = useHoverCard(hoverData, {
     anchorRef,
-    touchTrigger: isUnit ? 'longpress' : 'tap',
+    touchTrigger: href ? 'longpress' : 'tap',
   })
   const Card = CARDS[type]
   const content = (
@@ -43,11 +48,11 @@ export default function HoverableNameCell({ type, row, allItems, allChampions, p
 
   return (
     <>
-      {isUnit ? (
+      {href ? (
         <Link
-          to={buildUnitPath(row.id, patch)}
+          to={href}
           className={`${styles.nameCell} ${linkStyles.link}`}
-          aria-label={t('unit.viewStats', { unit: row.name })}
+          aria-label={linkLabel}
           {...triggerProps}
         >
           {content}

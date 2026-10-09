@@ -8,6 +8,7 @@ import LeaderboardPage from "./pages/LeaderboardPage.jsx";
 import MatchHistoryPage from "./pages/MatchHistoryPage.jsx";
 import StatsPage from "./pages/StatsPage.jsx";
 import UnitStatsPage from "./pages/UnitStatsPage.jsx";
+import ItemStatsPage from "./pages/ItemStatsPage.jsx";
 import TermsOfService from "./pages/TermsOfService.jsx";
 import PrivacyPolicy from "./pages/PrivacyPolicy.jsx";
 import styles from "./App.module.css";
@@ -15,6 +16,7 @@ import { Link } from "react-router-dom";
 import { buildStatsPath, ROUTES, STATS_TABS } from "./constants/routes.js";
 import NavSearchBar from "./components/NavSearchBar.jsx";
 import SettingsModal from "./components/SettingsModal.jsx";
+import { EdgeGlow } from "./components/layout/EdgeGlow.jsx";
 import { useFocusTrap } from "./hooks/useFocusTrap.js";
 
 function GearIcon() {
@@ -203,6 +205,7 @@ export default function App() {
       </nav>
 
       {settingsOpen && <SettingsModal onClose={() => setSettingsOpen(false)} />}
+      <EdgeGlow />
 
       <main id="main-content" className={styles.page} tabIndex={-1}>
         <Routes>
@@ -212,6 +215,7 @@ export default function App() {
           <Route path={ROUTES.statsTab} element={<StatsPage />} />
           <Route path={ROUTES.unit} element={<UnitStatsPage />} />
           <Route path={ROUTES.unitView} element={<UnitStatsPage />} />
+          <Route path={ROUTES.item} element={<ItemStatsPage />} />
           <Route path={ROUTES.builder} element={<CompBuilderPage />} />
           <Route path={ROUTES.leaderboard} element={<LeaderboardPage />} />
           <Route path={ROUTES.termsOfService} element={<TermsOfService />} />

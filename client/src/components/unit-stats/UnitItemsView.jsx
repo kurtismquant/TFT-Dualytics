@@ -7,7 +7,7 @@ import statsStyles from '../../pages/StatsPage.module.css'
 import styles from '../../pages/UnitStatsPage.module.css'
 
 // How each single item does on the unit, within the star / items-held ranges.
-export default function UnitItemsView({ data, starRange, itemRange, minGames, isLoading, isError, itemLookup, allItems, unitName }) {
+export default function UnitItemsView({ data, starRange, itemRange, minGames, isLoading, isError, itemLookup, allItems, unitName, patch }) {
   const { t } = useTranslation()
   const [sort, setSort] = useState(DEFAULT_COMBO_SORT)
   const handleSort = useCallback(key => setSort(current => nextComboSort(current, key)), [])
@@ -47,6 +47,7 @@ export default function UnitItemsView({ data, starRange, itemRange, minGames, is
             itemLookup={itemLookup}
             allItems={allItems}
             unitName={unitName}
+            patch={patch}
             itemsLabel={t('unit.colItem')}
             caption={t('unit.itemsCaption', { unit: unitName })}
           />

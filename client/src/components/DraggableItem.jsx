@@ -1,7 +1,7 @@
 import { useDraggable } from '@dnd-kit/core'
 import ItemIcon from './ItemIcon.jsx'
 
-export default function DraggableItem({ id, item, size = 42, onClick, selected = false }) {
+export default function DraggableItem({ id, item, size = 42, onClick, onDoubleClick, selected = false }) {
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({ id })
 
   const handleKeyDown = (event) => {
@@ -27,6 +27,7 @@ export default function DraggableItem({ id, item, size = 42, onClick, selected =
       {...attributes}
       style={wrapperStyle}
       onClick={onClick}
+      onDoubleClick={onDoubleClick}
       onKeyDown={onClick ? handleKeyDown : listeners?.onKeyDown}
       role={onClick ? 'button' : attributes.role}
       tabIndex={onClick ? 0 : attributes.tabIndex}

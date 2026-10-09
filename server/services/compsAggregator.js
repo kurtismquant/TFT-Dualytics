@@ -8,8 +8,10 @@ import { toTeamPlacement as teamPlacement } from './teamPlacement.js'
 import { buildStatsMatchFilter } from './patchFilters.js'
 import { getAvailablePatches, aggregateStats } from './statsAggregator.js'
 import { replaceAggregatedStats } from '../db/aggregatedStatsRepo.js'
-import { aggregateUnitItemCombos } from './unitItemCombosAggregator.js'
+import { collectUnitItemStats, finalizeUnitRows } from './unitItemCombosAggregator.js'
+import { finalizeItemRows } from './itemUnitsAggregator.js'
 import { replaceAggregatedUnitItems } from '../db/aggregatedUnitItemsRepo.js'
+import { replaceAggregatedItemUnits } from '../db/aggregatedItemUnitsRepo.js'
 import { buildBoardIndex, setBoardIndex } from './boardExplorer.js'
 import { THIEVES_GLOVES } from '../constants/game.js'
 
@@ -490,8 +492,11 @@ export async function runCompAggregation() {
       traits: aggregateStats(docs, 'traits'),
     }
     await replaceAggregatedStats(patch, statsByType)
-    // Per-unit 3-item combo tables for the unit stats page, one stored doc per unit.
-    await replaceAggregatedUnitItems(patch, aggregateUnitItemCombos(docs))
+    // Per-unit item tables for the unit stats page (one stored doc per unit) and
+    // the inverse per-item unit tables for the item stats page, from one pass.
+    const unitItemStats = collectUnitItemStats(docs)
+    await replaceAggregatedUnitItems(patch, finalizeUnitRows(unitItemStats))
+    await replaceAggregatedItemUnits(patch, finalizeItemRows(unitItemStats))
   }
 
   console.log(`Comp aggregation: ${comps.length} comps + unit/item/trait stats from ${docs.length} Double Up matches on patch ${patch ?? 'unknown'}`)

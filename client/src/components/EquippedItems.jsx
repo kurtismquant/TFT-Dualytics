@@ -1,6 +1,9 @@
+import { useNavigate } from 'react-router-dom'
+import { buildItemPath } from '../constants/routes.js'
 import styles from './EquippedItems.module.css'
 
 export default function EquippedItems({ itemIds = [], items = [], onRemove }) {
+  const navigate = useNavigate()
   if (!itemIds.length) return null
 
   return (
@@ -13,7 +16,8 @@ export default function EquippedItems({ itemIds = [], items = [], onRemove }) {
             key={id}
             type="button"
             className={styles.slot}
-            title={`${item.name} (right-click to remove)`}
+            title={`${item.name} (double-click for stats, right-click to remove)`}
+            onDoubleClick={() => navigate(buildItemPath(item.apiName || item.id))}
             onContextMenu={(e) => {
               e.preventDefault()
               onRemove?.(id)

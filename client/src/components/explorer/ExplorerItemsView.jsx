@@ -1,8 +1,11 @@
 import { useMemo, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import ExplorerTable from './ExplorerTable.jsx'
 import ExplorerUnitPicker from './ExplorerUnitPicker.jsx'
 import { ANY_UNIT } from '../../utils/explorerParams.js'
+import { buildItemPath } from '../../constants/routes.js'
+import linkStyles from '../stats/UnitLink.module.css'
 import styles from './DataExplorer.module.css'
 
 function Icon({ meta }) {
@@ -70,7 +73,13 @@ export default function ExplorerItemsView({ data, lookups, filteredUnitIds, onAd
         renderName={row => (
           <>
             <span className={styles.iconPair}>
-              <Icon meta={lookups.item.get(row.id)} />
+              <Link
+                to={buildItemPath(row.id)}
+                className={`${linkStyles.link} ${linkStyles.iconLink}`}
+                aria-label={t('item.viewStats', { item: nameOf('item', row.id) })}
+              >
+                <Icon meta={lookups.item.get(row.id)} />
+              </Link>
               {showUnitIcon && <Icon meta={lookups.unit.get(row.unit)} />}
             </span>
             <span>

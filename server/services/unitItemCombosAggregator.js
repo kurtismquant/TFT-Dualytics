@@ -209,10 +209,10 @@ function finalizeUnit(entry, minGames) {
   }
 }
 
-// Pure reducer over raw Double Up match docs. Returns one row per unit seen,
-// holding every 3-item combo with at least `minGames` boards. Units with no
-// qualifying combo are still returned (combos: []) so the page can show totals.
-export function aggregateUnitItemCombos(matches, { minGames = MIN_COMBO_GAMES } = {}) {
+// Raw per-unit totals (unfiltered, no rates) over Double Up match docs: unitId ->
+// entry with games, byStar, byStarItems and Maps of combos / single items. Both
+// the unit tables and the item -> units tables are derived from one pass of this.
+export function collectUnitItemStats(matches) {
   const stats = new Map()
   for (const match of matches) {
     const info = match?.info
@@ -223,9 +223,20 @@ export function aggregateUnitItemCombos(matches, { minGames = MIN_COMBO_GAMES } 
       recordBoard(stats, deduplicateUnits(participant.units || []), placement)
     }
   }
+  return stats
+}
+
+export function finalizeUnitRows(stats, minGames = MIN_COMBO_GAMES) {
   return [...stats.values()]
     .map(entry => finalizeUnit(entry, minGames))
     .sort((a, b) => a.unitId.localeCompare(b.unitId))
+}
+
+// Pure reducer over raw Double Up match docs. Returns one row per unit seen,
+// holding every 3-item combo with at least `minGames` boards. Units with no
+// qualifying combo are still returned (combos: []) so the page can show totals.
+export function aggregateUnitItemCombos(matches, { minGames = MIN_COMBO_GAMES } = {}) {
+  return finalizeUnitRows(collectUnitItemStats(matches), minGames)
 }
 
 export function isValidUnitId(unitId) {

@@ -1,13 +1,16 @@
 import { createPortal } from 'react-dom'
+import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import DraggableItem from './DraggableItem.jsx'
 import ItemCard from './ItemCard.jsx'
 import styles from './ItemPicker.module.css'
 import { useHoverCard } from '../hooks/useHoverCard.js'
+import { buildItemPath } from '../constants/routes.js'
 
 function PickerItem({ item, allItems, onSelect, selected }) {
   // Long-press for the detail sheet on touch (tap already selects the item).
   const { triggerProps, cardProps } = useHoverCard(item, { touchTrigger: 'longpress' })
+  const navigate = useNavigate()
   return (
     <>
       <div {...triggerProps}>
@@ -16,6 +19,8 @@ function PickerItem({ item, allItems, onSelect, selected }) {
           item={item}
           size={42}
           onClick={onSelect ? () => onSelect(item.id) : undefined}
+          // Single click / drag equips; double-click opens the item's stats page.
+          onDoubleClick={() => navigate(buildItemPath(item.apiName || item.id))}
           selected={selected}
         />
       </div>

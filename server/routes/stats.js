@@ -3,6 +3,7 @@ import { promisify } from 'node:util'
 import { gzip } from 'node:zlib'
 import { getStats } from '../services/statsAggregator.js'
 import { getUnitItemCombos, MIN_COMBO_GAMES } from '../services/unitItemCombosAggregator.js'
+import { getItemUnits } from '../services/itemUnitsAggregator.js'
 import { exploreCurrentPatch } from '../services/boardExplorer.js'
 
 const router = Router()
@@ -49,6 +50,30 @@ router.get('/units/:unitId/combos', async (req, res) => {
       singleItems: [],
       lastUpdated: null,
       error: status === 400 ? err.message : 'Failed to load unit item combos',
+    })
+  }
+})
+
+// Every unit that held one item on at least MIN_COMBO_GAMES boards on the patch.
+router.get('/items/:itemId/units', async (req, res) => {
+  try {
+    const patch = typeof req.query.patch === 'string' ? req.query.patch : null
+    res.json(await getItemUnits({ itemId: req.params.itemId, patch }))
+  } catch (err) {
+    const status = err.status || 500
+    if (status >= 500) console.error('Failed to load item units:', err.message)
+    res.status(status).json({
+      itemId: null,
+      patch: null,
+      patches: [],
+      minGames: MIN_COMBO_GAMES,
+      games: 0,
+      avgPlacement: null,
+      winRate: null,
+      top2Rate: null,
+      units: [],
+      lastUpdated: null,
+      error: status === 400 ? err.message : 'Failed to load item units',
     })
   }
 })

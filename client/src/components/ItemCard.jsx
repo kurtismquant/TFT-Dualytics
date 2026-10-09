@@ -1,78 +1,17 @@
 import ItemIcon from './ItemIcon.jsx'
 import StatIcon from './StatIcon.jsx'
 import DetailCardShell from './shared/DetailCardShell.jsx'
-import { tokenize } from '../utils/descriptionTokenizer.js'
+import ItemDescription from './shared/ItemDescription.jsx'
+import ItemStatsSheetLink from './shared/ItemStatsSheetLink.jsx'
+import { itemComponents, visibleItemStats } from '../utils/itemStats.js'
 import styles from './ItemCard.module.css'
 
-// pct = show "%" suffix (for stats that are inherently percentages)
-const STAT_DISPLAY = {
-  AD:           { label: 'AD',           icon: 'ad' },
-  AttackDamage: { label: 'AD',           icon: 'ad' },
-  AP:           { label: 'AP',           icon: 'ap' },
-  AbilityPower: { label: 'AP',           icon: 'ap' },
-  ManaRegen:    { label: 'Mana Regen',   icon: 'mana' },
-  Mana:         { label: 'Mana Regen',   icon: 'mana' },
-  Health:       { label: 'Health',       icon: 'hp' },
-  HP:           { label: 'Health',       icon: 'hp' },
-  Armor:        { label: 'Armor',        icon: 'armor' },
-  MagicResist:  { label: 'Magic Resist', icon: 'mr' },
-  MR:           { label: 'Magic Resist', icon: 'mr' },
-  AttackSpeed:  { label: 'Attack Speed', icon: 'as',         pct: true },
-  AS:           { label: 'Attack Speed', icon: 'as',         pct: true },
-  Durability:   { label: 'Durability',   icon: 'durability', pct: true },
-  Range:        { label: 'Range',        icon: 'range' },
-  CritChance:   { label: 'Crit Chance',  icon: 'crit',       pct: true },
-  CritDamage:   { label: 'Crit Damage',  icon: 'critdmg',    pct: true },
-  DamageAmp:    { label: 'Damage Amp',   icon: 'amp',        pct: true },
-  Omnivamp:     { label: 'Omnivamp',     icon: 'omnivamp',   pct: true },
-}
-
 const ITEM_KEYWORDS = {
-  Burn:      'Deals a percent of the target\'s max Health as true damage every second.',
+  Burn:      "Deals a percent of the target's max Health as true damage every second.",
   Wound:     'Reduces healing received.',
   Sunder:    'Reduces Armor.',
   Shred:     'Reduces Magic Resist.',
   Precision: 'Abilities can critically strike.',
-}
-
-const round2 = (n) => Math.round(n * 100) / 100
-
-// Values < 1 are stored as fractions by CDragon (0.10 = 10%) — normalize to percent first.
-// Stats from the TFT client say outright whether they're a percentage (`isPercent`).
-function formatStatValue(value, pct, isPercent) {
-  if (value == null) return null
-  if (isPercent) return `+${round2(value * 100)}%`
-  const scaled = value > 0 && value < 1 ? round2(value * 100) : round2(value)
-  return pct ? `+${scaled}%` : `+${scaled}`
-}
-
-function ItemDesc({ desc, effects, calculations }) {
-  const variables = (effects || []).map(e => {
-    const v = e.value > 0 && e.value < 1 ? round2(e.value * 100) : e.value
-    return { name: e.name, value: [v] }
-  })
-  // `calculations` carries the values of client-sourced tooltips (Set 18 items).
-  const nodes = tokenize(desc, variables, null, null, calculations)
-  if (nodes.length === 0) return null
-  return (
-    <>
-      {nodes.map((node, i) => {
-        if (node.type === 'var') {
-          return <strong key={i} className={styles.scaling}>{node.content}</strong>
-        }
-        if (node.type === 'icon') {
-          return <StatIcon key={i} type={node.iconType} />
-        }
-        if (node.type === 'buff') {
-          return <span key={i} className={styles.buffName}>{node.content}</span>
-        }
-        if (node.type === 'plus') {
-          return <span key={i} className={styles.opPlus}> + </span>
-        }
-        return <span key={i}>{node.content}</span>
-      })}
-    </>
-  )
 }
 
 function GlossaryFooter({ desc }) {
@@ -97,31 +36,29 @@ function GlossaryFooter({ desc }) {
 export default function ItemCard({ isOpen, data: item, style, allItems, mode, onClose }) {
   if (!isOpen || !item) return null
 
-  const components = (item.composition || [])
-    .map(id => (allItems || []).find(i => i.id === id))
-    .filter(Boolean)
-
-  const visibleEffects = (item.effects || [])
-    .filter(e => e.name && e.value != null && STAT_DISPLAY[e.name])
+  const components = itemComponents(item, allItems)
+  const stats = visibleItemStats(item)
 
   return (
-    <DetailCardShell mode={mode} style={style} onClose={onClose} cardClassName={styles.card} label={item.name}>
+    <DetailCardShell
+      mode={mode}
+      style={style}
+      onClose={onClose}
+      cardClassName={styles.card}
+      label={item.name}
+      sheetFooter={<ItemStatsSheetLink itemId={item.apiName || item.id} onNavigate={onClose} />}
+    >
       <span className={styles.name}>{item.name}</span>
 
-      {visibleEffects.length > 0 && (
+      {stats.length > 0 && (
         <ul className={styles.statList}>
-          {visibleEffects.map((e, i) => {
-            const { label, icon, pct } = STAT_DISPLAY[e.name]
-            const val = formatStatValue(e.value, pct, e.percent)
-            if (!val) return null
-            return (
-              <li key={i} className={styles.statRow}>
-                <StatIcon type={icon} size={14} />
-                <span className={styles.statValue}>{val}</span>
-                <span className={styles.statName}>{label}</span>
-              </li>
-            )
-          })}
+          {stats.map((stat, i) => (
+            <li key={i} className={styles.statRow}>
+              <StatIcon type={stat.icon} size={14} />
+              <span className={styles.statValue}>{stat.value}</span>
+              <span className={styles.statName}>{stat.label}</span>
+            </li>
+          ))}
         </ul>
       )}
 
@@ -135,7 +72,7 @@ export default function ItemCard({ isOpen, data: item, style, allItems, mode, on
 
       {item.desc && (
         <p className={styles.desc}>
-          <ItemDesc desc={item.desc} effects={item.effects} calculations={item.calculations} />
+          <ItemDescription desc={item.desc} effects={item.effects} calculations={item.calculations} />
         </p>
       )}
 

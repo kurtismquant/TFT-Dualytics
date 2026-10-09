@@ -1,0 +1,13 @@
+.delta {
+  font-variant-numeric: tabular-nums;
+  color: var(--text-secondary);
+}
+
+/* Lower placement is better: negative = the item helps this unit. */
+.deltaGood {
+  color: var(--accent-green);
+}
+
+.deltaBad {
+  color: var(--accent-red);
+}

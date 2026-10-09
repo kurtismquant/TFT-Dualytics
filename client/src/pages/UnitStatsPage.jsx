@@ -157,6 +157,7 @@ export default function UnitStatsPage() {
           itemLookup={itemLookup}
           allItems={items}
           unitName={unitName}
+          patch={patchParam}
         />
       )}
       {view === 'combos' && (

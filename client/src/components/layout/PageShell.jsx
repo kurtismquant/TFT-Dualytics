@@ -3,6 +3,7 @@ import styles from './PageShell.module.css'
 export function PageShell({ children, grid = false, wide = false }) {
   return (
     <div
+      data-page-shell
       className={[
         styles.shell,
         grid ? styles.grid : '',

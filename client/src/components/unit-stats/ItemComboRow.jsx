@@ -1,6 +1,7 @@
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { HoverableItem } from '../shared/HoverableBoardPieces.jsx'
+import { buildItemPath } from '../../constants/routes.js'
 import { formatAvg, formatPercent } from '../../utils/statsFormatting.js'
 import {
   getAvgPlacementColor,
@@ -11,7 +12,7 @@ import {
 import statsStyles from '../../pages/StatsPage.module.css'
 import styles from './ItemComboTable.module.css'
 
-function ItemComboRow({ combo, itemLookup, allItems }) {
+function ItemComboRow({ combo, itemLookup, allItems, patch }) {
   const { t } = useTranslation()
   const names = combo.items.map(id => itemLookup.get(id)?.name || id)
   const avgValue = formatAvg(combo.avgPlacement)
@@ -26,7 +27,7 @@ function ItemComboRow({ combo, itemLookup, allItems }) {
           {combo.items.map((id, i) => {
             const item = itemLookup.get(id)
             return item
-              ? <HoverableItem key={i} item={item} allItems={allItems} size={30} />
+              ? <HoverableItem key={i} item={item} allItems={allItems} size={30} href={buildItemPath(id, patch)} />
               : <span key={i} className={styles.missingItem} title={id} aria-hidden="true">?</span>
           })}
           {/* A single item's row names it; combos rely on hover cards. */}

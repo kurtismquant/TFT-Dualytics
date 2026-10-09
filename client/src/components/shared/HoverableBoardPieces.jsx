@@ -9,7 +9,7 @@ import ItemCard from '../ItemCard.jsx'
 import { useHoverCard } from '../../hooks/useHoverCard.js'
 import chipStyles from '../ui/TraitChip.module.css'
 import pieceStyles from './HoverableBoardPieces.module.css'
-import { buildUnitPath } from '../../constants/routes.js'
+import { buildItemPath, buildUnitPath } from '../../constants/routes.js'
 
 // With `href`, the unit is a link to its stats page. Touch devices then open the
 // detail sheet on long-press instead of tap, since a tap now navigates.
@@ -36,13 +36,24 @@ export function HoverableUnit({ unit, floatStars, href }) {
   )
 }
 
-export function HoverableItem({ item, allItems, size = 14 }) {
-  const { triggerProps, cardProps } = useHoverCard(item)
+// Links to the item's stats page; `href` overrides the target (e.g. to pin a
+// patch). Touch devices open the detail sheet on long-press, since a tap navigates.
+// Callers must not render this inside a <button> or another link.
+export function HoverableItem({ item, allItems, size = 14, href }) {
+  const { t } = useTranslation()
+  const to = href ?? buildItemPath(item.apiName || item.id)
+  const { triggerProps, cardProps } = useHoverCard(item, { touchTrigger: 'longpress' })
+  const icon = <ItemIcon item={item} size={size} />
   return (
     <>
-      <div {...triggerProps}>
-        <ItemIcon item={item} size={size} />
-      </div>
+      <Link
+        to={to}
+        className={pieceStyles.unitLink}
+        aria-label={t('item.viewStats', { item: item.name })}
+        {...triggerProps}
+      >
+        {icon}
+      </Link>
       {cardProps.isOpen && createPortal(<ItemCard {...cardProps} allItems={allItems} />, document.body)}
     </>
   )

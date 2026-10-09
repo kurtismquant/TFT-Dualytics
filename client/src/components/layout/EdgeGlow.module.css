@@ -1,0 +1,19 @@
+/* Sits under the nav (z 100) and modals; never intercepts input. */
+.glow {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--t-slow);
+  background: radial-gradient(
+    16rem circle at var(--glow-x, -100rem) var(--glow-y, -100rem),
+    var(--cursor-glow),
+    var(--cursor-glow-soft) 35%,
+    transparent 100%
+  );
+}
+
+.glow[data-active="true"] {
+  opacity: 1;
+}

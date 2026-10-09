@@ -5,6 +5,7 @@ export const ROUTES = {
   statsTab: '/stats/:tab',
   unit: '/units/:unitId',
   unitView: '/units/:unitId/:view',
+  item: '/items/:itemId',
   builder: '/builder',
   leaderboard: '/leaderboard',
   termsOfService: '/terms-of-service',
@@ -21,6 +22,12 @@ export function buildSummonerPath(region, id) {
 // default link always follows the current patch.
 export function buildUnitPath(unitId, patch = null) {
   const path = `/units/${encodeURIComponent(unitId)}`
+  return patch ? `${path}?patch=${encodeURIComponent(patch)}` : path
+}
+
+// Items are keyed by Riot apiName (what match data stores), e.g. TFT_Item_InfinityEdge.
+export function buildItemPath(itemId, patch = null) {
+  const path = `/items/${encodeURIComponent(itemId)}`
   return patch ? `${path}?patch=${encodeURIComponent(patch)}` : path
 }
 
