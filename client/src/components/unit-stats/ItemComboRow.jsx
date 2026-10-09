@@ -29,7 +29,10 @@ function ItemComboRow({ combo, itemLookup, allItems }) {
               ? <HoverableItem key={i} item={item} allItems={allItems} size={30} />
               : <span key={i} className={styles.missingItem} title={id} aria-hidden="true">?</span>
           })}
-          <span className="sr-only">{names.join(', ')}</span>
+          {/* A single item's row names it; combos rely on hover cards. */}
+          {combo.items.length === 1
+            ? <span className={styles.itemName}>{names[0]}</span>
+            : <span className="sr-only">{names.join(', ')}</span>}
         </div>
       </th>
       <td

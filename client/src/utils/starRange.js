@@ -113,3 +113,34 @@ export function combosForStarRange(combos, unitByStar, range, minGames) {
   }
   return ranged
 }
+
+// A unit's single-item rows re-scored within both ranges (each row's
+// byStarItems cells summed), dropping items with fewer than `minGames` boards
+// inside them. Frequency is the share of the unit's boards in range.
+export function itemsForRange(rows, starRange, itemRange, minGames, unitGames) {
+  const ranged = []
+  for (const row of rows || []) {
+    const totals = { count: 0, placementTotal: 0, wins: 0, top2: 0 }
+    for (const star of levelsIn(starRange)) {
+      for (const held of ITEM_COUNT_LEVELS) {
+        if (held < itemRange.min || held > itemRange.max) continue
+        const cell = row.byStarItems?.[star]?.[held]
+        if (!cell) continue
+        totals.count += cell.games || 0
+        totals.placementTotal += cell.placementTotal || 0
+        totals.wins += cell.wins || 0
+        totals.top2 += cell.top2 || 0
+      }
+    }
+    if (totals.count < minGames || totals.count === 0) continue
+    ranged.push({
+      items: row.items,
+      count: totals.count,
+      avgPlacement: totals.placementTotal / totals.count,
+      winRate: totals.wins / totals.count,
+      top2Rate: totals.top2 / totals.count,
+      frequency: unitGames > 0 ? totals.count / unitGames : 0,
+    })
+  }
+  return ranged
+}

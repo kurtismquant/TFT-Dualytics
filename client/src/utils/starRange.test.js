@@ -3,6 +3,7 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import {
   combosForStarRange,
+  itemsForRange,
   parseItemCountParam,
   parseStarsParam,
   serializeItemCountParam,
@@ -117,4 +118,24 @@ test('unitRangeSummary sums star x item-count cells inside both ranges', () => {
     unitRangeSummary({ byStar: unitByStar }, { min: 2, max: 3 }, { min: 0, max: 0 }),
     starRangeSummary(unitByStar, { min: 2, max: 3 })
   )
+})
+
+test('itemsForRange sums the star x items-held cells and applies the games floor', () => {
+  const cell = (games, placementTotal, wins, top2) => ({ games, placementTotal, wins, top2 })
+  const ie = {
+    items: ['IE'],
+    byStarItems: {
+      2: { 2: cell(6, 12, 2, 4), 3: cell(10, 20, 3, 6) },
+      3: { 3: cell(4, 4, 4, 4) },
+    },
+  }
+  const rare = { items: ['GS'], byStarItems: { 2: { 3: cell(3, 6, 1, 2) } } }
+
+  assert.deepEqual(itemsForRange([ie, rare], { min: 1, max: 3 }, { min: 0, max: 3 }, 10, 40), [
+    { items: ['IE'], count: 20, avgPlacement: 36 / 20, winRate: 9 / 20, top2Rate: 14 / 20, frequency: 0.5 },
+  ])
+  // 3 star only, 3 items only: 4 boards, below the floor of 5.
+  assert.deepEqual(itemsForRange([ie], { min: 3, max: 3 }, { min: 3, max: 3 }, 5, 4), [])
+  assert.deepEqual(itemsForRange([ie], { min: 2, max: 2 }, { min: 3, max: 3 }, 5, 10).map(r => r.count), [10])
+  assert.deepEqual(itemsForRange(null, { min: 1, max: 3 }, { min: 0, max: 3 }, 1, 0), [])
 })

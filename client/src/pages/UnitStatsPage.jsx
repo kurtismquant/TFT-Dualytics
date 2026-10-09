@@ -1,15 +1,19 @@
 import { useCallback, useMemo, useState } from 'react'
-import { useParams, useSearchParams } from 'react-router-dom'
+import { useLocation, useParams, useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { PageShell } from '../components/layout/PageShell.jsx'
 import UnitHeader from '../components/unit-stats/UnitHeader.jsx'
 import UnitOverview from '../components/unit-stats/UnitOverview.jsx'
+import UnitStatsNav from '../components/unit-stats/UnitStatsNav.jsx'
 import ItemFilterInput from '../components/unit-stats/ItemFilterInput.jsx'
-import ItemComboTable from '../components/unit-stats/ItemComboTable.jsx'
+import UnitCombosView from '../components/unit-stats/UnitCombosView.jsx'
+import UnitItemsView from '../components/unit-stats/UnitItemsView.jsx'
+import UnitCompsView from '../components/unit-stats/UnitCompsView.jsx'
 import { useChampions } from '../hooks/useChampions.js'
 import { useItems } from '../hooks/useItems.js'
 import { useTraits } from '../hooks/useTraits.js'
 import { useUnitItemCombos } from '../hooks/useUnitItemCombos.js'
+import { UNIT_VIEWS } from '../constants/routes.js'
 import {
   buildItemCandidates,
   buildItemLookup,
@@ -34,12 +38,15 @@ import styles from './UnitStatsPage.module.css'
 
 const DEFAULT_MIN_GAMES = 10
 
-// Per-unit stats: every 3-item combo with enough games, filterable by a star-level
-// range, an items-held range and up to 3 items. Patch, stars, item count and
-// items live in the URL (?patch=&stars=&itemCount=&items=) so views can be shared.
+// Per-unit stats: the unit's ability and base stats, then tabs for the comps it
+// appears in, single items and 3-item combos (/units/:unitId/:view). Patch,
+// star range, items-held range and item filters live in the URL
+// (?patch=&stars=&itemCount=&items=) so views can be shared.
 export default function UnitStatsPage() {
   const { t } = useTranslation()
-  const { unitId } = useParams()
+  const { unitId, view: viewParam } = useParams()
+  const view = UNIT_VIEWS.includes(viewParam) ? viewParam : UNIT_VIEWS[0]
+  const location = useLocation()
   const [searchParams, setSearchParams] = useSearchParams()
   const patchParam = searchParams.get('patch')
   const itemsParam = searchParams.get('items')
@@ -103,6 +110,8 @@ export default function UnitStatsPage() {
       <UnitHeader
         champion={champion}
         unitName={unitName}
+        // Comps are aggregated boards with no star / items-held breakdown.
+        showRangeFilters={view !== 'comps'}
         rangeFilters={{
           unit: { byStar, byStarItems },
           starRange,
@@ -113,6 +122,7 @@ export default function UnitStatsPage() {
         }}
       />
       <UnitOverview champion={champion} traits={traits} />
+      <UnitStatsNav unitId={unitId} view={view} search={location.search} />
       <div className={styles.controls}>
         <select
           className={statsStyles.select}
@@ -123,46 +133,47 @@ export default function UnitStatsPage() {
           {patches.length === 0 && <option value="">{t('stats.noPatch')}</option>}
           {patches.map(option => <option key={option} value={option}>{option}</option>)}
         </select>
-        <ItemFilterInput
-          filterIds={filterIds}
-          candidates={candidates}
-          itemLookup={itemLookup}
-          onChange={handleFiltersChange}
-        />
+        {view === 'combos' && (
+          <ItemFilterInput
+            filterIds={filterIds}
+            candidates={candidates}
+            itemLookup={itemLookup}
+            onChange={handleFiltersChange}
+          />
+        )}
       </div>
 
-      <h2 className={styles.sectionTitle}>{t('unit.sectionTitle')}</h2>
-      {isLoading && <p className={statsStyles.message} role="status" aria-live="polite">{t('unit.loading')}</p>}
-      {isError && <p className={statsStyles.message} role="alert">{t('unit.error')}</p>}
-      {!isLoading && !isError && rows.length === 0 && (
-        <p className={styles.notEnough} role="status">
-          <strong>{t('unit.notEnoughData')}</strong>
-          <span>
-            {combosExcluded
-              ? t('unit.combosNeedThreeItems')
-              : <>
-                {filterIds.length > 0
-                  ? t('unit.notEnoughDataFiltered', { count: minGames })
-                  : t('unit.notEnoughDataHelp', { count: minGames })}
-                {rangeLimited && ` ${t('unit.widenRanges')}`}
-              </>}
-          </span>
-        </p>
+      {view === 'comps' && (
+        <UnitCompsView unitId={unitId} patch={patchParam} champions={champions} items={items} traits={traits} />
       )}
-      {rows.length > 0 && (
-        <>
-          <p className={`${statsStyles.meta} ${styles.tableMeta}`}>
-            {t('unit.comboCount', { count: rows.length, min: minGames })}
-          </p>
-          <ItemComboTable
-            combos={rows}
-            sort={sort}
-            onSort={handleSort}
-            itemLookup={itemLookup}
-            allItems={items}
-            unitName={unitName}
-          />
-        </>
+      {view === 'items' && (
+        <UnitItemsView
+          data={data}
+          starRange={starRange}
+          itemRange={itemRange}
+          minGames={minGames}
+          isLoading={isLoading}
+          isError={isError}
+          itemLookup={itemLookup}
+          allItems={items}
+          unitName={unitName}
+        />
+      )}
+      {view === 'combos' && (
+        <UnitCombosView
+          rows={rows}
+          minGames={minGames}
+          isLoading={isLoading}
+          isError={isError}
+          filterCount={filterIds.length}
+          combosExcluded={combosExcluded}
+          rangeLimited={rangeLimited}
+          sort={sort}
+          onSort={handleSort}
+          itemLookup={itemLookup}
+          allItems={items}
+          unitName={unitName}
+        />
       )}
     </PageShell>
   )

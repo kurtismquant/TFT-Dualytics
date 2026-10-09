@@ -81,6 +81,7 @@ function ensureUnit(stats, unitId) {
       byStar: byStarOf(emptyUnitStar),
       byStarItems: emptyStarItems(),
       combos: new Map(),
+      singleItems: new Map(),
     }
     stats.set(unitId, entry)
   }
@@ -102,6 +103,20 @@ function recordCombo(entry, sortedItems, star, teamPlacement) {
   entry.byStar[star].threeItemGames += 1
 }
 
+// One item on one unit's board, bucketed like the unit's own games so the page
+// can sum any star / items-held range.
+function recordSingleItem(entry, item, star, held, teamPlacement) {
+  let row = entry.singleItems.get(item)
+  if (!row) {
+    row = { item, count: 0, placementTotal: 0, wins: 0, top2: 0, byStarItems: emptyStarItems() }
+    entry.singleItems.set(item, row)
+  }
+  row.count += 1
+  addResult(row, teamPlacement)
+  row.byStarItems[star][held].games += 1
+  addResult(row.byStarItems[star][held], teamPlacement)
+}
+
 function recordBoard(stats, units, placement) {
   const teamPlacement = toTeamPlacement(placement)
   // A unit's board-level star is its highest copy (two copies of a champion can
@@ -110,6 +125,8 @@ function recordBoard(stats, units, placement) {
   const boardCopies = new Map()
   // A doubled unit that survives dedup with the same build must not count twice.
   const seenCombos = new Set()
+  // Each item counts once per board per unit, at the best copy holding it.
+  const boardItems = new Map()
   for (const unit of units) {
     const unitId = unit.character_id
     if (!unitId) continue
@@ -121,6 +138,14 @@ function recordBoard(stats, units, placement) {
     if (!current || star > current.star || (star === current.star && held > current.held)) {
       boardCopies.set(unitId, { entry, star, held })
     }
+    for (const item of new Set(items)) {
+      if (item === EMPTY_BAG) continue
+      const key = `${unitId}#${item}`
+      const holder = boardItems.get(key)
+      if (!holder || star > holder.star || (star === holder.star && held > holder.held)) {
+        boardItems.set(key, { entry, item, star, held })
+      }
+    }
 
     if (!isComboBuild(items)) continue
     const sortedItems = items.slice().sort()
@@ -128,6 +153,10 @@ function recordBoard(stats, units, placement) {
     if (seenCombos.has(boardKey)) continue
     seenCombos.add(boardKey)
     recordCombo(entry, sortedItems, star, teamPlacement)
+  }
+
+  for (const { entry, item, star, held } of boardItems.values()) {
+    recordSingleItem(entry, item, star, held, teamPlacement)
   }
 
   for (const { entry, star, held } of boardCopies.values()) {
@@ -155,6 +184,20 @@ function finalizeUnit(entry, minGames) {
       byStar: combo.byStar,
     }))
     .sort((a, b) => a.avgPlacement - b.avgPlacement || b.count - a.count)
+  // Single items, same games floor. `items: [id]` matches the combo row shape so
+  // the page sorts and renders both the same way.
+  const singleItems = [...entry.singleItems.values()]
+    .filter(row => row.count >= minGames)
+    .map(row => ({
+      items: [row.item],
+      count: row.count,
+      avgPlacement: row.placementTotal / row.count,
+      winRate: row.wins / row.count,
+      top2Rate: row.top2 / row.count,
+      frequency: entry.games > 0 ? row.count / entry.games : 0,
+      byStarItems: row.byStarItems,
+    }))
+    .sort((a, b) => b.count - a.count || a.avgPlacement - b.avgPlacement)
   return {
     unitId: entry.unitId,
     games: entry.games,
@@ -162,6 +205,7 @@ function finalizeUnit(entry, minGames) {
     byStar: entry.byStar,
     byStarItems: entry.byStarItems,
     combos,
+    singleItems,
   }
 }
 
@@ -189,7 +233,7 @@ export function isValidUnitId(unitId) {
 }
 
 function emptyResult(unitId, patch, patches) {
-  return { unitId, patch, patches, minGames: MIN_COMBO_GAMES, games: 0, threeItemGames: 0, byStar: null, byStarItems: null, combos: [], lastUpdated: null }
+  return { unitId, patch, patches, minGames: MIN_COMBO_GAMES, games: 0, threeItemGames: 0, byStar: null, byStarItems: null, combos: [], singleItems: [], lastUpdated: null }
 }
 
 // Older patches aren't pre-stored, so aggregate every unit once per patch on
@@ -246,6 +290,8 @@ export async function getUnitItemCombos({ unitId, patch = null }) {
     byStar: row?.byStar ?? null,
     byStarItems: row?.byStarItems ?? null,
     combos: row?.combos ?? [],
+    // Absent on docs stored before single-item stats existed (until the next pass).
+    singleItems: row?.singleItems ?? null,
     lastUpdated,
   }
   resultCache.set(cacheKey, { at: Date.now(), value })

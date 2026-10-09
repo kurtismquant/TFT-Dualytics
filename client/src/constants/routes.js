@@ -3,6 +3,7 @@ export const ROUTES = {
   comps: '/comps',
   stats: '/stats',
   unit: '/units/:unitId',
+  unitView: '/units/:unitId/:view',
   builder: '/builder',
   leaderboard: '/leaderboard',
   termsOfService: '/terms-of-service',
@@ -20,4 +21,12 @@ export function buildSummonerPath(region, id) {
 export function buildUnitPath(unitId, patch = null) {
   const path = `/units/${encodeURIComponent(unitId)}`
   return patch ? `${path}?patch=${encodeURIComponent(patch)}` : path
+}
+
+// Tabs of the unit stats page, in nav order; the first is the default view.
+export const UNIT_VIEWS = ['comps', 'items', 'combos']
+
+export function buildUnitViewPath(unitId, view, search = '') {
+  const path = `/units/${encodeURIComponent(unitId)}`
+  return `${view === UNIT_VIEWS[0] ? path : `${path}/${view}`}${search}`
 }

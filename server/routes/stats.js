@@ -42,6 +42,7 @@ router.get('/units/:unitId/combos', async (req, res) => {
       games: 0,
       threeItemGames: 0,
       combos: [],
+      singleItems: [],
       lastUpdated: null,
       error: status === 400 ? err.message : 'Failed to load unit item combos',
     })

@@ -67,7 +67,10 @@ describe('aggregateUnitItemCombos', () => {
     ])
 
     assert.equal(MIN_COMBO_GAMES, 10)
-    assert.deepEqual(rowFor(rows, 'DA_18_Xayah'), {
+    const { singleItems, ...row } = rowFor(rows, 'DA_18_Xayah')
+    // Single items share the floor: BT (9 boards) is dropped; most played first.
+    assert.deepEqual(singleItems.map(r => [r.items[0], r.count]), [[IE, 19], [LW, 19], [GS, 10]])
+    assert.deepEqual(row, {
       unitId: 'DA_18_Xayah',
       games: 19,
       threeItemGames: 19,
@@ -115,7 +118,10 @@ describe('aggregateUnitItemCombos', () => {
       ]),
     ], { minGames: 1 })
 
-    assert.deepEqual(rowFor(rows, 'DA_18_Xayah'), {
+    const { singleItems, ...row } = rowFor(rows, 'DA_18_Xayah')
+    // Thief's Gloves is a single item; the EmptyBag placeholder is not.
+    assert.deepEqual(singleItems.map(r => [r.items[0], r.count]), [[IE, 2], [GS, 2], [THIEVES_GLOVES, 1]])
+    assert.deepEqual(row, {
       unitId: 'DA_18_Xayah',
       games: 4,
       threeItemGames: 0,
@@ -226,6 +232,46 @@ describe('aggregateUnitItemCombos item counts', () => {
       const total = Object.values(row.byStarItems[star]).reduce((sum, cell) => sum + cell.games, 0)
       assert.equal(total, row.byStar[star].games)
     }
+  })
+})
+
+describe('aggregateUnitItemCombos single items', () => {
+  it('rates each held item once per board, by star level and items held', () => {
+    const matches = [
+      // 10 boards: Xayah 2★ holding IE + GS (2 items).
+      ...boards([1, 1, 2, 2, 3, 3, 4, 4, 5, 6], [unit('DA_18_Xayah', [IE, GS], 2)]),
+      // 2 boards: Xayah 3★ with a full IE build.
+      ...boards([1, 2], [unit('DA_18_Xayah', [IE, LW, BT], 3)]),
+    ]
+    const row = rowFor(aggregateUnitItemCombos(matches), 'DA_18_Xayah')
+    const ie = row.singleItems.find(r => r.items[0] === IE)
+    assert.deepEqual(ie, {
+      items: [IE],
+      count: 12,
+      avgPlacement: (1 + 1 + 1 + 1 + 2 + 2 + 2 + 2 + 3 + 3 + 1 + 1) / 12,
+      winRate: 6 / 12,
+      top2Rate: 10 / 12,
+      frequency: 1,
+      byStarItems: starItems({
+        2: { 2: { games: 10, placementTotal: 18, wins: 4, top2: 8 } },
+        3: { 3: { games: 2, placementTotal: 2, wins: 2, top2: 2 } },
+      }),
+    })
+    // GS reaches the 10-board floor; LW and BT (2 boards) don't.
+    assert.deepEqual(row.singleItems.map(r => r.items[0]), [IE, GS])
+  })
+
+  it('counts an item once per board at the best copy holding it and skips the empty bag', () => {
+    const matches = boards([1, 2, 3, 4, 5, 6, 7, 8, 1, 2], [
+      unit('DA_18_Xayah', [IE, 'TFT_Item_EmptyBag'], 1),
+      unit('DA_18_Xayah', [IE, GS, LW], 2),
+    ])
+    const row = rowFor(aggregateUnitItemCombos(matches), 'DA_18_Xayah')
+    const ie = row.singleItems.find(r => r.items[0] === IE)
+    assert.equal(ie.count, 10)
+    assert.equal(ie.byStarItems['2']['3'].games, 10) // the 2★, 3-item copy
+    assert.equal(ie.byStarItems['1']['1'].games, 0)
+    assert.equal(row.singleItems.some(r => r.items[0] === 'TFT_Item_EmptyBag'), false)
   })
 })
 

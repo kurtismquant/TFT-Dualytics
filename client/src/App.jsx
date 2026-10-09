@@ -185,6 +185,7 @@ export default function App() {
           <Route path={ROUTES.comps} element={<CompPage />} />
           <Route path={ROUTES.stats} element={<StatsPage />} />
           <Route path={ROUTES.unit} element={<UnitStatsPage />} />
+          <Route path={ROUTES.unitView} element={<UnitStatsPage />} />
           <Route path={ROUTES.builder} element={<CompBuilderPage />} />
           <Route path={ROUTES.leaderboard} element={<LeaderboardPage />} />
           <Route path={ROUTES.termsOfService} element={<TermsOfService />} />

@@ -2,11 +2,13 @@ import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import UnitIcon from '../UnitIcon.jsx'
 import UnitRangeFilters from './UnitRangeFilters.jsx'
+import UnitRangeReadout from './UnitRangeReadout.jsx'
+import { unitRangeSummary } from '../../utils/starRange.js'
 import { ROUTES } from '../../constants/routes.js'
 import statsStyles from '../../pages/StatsPage.module.css'
 import styles from '../../pages/UnitStatsPage.module.css'
 
-export default function UnitHeader({ champion, unitName, rangeFilters }) {
+export default function UnitHeader({ champion, unitName, rangeFilters, showRangeFilters = true }) {
   const { t } = useTranslation()
   const traits = champion?.traits || []
 
@@ -28,7 +30,15 @@ export default function UnitHeader({ champion, unitName, rangeFilters }) {
           )}
         </div>
       </div>
-      <UnitRangeFilters {...rangeFilters} />
+      {showRangeFilters
+        ? <UnitRangeFilters {...rangeFilters} />
+        : (
+          <UnitRangeReadout
+            summary={rangeFilters.unit.byStar
+              ? unitRangeSummary(rangeFilters.unit, { min: 1, max: 3 }, { min: 0, max: 3 })
+              : rangeFilters.fallback}
+          />
+        )}
     </div>
   )
 }
