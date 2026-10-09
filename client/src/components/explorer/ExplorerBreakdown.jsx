@@ -23,7 +23,6 @@ function SimpleView({ kind, data, lookups, onAdd }) {
       nameHeader={t(`explorer.col.${kind}`)}
       rows={data[`${kind}s`] || []}
       minGames={data.minGames}
-      controls={<p className={styles.viewNote}>{t('explorer.note.boards')}</p>}
       getKey={row => `${row.id}#${row.tier ?? ''}`}
       renderName={row => {
         const meta = lookups[kind].get(row.id)
@@ -41,7 +40,9 @@ function SimpleView({ kind, data, lookups, onAdd }) {
 }
 
 // Horizontal view nav + the selected breakdown of the matching boards.
-export default function ExplorerBreakdown({ view, setView, data, lookups, champions, items, traits, onAdd, onAddUnitItem }) {
+export default function ExplorerBreakdown({
+  view, setView, data, lookups, champions, items, traits, filteredUnitIds, onAdd, onAddUnitItem,
+}) {
   const { t } = useTranslation()
   if (!data.boards) return null
   return (
@@ -65,6 +66,7 @@ export default function ExplorerBreakdown({ view, setView, data, lookups, champi
         <ExplorerItemsView
           data={data}
           lookups={lookups}
+          filteredUnitIds={filteredUnitIds}
           onAddItem={id => onAdd('item', id)}
           onAddUnitItem={onAddUnitItem}
         />

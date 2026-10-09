@@ -453,12 +453,12 @@
       "unit": "Unit",
       "trait": "Trait",
       "item": "Item",
-      "playRate": "Play",
-      "avg": "Avg",
-      "delta": "Δ",
+      "playRate": "Play Rate",
+      "avg": "Avg Placement",
+      "delta": "Delta",
       "add": "Add as filter",
-      "win": "Win",
-      "top2": "Top 2"
+      "win": "Win Rate",
+      "top2": "Top 2 Rate"
     },
     "panelEmpty": "Nothing reaches {{count}} boards here.",
     "addFilter": "Add {{name}} as a filter",
@@ -474,9 +474,8 @@
     },
     "tableScroll": "{{label}} table (scrollable)",
     "note": {
-      "boards": "Play: share of the matching boards. Δ: avg place vs the matching boards (negative is better).",
-      "unitItems": "Play: share of that unit's boards with the item on it. Δ: avg place vs that unit's average.",
-      "comps": "Comps as grouped on the Comps page, rated within the matching boards. Play rate: times played per game this patch. Δ: avg place vs the matching boards."
+      "unitItems": "Play rate: share of that unit's boards with the item on it. Delta: avg placement vs that unit's average.",
+      "comps": "Comps as grouped on the Comps page, rated within the matching boards. Play rate: times played per game this patch. Delta: avg placement vs the matching boards."
     },
     "itemsOn": "Items on",
     "anyUnit": "Any unit",
@@ -484,6 +483,11 @@
     "onUnit": "on {{name}}",
     "addUnitItem": "Add {{name}} holding {{item}} as a filter",
     "boardCount_one": "{{formatted}} board",
-    "boardCount_other": "{{formatted}} boards"
+    "boardCount_other": "{{formatted}} boards",
+    "itemsOnLabel": "Items on: {{name}}",
+    "unitPicker": {
+      "inFilters": "In your filters",
+      "allUnits": "All units"
+    }
   }
 }

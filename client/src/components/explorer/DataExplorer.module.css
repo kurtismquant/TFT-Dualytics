@@ -503,7 +503,7 @@
 
 .breakdown th,
 .breakdown td {
-  padding: 0.5rem 0.75rem;
+  padding: 0.5rem 1.25rem;
   border-bottom: 1px solid color-mix(in srgb, var(--text-primary) 8%, transparent);
   font-variant-numeric: tabular-nums;
   text-align: right;
@@ -568,26 +568,11 @@
   object-fit: cover;
 }
 
-/* Item icon with the holder's champion overlapping its bottom-right corner. */
-.iconStack {
-  position: relative;
+/* Item icon, then (split by unit) the holder's icon at the same size. */
+.iconPair {
+  display: flex;
   flex-shrink: 0;
-  margin-right: 0.375rem;
-}
-
-.iconStack .rowIcon {
-  display: block;
-}
-
-.unitBadge {
-  position: absolute;
-  right: -0.4375rem;
-  bottom: -0.3125rem;
-  width: 1.125rem;
-  height: 1.125rem;
-  border: 1px solid var(--bg-base);
-  border-radius: 50%;
-  object-fit: cover;
+  gap: 0.25rem;
 }
 
 .rowGames {
@@ -634,6 +619,108 @@
   white-space: nowrap;
 }
 
+/* "Items on" unit picker. */
+.picker {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.pickerButton,
+.pickerOption {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid var(--bg-border-muted);
+  background: var(--bg-input);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  letter-spacing: var(--track-wide);
+  text-align: left;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.pickerButton {
+  min-width: 12rem;
+  min-height: 2.25rem;
+  padding: 0.1875rem 0.5rem 0.1875rem 0.375rem;
+}
+
+.pickerButton:hover,
+.pickerButton[aria-expanded='true'] {
+  border-color: var(--bg-border-bright);
+}
+
+.pickerButton:focus-visible,
+.pickerOption:focus-visible {
+  outline: 2px solid var(--accent-gold);
+  outline-offset: -2px;
+}
+
+.pickerCaret {
+  margin-left: auto;
+  color: var(--text-muted);
+}
+
+.pickerMenu {
+  position: absolute;
+  top: calc(100% + 0.25rem);
+  left: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  width: max(100%, 16rem);
+  max-height: 22rem;
+  overflow-y: auto;
+  border: 1px solid var(--bg-border-bright);
+  background: var(--bg-card);
+}
+
+.pickerOption {
+  width: 100%;
+  min-height: 2.25rem;
+  padding: 0.25rem 0.75rem 0.25rem 0.5rem;
+  border: 0;
+  background: transparent;
+}
+
+.pickerOption:hover,
+.pickerOption[aria-pressed='true'] {
+  background: var(--bg-hover);
+}
+
+.pickerHeading {
+  margin: 0;
+  padding: 0.5rem 0.75rem 0.25rem;
+  border-top: 1px solid var(--bg-border-muted);
+  color: var(--text-muted);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--track-wider);
+  text-transform: uppercase;
+}
+
+.pickerIcon {
+  width: 1.5rem;
+  height: 1.5rem;
+  flex-shrink: 0;
+  object-fit: cover;
+}
+
+.pickerName {
+  white-space: nowrap;
+}
+
+.pickerCount {
+  margin-left: auto;
+  padding-left: 0.75rem;
+  color: var(--text-muted);
+  font-size: var(--text-2xs);
+  font-variant-numeric: tabular-nums;
+}
+
 @media (--bp-lg) {
   .summary {
     grid-template-columns: 1fr;
@@ -662,6 +749,18 @@
   .breakdown th,
   .breakdown td {
     padding: 0.375rem;
+  }
+
+  /* Full column names wrap on phones instead of widening the table. */
+  .breakdown thead th {
+    white-space: normal;
+  }
+
+  /* Icons above the name, so the name gets the column's full width. */
+  .rowName {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
   }
 
   .optionalCol {

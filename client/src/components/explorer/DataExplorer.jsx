@@ -44,6 +44,7 @@ export default function DataExplorer() {
     trait: makeMap(traits),
   }), [champions, items, traits])
   const { data, isLoading, isError, isFetching } = useBoardExplorer(filters)
+  const filteredUnitIds = useMemo(() => filters.units.map(unit => unit.id), [filters.units])
 
   // Adds a filter of the given kind (from search or a breakdown row).
   const addFilter = useCallback((kind, id, extra = {}) => {
@@ -96,6 +97,7 @@ export default function DataExplorer() {
             champions={champions}
             items={items}
             traits={traits}
+            filteredUnitIds={filteredUnitIds}
             onAdd={addFilter}
             onAddUnitItem={addUnitItem}
           />

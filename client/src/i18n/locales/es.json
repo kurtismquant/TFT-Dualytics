@@ -453,12 +453,12 @@
       "unit": "Unidad",
       "trait": "Rasgo",
       "item": "Objeto",
-      "playRate": "Uso",
-      "avg": "Prom.",
-      "delta": "Δ",
+      "playRate": "Tasa de uso",
+      "avg": "Posición media",
+      "delta": "Delta",
       "add": "Añadir como filtro",
-      "win": "Victoria",
-      "top2": "Top 2"
+      "win": "Tasa de victoria",
+      "top2": "Tasa de top 2"
     },
     "panelEmpty": "Nada llega a {{count}} tableros aquí.",
     "addFilter": "Añadir {{name}} como filtro",
@@ -474,9 +474,8 @@
     },
     "tableScroll": "Tabla de {{label}} (desplazable)",
     "note": {
-      "boards": "Uso: porcentaje de los tableros que coinciden. Δ: posición media frente a esos tableros (negativo es mejor).",
-      "unitItems": "Uso: porcentaje de los tableros de esa unidad con el objeto. Δ: posición media frente a la media de esa unidad.",
-      "comps": "Composiciones agrupadas como en la página de Composiciones, valoradas dentro de los tableros que coinciden. Uso: veces jugada por partida este parche. Δ: posición media frente a esos tableros."
+      "unitItems": "Tasa de uso: porcentaje de los tableros de esa unidad con el objeto. Delta: posición media frente a la media de esa unidad.",
+      "comps": "Composiciones agrupadas como en la página de Composiciones, valoradas dentro de los tableros que coinciden. Tasa de uso: veces jugada por partida este parche. Delta: posición media frente a esos tableros."
     },
     "itemsOn": "Objetos en",
     "anyUnit": "Cualquier unidad",
@@ -484,6 +483,11 @@
     "onUnit": "en {{name}}",
     "addUnitItem": "Añadir {{name}} con {{item}} como filtro",
     "boardCount_one": "{{formatted}} tablero",
-    "boardCount_other": "{{formatted}} tableros"
+    "boardCount_other": "{{formatted}} tableros",
+    "itemsOnLabel": "Objetos en: {{name}}",
+    "unitPicker": {
+      "inFilters": "En tus filtros",
+      "allUnits": "Todas las unidades"
+    }
   }
 }

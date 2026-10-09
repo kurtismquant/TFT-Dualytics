@@ -34,7 +34,6 @@ function ExplorerCompRow({ row, totalGames, champions, items, traits, uniqueTrai
         />
         <span
           className={`${styles.compDelta} ${formatDelta(row.delta) === '0.00' ? '' : row.delta < 0 ? styles.deltaGood : styles.deltaBad}`}
-          title={t('explorer.note.boards')}
         >
           {t('explorer.col.delta')} {formatDelta(row.delta)}
           <span className={styles.rowGames}>{t('explorer.boardCount', { count: row.count, formatted: row.count.toLocaleString() })}</span>

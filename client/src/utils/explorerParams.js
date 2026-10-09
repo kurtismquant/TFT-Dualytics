@@ -70,3 +70,5 @@ export const hasFilters = filters => filters.units.length + filters.traits.lengt
 
 // Breakdown views (?v=).
 export const EXPLORER_VIEWS = ['units', 'traits', 'items', 'comps']
+// Items view unit choice meaning "items on any unit".
+export const ANY_UNIT = ''
