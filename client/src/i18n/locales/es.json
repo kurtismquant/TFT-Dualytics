@@ -462,7 +462,7 @@
     },
     "panelEmpty": "Nada llega a {{count}} tableros aquí.",
     "addFilter": "Añadir {{name}} como filtro",
-    "recommendedWith": "Suelen jugarse con estos",
+    "recommendedWith": "Sugeridas",
     "recommendedAll": "Más jugadas",
     "addRecommended": "Añadir {{name}} ({{rate}} de uso) como filtro",
     "viewNav": "Desglose",

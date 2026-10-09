@@ -462,7 +462,7 @@
     },
     "panelEmpty": "Nothing reaches {{count}} boards here.",
     "addFilter": "Add {{name}} as a filter",
-    "recommendedWith": "Often played with these",
+    "recommendedWith": "Suggested",
     "recommendedAll": "Most played",
     "addRecommended": "Add {{name}} ({{rate}} play rate) as a filter",
     "viewNav": "Breakdown",
