@@ -2,6 +2,8 @@
   "nav": {
     "comps": "Comps",
     "stats": "Stats",
+    "statsSections": "Stats sections",
+    "statsTab": { "units": "Units", "traits": "Traits", "items": "Items", "explorer": "Data Explorer" },
     "teamBuilder": "Team Builder",
     "leaderboard": "Leaderboard",
     "skipToMain": "Skip to main content",
@@ -101,6 +103,7 @@
     "tabUnits": "Unit Stats",
     "tabItems": "Item Stats",
     "tabTraits": "Trait Stats",
+    "tabExplorer": "Data Explorer",
     "colUnit": "Unit",
     "colItem": "Item",
     "colTrait": "Trait",

@@ -2,6 +2,8 @@
   "nav": {
     "comps": "Comps",
     "stats": "Estadísticas",
+    "statsSections": "Secciones de estadísticas",
+    "statsTab": { "units": "Unidades", "traits": "Rasgos", "items": "Objetos", "explorer": "Explorador de datos" },
     "teamBuilder": "Constructor",
     "leaderboard": "Clasificación",
     "skipToMain": "Saltar al contenido principal",
@@ -101,6 +103,7 @@
     "tabUnits": "Unidades",
     "tabItems": "Objetos",
     "tabTraits": "Rasgos",
+    "tabExplorer": "Explorador de datos",
     "colUnit": "Unidad",
     "colItem": "Objeto",
     "colTrait": "Rasgo",

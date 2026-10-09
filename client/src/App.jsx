@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect } from "react";
-import { Routes, Route, NavLink, useLocation } from "react-router-dom";
+import { Routes, Route, NavLink, Navigate, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import CompPage from "./pages/CompPage.jsx";
 import LandingPage from "./pages/LandingPage.jsx";
@@ -12,7 +12,7 @@ import TermsOfService from "./pages/TermsOfService.jsx";
 import PrivacyPolicy from "./pages/PrivacyPolicy.jsx";
 import styles from "./App.module.css";
 import { Link } from "react-router-dom";
-import { ROUTES } from "./constants/routes.js";
+import { buildStatsPath, ROUTES, STATS_TABS } from "./constants/routes.js";
 import NavSearchBar from "./components/NavSearchBar.jsx";
 import SettingsModal from "./components/SettingsModal.jsx";
 import { useFocusTrap } from "./hooks/useFocusTrap.js";
@@ -35,6 +35,11 @@ function GearIcon() {
     </svg>
   )
 }
+
+// The Stats menu opens on focus; Escape on any of its links closes it.
+const closeStatsMenuOnEscape = (e) => {
+  if (e.key === "Escape") e.currentTarget.blur();
+};
 
 export default function App() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -113,15 +118,35 @@ export default function App() {
             {t("nav.comps")}
           </NavLink>
 
-          <NavLink
-            to={ROUTES.stats}
-            className={({ isActive }) =>
-              isActive ? styles.activeLink : styles.link
-            }
-            onClick={() => setMenuOpen(false)}
-          >
-            {t("nav.stats")}
-          </NavLink>
+          {/* Stats opens a menu of its sections on hover / focus; a click goes
+              to the first one (Units). The drawer lists them indented. */}
+          <div className={styles.statsMenu}>
+            <NavLink
+              to={buildStatsPath(STATS_TABS[0])}
+              className={location.pathname.startsWith(ROUTES.stats) ? styles.activeLink : styles.link}
+              aria-haspopup="true"
+              onKeyDown={closeStatsMenuOnEscape}
+              onClick={(e) => { e.currentTarget.blur(); setMenuOpen(false); }}
+            >
+              {t("nav.stats")}
+            </NavLink>
+            <ul className={styles.statsDropdown} aria-label={t("nav.statsSections")}>
+              {STATS_TABS.map((tab) => (
+                <li key={tab}>
+                  <NavLink
+                    to={buildStatsPath(tab)}
+                    className={({ isActive }) =>
+                      isActive ? `${styles.dropdownLink} ${styles.dropdownLinkActive}` : styles.dropdownLink
+                    }
+                    onKeyDown={closeStatsMenuOnEscape}
+                    onClick={(e) => { e.currentTarget.blur(); setMenuOpen(false); }}
+                  >
+                    {t(`nav.statsTab.${tab}`)}
+                  </NavLink>
+                </li>
+              ))}
+            </ul>
+          </div>
 
           <NavLink
             to={ROUTES.leaderboard}
@@ -183,7 +208,8 @@ export default function App() {
         <Routes>
           <Route path={ROUTES.home} element={<LandingPage />} />
           <Route path={ROUTES.comps} element={<CompPage />} />
-          <Route path={ROUTES.stats} element={<StatsPage />} />
+          <Route path={ROUTES.stats} element={<Navigate to={buildStatsPath(STATS_TABS[0])} replace />} />
+          <Route path={ROUTES.statsTab} element={<StatsPage />} />
           <Route path={ROUTES.unit} element={<UnitStatsPage />} />
           <Route path={ROUTES.unitView} element={<UnitStatsPage />} />
           <Route path={ROUTES.builder} element={<CompBuilderPage />} />

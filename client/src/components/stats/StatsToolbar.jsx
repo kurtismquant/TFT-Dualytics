@@ -31,8 +31,9 @@ export default function StatsToolbar({
   // language changes — but it should be stable across unrelated state.
   const tabs = useMemo(() => ([
     { key: 'units', label: t('stats.tabUnits') },
-    { key: 'items', label: t('stats.tabItems') },
     { key: 'traits', label: t('stats.tabTraits') },
+    { key: 'items', label: t('stats.tabItems') },
+    { key: 'explorer', label: t('stats.tabExplorer') },
   ]), [t])
 
   const handlePatchChange = useCallback(event => {
@@ -50,7 +51,8 @@ export default function StatsToolbar({
     <>
       <p id={patchHelpId} className="sr-only">{t('stats.patchHelp')}</p>
       <p id={searchHelpId} className="sr-only">{t('stats.searchHelp')}</p>
-      <div className={styles.primaryControls}>
+      {/* The explorer has its own filters; only the section tabs apply. */}
+      {activeTab !== 'explorer' && <div className={styles.primaryControls}>
         <select
           className={styles.select}
           value={patch || ''}
@@ -101,7 +103,7 @@ export default function StatsToolbar({
           aria-label={t('stats.searchLabel')}
           aria-describedby={searchHelpId}
         />
-      </div>
+      </div>}
       <div className={styles.tabBar} role="group" aria-label={t('stats.statsTypeLabel')}>
         {tabs.map(tab => (
           <Button

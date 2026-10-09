@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useState } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import StatsTable from '../components/stats/StatsTable.jsx'
 import StatsToolbar from '../components/stats/StatsToolbar.jsx'
@@ -10,6 +11,8 @@ import { makeMap, normalizeName } from '../utils/statsFormatting.js'
 import { compareRows, DEFAULT_SORT, nextSort } from '../utils/statsSort.js'
 import { getTraitTierInfo } from '../utils/traitTier.js'
 import { PageShell } from '../components/layout/PageShell.jsx'
+import DataExplorer from '../components/explorer/DataExplorer.jsx'
+import { buildStatsPath, STATS_TABS } from '../constants/routes.js'
 import styles from './StatsPage.module.css'
 
 // Items in this collection are filtered from the items table.
@@ -32,7 +35,12 @@ function buildSimpleRow(row, assetMap) {
 
 export default function StatsPage() {
   const { t } = useTranslation()
-  const [activeTab, setActiveTab] = useState('units')
+  // The section lives in the URL (/stats/units, /stats/explorer, …).
+  const { tab } = useParams()
+  const activeTab = STATS_TABS.includes(tab) ? tab : STATS_TABS[0]
+  const navigate = useNavigate()
+  const setActiveTab = useCallback(key => navigate(buildStatsPath(key)), [navigate])
+  const isExplorer = activeTab === 'explorer'
   const [selectedPatch, setSelectedPatch] = useState(null)
   const [query, setQuery] = useState('')
   const [costFilter, setCostFilter] = useState(null)
@@ -42,7 +50,7 @@ export default function StatsPage() {
   const { data: champions } = useChampions()
   const { data: items } = useItems()
   const { data: traits } = useTraits()
-  const { data, isLoading, isError } = useStats({ type: activeTab, patch: selectedPatch })
+  const { data, isLoading, isError } = useStats({ type: activeTab, patch: selectedPatch, enabled: !isExplorer })
 
   // Stable id->meta lookups. Rebuilt only when the underlying lists change,
   // not on every keystroke or sort flip.
@@ -95,7 +103,7 @@ export default function StatsPage() {
           <p className={styles.eyebrow}>{t('stats.eyebrow')}</p>
           <h1 className={styles.title}>{t('stats.title')}</h1>
         </div>
-        <div className={styles.meta}>{t('stats.gamesAnalyzed', { count: matchCount })}</div>
+        {!isExplorer && <div className={styles.meta}>{t('stats.gamesAnalyzed', { count: matchCount })}</div>}
       </div>
       <StatsToolbar
         activeTab={activeTab}
@@ -110,11 +118,12 @@ export default function StatsPage() {
         itemCategory={itemCategory}
         setItemCategory={setItemCategory}
       />
-      {isLoading && <p className={styles.message} role="status" aria-live="polite">{t('stats.loading')}</p>}
-      {isError && <p className={styles.message} role="alert">{t('stats.error')}</p>}
-      {!isLoading && !isError && rows.length === 0
+      {isExplorer && <DataExplorer />}
+      {!isExplorer && isLoading && <p className={styles.message} role="status" aria-live="polite">{t('stats.loading')}</p>}
+      {!isExplorer && isError && <p className={styles.message} role="alert">{t('stats.error')}</p>}
+      {!isExplorer && !isLoading && !isError && rows.length === 0
         && <p className={styles.message} role="status">{t('stats.empty')}</p>}
-      {rows.length > 0 && (
+      {!isExplorer && rows.length > 0 && (
         <StatsTable
           type={activeTab}
           rows={rows}

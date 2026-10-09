@@ -2,6 +2,7 @@ export const ROUTES = {
   home: '/',
   comps: '/comps',
   stats: '/stats',
+  statsTab: '/stats/:tab',
   unit: '/units/:unitId',
   unitView: '/units/:unitId/:view',
   builder: '/builder',
@@ -29,4 +30,11 @@ export const UNIT_VIEWS = ['comps', 'items', 'combos']
 export function buildUnitViewPath(unitId, view, search = '') {
   const path = `/units/${encodeURIComponent(unitId)}`
   return `${view === UNIT_VIEWS[0] ? path : `${path}/${view}`}${search}`
+}
+
+// Stats sections, in nav order; the first is where /stats lands.
+export const STATS_TABS = ['units', 'traits', 'items', 'explorer']
+
+export function buildStatsPath(tab, search = '') {
+  return `/stats/${tab}${search}`
 }

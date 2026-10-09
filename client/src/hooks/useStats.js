@@ -1,8 +1,9 @@
 import { useQuery } from '@tanstack/react-query'
 import { apiGet } from '../api/client.js'
 
-export const useStats = ({ type, patch }) =>
+export const useStats = ({ type, patch, enabled = true }) =>
   useQuery({
+    enabled,
     queryKey: ['stats', type, patch ?? null],
     queryFn: async () => {
       const params = { type }
