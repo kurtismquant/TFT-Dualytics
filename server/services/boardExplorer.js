@@ -1,4 +1,4 @@
-import { deduplicateUnits } from './unitUtils.js'
+import { buildCompFingerprint, deduplicateUnits } from './unitUtils.js'
 import { toTeamPlacement } from './teamPlacement.js'
 
 // Board explorer: "how do boards with these units / traits / items do, and what
@@ -11,15 +11,17 @@ const EMPTY_BAG = 'TFT_Item_EmptyBag'
 const ID_PATTERN = /^[A-Za-z0-9_]{1,64}$/
 export const MAX_FILTERS = 6
 // Breakdown rows need this many matching boards; below it the averages are noise.
+// Every row that reaches it is returned (the client lists them in scrollable tables).
 export const MIN_BREAKDOWN_GAMES = 10
-export const BREAKDOWN_LIMIT = 60
 const CACHE_TTL_MS = 60 * 1000
 
 // One board per Double Up participant, normalized like the Stats tables:
 // deduplicated/aliased units (unitUtils), team placement 1-4, active traits
 // (tier_current > 0), no EmptyBag. A unit fielded twice is merged: its best
-// star level and the union of the items both copies hold.
-export function buildBoardIndex(matches) {
+// star level and the union of the items both copies hold. `comp` is the comp
+// the board counts toward on the Comps page: its fingerprint, resolved through
+// the comp aggregation's merge `aliases`.
+export function buildBoardIndex(matches, aliases = new Map()) {
   const boards = []
   for (const match of matches) {
     const info = match?.info
@@ -28,7 +30,8 @@ export function buildBoardIndex(matches) {
       const placement = Number(participant.placement)
       if (!Number.isFinite(placement)) continue
       const units = new Map()
-      for (const unit of deduplicateUnits(participant.units || [])) {
+      const deduplicated = deduplicateUnits(participant.units || [])
+      for (const unit of deduplicated) {
         const id = unit.character_id
         if (!id) continue
         const star = Math.min(3, Math.max(1, Math.trunc(Number(unit.tier)) || 1))
@@ -44,7 +47,13 @@ export function buildBoardIndex(matches) {
       const traits = (participant.traits || [])
         .filter(trait => trait.name && Number(trait.tier_current) > 0)
         .map(trait => ({ id: trait.name, tier: Number(trait.tier_current) }))
-      boards.push({ place: toTeamPlacement(placement), units: [...units.values()], traits })
+      const fingerprint = buildCompFingerprint(deduplicated.map(unit => unit.character_id))
+      boards.push({
+        place: toTeamPlacement(placement),
+        comp: aliases.get(fingerprint) ?? fingerprint,
+        units: [...units.values()],
+        traits,
+      })
     }
   }
   return boards
@@ -125,29 +134,40 @@ function tally(map, key, place, extra) {
   if (place <= 2) row.top2 += 1
 }
 
-function finalizeRows(map, total, matchedAvg) {
+// 4 decimals is plenty for display and keeps the (uncompressed) payload small.
+const round = value => Math.round(value * 1e4) / 1e4
+
+// `total(row)` and `baseAvg(row)` give the frequency denominator and the
+// average `delta` is measured against.
+function finalizeRows(map, total, baseAvg) {
   return [...map.values()]
     .filter(row => row.count >= MIN_BREAKDOWN_GAMES)
     .map(({ placementTotal, wins, top2, ...row }) => {
       const avgPlacement = placementTotal / row.count
       return {
         ...row,
-        frequency: row.count / total,
-        avgPlacement,
-        winRate: wins / row.count,
-        top2Rate: top2 / row.count,
-        delta: avgPlacement - matchedAvg,
+        frequency: round(row.count / total(row)),
+        avgPlacement: round(avgPlacement),
+        winRate: round(wins / row.count),
+        top2Rate: round(top2 / row.count),
+        delta: round(avgPlacement - baseAvg(row)),
       }
     })
     .sort((a, b) => b.count - a.count || a.avgPlacement - b.avgPlacement)
-    .slice(0, BREAKDOWN_LIMIT)
 }
 
 // Pure: index boards + filters → how matching boards place, and the units,
-// items and traits they run (minus the filtered ones) with each one's results
-// within those boards. `delta` < 0 means boards with it place better than the
-// matching boards overall.
-export function exploreBoards(boards, filters) {
+// items, traits and comps they run (minus the filtered ones) with each one's
+// results within those boards. `delta` < 0 means boards with it place better
+// than the matching boards overall.
+//
+// `unitItems` are per (unit, item) — every unit, filtered ones included, so a
+// filtered unit's items show too. Their `frequency` is the share of that unit's
+// boards with the item on it and `delta` is vs that unit's average.
+//
+// `comps` needs the comp aggregation's results (`compResults`, for each comp's
+// units and traits); boards whose comp isn't among them are skipped.
+export function exploreBoards(boards, filters, compResults = []) {
   const matched = boards.filter(board => boardMatches(board, filters))
   const placements = [0, 0, 0, 0]
   let placementTotal = 0
@@ -161,14 +181,20 @@ export function exploreBoards(boards, filters) {
   const unitIds = new Set(filters.units.map(f => f.id))
   const traitIds = new Set(filters.traits.map(f => f.id))
   const itemIds = new Set(filters.items)
-  const units = new Map()
+  const compsById = new Map(compResults.map(comp => [comp.fingerprint, comp]))
+  const allUnits = new Map()
+  const unitItems = new Map()
   const items = new Map()
   const traits = new Map()
+  const comps = new Map()
   for (const board of matched) {
     const boardItems = new Set()
     for (const unit of board.units) {
-      if (!unitIds.has(unit.id)) tally(units, unit.id, board.place, { id: unit.id })
-      for (const item of unit.items) boardItems.add(item)
+      tally(allUnits, unit.id, board.place, { id: unit.id })
+      for (const item of unit.items) {
+        boardItems.add(item)
+        tally(unitItems, `${unit.id}|${item}`, board.place, { unit: unit.id, id: item })
+      }
     }
     for (const item of boardItems) {
       if (!itemIds.has(item)) tally(items, item, board.place, { id: item })
@@ -176,7 +202,13 @@ export function exploreBoards(boards, filters) {
     for (const trait of board.traits) {
       if (!traitIds.has(trait.id)) tally(traits, `${trait.id}#${trait.tier}`, board.place, { id: trait.id, tier: trait.tier })
     }
+    if (compsById.has(board.comp)) tally(comps, board.comp, board.place, { id: board.comp })
   }
+
+  const units = new Map([...allUnits].filter(([id]) => !unitIds.has(id)))
+  const unitStats = id => allUnits.get(id)
+  const ofMatched = () => n
+  const vsMatched = () => avgPlacement
 
   return {
     totalBoards: boards.length,
@@ -186,18 +218,32 @@ export function exploreBoards(boards, filters) {
     top2Rate: n ? (placements[0] + placements[1]) / n : null,
     placements,
     minGames: MIN_BREAKDOWN_GAMES,
-    units: n ? finalizeRows(units, n, avgPlacement) : [],
-    items: n ? finalizeRows(items, n, avgPlacement) : [],
-    traits: n ? finalizeRows(traits, n, avgPlacement) : [],
+    units: n ? finalizeRows(units, ofMatched, vsMatched) : [],
+    items: n ? finalizeRows(items, ofMatched, vsMatched) : [],
+    traits: n ? finalizeRows(traits, ofMatched, vsMatched) : [],
+    unitItems: n
+      ? finalizeRows(
+        unitItems,
+        row => unitStats(row.unit).count,
+        row => unitStats(row.unit).placementTotal / unitStats(row.unit).count,
+      ).map(row => ({ ...row, unitCount: unitStats(row.unit).count }))
+      : [],
+    comps: n
+      ? finalizeRows(comps, ofMatched, vsMatched).map(row => ({
+        ...row,
+        units: compsById.get(row.id).units,
+        traits: compsById.get(row.id).traits,
+      }))
+      : [],
   }
 }
 
 // ── Current-patch index, kept in memory ─────────────────────────────────────
-let current = null // { patch, boards, builtAt }
+let current = null // { patch, boards, comps, builtAt }
 const resultCache = new Map()
 
-export function setBoardIndex(patch, boards) {
-  current = { patch, boards, builtAt: new Date().toISOString() }
+export function setBoardIndex(patch, boards, comps = []) {
+  current = { patch, boards, comps, builtAt: new Date().toISOString() }
   resultCache.clear()
 }
 
@@ -213,7 +259,7 @@ export function exploreCurrentPatch(query) {
   const key = cacheKey(filters)
   const cached = resultCache.get(key)
   if (cached && Date.now() - cached.at < CACHE_TTL_MS) return cached.value
-  const value = { ready: true, patch: current.patch, builtAt: current.builtAt, filters, ...exploreBoards(current.boards, filters) }
+  const value = { ready: true, patch: current.patch, builtAt: current.builtAt, filters, ...exploreBoards(current.boards, filters, current.comps) }
   resultCache.set(key, { at: Date.now(), value })
   return value
 }

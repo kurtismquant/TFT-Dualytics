@@ -3,7 +3,12 @@
     "comps": "Comps",
     "stats": "Estadísticas",
     "statsSections": "Secciones de estadísticas",
-    "statsTab": { "units": "Unidades", "traits": "Rasgos", "items": "Objetos", "explorer": "Explorador de datos" },
+    "statsTab": {
+      "units": "Unidades",
+      "traits": "Rasgos",
+      "items": "Objetos",
+      "explorer": "Explorador de datos"
+    },
     "teamBuilder": "Constructor",
     "leaderboard": "Clasificación",
     "skipToMain": "Saltar al contenido principal",
@@ -395,7 +400,7 @@
   },
   "explorer": {
     "label": "Explorador de tableros",
-    "intro": "Elige unidades, rasgos y objetos para ver cómo quedan los tableros de Dobles que los usan todos este parche, y qué otras unidades, rasgos y objetos rinden mejor junto a ellos.",
+    "intro": "Elige unidades, rasgos y objetos para ver cómo quedan los tableros de Dobles que los usan todos este parche, y qué otras unidades, rasgos, objetos y composiciones rinden mejor junto a ellos.",
     "searchPlaceholder": "Añade una unidad, rasgo u objeto…",
     "searchLabel": "Añade un filtro de unidad, rasgo u objeto (hasta {{count}} de cada uno)",
     "suggestions": "Unidades, rasgos y objetos que coinciden",
@@ -440,7 +445,8 @@
     "panel": {
       "unit": "Unidades",
       "trait": "Rasgos",
-      "item": "Objetos"
+      "item": "Objetos",
+      "comp": "Composiciones"
     },
     "sortLabel": "Ordenar",
     "sort": {
@@ -454,11 +460,34 @@
       "playRate": "Uso",
       "avg": "Prom.",
       "delta": "Δ",
-      "add": "Añadir como filtro"
+      "add": "Añadir como filtro",
+      "win": "Victoria",
+      "top2": "Top 2"
     },
     "panelEmpty": "Nada llega a {{count}} tableros aquí.",
     "addFilter": "Añadir {{name}} como filtro",
-    "showAll": "Ver los {{count}}",
-    "showLess": "Ver menos"
+    "recommendedWith": "Suelen jugarse con estos",
+    "recommendedAll": "Más jugadas",
+    "addRecommended": "Añadir {{name}} ({{rate}} de uso) como filtro",
+    "viewNav": "Desglose",
+    "view": {
+      "units": "Unidades",
+      "traits": "Rasgos",
+      "items": "Objetos",
+      "comps": "Composiciones"
+    },
+    "tableScroll": "Tabla de {{label}} (desplazable)",
+    "note": {
+      "boards": "Uso: porcentaje de los tableros que coinciden. Δ: posición media frente a esos tableros (negativo es mejor).",
+      "unitItems": "Uso: porcentaje de los tableros de esa unidad con el objeto. Δ: posición media frente a la media de esa unidad.",
+      "comps": "Composiciones agrupadas como en la página de Composiciones, valoradas dentro de los tableros que coinciden. Δ: posición media frente a esos tableros."
+    },
+    "itemsOn": "Objetos en",
+    "anyUnit": "Cualquier unidad",
+    "groupByUnit": "Separar por unidad",
+    "onUnit": "en {{name}}",
+    "addUnitItem": "Añadir {{name}} con {{item}} como filtro",
+    "boardCount_one": "{{formatted}} tablero",
+    "boardCount_other": "{{formatted}} tableros"
   }
 }

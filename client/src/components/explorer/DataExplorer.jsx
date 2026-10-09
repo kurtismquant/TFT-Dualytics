@@ -9,21 +9,31 @@ import { useChampions } from '../../hooks/useChampions.js'
 import { useItems } from '../../hooks/useItems.js'
 import { useTraits } from '../../hooks/useTraits.js'
 import { makeMap } from '../../utils/statsFormatting.js'
-import { filtersToSearch, MAX_EXPLORER_FILTERS, parseExplorerParams } from '../../utils/explorerParams.js'
+import { EXPLORER_VIEWS, filtersToSearch, MAX_EXPLORER_FILTERS, MAX_UNIT_ITEMS, parseExplorerParams } from '../../utils/explorerParams.js'
 import statsStyles from '../../pages/StatsPage.module.css'
 import styles from './DataExplorer.module.css'
 
+const NO_UNITS = []
+
 // Board explorer: pick units (star range, held items), traits (tier) and items;
-// see how boards with all of them place and what else they run. Filters live
-// in the URL (?u=&t=&i=) so explorations can be shared.
+// see how boards with all of them place and what else they run. Filters and
+// the open view live in the URL (?u=&t=&i=&v=) so explorations can be shared.
 export default function DataExplorer() {
   const { t } = useTranslation()
   const [searchParams, setSearchParams] = useSearchParams()
   const filters = useMemo(() => parseExplorerParams(searchParams), [searchParams])
-  const setFilters = useCallback(
-    next => setSearchParams(filtersToSearch(next), { replace: true }),
-    [setSearchParams]
-  )
+  const view = EXPLORER_VIEWS.includes(searchParams.get('v')) ? searchParams.get('v') : EXPLORER_VIEWS[0]
+  const setFilters = useCallback(next => setSearchParams(previous => {
+    const params = filtersToSearch(next)
+    if (previous.get('v')) params.set('v', previous.get('v'))
+    return params
+  }, { replace: true }), [setSearchParams])
+  const setView = useCallback(next => setSearchParams(previous => {
+    const params = new URLSearchParams(previous)
+    if (next === EXPLORER_VIEWS[0]) params.delete('v')
+    else params.set('v', next)
+    return params
+  }, { replace: true }), [setSearchParams])
 
   const { data: champions } = useChampions()
   const { data: items } = useItems()
@@ -45,6 +55,20 @@ export default function DataExplorer() {
     setFilters({ ...filters, [key]: [...current, entry] })
   }, [filters, setFilters])
 
+  // From a unit's item row: require the item on that unit (adding the unit if needed).
+  const addUnitItem = useCallback((unitId, itemId) => {
+    const index = filters.units.findIndex(entry => entry.id === unitId)
+    if (index === -1) {
+      addFilter('unit', unitId, { items: [itemId] })
+      return
+    }
+    const entry = filters.units[index]
+    if (entry.items.includes(itemId) || entry.items.length >= MAX_UNIT_ITEMS) return
+    const units = filters.units.slice()
+    units[index] = { ...entry, items: [...entry.items, itemId] }
+    setFilters({ ...filters, units })
+  }, [addFilter, filters, setFilters])
+
   return (
     <section className={styles.explorer} aria-label={t('explorer.label')}>
       <p className={styles.intro}>{t('explorer.intro')}</p>
@@ -56,6 +80,7 @@ export default function DataExplorer() {
         champions={champions}
         items={items}
         traits={traits}
+        recommended={(data?.ready && data.units) || NO_UNITS}
       />
       {isLoading && <p className={statsStyles.message} role="status" aria-live="polite">{t('explorer.loading')}</p>}
       {isError && <p className={statsStyles.message} role="alert">{t('explorer.error')}</p>}
@@ -63,7 +88,17 @@ export default function DataExplorer() {
       {data?.ready && (
         <div className={isFetching ? styles.updating : undefined} aria-busy={isFetching}>
           <ExplorerSummary data={data} filters={filters} />
-          <ExplorerBreakdown data={data} lookups={lookups} onAdd={addFilter} />
+          <ExplorerBreakdown
+            view={view}
+            setView={setView}
+            data={data}
+            lookups={lookups}
+            champions={champions}
+            items={items}
+            traits={traits}
+            onAdd={addFilter}
+            onAddUnitItem={addUnitItem}
+          />
         </div>
       )}
     </section>

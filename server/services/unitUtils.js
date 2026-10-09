@@ -68,3 +68,9 @@ export function deduplicateUnits(units) {
     return true
   })
 }
+
+// A comp's identity: its (deduplicated) unit ids, order-independent. Shared by
+// the comp aggregation and the board explorer so a board maps to its comp.
+export function buildCompFingerprint(unitIds) {
+  return unitIds.slice().sort().join('|')
+}

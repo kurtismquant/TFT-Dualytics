@@ -1,6 +1,6 @@
 import { getMatchesCollection } from '../db/mongo.js'
 import { replaceAggregatedComps, getAggregatedComps, selectTopComps } from '../db/aggregatedCompsRepo.js'
-import { deduplicateUnits, hadUnitDoubling } from './unitUtils.js'
+import { buildCompFingerprint, deduplicateUnits, hadUnitDoubling } from './unitUtils.js'
 import { toTeamPlacement as teamPlacement } from './teamPlacement.js'
 // Comps share the Stats patch logic so both pages label and filter patches the
 // same way (a patch is a gameDatetime window from SET_PATCH_SCHEDULE). Patch math comes from the shared patchFilters module; patch *discovery* (a DB
@@ -15,10 +15,6 @@ import { THIEVES_GLOVES } from '../constants/game.js'
 
 const TOP_PARTNERS_LIMIT = 3
 const COMP_MERGE_SHARED_UNITS = 6
-
-function buildCompFingerprint(unitIds) {
-  return unitIds.slice().sort().join('|')
-}
 
 function isDoubleUpInfo(info) {
   return info?.tft_game_type === 'pairs'
@@ -343,7 +339,7 @@ function buildMergeCandidate(stats) {
   }
 }
 
-function mergeSimilarStats(statsValues, mergeStats) {
+function mergeSimilarStats(statsValues, mergeStats, onMerge = null) {
   const candidates = statsValues
     .filter(stats => stats.placements.length > 0)
     .map(stats => buildMergeCandidate(stats))
@@ -362,6 +358,7 @@ function mergeSimilarStats(statsValues, mergeStats) {
 
       mergeStats(target.stats, source.stats)
       mergedFingerprints.add(source.fingerprint)
+      onMerge?.(source.fingerprint, target.fingerprint)
     }
   }
 
@@ -370,8 +367,8 @@ function mergeSimilarStats(statsValues, mergeStats) {
     .map(candidate => candidate.stats)
 }
 
-function mergeSimilarCompStats(compStats) {
-  return mergeSimilarStats([...compStats.values()], mergeCompStats)
+function mergeSimilarCompStats(compStats, onMerge) {
+  return mergeSimilarStats([...compStats.values()], mergeCompStats, onMerge)
 }
 
 function mergeSimilarPartnerStats(partners) {
@@ -415,6 +412,17 @@ function buildCompResult(stats) {
 // Pure reducer — exported for testability. Takes raw match docs in the Riot
 // shape (info.participants[].character_id, partner_group_id, etc.).
 export function aggregateComps(matches, { maxComps = null } = {}) {
+  const { comps } = aggregateCompsWithAliases(matches)
+  if (typeof maxComps === 'number' && Number.isFinite(maxComps) && maxComps > 0) {
+    return comps.slice(0, maxComps)
+  }
+  return comps
+}
+
+// Same comps plus `aliases`: fingerprint → fingerprint of the comp it was merged
+// into (comps sharing 6+ units merge). Fingerprints missing from it are comps
+// of their own. The board explorer uses it to file each board under its comp.
+export function aggregateCompsWithAliases(matches) {
   const compStats = new Map()
 
   for (const match of matches) {
@@ -432,16 +440,13 @@ export function aggregateComps(matches, { maxComps = null } = {}) {
     }
   }
 
-  const results = mergeSimilarCompStats(compStats)
+  const aliases = new Map()
+  const comps = mergeSimilarCompStats(compStats, (source, target) => aliases.set(source, target))
     .map(buildCompResult)
     .filter(Boolean)
     .sort(rankComps)
 
-  if (typeof maxComps === 'number' && Number.isFinite(maxComps) && maxComps > 0) {
-    return results.slice(0, maxComps)
-  }
-
-  return results
+  return { comps, aliases }
 }
 
 // Builds the Mongo filter for a comp aggregation read. `patch` is the TFT label
@@ -468,10 +473,11 @@ export async function runCompAggregation() {
   const patch = (await getAvailablePatches())[0] ?? null
   const docs = await loadPatchMatches(matches, patch)
 
-  const comps = aggregateComps(docs)
+  const { comps, aliases } = aggregateCompsWithAliases(docs)
   await replaceAggregatedComps(comps, docs.length)
-  // The board explorer answers from an in-memory index of these same boards.
-  if (patch) setBoardIndex(patch, buildBoardIndex(docs))
+  // The board explorer answers from an in-memory index of these same boards,
+  // each filed under the comp it counts toward on the Comps page.
+  if (patch) setBoardIndex(patch, buildBoardIndex(docs, aliases), comps)
 
   // Compute the Stats tables (units/items/traits) from the SAME docs we just pulled,
   // then store them so getStats serves the current patch without re-streaming ~20MB of

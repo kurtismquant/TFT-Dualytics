@@ -3,7 +3,12 @@
     "comps": "Comps",
     "stats": "Stats",
     "statsSections": "Stats sections",
-    "statsTab": { "units": "Units", "traits": "Traits", "items": "Items", "explorer": "Data Explorer" },
+    "statsTab": {
+      "units": "Units",
+      "traits": "Traits",
+      "items": "Items",
+      "explorer": "Data Explorer"
+    },
     "teamBuilder": "Team Builder",
     "leaderboard": "Leaderboard",
     "skipToMain": "Skip to main content",
@@ -395,7 +400,7 @@
   },
   "explorer": {
     "label": "Board explorer",
-    "intro": "Pick units, traits and items to see how Double Up boards running all of them place this patch — and which other units, traits and items do best alongside them.",
+    "intro": "Pick units, traits and items to see how Double Up boards running all of them place this patch — and which other units, traits, items and comps do best alongside them.",
     "searchPlaceholder": "Add a unit, trait or item…",
     "searchLabel": "Add a unit, trait or item filter (up to {{count}} of each)",
     "suggestions": "Matching units, traits and items",
@@ -440,7 +445,8 @@
     "panel": {
       "unit": "Units",
       "trait": "Traits",
-      "item": "Items"
+      "item": "Items",
+      "comp": "Comps"
     },
     "sortLabel": "Sort",
     "sort": {
@@ -454,11 +460,34 @@
       "playRate": "Play",
       "avg": "Avg",
       "delta": "Δ",
-      "add": "Add as filter"
+      "add": "Add as filter",
+      "win": "Win",
+      "top2": "Top 2"
     },
     "panelEmpty": "Nothing reaches {{count}} boards here.",
     "addFilter": "Add {{name}} as a filter",
-    "showAll": "Show all {{count}}",
-    "showLess": "Show less"
+    "recommendedWith": "Often played with these",
+    "recommendedAll": "Most played",
+    "addRecommended": "Add {{name}} ({{rate}} play rate) as a filter",
+    "viewNav": "Breakdown",
+    "view": {
+      "units": "Units",
+      "traits": "Traits",
+      "items": "Items",
+      "comps": "Comps"
+    },
+    "tableScroll": "{{label}} table (scrollable)",
+    "note": {
+      "boards": "Play: share of the matching boards. Δ: avg place vs the matching boards (negative is better).",
+      "unitItems": "Play: share of that unit's boards with the item on it. Δ: avg place vs that unit's average.",
+      "comps": "Comps as grouped on the Comps page, rated within the matching boards. Δ: avg place vs the matching boards."
+    },
+    "itemsOn": "Items on",
+    "anyUnit": "Any unit",
+    "groupByUnit": "Split by unit",
+    "onUnit": "on {{name}}",
+    "addUnitItem": "Add {{name}} holding {{item}} as a filter",
+    "boardCount_one": "{{formatted}} board",
+    "boardCount_other": "{{formatted}} boards"
   }
 }

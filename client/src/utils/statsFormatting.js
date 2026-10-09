@@ -5,6 +5,13 @@ export const formatAvg = value => Number(value || 0).toFixed(2)
 
 export const formatPercent = value => `${((value || 0) * 100).toFixed(1)}%`
 
+// Signed avg-placement difference, 2 decimals ("−0.12", "+0.05", "0.00").
+export function formatDelta(value) {
+  const rounded = Number((value || 0).toFixed(2))
+  if (rounded === 0) return '0.00'
+  return `${rounded < 0 ? '−' : '+'}${Math.abs(rounded).toFixed(2)}`
+}
+
 export function normalizeName(name) {
   return String(name || '').toLowerCase()
 }

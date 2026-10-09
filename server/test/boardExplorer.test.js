@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import { describe, it } from 'node:test'
 
+import { aggregateCompsWithAliases } from '../services/compsAggregator.js'
 import {
   buildBoardIndex,
   exploreBoards,
@@ -38,6 +39,7 @@ describe('buildBoardIndex', () => {
     ])
     assert.deepEqual(index, [{
       place: 2,
+      comp: `${AHRI}|${AHRI}|DA_18_Elise`,
       // Two Ahri copies merge (best star, items of both); aliases map to the real unit.
       units: [{ id: AHRI, star: 2, items: [IE, GS] }, { id: 'DA_18_Elise', star: 1, items: [] }],
       traits: [{ id: BLOSSOM, tier: 2 }],
@@ -86,6 +88,32 @@ describe('exploreBoards', () => {
     // Filtered traits are left out of the trait breakdown.
     const byTrait = exploreBoards(index, { ...none, traits: [{ id: BLOSSOM }] })
     assert.deepEqual(byTrait.traits, [])
+  })
+
+  it('breaks down items per unit, filtered units included', () => {
+    const result = exploreBoards(index, { ...none, units: [{ id: AHRI }] })
+    // Ahri is in all 20 matching boards (avg 2): IE on half (1st), GS on half (3rd).
+    assert.deepEqual(result.unitItems, [
+      { unit: AHRI, id: IE, count: 10, frequency: 0.5, avgPlacement: 1, winRate: 1, top2Rate: 1, delta: -1, unitCount: 20 },
+      { unit: AHRI, id: GS, count: 10, frequency: 0.5, avgPlacement: 3, winRate: 0, top2Rate: 0, delta: 1, unitCount: 20 },
+    ])
+  })
+
+  it('groups matching boards by comp, merged comps included', () => {
+    const docs = [
+      ...boards(10, 1, [unit(AHRI, 3, [IE]), unit(SETT)], [trait(BLOSSOM, 2)]),
+      ...boards(10, 5, [unit(AHRI, 2, [GS]), unit(KENNEN)], [trait(BLOSSOM, 1)]),
+    ]
+    const { comps, aliases } = aggregateCompsWithAliases(docs)
+    const result = exploreBoards(buildBoardIndex(docs, aliases), { ...none, units: [{ id: AHRI }] }, comps)
+    assert.deepEqual(result.comps.map(({ id, count, avgPlacement, delta }) => ({ id, count, avgPlacement, delta })), [
+      { id: `${AHRI}|${SETT}`, count: 10, avgPlacement: 1, delta: -1 },
+      { id: `${AHRI}|${KENNEN}`, count: 10, avgPlacement: 3, delta: 1 },
+    ])
+    assert.deepEqual(result.comps[0].units.map(u => u.id), [AHRI, SETT])
+    assert.deepEqual(result.comps[0].traits.map(t => t.id), [BLOSSOM])
+    // Without comp results there is nothing to show comps with.
+    assert.deepEqual(exploreBoards(buildBoardIndex(docs, aliases), none).comps, [])
   })
 
   it('drops breakdown rows below the games floor and handles no matches', () => {

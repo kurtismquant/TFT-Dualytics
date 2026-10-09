@@ -33,7 +33,6 @@ export default function StatsToolbar({
     { key: 'units', label: t('stats.tabUnits') },
     { key: 'traits', label: t('stats.tabTraits') },
     { key: 'items', label: t('stats.tabItems') },
-    { key: 'explorer', label: t('stats.tabExplorer') },
   ]), [t])
 
   const handlePatchChange = useCallback(event => {
@@ -47,12 +46,15 @@ export default function StatsToolbar({
     [setCostFilter],
   )
 
+  // The explorer is reached from the top-nav Stats menu and has its own
+  // filters, so it shows none of these controls.
+  if (activeTab === 'explorer') return null
+
   return (
     <>
       <p id={patchHelpId} className="sr-only">{t('stats.patchHelp')}</p>
       <p id={searchHelpId} className="sr-only">{t('stats.searchHelp')}</p>
-      {/* The explorer has its own filters; only the section tabs apply. */}
-      {activeTab !== 'explorer' && <div className={styles.primaryControls}>
+      <div className={styles.primaryControls}>
         <select
           className={styles.select}
           value={patch || ''}
@@ -103,7 +105,7 @@ export default function StatsToolbar({
           aria-label={t('stats.searchLabel')}
           aria-describedby={searchHelpId}
         />
-      </div>}
+      </div>
       <div className={styles.tabBar} role="group" aria-label={t('stats.statsTypeLabel')}>
         {tabs.map(tab => (
           <Button

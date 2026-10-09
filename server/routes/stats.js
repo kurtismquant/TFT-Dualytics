@@ -1,9 +1,12 @@
 import { Router } from 'express'
+import { promisify } from 'node:util'
+import { gzip } from 'node:zlib'
 import { getStats } from '../services/statsAggregator.js'
 import { getUnitItemCombos, MIN_COMBO_GAMES } from '../services/unitItemCombosAggregator.js'
 import { exploreCurrentPatch } from '../services/boardExplorer.js'
 
 const router = Router()
+const gzipAsync = promisify(gzip)
 
 router.get('/', async (req, res) => {
   try {
@@ -51,10 +54,16 @@ router.get('/units/:unitId/combos', async (req, res) => {
 })
 
 // Board explorer over the current patch: ?units=ID:1-3:ITEM+ITEM&traits=ID:2&items=ID
-router.get('/explorer', (req, res) => {
+// Every breakdown row with enough boards is returned, so an unfiltered answer
+// runs to several hundred KB of JSON; the server has no compression middleware,
+// so gzip it here (~10x smaller).
+router.get('/explorer', async (req, res) => {
   try {
     const result = exploreCurrentPatch(req.query)
-    res.status(result.ready ? 200 : 503).json(result)
+    res.status(result.ready ? 200 : 503).vary('Accept-Encoding')
+    if (!req.acceptsEncodings('gzip')) return res.json(result)
+    const body = await gzipAsync(JSON.stringify(result))
+    res.set({ 'Content-Type': 'application/json; charset=utf-8', 'Content-Encoding': 'gzip' }).send(body)
   } catch (err) {
     const status = err.status || 500
     if (status >= 500) console.error('Board explorer failed:', err.message)

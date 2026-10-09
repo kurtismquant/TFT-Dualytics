@@ -3,6 +3,7 @@ import { describe, it } from 'node:test'
 
 import {
   aggregateComps,
+  aggregateCompsWithAliases,
   buildCompAggregationMatchFilter,
 } from '../services/compsAggregator.js'
 import { CURRENT_SET } from '../constants/game.js'
@@ -299,6 +300,21 @@ describe('aggregateComps', () => {
       ['DA_18_Akali_AD', 'DA_18_Elise', 'DA_Lux18_Base']
     )
     assert.deepEqual(comp.units.find(u => u.id === 'DA_18_Akali_AD').items, carryItems.slice().sort())
+  })
+
+  it('reports which comps were merged into which', () => {
+    const shared = Array.from({ length: 6 }, (_, index) => `DA_18_CORE_${index + 1}`)
+    const mainIds = [...shared, 'DA_18_MAIN_EXTRA']
+    const variantIds = [...shared, 'DA_18_VARIANT_EXTRA']
+    const loneIds = ['DA_18_LONE_1', 'DA_18_LONE_2']
+    const game = (ids, puuid) => match([participant({ puuid, partner_group_id: null, units: units(ids) })])
+    const { comps, aliases } = aggregateCompsWithAliases([
+      game(mainIds, 'a'), game(mainIds, 'b'), game(variantIds, 'c'), game(loneIds, 'd'),
+    ])
+    const fingerprint = ids => ids.slice().sort().join('|')
+
+    assert.deepEqual(comps.map(comp => comp.fingerprint), [fingerprint(mainIds), fingerprint(loneIds)])
+    assert.deepEqual([...aliases], [[fingerprint(variantIds), fingerprint(mainIds)]])
   })
 
   it('returns an empty result for empty input, non-Double-Up matches, and participants without comps', () => {

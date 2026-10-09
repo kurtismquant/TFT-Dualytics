@@ -101,10 +101,11 @@ export default function StatsPage() {
       <div className={styles.header}>
         <div>
           <p className={styles.eyebrow}>{t('stats.eyebrow')}</p>
-          <h1 className={styles.title}>{t('stats.title')}</h1>
+          <h1 className={styles.title}>{isExplorer ? t('stats.tabExplorer') : t('stats.title')}</h1>
         </div>
         {!isExplorer && <div className={styles.meta}>{t('stats.gamesAnalyzed', { count: matchCount })}</div>}
       </div>
+      {/* Renders nothing on the explorer. */}
       <StatsToolbar
         activeTab={activeTab}
         setActiveTab={setActiveTab}

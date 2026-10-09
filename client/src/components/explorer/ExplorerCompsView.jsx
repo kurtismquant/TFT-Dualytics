@@ -1,0 +1,83 @@
+import { useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import CompRowHeader from '../comp-row/CompRowHeader.jsx'
+import CompUnitList from '../comp-row/CompUnitList.jsx'
+import { SortToggle } from './ExplorerTable.jsx'
+import { EXPLORER_SORTS } from '../../utils/explorerParams.js'
+import { resolveUnits } from '../../utils/resolveUnits.js'
+import { formatDelta } from '../../utils/statsFormatting.js'
+import { generateCompName, getUniqueTraitIds } from '../../utils/compName.js'
+import { buildUnitPath } from '../../constants/routes.js'
+import compRowStyles from '../CompRow.module.css'
+import compStyles from '../../pages/CompPage.module.css'
+import styles from './DataExplorer.module.css'
+
+function ExplorerCompRow({ row, champions, items, traits, uniqueTraitIds }) {
+  const { t } = useTranslation()
+  const resolvedUnits = useMemo(() => resolveUnits(row.units, champions, items), [row.units, champions, items])
+  const name = useMemo(
+    () => generateCompName(row, { champions, traits, uniqueTraitIds }),
+    [row, champions, traits, uniqueTraitIds]
+  )
+  return (
+    <div className={compRowStyles.row}>
+      <CompRowHeader name={name} comp={row} traits={traits} champions={champions} excludeTraitIds={uniqueTraitIds} />
+      <div className={styles.compBody}>
+        <CompUnitList
+          resolvedUnits={resolvedUnits}
+          items={items}
+          playRate={row.frequency}
+          winRate={row.winRate}
+          avgPlacement={row.avgPlacement}
+          getUnitHref={id => buildUnitPath(id)}
+        />
+        <span
+          className={`${styles.compDelta} ${formatDelta(row.delta) === '0.00' ? '' : row.delta < 0 ? styles.deltaGood : styles.deltaBad}`}
+          title={t('explorer.note.boards')}
+        >
+          {t('explorer.col.delta')} {formatDelta(row.delta)}
+          <span className={styles.rowGames}>{t('explorer.boardCount', { count: row.count, formatted: row.count.toLocaleString() })}</span>
+        </span>
+      </div>
+    </div>
+  )
+}
+
+// Comps the matching boards were playing (as grouped on the Comps page),
+// rated within those boards.
+export default function ExplorerCompsView({ data, champions, items, traits }) {
+  const { t } = useTranslation()
+  const [sort, setSort] = useState('played')
+  const uniqueTraitIds = useMemo(() => getUniqueTraitIds(champions || [], traits || []), [champions, traits])
+  const rows = useMemo(() => (data.comps || []).slice().sort(EXPLORER_SORTS[sort]), [data.comps, sort])
+
+  return (
+    <section className={styles.panel} aria-label={t('explorer.panel.comp')}>
+      <header className={styles.panelHeader}>
+        <p className={styles.viewNote}>{t('explorer.note.comps')}</p>
+        <SortToggle sort={sort} setSort={setSort} />
+      </header>
+      {rows.length === 0
+        ? <p className={styles.panelEmpty}>{t('explorer.panelEmpty', { count: data.minGames })}</p>
+        : (
+          // Focusable so keyboard users can scroll the list.
+          // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
+          <div className={`${styles.tableScroll} ${styles.compScroll}`} tabIndex={0} role="region"
+            aria-label={t('explorer.tableScroll', { label: t('explorer.panel.comp') })}>
+            <div className={compStyles.compList}>
+              {rows.map(row => (
+                <ExplorerCompRow
+                  key={row.id}
+                  row={row}
+                  champions={champions || []}
+                  items={items || []}
+                  traits={traits || []}
+                  uniqueTraitIds={uniqueTraitIds}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+    </section>
+  )
+}

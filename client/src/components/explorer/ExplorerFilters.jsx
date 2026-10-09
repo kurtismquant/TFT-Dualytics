@@ -3,14 +3,19 @@ import { useTranslation } from 'react-i18next'
 import SearchInput from '../ui/SearchInput.jsx'
 import ExplorerChip from './ExplorerChip.jsx'
 import { rankItemMatches } from '../../utils/itemComboFilter.js'
+import { formatPercent } from '../../utils/statsFormatting.js'
 import { EMPTY_FILTERS, hasFilters, MAX_EXPLORER_FILTERS } from '../../utils/explorerParams.js'
 import styles from './DataExplorer.module.css'
 
 const MAX_SUGGESTIONS = 8
+const QUICK_PICKS = 5
+const DROPDOWN_PICKS = 15
 const EXPLORER_ITEM_CATEGORIES = new Set(['craftable', 'radiant', 'artifact', 'emblem'])
 
-// One search box for units, traits and items, then a chip per active filter.
-export default function ExplorerFilters({ filters, setFilters, addFilter, lookups, champions, items, traits }) {
+// One search box for units, traits and items, recommended units beside it (the
+// most played on the matching boards; a longer list drops down from the empty,
+// focused box), then a chip per active filter.
+export default function ExplorerFilters({ filters, setFilters, addFilter, lookups, champions, items, traits, recommended }) {
   const { t } = useTranslation()
   const baseId = useId()
   const [text, setText] = useState('')
@@ -28,8 +33,22 @@ export default function ExplorerFilters({ filters, setFilters, addFilter, lookup
       .slice().sort((a, b) => a.name.localeCompare(b.name)),
     [items]
   )
-  const suggestions = useMemo(() => rankItemMatches(text, candidates, MAX_SUGGESTIONS), [text, candidates])
+  const canAddUnit = filters.units.length < MAX_EXPLORER_FILTERS
+  const picks = useMemo(() => (canAddUnit ? recommended : []).map(row => ({
+    id: row.id,
+    kind: 'unit',
+    name: lookups.unit.get(row.id)?.name || row.id,
+    iconUrl: lookups.unit.get(row.id)?.iconUrl,
+    note: formatPercent(row.frequency),
+  })), [canAddUnit, recommended, lookups])
+
+  const typing = text.trim() !== ''
+  const suggestions = useMemo(
+    () => (typing ? rankItemMatches(text, candidates, MAX_SUGGESTIONS) : picks.slice(0, DROPDOWN_PICKS)),
+    [typing, text, candidates, picks]
+  )
   const showSuggestions = open && suggestions.length > 0
+  const pickLabel = hasFilters(filters) ? t('explorer.recommendedWith') : t('explorer.recommendedAll')
 
   const pick = candidate => {
     addFilter(candidate.kind, candidate.id)
@@ -46,7 +65,7 @@ export default function ExplorerFilters({ filters, setFilters, addFilter, lookup
   }
 
   const handleKeyDown = event => {
-    if (event.key === 'Enter' && suggestions[0]) {
+    if (event.key === 'Enter' && typing && suggestions[0]) {
       event.preventDefault()
       pick(suggestions[0])
     } else if (event.key === 'Escape') {
@@ -62,27 +81,57 @@ export default function ExplorerFilters({ filters, setFilters, addFilter, lookup
 
   return (
     <div className={styles.filters}>
-      <div
-        className={styles.searchWrap}
-        onBlur={event => { if (!event.currentTarget.contains(event.relatedTarget)) setOpen(false) }}
-      >
-        <SearchInput
-          value={text}
-          onChange={event => { setText(event.target.value); setOpen(true) }}
-          onFocus={() => setOpen(true)}
-          onKeyDown={handleKeyDown}
-          placeholder={t('explorer.searchPlaceholder')}
-          aria-label={t('explorer.searchLabel', { count: MAX_EXPLORER_FILTERS })}
-          aria-controls={showSuggestions ? `${baseId}-suggestions` : undefined}
-          autoComplete="off"
-        />
-        {showSuggestions && (
-          <div id={`${baseId}-suggestions`} className={styles.suggestions} role="group" aria-label={t('explorer.suggestions')}>
-            {suggestions.map(candidate => (
-              <button key={`${candidate.kind}-${candidate.id}`} type="button" className={styles.suggestion} onClick={() => pick(candidate)}>
-                {candidate.iconUrl && <img src={candidate.iconUrl} alt="" className={styles.suggestionIcon} />}
-                <span>{candidate.name}</span>
-                <span className={styles.suggestionKind}>{t(`explorer.kind.${candidate.kind}`)}</span>
+      <div className={styles.filterRow}>
+        <div
+          className={styles.searchWrap}
+          onBlur={event => { if (!event.currentTarget.contains(event.relatedTarget)) setOpen(false) }}
+        >
+          <SearchInput
+            value={text}
+            onChange={event => { setText(event.target.value); setOpen(true) }}
+            onFocus={() => setOpen(true)}
+            onClick={() => setOpen(true)}
+            onKeyDown={handleKeyDown}
+            placeholder={t('explorer.searchPlaceholder')}
+            aria-label={t('explorer.searchLabel', { count: MAX_EXPLORER_FILTERS })}
+            aria-controls={showSuggestions ? `${baseId}-suggestions` : undefined}
+            aria-expanded={showSuggestions}
+            autoComplete="off"
+          />
+          {showSuggestions && (
+            <div
+              id={`${baseId}-suggestions`}
+              className={styles.suggestions}
+              role="group"
+              aria-label={typing ? t('explorer.suggestions') : pickLabel}
+            >
+              {!typing && <p className={styles.suggestionsTitle}>{pickLabel}</p>}
+              {suggestions.map(candidate => (
+                <button key={`${candidate.kind}-${candidate.id}`} type="button" className={styles.suggestion} onClick={() => pick(candidate)}>
+                  {candidate.iconUrl && <img src={candidate.iconUrl} alt="" className={styles.suggestionIcon} />}
+                  <span>{candidate.name}</span>
+                  <span className={styles.suggestionKind}>{candidate.note ?? t(`explorer.kind.${candidate.kind}`)}</span>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {picks.length > 0 && (
+          <div className={styles.quickPicks} role="group" aria-label={pickLabel}>
+            <span className={styles.quickPicksLabel}>{pickLabel}</span>
+            {picks.slice(0, QUICK_PICKS).map(candidate => (
+              <button
+                key={candidate.id}
+                type="button"
+                className={styles.quickPick}
+                onClick={() => pick(candidate)}
+                aria-label={t('explorer.addRecommended', { name: candidate.name, rate: candidate.note })}
+                title={`${candidate.name} · ${candidate.note}`}
+              >
+                {candidate.iconUrl && <img src={candidate.iconUrl} alt="" className={styles.quickPickIcon} />}
+                <span className={styles.quickPickName}>{candidate.name}</span>
+                <span className={styles.quickPickRate}>{candidate.note}</span>
               </button>
             ))}
           </div>
