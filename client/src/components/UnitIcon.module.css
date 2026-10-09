@@ -80,7 +80,7 @@
   right: 0;
   text-align: center;
   font-family: var(--font-body);
-  font-size: var(--text-2xs);
+  font-size: var(--unit-name-size, var(--text-2xs));
   font-weight: var(--fw-regular);
   line-height: 0.94;
   letter-spacing: var(--track-wider);

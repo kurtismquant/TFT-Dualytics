@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { DndContext, DragOverlay, PointerSensor, useSensor, useSensors } from '@dnd-kit/core'
@@ -15,6 +15,7 @@ import ItemIcon from '../components/ItemIcon.jsx'
 import { PageShell } from '../components/layout/PageShell.jsx'
 import { useIsMobile } from '../hooks/useMediaQuery.js'
 import { buildUnitPath } from '../constants/routes.js'
+import { toBuilderRoster } from '../utils/builderRoster.js'
 import styles from './CompBuilderPage.module.css'
 
 const BOARD_UNIT_SIZE = 90
@@ -22,7 +23,12 @@ const ROSTER_UNIT_SIZE = 52
 
 export default function CompBuilderPage() {
   const { t } = useTranslation()
-  const { data: champions } = useChampions()
+  const { data: allChampions } = useChampions()
+  // Builder view of the roster: Lux forms renamed, base Lux dropped.
+  const champions = useMemo(
+    () => (allChampions ? toBuilderRoster(allChampions) : undefined),
+    [allChampions],
+  )
   const { data: items } = useItems()
   const {
     board,

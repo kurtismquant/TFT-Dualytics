@@ -19,8 +19,10 @@ function computeTraits(board, roster, allItems) {
     const champion = roster.find(c => c.id === cell.championId)
     if (!champion) continue
 
+    // traitWeights: units that count more than once for a trait (Lux's form
+    // trait, see utils/builderRoster.js). Everything else counts once.
     for (const trait of champion.traits || []) {
-      traitCounts[trait] = (traitCounts[trait] || 0) + 1
+      traitCounts[trait] = (traitCounts[trait] || 0) + (champion.traitWeights?.[trait] ?? 1)
     }
 
     // Emblem items grant +1 to the corresponding trait
