@@ -8,6 +8,7 @@ import { resolveUnits } from '../../utils/resolveUnits.js'
 import { formatDelta } from '../../utils/statsFormatting.js'
 import { generateCompName, getUniqueTraitIds } from '../../utils/compName.js'
 import { buildUnitPath } from '../../constants/routes.js'
+import { teamCodeForResolvedUnits } from '../../utils/teamPlannerCode.js'
 import compRowStyles from '../CompRow.module.css'
 import compStyles from '../../pages/CompPage.module.css'
 import styles from './DataExplorer.module.css'
@@ -21,7 +22,14 @@ function ExplorerCompRow({ row, totalGames, champions, items, traits, uniqueTrai
   )
   return (
     <div className={compRowStyles.row}>
-      <CompRowHeader name={name} comp={row} traits={traits} champions={champions} excludeTraitIds={uniqueTraitIds} />
+      <CompRowHeader
+        name={name}
+        comp={row}
+        traits={traits}
+        champions={champions}
+        excludeTraitIds={uniqueTraitIds}
+        teamCode={teamCodeForResolvedUnits(resolvedUnits)}
+      />
       <div className={styles.compBody}>
         <CompUnitList
           resolvedUnits={resolvedUnits}

@@ -5,9 +5,11 @@ import CompUnitList from './comp-row/CompUnitList.jsx'
 import PartnerRows from './comp-row/PartnerRows.jsx'
 import { resolveUnits } from './comp-row/resolveUnits.js'
 import { generateCompName } from '../utils/compName.js'
+import { teamCodeForResolvedUnits } from '../utils/teamPlannerCode.js'
 import styles from './CompRow.module.css'
 
-export default function CompRow({ comp, champions, items, traits, matchCount, uniqueTraitIds, getUnitHref }) {
+// `showTeamCode={false}` hides the copy-team-code buttons (the unit page's Comps tab).
+export default function CompRow({ comp, champions, items, traits, matchCount, uniqueTraitIds, getUnitHref, showTeamCode = true }) {
   const { t } = useTranslation()
   const reactId = useId()
   const [expanded, setExpanded] = useState(false)
@@ -23,6 +25,7 @@ export default function CompRow({ comp, champions, items, traits, matchCount, un
     [comp, champions, traits, uniqueTraitIds]
   )
   const playRate = matchCount > 0 ? comp.playCount / matchCount : 0
+  const teamCode = useMemo(() => (showTeamCode ? teamCodeForResolvedUnits(resolvedUnits) : undefined), [showTeamCode, resolvedUnits])
 
   const toggleExpand = () => setExpanded(v => !v)
 
@@ -48,6 +51,7 @@ export default function CompRow({ comp, champions, items, traits, matchCount, un
             traits={traits}
             champions={champions}
             excludeTraitIds={uniqueTraitIds}
+            teamCode={teamCode}
           />
           <CompUnitList
             resolvedUnits={resolvedUnits}
@@ -76,6 +80,7 @@ export default function CompRow({ comp, champions, items, traits, matchCount, un
             parentGames={comp.playCount}
             uniqueTraitIds={uniqueTraitIds}
             getUnitHref={getUnitHref}
+            showTeamCode={showTeamCode}
           />
         </div>
       )}

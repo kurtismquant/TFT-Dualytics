@@ -1,0 +1,23 @@
+/* Copy-team-code button. Sits inside row/card summaries whose content passes
+   clicks through to an expand button (pointer-events: none), so it opts back in. */
+.wrap {
+  display: inline-flex;
+  flex: 0 0 auto;
+  pointer-events: auto;
+}
+
+.icon {
+  color: var(--text-secondary);
+}
+
+.labeled {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  white-space: nowrap;
+}
+
+.done {
+  border-color: var(--accent-gold);
+  color: var(--accent-gold);
+}

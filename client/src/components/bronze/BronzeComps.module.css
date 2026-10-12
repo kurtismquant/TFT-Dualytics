@@ -233,17 +233,7 @@
 }
 
 .copyCell {
-  display: flex;
-  justify-content: flex-end;
-}
-
-.copyButton {
-  color: var(--text-secondary);
-}
-
-.copyDone {
-  border-color: var(--accent-gold);
-  color: var(--accent-gold);
+  justify-self: end;
 }
 
 .loadMore {

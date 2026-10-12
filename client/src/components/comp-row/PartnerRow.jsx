@@ -3,9 +3,11 @@ import { TraitChips, UnitsGrid } from './BoardPieces.jsx'
 import CompStatBlock from './CompStatBlock.jsx'
 import { resolveUnits } from './resolveUnits.js'
 import { generateCompName } from '../../utils/compName.js'
+import { teamCodeForResolvedUnits } from '../../utils/teamPlannerCode.js'
+import CopyTeamCodeButton from '../shared/CopyTeamCodeButton.jsx'
 import styles from '../CompRow.module.css'
 
-export default function PartnerRow({ partner, champions, items, traits, parentGames, uniqueTraitIds, getUnitHref }) {
+export default function PartnerRow({ partner, champions, items, traits, parentGames, uniqueTraitIds, getUnitHref, showTeamCode = true }) {
   const resolvedUnits = useMemo(
     () => resolveUnits(partner.units, champions, items),
     [partner.units, champions, items]
@@ -21,6 +23,7 @@ export default function PartnerRow({ partner, champions, items, traits, parentGa
     <div className={styles.partnerRow} role="listitem">
       <div className={styles.partnerMeta}>
         <span className={styles.compName} title={name}>{name}</span>
+        {showTeamCode && <CopyTeamCodeButton code={teamCodeForResolvedUnits(resolvedUnits)} className={styles.copyEnd} />}
       </div>
       <div className={styles.partnerBody}>
         <div className={styles.partnerBoard}>

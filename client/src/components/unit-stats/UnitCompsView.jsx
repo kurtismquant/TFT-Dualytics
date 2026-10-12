@@ -46,6 +46,7 @@ export default function UnitCompsView({ unitId, patch, champions, items, traits 
                 matchCount={matchCount}
                 uniqueTraitIds={uniqueTraitIds}
                 getUnitHref={getUnitHref}
+                showTeamCode={false}
               />
             ))}
           </div>

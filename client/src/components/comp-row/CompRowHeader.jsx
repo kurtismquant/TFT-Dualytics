@@ -1,7 +1,9 @@
 import { TraitChips } from './BoardPieces.jsx'
+import CopyTeamCodeButton from '../shared/CopyTeamCodeButton.jsx'
 import styles from '../CompRow.module.css'
 
-export default function CompRowHeader({ name, comp, traits, champions, excludeTraitIds }) {
+// `teamCode` (a Team Planner code) adds a copy button at the far right; omit to hide it.
+export default function CompRowHeader({ name, comp, traits, champions, excludeTraitIds, teamCode }) {
   return (
     <div className={styles.headerBar}>
       <span className={styles.compName} title={name}>{name}</span>
@@ -14,6 +16,7 @@ export default function CompRowHeader({ name, comp, traits, champions, excludeTr
             excludeTraitIds={excludeTraitIds}
           />
         </div>
+        {teamCode !== undefined && <CopyTeamCodeButton code={teamCode} />}
       </div>
     </div>
   )

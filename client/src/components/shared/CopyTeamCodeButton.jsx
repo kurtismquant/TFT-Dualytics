@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import Button from '../ui/Button.jsx'
-import styles from './BronzeComps.module.css'
+import styles from './CopyTeamCodeButton.module.css'
 
 const FEEDBACK_MS = 1800
 
@@ -43,16 +43,20 @@ async function copyText(text) {
   if (!ok) throw new Error('copy failed')
 }
 
-// Icon button copying the comp's in-game Team Planner code; the icon turns
-// into a check (or a cross) briefly after a click. Disabled when a unit has no
-// planner code (e.g. asset data cached before codes were served).
-export default function CopyCodeButton({ code }) {
+// Copies a board's in-game Team Planner code (utils/teamPlannerCode.js). An
+// icon by default; `labeled` adds text (the Team Builder toolbar). The icon
+// turns into a check (or a cross) briefly after a click. Disabled when there's
+// no code (no unit with a planner code, e.g. assets cached before codes were
+// served). Clicks don't reach row/card expand handlers. `className` is for the
+// wrapper's placement in the parent layout.
+export default function CopyTeamCodeButton({ code, labeled = false, className = '' }) {
   const { t } = useTranslation()
   const [status, setStatus] = useState('idle') // idle | copied | failed
   const timerRef = useRef(null)
   useEffect(() => () => clearTimeout(timerRef.current), [])
 
-  const handleCopy = async () => {
+  const handleCopy = async event => {
+    event.stopPropagation()
     try {
       await copyText(code)
       setStatus('copied')
@@ -63,20 +67,22 @@ export default function CopyCodeButton({ code }) {
     timerRef.current = setTimeout(() => setStatus('idle'), FEEDBACK_MS)
   }
 
+  const text = status === 'copied' ? t('teamCode.copied') : status === 'failed' ? t('teamCode.copyFailed') : t('teamCode.copy')
   return (
-    <div className={styles.copyCell}>
+    <div className={`${styles.wrap} ${className}`}>
       <Button
-        variant="icon"
-        className={`${styles.copyButton} ${status === 'copied' ? styles.copyDone : ''}`}
+        variant={labeled ? 'ghost' : 'icon'}
+        className={`${labeled ? styles.labeled : styles.icon} ${status === 'copied' ? styles.done : ''}`}
         onClick={handleCopy}
         disabled={!code}
-        title={code ? t('bronze.copyTitle', { code }) : t('bronze.copyUnavailable')}
-        aria-label={code ? t('bronze.copyLabel') : t('bronze.copyUnavailable')}
+        title={code ? t('teamCode.title', { code }) : t('teamCode.unavailable')}
+        aria-label={code ? t('teamCode.label') : t('teamCode.unavailable')}
       >
         <StatusIcon status={status} />
+        {labeled && <span aria-hidden="true">{text}</span>}
       </Button>
       <span className="sr-only" role="status" aria-live="polite">
-        {status === 'copied' ? t('bronze.copiedStatus') : status === 'failed' ? t('bronze.copyFailed') : ''}
+        {status === 'copied' ? t('teamCode.copiedStatus') : status === 'failed' ? t('teamCode.copyFailed') : ''}
       </span>
     </div>
   )

@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import ItemIcon from '../ItemIcon.jsx'
-import CopyCodeButton from './CopyCodeButton.jsx'
+import CopyTeamCodeButton from '../shared/CopyTeamCodeButton.jsx'
 import { HoverableTraitChip, HoverableUnit } from '../shared/HoverableBoardPieces.jsx'
 import { buildUnitPath } from '../../constants/routes.js'
 import { CURRENT_SET } from '../../constants/game.js'
@@ -93,7 +93,7 @@ export default function BronzeCompRow({ comp, traitByName, traits, champions, ch
           </span>
         )}
       </div>
-      <CopyCodeButton code={teamCode} />
+      <CopyTeamCodeButton code={teamCode} className={styles.copyCell} />
     </li>
   )
 }

@@ -279,6 +279,11 @@
   padding: 0.625rem 0.75rem;
 }
 
+/* Pushes a board's copy-team-code button to the far right of its row. */
+.copyEnd {
+  margin-left: auto;
+}
+
 .splitNameRow {
   display: flex;
   align-items: center;

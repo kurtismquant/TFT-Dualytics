@@ -16,6 +16,9 @@ import { PageShell } from '../components/layout/PageShell.jsx'
 import { useIsMobile } from '../hooks/useMediaQuery.js'
 import { buildUnitPath } from '../constants/routes.js'
 import { toBuilderRoster } from '../utils/builderRoster.js'
+import { makeMap } from '../utils/statsFormatting.js'
+import { encodeTeamPlannerCode } from '../utils/teamPlannerCode.js'
+import CopyTeamCodeButton from '../components/shared/CopyTeamCodeButton.jsx'
 import styles from './CompBuilderPage.module.css'
 
 const BOARD_UNIT_SIZE = 90
@@ -44,6 +47,14 @@ export default function CompBuilderPage() {
     clearBoard,
     setIsDragging,
   } = useBoardStore()
+
+  // In-game Team Planner code for the units on the board (null when empty).
+  const rosterById = useMemo(() => makeMap(champions), [champions])
+  const allChampionsById = useMemo(() => makeMap(allChampions), [allChampions])
+  const teamCode = useMemo(() => encodeTeamPlannerCode(
+    Object.values(board).filter(cell => cell?.championId).map(cell => rosterById.get(cell.championId)).filter(Boolean),
+    allChampionsById,
+  ), [board, rosterById, allChampionsById])
 
   const [draggedUnit, setDraggedUnit] = useState(null)
   const [draggedItem, setDraggedItem] = useState(null)
@@ -216,6 +227,8 @@ export default function CompBuilderPage() {
     <PageShell wide>
       <div className={styles.toolbar}>
         <h1 className={styles.title}>{t('builder.title')}</h1>
+        {/* Shown on every screen size: the mobile board corner only has room for Clear. */}
+        <CopyTeamCodeButton code={teamCode} labeled />
         {/* Desktop position; on mobile this is hidden and re-shown below the traits. */}
         <button className={styles.clearBtn} onClick={clearBoard}>{t('builder.clearBoard')}</button>
       </div>

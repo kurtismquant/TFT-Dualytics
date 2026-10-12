@@ -564,13 +564,17 @@
     "truncated": "La búsqueda se detuvo antes de tiempo; estas son las mejores comps encontradas.",
     "searching": "Buscando comps...",
     "loadMore": "Mostrar más comps",
-    "copyFailed": "Error al copiar",
-    "copyLabel": "Copiar código del planificador de equipo",
-    "copyTitle": "Copiar código del planificador de equipo: {{code}}",
-    "copyUnavailable": "Código del planificador no disponible",
-    "copiedStatus": "Código copiado. Pégalo en el planificador de equipo del juego.",
     "groupHeading_one": "{{count}} rasgo",
     "groupHeading_other": "{{count}} rasgos",
     "nearTitle": "A una unidad o emblema de contar (tienes/necesitas)"
+  },
+  "teamCode": {
+    "copy": "Copiar código",
+    "copied": "Copiado",
+    "copyFailed": "Error al copiar",
+    "label": "Copiar código del planificador de equipo",
+    "title": "Copiar código del planificador de equipo: {{code}}",
+    "unavailable": "Código del planificador no disponible",
+    "copiedStatus": "Código copiado. Pégalo en el planificador de equipo del juego."
   }
 }

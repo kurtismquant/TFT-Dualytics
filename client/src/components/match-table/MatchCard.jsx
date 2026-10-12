@@ -3,6 +3,8 @@ import { useTranslation } from 'react-i18next'
 import { DamageIcon, TraitChips, UnitsGrid } from './BoardDisplay.jsx'
 import ExpandedScoreboard from './ExpandedScoreboard.jsx'
 import ExpandableCardHeader from './ExpandableCardHeader.jsx'
+import CopyTeamCodeButton from '../shared/CopyTeamCodeButton.jsx'
+import { teamCodeForResolvedUnits } from '../../utils/teamPlannerCode.js'
 import PlacementBadge from '../ui/PlacementBadge.jsx'
 import { useIsMobile } from '../../hooks/useMediaQuery.js'
 import {
@@ -82,6 +84,7 @@ export default function MatchCard({ match, champions, items, traits, excludeTrai
                 {match.lastRound != null && (
                   <span className={styles.round} title="Last round">{formatRound(match.lastRound)}</span>
                 )}
+                <CopyTeamCodeButton code={teamCodeForResolvedUnits(resolvedUnits)} className={styles.copyEnd} />
               </div>
               <div className={styles.splitTraits}>
                 <TraitChips traitData={match.traits} traits={traits} filterOne excludeTraitIds={excludeTraitIds} allChampions={champions} />
@@ -110,6 +113,7 @@ export default function MatchCard({ match, champions, items, traits, excludeTrai
                 {match.partnerLastRound != null && (
                   <span className={styles.round} title="Last round">{formatRound(match.partnerLastRound)}</span>
                 )}
+                <CopyTeamCodeButton code={teamCodeForResolvedUnits(resolvedPartnerUnits)} className={styles.copyEnd} />
               </div>
               <div className={styles.splitTraits}>
                 <TraitChips traitData={match.partnerTraits} traits={traits} filterOne excludeTraitIds={excludeTraitIds} allChampions={champions} />
@@ -151,6 +155,7 @@ export default function MatchCard({ match, champions, items, traits, excludeTrai
             <div className={styles.traitRow}>
               <TraitChips traitData={resolvedTraits} traits={traits} filterOne={false} excludeTraitIds={excludeTraitIds} allChampions={champions} />
             </div>
+            <CopyTeamCodeButton code={teamCodeForResolvedUnits(resolvedUnits)} />
           </div>
         </div>
 

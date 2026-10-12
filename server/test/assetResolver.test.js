@@ -5,6 +5,7 @@ import {
   buildAbility,
   isAbilityResolved,
   isCurrentSetId,
+  fillFormPlannerCodes,
   normalizeOverrideToken,
   plannerCodesFor,
   selectSetEntry,
@@ -223,5 +224,18 @@ describe('plannerCodesFor', () => {
   it('is empty when the file or the set is missing', () => {
     assert.equal(plannerCodesFor(null, 18).size, 0)
     assert.equal(plannerCodesFor(data, 19).size, 0)
+  })
+})
+
+describe('fillFormPlannerCodes', () => {
+  it("gives trait forms their base unit's code and leaves others alone", () => {
+    const champions = [
+      { name: 'Lux', plannerCode: 1029 },
+      { name: 'Lux (Coven)', plannerCode: null },
+      { name: 'Gromp', plannerCode: 1026 },
+      { name: 'Mystery (Form)', plannerCode: null },
+    ]
+    fillFormPlannerCodes(champions)
+    assert.deepEqual(champions.map(c => c.plannerCode), [1029, 1029, 1026, null])
   })
 })

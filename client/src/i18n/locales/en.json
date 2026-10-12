@@ -564,13 +564,17 @@
     "truncated": "The search stopped early; these are the best comps found so far.",
     "searching": "Finding comps...",
     "loadMore": "Show more comps",
-    "copyFailed": "Copy failed",
-    "copyLabel": "Copy team planner code",
-    "copyTitle": "Copy team planner code: {{code}}",
-    "copyUnavailable": "Team planner code unavailable",
-    "copiedStatus": "Team code copied. Paste it into the in-game Team Planner.",
     "groupHeading_one": "{{count}} Trait",
     "groupHeading_other": "{{count}} Traits",
     "nearTitle": "One unit or emblem away from counting (have/need)"
+  },
+  "teamCode": {
+    "copy": "Copy team code",
+    "copied": "Copied",
+    "copyFailed": "Copy failed",
+    "label": "Copy team planner code",
+    "title": "Copy team planner code: {{code}}",
+    "unavailable": "Team planner code unavailable",
+    "copiedStatus": "Team code copied. Paste it into the in-game Team Planner."
   }
 }

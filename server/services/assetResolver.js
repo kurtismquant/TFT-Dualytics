@@ -79,6 +79,18 @@ const CDRAGON_BASE = 'https://raw.communitydragon.org/latest/game/'
 // "TFTSet<n>"; trait forms (Lux (Coven)) aren't listed, only their base.
 const CDRAGON_TEAM_PLANNER_URL = 'https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/tftchampions-teamplanner.json'
 
+// Trait forms ("Lux (Coven)") aren't in the planner list: the planner plans
+// the base unit, so a form without a code takes its base's (matched by name).
+export const fillFormPlannerCodes = (champions) => {
+  const codeByName = new Map(champions.filter(c => c.plannerCode != null).map(c => [c.name, c.plannerCode]))
+  for (const champion of champions) {
+    if (champion.plannerCode != null) continue
+    const base = /^(.+?)\s*\(.+\)$/.exec(champion.name || '')?.[1]
+    if (base && codeByName.has(base)) champion.plannerCode = codeByName.get(base)
+  }
+  return champions
+}
+
 // character_id -> team_planner_code for the current set; empty when absent.
 export const plannerCodesFor = (teamPlannerData, setNumber = CURRENT_SET) => new Map(
   (teamPlannerData?.[`TFTSet${setNumber}`] || [])
@@ -377,6 +389,7 @@ export const fetchAndCacheAssets = async () => {
       })
     }
   }
+  fillFormPlannerCodes([...championMap.values()])
   console.log(`Loaded ${championMap.size} champions for set ${CURRENT_SET} (${plannerCodes.size} with Team Planner codes)`)
 
   // Step 4: Build item map — DD for icons, CDragon for categorization.

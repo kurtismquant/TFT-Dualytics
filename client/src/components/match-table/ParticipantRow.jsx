@@ -2,6 +2,8 @@ import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { DamageIcon, TraitChips, UnitsGrid } from './BoardDisplay.jsx'
 import PlacementBadge from '../ui/PlacementBadge.jsx'
+import CopyTeamCodeButton from '../shared/CopyTeamCodeButton.jsx'
+import { teamCodeForResolvedUnits } from '../../utils/teamPlannerCode.js'
 import {
   calcBoardCost,
   formatRankDetail,
@@ -74,6 +76,7 @@ export default function ParticipantRow({ participant, champions, items, traits, 
         {boardCost > 0 && (
           <span className={styles.boardCost} title="Total board cost">{boardCost}g</span>
         )}
+        <CopyTeamCodeButton code={teamCodeForResolvedUnits(resolvedUnits)} className={styles.copyEnd} />
       </div>
       <div className={styles.participantBoard}>
         <div className={styles.participantTraits}>

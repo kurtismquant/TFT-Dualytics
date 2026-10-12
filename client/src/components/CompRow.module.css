@@ -224,6 +224,11 @@
   border-bottom: none;
 }
 
+/* Pushes a row's copy-team-code button to the far right. */
+.copyEnd {
+  margin-left: auto;
+}
+
 .partnerMeta {
   display: flex;
   align-items: center;
