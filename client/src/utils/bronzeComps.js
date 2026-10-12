@@ -430,3 +430,15 @@ export function recommendUnits(comps, { top = 20, count = 3 } = {}) {
   const last = rows[count - 1]
   return rows.filter((row, i) => i < count || (row.appearances === last.appearances && cost(row) === cost(last)))
 }
+
+// Comps sorted by trait count -> consecutive runs [{ traitCount, comps }], one
+// heading each on the page.
+export function groupByTraitCount(comps) {
+  const groups = []
+  for (const comp of comps) {
+    const last = groups[groups.length - 1]
+    if (last && last.traitCount === comp.traitCount) last.comps.push(comp)
+    else groups.push({ traitCount: comp.traitCount, comps: [comp] })
+  }
+  return groups
+}

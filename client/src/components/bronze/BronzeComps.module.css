@@ -75,12 +75,15 @@
 }
 
 /* ── Results ─────────────────────────────────────────── */
-/* Results beside the sticky recommended-units widget. */
+/* Results and the recommended-units widget. By default the widget is a strip
+   above the list; on windows wide enough (data-widget="outside", decided in
+   BronzeComps.jsx) it sits outside the page's content box, in the left
+   margin, and stays in view while the list scrolls. */
 .resultsLayout {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 10rem;
+  grid-template-columns: minmax(0, 1fr);
   align-items: start;
-  gap: 1.25rem;
+  gap: 1rem;
   margin-top: 1.25rem;
 }
 
@@ -89,11 +92,37 @@
 }
 
 .recommended {
-  position: sticky;
-  top: 1rem;
+  order: -1; /* the strip goes above the list */
   padding: 0.75rem;
   border: 1px solid var(--bg-border-muted);
   background: var(--bg-card);
+}
+
+/* A zero-width first column holds the widget; a negative margin of its own
+   width plus the gap pulls it into the margin beside the content box. */
+.resultsLayout[data-widget='outside'] {
+  grid-template-columns: 0 minmax(0, 1fr);
+  column-gap: 0;
+}
+
+.resultsLayout[data-widget='outside'] .resultsMain {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.resultsLayout[data-widget='outside'] .recommendedList {
+  flex-direction: column;
+  flex-wrap: nowrap;
+  gap: 0.5rem;
+}
+
+.resultsLayout[data-widget='outside'] .recommended {
+  position: sticky;
+  top: 1rem;
+  grid-column: 1;
+  grid-row: 1;
+  width: 9.5rem;
+  margin-left: -10.75rem;
 }
 
 .recommendedHeading {
@@ -115,10 +144,11 @@
   line-height: 1.35;
 }
 
+/* A wrapping row in the strip; a column in the side widget. */
 .recommendedList {
   display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.25rem;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -217,7 +247,7 @@
 .row {
   position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 17rem) auto;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 19rem) auto;
   align-items: center;
   gap: 0.5rem 1rem;
   padding: 0.5rem 0.75rem 0.5rem 1.25rem;
@@ -347,22 +377,6 @@
 }
 
 @media (--bp-lg) {
-  /* The widget moves above the list as a non-sticky strip. */
-  .resultsLayout {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .recommended {
-    position: static;
-    order: -1;
-  }
-
-  .recommendedList {
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 0.5rem 1.25rem;
-  }
-
   /* Units and the copy icon share the first line; traits go under them. */
   .row {
     grid-template-columns: minmax(0, 1fr) auto;

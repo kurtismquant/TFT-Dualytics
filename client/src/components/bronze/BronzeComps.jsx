@@ -11,8 +11,12 @@ import { usePlayedBoards } from '../../hooks/usePlayedBoards.js'
 import { useChampions } from '../../hooks/useChampions.js'
 import { useItems } from '../../hooks/useItems.js'
 import { useTraits } from '../../hooks/useTraits.js'
+import { useMediaQuery } from '../../hooks/useMediaQuery.js'
+import { useUiScale } from '../../contexts/useUiScale.js'
 import { toBuilderRoster } from '../../utils/builderRoster.js'
-import { buildEmblemOptions, HIGHLY_PLAYED_MIN_BOARDS, LEGENDARY_COST, recommendUnits, TRAIT_CHOICE_UNIT_IDS, traitRanges } from '../../utils/bronzeComps.js'
+import {
+  buildEmblemOptions, groupByTraitCount, HIGHLY_PLAYED_MIN_BOARDS, LEGENDARY_COST, recommendUnits, TRAIT_CHOICE_UNIT_IDS, traitRanges,
+} from '../../utils/bronzeComps.js'
 import { makeMap } from '../../utils/statsFormatting.js'
 import statsStyles from '../../pages/StatsPage.module.css'
 import styles from './BronzeComps.module.css'
@@ -23,17 +27,12 @@ const MAX_RESULTS = 100
 const PAGE_SIZE = 20
 // The recommended-units widget counts units across this many top comps.
 const RECOMMEND_POOL = 20
-// Comps arrive sorted by trait count; consecutive runs share one heading.
-function groupByTraitCount(comps) {
-  const groups = []
-  for (const comp of comps) {
-    const last = groups[groups.length - 1]
-    if (last && last.traitCount === comp.traitCount) last.comps.push(comp)
-    else groups.push({ traitCount: comp.traitCount, comps: [comp] })
-  }
-  return groups
-}
-
+// Window width (rem) from which the widget fits in the left margin outside
+// the content box: the 77.5rem box plus two margins each holding the 9.5rem
+// widget, its 1.25rem gap and 0.75rem of room, less the 2rem page gutter,
+// plus ~1rem for a scrollbar. Media queries ignore the root font-size, so
+// it's converted with the Interface Size factor (16px per rem at Compact).
+const SIDE_WIDGET_MIN_REM = 97.5
 const DEFAULT_FILTERS = {
   size: 8, includeSilverGold: false, excludeLegendary: false, excludeKhaZix: false, requiredIds: [], emblemIds: [],
 }
@@ -96,6 +95,8 @@ export default function BronzeComps() {
   )
   const { result, error: searchError, isSearching } = useBronzeSearch(search)
   const championsById = useMemo(() => makeMap(champions), [champions])
+  const uiScale = useUiScale()
+  const widgetOutside = useMediaQuery(`(min-width: ${Math.round(SIDE_WIDGET_MIN_REM * 16 * uiScale)}px)`)
 
   // Pages shown, reset whenever a new result arrives.
   const [paging, setPaging] = useState({ result: null, shown: PAGE_SIZE })
@@ -148,7 +149,7 @@ export default function BronzeComps() {
       )}
       {result?.truncated && <p className={statsStyles.message} role="status">{t('bronze.truncated')}</p>}
       {total > 0 && (
-        <div className={styles.resultsLayout}>
+        <div className={styles.resultsLayout} data-widget={widgetOutside ? 'outside' : 'inline'}>
           <div className={styles.resultsMain}>
             <div
               className={`${styles.list} ${isSearching ? styles.updating : ''}`}
