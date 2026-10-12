@@ -550,11 +550,8 @@
     "emblemMax": "Puedes añadir hasta {{count}} emblemas.",
     "emblemNoMatch": "Ningún emblema coincide con \"{{query}}\".",
     "clear": "Limpiar",
-    "traitsLabel_one": "Rasgo",
-    "traitsLabel_other": "Rasgos",
     "unitsLabel": "Unidades",
     "emblemsUsed": "Emblemas usados",
-    "nearLabel": "A 1 de activar",
     "evolutions": "Evoluciones: {{traits}}",
     "bonusEvolution": "4.ª evolución: {{traits}}",
     "swapIn": "Intercambiable con: {{units}}",
@@ -567,12 +564,13 @@
     "truncated": "La búsqueda se detuvo antes de tiempo; estas son las mejores comps encontradas.",
     "searching": "Buscando comps...",
     "loadMore": "Mostrar más comps",
-    "copy": "Copiar",
-    "copied": "Copiado",
     "copyFailed": "Error al copiar",
     "copyLabel": "Copiar código del planificador de equipo",
     "copyTitle": "Copiar código del planificador de equipo: {{code}}",
     "copyUnavailable": "Código del planificador no disponible",
-    "copiedStatus": "Código copiado. Pégalo en el planificador de equipo del juego."
+    "copiedStatus": "Código copiado. Pégalo en el planificador de equipo del juego.",
+    "groupHeading_one": "{{count}} rasgo",
+    "groupHeading_other": "{{count}} rasgos",
+    "nearTitle": "A una unidad o emblema de contar (tienes/necesitas)"
   }
 }

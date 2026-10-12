@@ -550,11 +550,8 @@
     "emblemMax": "You can add up to {{count}} emblems.",
     "emblemNoMatch": "No emblem matches \"{{query}}\".",
     "clear": "Clear",
-    "traitsLabel_one": "Trait",
-    "traitsLabel_other": "Traits",
     "unitsLabel": "Units",
     "emblemsUsed": "Emblems used",
-    "nearLabel": "1 away",
     "evolutions": "Evolutions: {{traits}}",
     "bonusEvolution": "4th evolution: {{traits}}",
     "swapIn": "Can swap with: {{units}}",
@@ -567,12 +564,13 @@
     "truncated": "The search stopped early; these are the best comps found so far.",
     "searching": "Finding comps...",
     "loadMore": "Show more comps",
-    "copy": "Copy",
-    "copied": "Copied",
     "copyFailed": "Copy failed",
     "copyLabel": "Copy team planner code",
     "copyTitle": "Copy team planner code: {{code}}",
     "copyUnavailable": "Team planner code unavailable",
-    "copiedStatus": "Team code copied. Paste it into the in-game Team Planner."
+    "copiedStatus": "Team code copied. Paste it into the in-game Team Planner.",
+    "groupHeading_one": "{{count}} Trait",
+    "groupHeading_other": "{{count}} Traits",
+    "nearTitle": "One unit or emblem away from counting (have/need)"
   }
 }

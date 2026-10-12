@@ -19,6 +19,17 @@ import styles from './BronzeComps.module.css'
 // each time the user scrolls to its end.
 const MAX_RESULTS = 100
 const PAGE_SIZE = 20
+// Comps arrive sorted by trait count; consecutive runs share one heading.
+function groupByTraitCount(comps) {
+  const groups = []
+  for (const comp of comps) {
+    const last = groups[groups.length - 1]
+    if (last && last.traitCount === comp.traitCount) last.comps.push(comp)
+    else groups.push({ traitCount: comp.traitCount, comps: [comp] })
+  }
+  return groups
+}
+
 const DEFAULT_FILTERS = {
   size: 8, includeSilverGold: false, excludeLegendary: false, excludeKhaZix: false, requiredIds: [], emblemIds: [],
 }
@@ -86,6 +97,7 @@ export default function BronzeComps() {
   const [paging, setPaging] = useState({ result: null, shown: PAGE_SIZE })
   const shown = paging.result === result ? paging.shown : PAGE_SIZE
   const total = result?.comps.length || 0
+  const groups = useMemo(() => groupByTraitCount(result?.comps.slice(0, shown) || []), [result, shown])
   const showMore = useCallback(() => setPaging(current => {
     const base = current.result === result ? current.shown : PAGE_SIZE
     return base >= total ? current : { result, shown: Math.min(base + PAGE_SIZE, total) }
@@ -114,24 +126,31 @@ export default function BronzeComps() {
       {result?.truncated && <p className={statsStyles.message} role="status">{t('bronze.truncated')}</p>}
       {total > 0 && (
         <>
-          <ol
+          <div
             className={`${styles.list} ${isSearching ? styles.updating : ''}`}
             aria-busy={isSearching}
             aria-label={t('bronze.resultsLabel', { count: filters.size })}
+            role="region"
           >
-            {result.comps.slice(0, shown).map((comp, index) => (
-              <BronzeCompRow
-                key={comp.key}
-                comp={comp}
-                rank={index + 1}
-                traitByName={traitByName}
-                traits={traits}
-                champions={champions}
-                championsById={championsById}
-                emblemByTrait={emblemByTrait}
-              />
+            {groups.map(group => (
+              <section key={group.traitCount} className={styles.group}>
+                <h3 className={styles.groupHeading}>{t('bronze.groupHeading', { count: group.traitCount })}</h3>
+                <ol className={styles.groupList}>
+                  {group.comps.map(comp => (
+                    <BronzeCompRow
+                      key={comp.key}
+                      comp={comp}
+                      traitByName={traitByName}
+                      traits={traits}
+                      champions={champions}
+                      championsById={championsById}
+                      emblemByTrait={emblemByTrait}
+                    />
+                  ))}
+                </ol>
+              </section>
             ))}
-          </ol>
+          </div>
           {shown < total && <LoadMore onMore={showMore} shown={shown} />}
         </>
       )}

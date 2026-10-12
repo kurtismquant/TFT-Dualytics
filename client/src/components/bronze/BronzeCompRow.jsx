@@ -22,49 +22,25 @@ function ChosenTraits({ chosen, traitByName, bonus }) {
   )
 }
 
-// Traits one unit or emblem away from counting, shown as "have/need".
-function NearTraits({ near, traitByName, traits, champions }) {
-  const { t } = useTranslation()
-  if (near.length === 0) return <div className={styles.near} />
-  return (
-    <div className={styles.near}>
-      <span className={styles.nearLabel}>{t('bronze.nearLabel')}</span>
-      <div className={styles.nearChips}>
-        {near.map(({ name, count, needed }) => {
-          const meta = traitByName.get(name)
-          if (!meta) return null
-          return (
-            <HoverableTraitChip
-              key={name}
-              trait={{ id: meta.id, numUnits: count }}
-              traits={traits}
-              allChampions={champions}
-              countLabel={`${count}/${needed}`}
-            />
-          )
-        })}
-      </div>
-    </div>
-  )
-}
-
-// One result: counted-trait total, the units (priciest of each interchangeable
-// group, swap-ins noted), the emblems in use, the counted traits and any other
-// active traits, the traits one short of counting, and at the far right a
-// button copying the comp's in-game Team Planner code.
-export default function BronzeCompRow({ comp, rank, traitByName, traits, champions, championsById, emblemByTrait }) {
+// One result, kept to a single line of units where the width allows: the units
+// (priciest of each interchangeable group, swap-ins noted) and the emblems in
+// use; the traits (counted, other active ones dimmed, ones a unit or emblem
+// short in grey as have/need); then a button copying the Team Planner code.
+// The trait count is the heading of the group the row sits in.
+export default function BronzeCompRow({ comp, traitByName, traits, champions, championsById, emblemByTrait }) {
   const { t } = useTranslation()
   const teamCode = encodeTeamPlannerCode(comp.units.map(unit => unit.champion), championsById, CURRENT_SET)
-  const chip = (name, count) => {
+  // style null + countLabel: an inactive (colorless) chip, used for near traits.
+  const chip = (name, count, { style = activeTraitStyle(traitByName.get(name), count), countLabel } = {}) => {
     const meta = traitByName.get(name)
-    const style = activeTraitStyle(meta, count)
-    if (!meta || style == null) return null
+    if (!meta || (style == null && !countLabel)) return null
     return (
       <HoverableTraitChip
         key={name}
         trait={{ id: meta.id, numUnits: count, style }}
         traits={traits}
         allChampions={champions}
+        countLabel={countLabel}
       />
     )
   }
@@ -72,13 +48,6 @@ export default function BronzeCompRow({ comp, rank, traitByName, traits, champio
 
   return (
     <li className={styles.row}>
-      <div className={styles.rowHead}>
-        <span className={styles.rank}>#{rank}</span>
-        <span className={styles.score}>
-          <span className={styles.scoreValue}>{comp.traitCount}</span>
-          <span className={styles.scoreLabel}>{t('bronze.traitsLabel', { count: comp.traitCount })}</span>
-        </span>
-      </div>
       <div className={styles.board}>
         <ul className={styles.units} aria-label={t('bronze.unitsLabel')}>
           {comp.units.map(({ champion, alternatives, required }) => {
@@ -104,7 +73,7 @@ export default function BronzeCompRow({ comp, rank, traitByName, traits, champio
           <ul className={styles.emblems} aria-label={t('bronze.emblemsUsed')}>
             {emblems.map((item, index) => (
               <li key={`${item.id}-${index}`} title={item.name}>
-                <ItemIcon item={item} size={30} />
+                <ItemIcon item={item} size={28} />
               </li>
             ))}
           </ul>
@@ -117,8 +86,12 @@ export default function BronzeCompRow({ comp, rank, traitByName, traits, champio
             {comp.otherTraits.map(trait => chip(trait.name, trait.count))}
           </span>
         )}
+        {comp.nearTraits.length > 0 && (
+          <span className={styles.nearTraits} title={t('bronze.nearTitle')}>
+            {comp.nearTraits.map(trait => chip(trait.name, trait.count, { style: null, countLabel: `${trait.count}/${trait.needed}` }))}
+          </span>
+        )}
       </div>
-      <NearTraits near={comp.nearTraits} traitByName={traitByName} traits={traits} champions={champions} />
       <CopyCodeButton code={teamCode} />
     </li>
   )
