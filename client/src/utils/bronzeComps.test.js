@@ -103,6 +103,7 @@ test('finds the comp with the most bronze traits, fields one Lux at most', () =>
     ],
     countedTraits: [{ name: 'Blossom', count: 2 }, { name: 'Flora Fatalis', count: 1 }],
     otherTraits: [{ name: 'Avatar', count: 1 }],
+    nearTraits: [],
     usedEmblemTraits: [],
   })
   for (const comp of comps) {
@@ -122,6 +123,16 @@ test('an emblem adds +1 to its trait; trait ties go to the pricier comp', () => 
   assert.deepEqual(covenPair.countedTraits, [{ name: 'Coven', count: 3 }, { name: 'Ravager', count: 2 }])
   assert.deepEqual(covenPair.usedEmblemTraits, ['Coven'])
   assert.deepEqual(comps[0].usedEmblemTraits, []) // Coven 1 there: emblem unused
+})
+
+test('lists traits one unit or emblem short of counting', () => {
+  const { comps } = findBronzeComps({ roster: [covenRavager1, covenRavager2, flora], ranges, size: 2 })
+  const covenPair = comps.find(c => c.key === 'CovenRavager1|CovenRavager2')
+  assert.deepEqual(covenPair.countedTraits, [{ name: 'Ravager', count: 2 }])
+  assert.deepEqual(covenPair.nearTraits, [{ name: 'Coven', count: 2, needed: 3 }])
+  // Ravager 1 is one short too; traits the comp doesn't have at all are not listed.
+  const withFlora = comps.find(c => c.key === 'CovenRavager2|Flora')
+  assert.deepEqual(withFlora.nearTraits, [{ name: 'Ravager', count: 1, needed: 2 }])
 })
 
 test('interchangeable units collapse: priciest shown, the rest as alternatives', () => {

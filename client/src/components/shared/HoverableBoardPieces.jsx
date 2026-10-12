@@ -59,7 +59,8 @@ export function HoverableItem({ item, allItems, size = 14, href }) {
   )
 }
 
-export function HoverableTraitChip({ trait, traits, allChampions }) {
+// `countLabel` replaces the count shown on the chip (e.g. "2/3").
+export function HoverableTraitChip({ trait, traits, allChampions, countLabel }) {
   const meta = traits?.find(td => td.id === trait.id) || null
   const { triggerProps, cardProps } = useHoverCard({ meta, count: trait.numUnits })
   if (!meta) return null
@@ -73,7 +74,7 @@ export function HoverableTraitChip({ trait, traits, allChampions }) {
         {...triggerProps}
       >
         <img src={meta.iconUrl} alt="" className={chipStyles.traitIcon} loading="lazy" aria-hidden="true" />
-        <span className={chipStyles.traitCount} aria-hidden="true">{trait.numUnits}</span>
+        <span className={chipStyles.traitCount} aria-hidden="true">{countLabel ?? trait.numUnits}</span>
         <span className="sr-only">{chipLabel}</span>
       </span>
       {cardProps.isOpen && createPortal(<TraitCard {...cardProps} allChampions={allChampions} />, document.body)}

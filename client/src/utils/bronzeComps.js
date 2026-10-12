@@ -336,7 +336,13 @@ function describeComp({ traitCount, bonus, picks }, classes, fixed, ranges, embl
   }
   const countedTraits = []
   const otherTraits = []
-  for (const [name, count] of traitCounts) (counted(name) ? countedTraits : otherTraits).push({ name, count })
+  const nearTraits = []
+  for (const [name, count] of traitCounts) {
+    ;(counted(name) ? countedTraits : otherTraits).push({ name, count })
+    // One unit or emblem short of counting: worth playing for an emblem.
+    const range = ranges.get(name)
+    if (range && count === range.lo - 1) nearTraits.push({ name, count, needed: range.lo })
+  }
   const byCount = (a, b) => b.count - a.count || a.name.localeCompare(b.name)
   return {
     key: units.map(({ champion }) => [champion.id, ...(champion.chosenTraits || [])].join('+')).join('|'),
@@ -346,6 +352,7 @@ function describeComp({ traitCount, bonus, picks }, classes, fixed, ranges, embl
     units,
     countedTraits: countedTraits.sort(byCount),
     otherTraits: otherTraits.sort(byCount),
+    nearTraits: nearTraits.sort(byCount),
     // Emblems that put their trait in a counted tier, i.e. the ones in use.
     usedEmblemTraits: emblemTraits.filter(counted),
   }

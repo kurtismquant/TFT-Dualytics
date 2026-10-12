@@ -553,6 +553,7 @@
     "traitsLabel_other": "Rasgos",
     "unitsLabel": "Unidades",
     "emblemsUsed": "Emblemas usados",
+    "nearLabel": "A 1 de activar",
     "evolutions": "Evoluciones: {{traits}}",
     "bonusEvolution": "4.ª evolución: {{traits}}",
     "swapIn": "Intercambiable con: {{units}}",

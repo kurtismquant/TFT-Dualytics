@@ -19,9 +19,35 @@ function ChosenTraits({ chosen, traitByName, bonus }) {
   )
 }
 
+// Traits one unit or emblem away from counting, shown as "have/need".
+function NearTraits({ near, traitByName, traits, champions }) {
+  const { t } = useTranslation()
+  if (near.length === 0) return <div className={styles.near} />
+  return (
+    <div className={styles.near}>
+      <span className={styles.nearLabel}>{t('bronze.nearLabel')}</span>
+      <div className={styles.nearChips}>
+        {near.map(({ name, count, needed }) => {
+          const meta = traitByName.get(name)
+          if (!meta) return null
+          return (
+            <HoverableTraitChip
+              key={name}
+              trait={{ id: meta.id, numUnits: count }}
+              traits={traits}
+              allChampions={champions}
+              countLabel={`${count}/${needed}`}
+            />
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
 // One result: counted-trait total, the units (priciest of each interchangeable
-// group, swap-ins noted), the emblems in use, then the counted traits and any
-// other active traits.
+// group, swap-ins noted), the emblems in use, the counted traits and any other
+// active traits, and at the far right the traits one short of counting.
 export default function BronzeCompRow({ comp, rank, traitByName, traits, champions, emblemByTrait }) {
   const { t } = useTranslation()
   const chip = (name, count) => {
@@ -87,6 +113,7 @@ export default function BronzeCompRow({ comp, rank, traitByName, traits, champio
           </span>
         )}
       </div>
+      <NearTraits near={comp.nearTraits} traitByName={traitByName} traits={traits} champions={champions} />
     </li>
   )
 }

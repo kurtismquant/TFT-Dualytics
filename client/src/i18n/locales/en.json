@@ -553,6 +553,7 @@
     "traitsLabel_other": "Traits",
     "unitsLabel": "Units",
     "emblemsUsed": "Emblems used",
+    "nearLabel": "1 away",
     "evolutions": "Evolutions: {{traits}}",
     "bonusEvolution": "4th evolution: {{traits}}",
     "swapIn": "Can swap with: {{units}}",

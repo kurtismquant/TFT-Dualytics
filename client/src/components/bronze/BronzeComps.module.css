@@ -91,7 +91,7 @@
 
 .row {
   display: grid;
-  grid-template-columns: 7.5rem minmax(0, 1fr) minmax(0, 18rem);
+  grid-template-columns: 7.5rem minmax(0, 1fr) minmax(0, 18rem) minmax(0, 9rem);
   align-items: center;
   gap: 0.75rem 1.25rem;
   padding: 0.75rem 1rem;
@@ -222,6 +222,30 @@
   cursor: help;
 }
 
+/* Far right: traits one short of counting. */
+.near {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding-left: 1rem;
+  border-left: 1px dashed var(--bg-border-muted);
+  align-self: stretch;
+  justify-content: center;
+}
+
+.nearLabel {
+  color: var(--text-muted);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--track-wider);
+  text-transform: uppercase;
+}
+
+.nearChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3125rem;
+}
+
 .traits {
   display: flex;
   flex-wrap: wrap;
@@ -243,8 +267,21 @@
     grid-template-columns: 6.5rem minmax(0, 1fr);
   }
 
-  .traits {
+  .traits,
+  .near {
     grid-column: 1 / -1;
+  }
+
+  .near {
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+    padding-left: 0;
+    border-left: 0;
+  }
+
+  .near:empty {
+    display: none;
   }
 }
 
