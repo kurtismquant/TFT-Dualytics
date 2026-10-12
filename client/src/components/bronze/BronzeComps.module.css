@@ -90,7 +90,7 @@
 /* One heading per trait count, e.g. "13 Traits", above its comps. */
 .groupHeading {
   margin: 0 0 0.5rem;
-  color: var(--tier-bronze);
+  color: var(--text-primary);
   font-family: var(--font-display);
   font-size: var(--text-xl);
   font-weight: var(--fw-bold);
