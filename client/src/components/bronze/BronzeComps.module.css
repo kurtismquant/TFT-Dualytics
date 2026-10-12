@@ -216,14 +216,11 @@
   gap: 0.3125rem;
 }
 
-/* Active traits that aren't counted: shown for context, visually secondary. */
+/* Active traits that aren't counted (unique, or silver/gold in bronze-only
+   mode) show at full strength after the counted ones. */
 .otherTraits,
 .nearTraits {
   display: contents;
-}
-
-.otherTraits > * {
-  opacity: 0.55;
 }
 
 /* One unit or emblem short of counting: colorless, dashed, as have/need. */

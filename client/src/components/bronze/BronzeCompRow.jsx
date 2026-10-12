@@ -25,7 +25,7 @@ function ChosenTraits({ chosen, traitByName, bonus }) {
 
 // One result, kept to a single line of units where the width allows: the units
 // (priciest of each interchangeable group, swap-ins noted) and the emblems in
-// use; the traits (counted, other active ones dimmed, ones a unit or emblem
+// use; the traits (counted, then other active ones, then ones a unit or emblem
 // short in grey as have/need); then a button copying the Team Planner code.
 // The trait count is the heading of the group the row sits in.
 export default function BronzeCompRow({ comp, traitByName, traits, champions, championsById, emblemByTrait }) {
