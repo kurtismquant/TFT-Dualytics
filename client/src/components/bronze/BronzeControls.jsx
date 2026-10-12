@@ -1,11 +1,21 @@
 import { useTranslation } from 'react-i18next'
 import Button from '../ui/Button.jsx'
-import EmblemPicker from './EmblemPicker.jsx'
-import { BOARD_SIZES } from '../../utils/bronzeComps.js'
+import ChipPicker from './ChipPicker.jsx'
+import { BOARD_SIZES, MAX_EMBLEMS } from '../../utils/bronzeComps.js'
 import styles from './BronzeComps.module.css'
 
-// Board size (5-10 units) and the emblems the search may count on.
-export default function BronzeControls({ size, setSize, emblemIds, setEmblemIds, emblemOptions, itemLookup }) {
+function Checkbox({ checked, onChange, children }) {
+  return (
+    <label className={styles.checkbox}>
+      <input type="checkbox" checked={checked} onChange={event => onChange(event.target.checked)} />
+      <span>{children}</span>
+    </label>
+  )
+}
+
+// Board size, counting options, required units and the emblems the search
+// may count on.
+export default function BronzeControls({ filters, setFilter, emblemPicker, unitPicker }) {
   const { t } = useTranslation()
   return (
     <div className={styles.controls}>
@@ -17,26 +27,55 @@ export default function BronzeControls({ size, setSize, emblemIds, setEmblemIds,
               key={option}
               variant="tab"
               className={styles.sizeButton}
-              pressed={size === option}
-              onClick={() => setSize(option)}
+              pressed={filters.size === option}
+              onClick={() => setFilter('size', option)}
               aria-label={t('bronze.sizeOption', { count: option })}
             >
               {option}
             </Button>
           ))}
         </div>
+        <div className={styles.checkboxes}>
+          <Checkbox checked={filters.includeSilverGold} onChange={value => setFilter('includeSilverGold', value)}>
+            {t('bronze.includeSilverGold')}
+          </Checkbox>
+          <Checkbox checked={filters.excludeLegendary} onChange={value => setFilter('excludeLegendary', value)}>
+            {t('bronze.excludeLegendary')}
+          </Checkbox>
+        </div>
+      </div>
+      <div className={styles.controlRow}>
+        <span className={styles.controlLabel}>{t('bronze.unitFilterLabel')}</span>
+        <ChipPicker
+          i18nKey="unit"
+          selectedIds={filters.requiredIds}
+          options={unitPicker.options}
+          renderIcon={unitPicker.renderIcon}
+          nameFor={unitPicker.nameFor}
+          onChange={ids => setFilter('requiredIds', ids)}
+          max={filters.size}
+        />
+        {filters.requiredIds.length > 0 && (
+          <Button variant="ghost" className={styles.clearButton} onClick={() => setFilter('requiredIds', [])}>
+            {t('bronze.clear')}
+          </Button>
+        )}
       </div>
       <div className={styles.controlRow}>
         <span className={styles.controlLabel}>{t('bronze.emblemsLabel')}</span>
-        <EmblemPicker
-          emblemIds={emblemIds}
-          options={emblemOptions}
-          itemLookup={itemLookup}
-          onChange={setEmblemIds}
+        <ChipPicker
+          i18nKey="emblem"
+          selectedIds={filters.emblemIds}
+          options={emblemPicker.options}
+          renderIcon={emblemPicker.renderIcon}
+          nameFor={emblemPicker.nameFor}
+          onChange={ids => setFilter('emblemIds', ids)}
+          max={MAX_EMBLEMS}
+          allowDuplicates
         />
-        {emblemIds.length > 0 && (
-          <Button variant="ghost" className={styles.clearButton} onClick={() => setEmblemIds([])}>
-            {t('bronze.clearEmblems')}
+        {filters.emblemIds.length > 0 && (
+          <Button variant="ghost" className={styles.clearButton} onClick={() => setFilter('emblemIds', [])}>
+            {t('bronze.clear')}
           </Button>
         )}
       </div>

@@ -1,44 +1,43 @@
 import { useId, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import SearchInput from '../ui/SearchInput.jsx'
-import ItemIcon from '../ItemIcon.jsx'
 import { rankItemMatches } from '../../utils/itemComboFilter.js'
-import { MAX_EMBLEMS } from '../../utils/bronzeComps.js'
 import styles from '../unit-stats/ItemFilterInput.module.css'
 
-// Emblem chip picker: focus to see every emblem, type to narrow, click or press
-// Enter to add. The same emblem can be added more than once (each is +1).
-// Backspace on an empty input removes the last chip; ArrowDown enters the list.
-export default function EmblemPicker({ emblemIds, options, itemLookup, onChange }) {
+// Chip picker (emblems, required units): focus to see every option, type to
+// narrow, click or press Enter to add. With `allowDuplicates` an option can be
+// added more than once. Backspace on an empty input removes the last chip;
+// ArrowDown enters the list. `i18nKey` prefixes the copy (bronze.<key>Label…).
+export default function ChipPicker({ selectedIds, options, renderIcon, nameFor, onChange, max, allowDuplicates = false, i18nKey }) {
   const { t } = useTranslation()
+  const copy = (suffix, values) => t(`bronze.${i18nKey}${suffix}`, values)
   const baseId = useId()
   const inputRef = useRef(null)
   const listRef = useRef(null)
   const [text, setText] = useState('')
   const [open, setOpen] = useState(false)
   const [notice, setNotice] = useState('')
-  const full = emblemIds.length >= MAX_EMBLEMS
+  const full = selectedIds.length >= max
   const suggestions = useMemo(() => {
     if (full) return []
-    return text.trim() ? rankItemMatches(text, options, options.length) : options
-  }, [full, text, options])
+    const available = allowDuplicates ? options : options.filter(option => !selectedIds.includes(option.id))
+    return text.trim() ? rankItemMatches(text, available, available.length) : available
+  }, [allowDuplicates, full, options, selectedIds, text])
   const showSuggestions = open && suggestions.length > 0
   const suggestionsId = `${baseId}-suggestions`
   const helpId = `${baseId}-help`
 
-  const nameFor = id => itemLookup.get(id)?.name || id
-
-  const addEmblem = id => {
-    onChange([...emblemIds, id])
+  const add = id => {
+    onChange([...selectedIds, id])
     setText('')
-    setNotice(t('bronze.emblemAdded', { emblem: nameFor(id) }))
+    setNotice(copy('Added', { name: nameFor(id) }))
     inputRef.current?.focus()
   }
 
   const removeAt = index => {
-    const removed = emblemIds[index]
-    onChange(emblemIds.filter((_, i) => i !== index))
-    setNotice(t('bronze.emblemRemoved', { emblem: nameFor(removed) }))
+    const removed = selectedIds[index]
+    onChange(selectedIds.filter((_, i) => i !== index))
+    setNotice(copy('Removed', { name: nameFor(removed) }))
     inputRef.current?.focus()
   }
 
@@ -52,14 +51,14 @@ export default function EmblemPicker({ emblemIds, options, itemLookup, onChange 
     if (event.key === 'Enter') {
       event.preventDefault()
       if (full) {
-        setNotice(t('bronze.emblemMax', { count: MAX_EMBLEMS }))
+        setNotice(copy('Max', { count: max }))
         return
       }
       if (!text.trim()) return
-      if (suggestions[0]) addEmblem(suggestions[0].id)
-      else setNotice(t('bronze.emblemNoMatch', { query: text.trim() }))
-    } else if (event.key === 'Backspace' && !text && emblemIds.length > 0) {
-      removeAt(emblemIds.length - 1)
+      if (suggestions[0]) add(suggestions[0].id)
+      else setNotice(copy('NoMatch', { query: text.trim() }))
+    } else if (event.key === 'Backspace' && !text && selectedIds.length > 0) {
+      removeAt(selectedIds.length - 1)
     } else if (event.key === 'ArrowDown' && showSuggestions) {
       event.preventDefault()
       focusSuggestion(0)
@@ -92,20 +91,20 @@ export default function EmblemPicker({ emblemIds, options, itemLookup, onChange 
 
   return (
     <div className={styles.wrap} onBlur={handleBlur}>
-      <p id={helpId} className="sr-only">{t('bronze.emblemHelp', { count: MAX_EMBLEMS })}</p>
+      <p id={helpId} className="sr-only">{copy('Help', { count: max })}</p>
       <p className="sr-only" role="status" aria-live="polite">{notice}</p>
       <div className={styles.field}>
-        {emblemIds.length > 0 && (
-          <ul className={styles.chips} aria-label={t('bronze.activeEmblems')}>
-            {emblemIds.map((id, index) => (
+        {selectedIds.length > 0 && (
+          <ul className={styles.chips} aria-label={copy('Active')}>
+            {selectedIds.map((id, index) => (
               <li key={`${id}-${index}`} className={styles.chip}>
-                <ItemIcon item={itemLookup.get(id)} size={22} />
+                {renderIcon(id, 22)}
                 <span>{nameFor(id)}</span>
                 <button
                   type="button"
                   className={styles.chipRemove}
                   onClick={() => removeAt(index)}
-                  aria-label={t('bronze.removeEmblem', { emblem: nameFor(id) })}
+                  aria-label={copy('Remove', { name: nameFor(id) })}
                 >
                   ✕
                 </button>
@@ -121,8 +120,8 @@ export default function EmblemPicker({ emblemIds, options, itemLookup, onChange 
           onFocus={() => setOpen(true)}
           onClick={() => setOpen(true)}
           onKeyDown={handleKeyDown}
-          placeholder={full ? t('bronze.emblemFullPlaceholder') : t('bronze.emblemPlaceholder')}
-          aria-label={t('bronze.emblemLabel')}
+          placeholder={full ? copy('FullPlaceholder') : copy('Placeholder')}
+          aria-label={copy('Label')}
           aria-describedby={helpId}
           aria-controls={showSuggestions ? suggestionsId : undefined}
           autoComplete="off"
@@ -134,17 +133,17 @@ export default function EmblemPicker({ emblemIds, options, itemLookup, onChange 
           ref={listRef}
           className={styles.dropdown}
           role="group"
-          aria-label={t('bronze.emblemSuggestions')}
+          aria-label={copy('Suggestions')}
         >
           {suggestions.map(option => (
             <button
               key={option.id}
               type="button"
               className={styles.suggestion}
-              onClick={() => addEmblem(option.id)}
+              onClick={() => add(option.id)}
               onKeyDown={handleListKeyDown}
             >
-              <ItemIcon item={itemLookup.get(option.id)} size={26} />
+              {renderIcon(option.id, 26)}
               <span>{option.name}</span>
             </button>
           ))}

@@ -3,15 +3,6 @@
   font-family: var(--font-body);
 }
 
-.intro {
-  max-width: 48rem;
-  margin: 0 0 1rem;
-  color: var(--text-secondary);
-  font-size: var(--text-xs);
-  letter-spacing: var(--track-base);
-  line-height: var(--leading-normal);
-}
-
 /* ── Controls ────────────────────────────────────────── */
 .controls {
   display: flex;
@@ -52,14 +43,50 @@
   flex: 0 0 auto;
 }
 
+.checkboxes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.25rem;
+  margin-left: auto;
+}
+
+.checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 2.75rem;
+  color: var(--text-secondary);
+  font-size: var(--text-xs);
+  letter-spacing: var(--track-wide);
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.checkbox input {
+  width: 1.125rem;
+  height: 1.125rem;
+  margin: 0;
+  accent-color: var(--accent-gold);
+  cursor: pointer;
+}
+
+.checkbox:hover {
+  color: var(--text-primary);
+}
+
 /* ── Results ─────────────────────────────────────────── */
 .list {
+  transition: opacity var(--t-fast);
   display: flex;
   flex-direction: column;
   margin: 1.25rem 0 0;
   padding: 0;
   list-style: none;
   border: 1px solid var(--bg-border-muted);
+}
+
+.updating {
+  opacity: 0.6;
 }
 
 .row {
@@ -115,12 +142,23 @@
   text-transform: uppercase;
 }
 
-.cost {
-  color: var(--text-muted);
-  font-size: var(--text-2xs);
-  letter-spacing: var(--track-wide);
-  text-transform: uppercase;
-  font-variant-numeric: tabular-nums;
+/* Units, then the emblems the comp uses, on one line. */
+.board {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 0.5rem 1rem;
+  min-width: 0;
+}
+
+.emblems {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  margin: 0;
+  padding: 0 0 0 1rem;
+  border-left: 1px solid var(--bg-border-muted);
+  list-style: none;
 }
 
 .units {
@@ -150,6 +188,22 @@
   text-align: center;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+/* A unit the user asked for. */
+.requiredUnit .unitName {
+  color: var(--accent-gold);
+}
+
+.chosenTraits {
+  display: flex;
+  gap: 1px;
+}
+
+.chosenTraitIcon {
+  width: 0.75rem;
+  height: 0.75rem;
+  object-fit: contain;
 }
 
 /* "+N" marks a unit that other units could replace without changing the result. */
@@ -206,6 +260,10 @@
     gap: 0.75rem;
   }
 
+  .board {
+    flex-direction: column;
+  }
+
   .scoreValue {
     font-size: var(--text-2xl);
   }
@@ -213,6 +271,15 @@
   .controlLabel {
     min-width: 0;
     width: 100%;
+  }
+
+  .checkboxes {
+    margin-left: 0;
+  }
+
+  .emblems {
+    padding-left: 0;
+    border-left: 0;
   }
 
   .sizeButton {

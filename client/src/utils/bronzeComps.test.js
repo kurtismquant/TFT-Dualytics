@@ -5,20 +5,23 @@ import {
   activeTraitStyle,
   bronzeRanges,
   buildEmblemOptions,
+  expandTraitChoices,
   findBronzeComps,
+  traitRanges,
 } from './bronzeComps.js'
 
 // Shapes mirror /api/assets/traits and the builder roster for Set 18.
 const OPEN = 25000
+const tiers = (...list) => list.map(([minUnits, maxUnits, style]) => ({ minUnits, maxUnits, style }))
 const traits = [
-  { name: 'Coven', effects: [{ minUnits: 3, maxUnits: 3, style: 1 }, { minUnits: 4, maxUnits: OPEN, style: 3 }] },
-  { name: 'Ravager', effects: [{ minUnits: 2, maxUnits: 3, style: 1 }, { minUnits: 4, maxUnits: OPEN, style: 3 }] },
-  { name: 'Flora Fatalis', effects: [{ minUnits: 1, maxUnits: 1, style: 1 }, { minUnits: 2, maxUnits: OPEN, style: 5 }] },
-  { name: 'Blossom', effects: [{ minUnits: 2, maxUnits: 3, style: 1 }, { minUnits: 4, maxUnits: OPEN, style: 3 }] },
-  { name: 'Fae', effects: [{ minUnits: 2, maxUnits: 3, style: 1 }, { minUnits: 4, maxUnits: OPEN, style: 5 }] },
+  { name: 'Coven', effects: tiers([3, 3, 1], [4, 5, 3], [6, OPEN, 5]) },
+  { name: 'Ravager', effects: tiers([2, 3, 1], [4, OPEN, 3]) },
+  { name: 'Flora Fatalis', effects: tiers([1, 1, 1], [2, OPEN, 5]) },
+  { name: 'Blossom', effects: tiers([2, 3, 1], [4, 6, 3], [7, OPEN, 6]) },
+  { name: 'Fae', effects: tiers([2, 3, 1], [4, OPEN, 5]) },
   // Unique trait and a trait whose first tier is gold: never bronze.
-  { name: 'Avatar', effects: [{ minUnits: 1, maxUnits: OPEN, style: 4 }] },
-  { name: 'Solar', effects: [{ minUnits: 3, maxUnits: OPEN, style: 5 }] },
+  { name: 'Avatar', effects: tiers([1, OPEN, 4]) },
+  { name: 'Solar', effects: tiers([3, OPEN, 5]) },
 ]
 
 const unit = (id, cost, unitTraits, extra = {}) => ({ id, name: id, cost, traits: unitTraits, ...extra })
@@ -44,24 +47,32 @@ test('bronze ranges cover only traits with a bronze tier', () => {
   ])
 })
 
+test('silver and gold option widens ranges up to gold, never unique or prismatic', () => {
+  assert.deepEqual([...traitRanges(traits, { includeSilverGold: true })], [
+    ['Coven', { lo: 3, hi: OPEN }],
+    ['Ravager', { lo: 2, hi: OPEN }],
+    ['Flora Fatalis', { lo: 1, hi: OPEN }],
+    ['Blossom', { lo: 2, hi: 6 }],
+    ['Fae', { lo: 2, hi: OPEN }],
+    ['Solar', { lo: 3, hi: OPEN }],
+  ])
+})
+
 test('without maxUnits (cached assets) ranges end below the next tier', () => {
   const stripped = traits.map(t => ({ ...t, effects: t.effects.map(e => ({ minUnits: e.minUnits, style: e.style })) }))
   assert.deepEqual([...bronzeRanges(stripped)], [...ranges])
 })
 
-test('overlapping tiers resolve to the narrowest one (Rival)', () => {
-  const rival = { name: 'Rival', effects: [
-    { minUnits: 1, maxUnits: OPEN, style: 5 },
-    { minUnits: 1, maxUnits: 1, style: 1 },
-    { minUnits: 2, maxUnits: OPEN, style: 5 },
-  ] }
-  assert.deepEqual(bronzeRanges([rival]).get('Rival'), { lo: 1, hi: 1 })
-  assert.equal(activeTraitStyle(rival, 1), 1)
+test('Rival is gold at 1 and 2 despite its 1-1 bronze row', () => {
+  const rival = { name: 'Rival', effects: tiers([1, OPEN, 5], [1, 1, 1], [2, OPEN, 5]) }
+  assert.equal(bronzeRanges([rival]).has('Rival'), false)
+  assert.deepEqual(traitRanges([rival], { includeSilverGold: true }).get('Rival'), { lo: 1, hi: OPEN })
+  assert.equal(activeTraitStyle(rival, 1), 5)
   assert.equal(activeTraitStyle(rival, 2), 5)
   assert.equal(activeTraitStyle(rival, 0), null)
 })
 
-test('emblem options: one per name, only bronze-capable traits', () => {
+test('emblem options: one per name, only traits that can count', () => {
   const items = [
     { id: 'DA_18_EmblemCoven', name: 'Coven Emblem', category: 'emblem' },
     { id: 'DA_18_EmblemSlayer', name: 'Ravager Emblem', category: 'emblem' },
@@ -82,14 +93,17 @@ test('finds the comp with the most bronze traits, fields one Lux at most', () =>
   const { comps, truncated } = findBronzeComps({ roster, ranges, size: 2 })
   assert.equal(truncated, false)
   assert.deepEqual(comps[0], {
-    bronzeCount: 2,
+    key: 'Flora|Blossom Lux',
+    traitCount: 2,
+    bonusEvolution: false,
     totalCost: 9,
     units: [
-      { champion: flora, alternatives: [] },
-      { champion: blossomLux, alternatives: [] },
+      { champion: flora, alternatives: [], required: false },
+      { champion: blossomLux, alternatives: [], required: false },
     ],
-    bronzeTraits: [{ name: 'Blossom', count: 2 }, { name: 'Flora Fatalis', count: 1 }],
+    countedTraits: [{ name: 'Blossom', count: 2 }, { name: 'Flora Fatalis', count: 1 }],
     otherTraits: [{ name: 'Avatar', count: 1 }],
+    usedEmblemTraits: [],
   })
   for (const comp of comps) {
     assert.equal(comp.units.length, 2)
@@ -97,39 +111,93 @@ test('finds the comp with the most bronze traits, fields one Lux at most', () =>
   }
 })
 
-test('an emblem adds +1 to its trait; ties go to the cheaper comp', () => {
+test('an emblem adds +1 to its trait; trait ties go to the pricier comp', () => {
   const { comps } = findBronzeComps({ roster, ranges, size: 2, emblemTraits: ['Coven'] })
-  assert.deepEqual(comps[0], {
-    bronzeCount: 2,
-    totalCost: 3,
-    units: [
-      { champion: covenRavager1, alternatives: [] },
-      { champion: covenRavager2, alternatives: [] },
-    ],
-    bronzeTraits: [{ name: 'Coven', count: 3 }, { name: 'Ravager', count: 2 }],
-    otherTraits: [],
-  })
+  assert.deepEqual(comps.slice(0, 3).map(c => [c.key, c.traitCount, c.totalCost]), [
+    ['Flora|Blossom Lux', 2, 9],
+    ['Flora|Fae Lux', 2, 9],
+    ['CovenRavager1|CovenRavager2', 2, 3],
+  ])
+  const covenPair = comps[2]
+  assert.deepEqual(covenPair.countedTraits, [{ name: 'Coven', count: 3 }, { name: 'Ravager', count: 2 }])
+  assert.deepEqual(covenPair.usedEmblemTraits, ['Coven'])
+  assert.deepEqual(comps[0].usedEmblemTraits, []) // Coven 1 there: emblem unused
 })
 
-test('interchangeable units collapse: cheapest shown, the rest as alternatives', () => {
-  const { comps } = findBronzeComps({ roster: [covenRavager2, covenRavager1, solar], ranges, size: 1, emblemTraits: ['Ravager'] })
-  assert.deepEqual(comps[0].units, [{ champion: covenRavager1, alternatives: [covenRavager2] }])
-  assert.deepEqual(comps[0].bronzeTraits, [{ name: 'Ravager', count: 2 }])
+test('interchangeable units collapse: priciest shown, the rest as alternatives', () => {
+  const { comps } = findBronzeComps({ roster: [covenRavager1, covenRavager2, solar], ranges, size: 1, emblemTraits: ['Ravager'] })
+  assert.deepEqual(comps[0].units, [{ champion: covenRavager2, alternatives: [covenRavager1], required: false }])
+  assert.deepEqual(comps[0].countedTraits, [{ name: 'Ravager', count: 2 }])
 })
 
 test('fills spare slots with units that carry no bronze trait', () => {
   const { comps } = findBronzeComps({ roster: [covenRavager1, covenRavager2, solar], ranges, size: 3 })
   assert.equal(comps.length, 1)
   assert.deepEqual(names(comps[0]), ['CovenRavager1', 'Solar', 'CovenRavager2']) // by cost, then name
-  assert.equal(comps[0].bronzeCount, 1)
+  assert.equal(comps[0].traitCount, 1)
 })
 
 test('a trait pushed past its bronze range into silver does not count', () => {
   // Forced to take all four: Ravager hits 4 (silver), Coven stops at 2.
   const ravager2 = unit('Ravager2', 2, ['Ravager'])
-  const { comps } = findBronzeComps({ roster: [covenRavager1, covenRavager2, ravager, ravager2], ranges, size: 4 })
-  assert.equal(comps.length, 1)
-  assert.equal(comps[0].bronzeCount, 0)
-  assert.deepEqual(comps[0].bronzeTraits, [])
+  const four = [covenRavager1, covenRavager2, ravager, ravager2]
+  const { comps } = findBronzeComps({ roster: four, ranges, size: 4 })
+  assert.equal(comps[0].traitCount, 0)
   assert.deepEqual(comps[0].otherTraits, [{ name: 'Ravager', count: 4 }, { name: 'Coven', count: 2 }])
+  // ...unless silver and gold count too.
+  const wide = findBronzeComps({ roster: four, ranges: traitRanges(traits, { includeSilverGold: true }), size: 4 })
+  assert.deepEqual(wide.comps[0].countedTraits, [{ name: 'Ravager', count: 4 }])
+})
+
+test('required units are in every comp; too many for the board gives none', () => {
+  const { comps } = findBronzeComps({ roster, ranges, size: 2, requiredIds: ['Coven3'] })
+  assert.ok(comps.length > 0)
+  for (const comp of comps) {
+    assert.ok(names(comp).includes('Coven3'))
+    assert.equal(comp.units.find(u => u.champion.id === 'Coven3').required, true)
+  }
+  // A required Lux form keeps the other forms out.
+  const lux = findBronzeComps({ roster, ranges, size: 2, requiredIds: ['Blossom Lux'] })
+  for (const comp of lux.comps) assert.ok(!names(comp).includes('Fae Lux'))
+  assert.deepEqual(findBronzeComps({ roster, ranges, size: 1, requiredIds: ['Coven3', 'Flora'] }).comps, [])
+})
+
+// ── Kha'Zix: picks 3 of 4 evolution traits ─────────────────────────────────
+const khaTraits = ['Executioner', 'Rapidfire', 'Ravager', 'Spellweaver'].map(name => (
+  { name, effects: tiers([2, 2, 1], [3, OPEN, 3]) }
+))
+const khaRanges = bronzeRanges([...khaTraits, { name: 'Rival', effects: tiers([1, OPEN, 5], [1, 1, 1], [2, OPEN, 5]) }])
+const khazix = unit('DA_18_KhaZix', 3, ['Rival'])
+const [exe, rap, rav, spe] = ['Executioner', 'Rapidfire', 'Ravager', 'Spellweaver'].map(t => unit(t, 1, [t]))
+const filler = unit('Filler', 1, ['Solar'])
+
+test("Kha'Zix expands into each 3-trait evolution plus the full one", () => {
+  const variants = expandTraitChoices([khazix])
+  assert.equal(variants.length, 5)
+  assert.deepEqual(variants.map(v => [v.chosenTraits.length, v.bonusEvolution]), [
+    [3, false], [3, false], [3, false], [3, false], [4, true],
+  ])
+  assert.ok(variants.every(v => v.id === 'DA_18_KhaZix' && v.formOf === 'DA_18_KhaZix' && v.traits.includes('Rival')))
+})
+
+test('a 4th evolution that adds a trait ranks first within its trait count', () => {
+  const { comps } = findBronzeComps({ roster: [khazix, exe, rap, rav, spe], ranges: khaRanges, size: 5 })
+  const top = comps[0]
+  assert.equal(top.traitCount, 4)
+  assert.equal(top.bonusEvolution, true)
+  assert.deepEqual(top.units.find(u => u.champion.id === 'DA_18_KhaZix').champion.chosenTraits,
+    ['Executioner', 'Rapidfire', 'Ravager', 'Spellweaver'])
+})
+
+test('a 4th evolution that adds nothing is dropped for the 3-trait one', () => {
+  const { comps } = findBronzeComps({ roster: [khazix, exe, filler], ranges: khaRanges, size: 2, requiredIds: ['DA_18_KhaZix'] })
+  assert.ok(comps.length > 0)
+  for (const comp of comps) {
+    assert.equal(comp.bonusEvolution, false)
+    const kha = comp.units.find(u => u.champion.id === 'DA_18_KhaZix')
+    assert.ok(kha, "required Kha'Zix in every comp")
+    assert.equal(kha.champion.chosenTraits.length, 3)
+  }
+  assert.equal(comps[0].traitCount, 1)
+  assert.deepEqual(names(comps[0]), ['Executioner', 'DA_18_KhaZix'])
 })
