@@ -15,7 +15,8 @@ import { useMediaQuery } from '../../hooks/useMediaQuery.js'
 import { useUiScale } from '../../contexts/useUiScale.js'
 import { toBuilderRoster } from '../../utils/builderRoster.js'
 import {
-  buildEmblemOptions, groupByTraitCount, HIGHLY_PLAYED_MIN_BOARDS, LEGENDARY_COST, recommendUnits, TRAIT_CHOICE_UNIT_IDS, traitRanges,
+  buildEmblemOptions, compsInTopTraitCounts, groupByTraitCount, HIGHLY_PLAYED_MIN_BOARDS, LEGENDARY_COST, recommendUnits,
+  TRAIT_CHOICE_UNIT_IDS, traitRanges,
 } from '../../utils/bronzeComps.js'
 import { makeMap } from '../../utils/statsFormatting.js'
 import statsStyles from '../../pages/StatsPage.module.css'
@@ -25,8 +26,9 @@ import styles from './BronzeComps.module.css'
 // each time the user scrolls to its end.
 const MAX_RESULTS = 100
 const PAGE_SIZE = 20
-// The recommended-units widget counts units across this many top comps.
-const RECOMMEND_POOL = 20
+// The recommended-units widget counts units across every loaded comp in this
+// many of the highest trait counts.
+const RECOMMEND_TRAIT_TIERS = 2
 // Window width (rem) from which the widget fits in the left margin outside
 // the content box: the 77.5rem box plus two margins each holding the 9.5rem
 // widget, its 1.25rem gap and 0.75rem of room, less the 2rem page gutter,
@@ -121,7 +123,8 @@ export default function BronzeComps() {
       || a.index - b.index)
     .map(entry => entry.comp), [result, highlyPlayed])
   const groups = useMemo(() => groupByTraitCount(ordered.slice(0, shown)), [ordered, shown])
-  const recommended = useMemo(() => recommendUnits(ordered, { top: RECOMMEND_POOL }), [ordered])
+  const recommendPool = useMemo(() => compsInTopTraitCounts(ordered, RECOMMEND_TRAIT_TIERS), [ordered])
+  const recommended = useMemo(() => recommendUnits(recommendPool.comps), [recommendPool])
   const showMore = useCallback(() => setPaging(current => {
     const base = current.result === result ? current.shown : PAGE_SIZE
     return base >= total ? current : { result, shown: Math.min(base + PAGE_SIZE, total) }
@@ -183,7 +186,7 @@ export default function BronzeComps() {
             </div>
             {shown < total && <LoadMore onMore={showMore} shown={shown} />}
           </div>
-          <RecommendedUnits units={recommended} poolSize={Math.min(RECOMMEND_POOL, total)} />
+          <RecommendedUnits units={recommended} poolSize={recommendPool.comps.length} traitCounts={recommendPool.traitCounts} />
         </div>
       )}
     </section>

@@ -409,11 +409,18 @@ function describeComp({ traitCount, bonus, picks }, classes, fixed, ranges, embl
   }
 }
 
-// Units appearing in the most of the first `top` comps (each comp counts a
-// unit once): ties go to the cheaper unit, and units still tied with the last
-// pick (same count and cost) are all included, so this can return more than
-// `count`. [{ champion, appearances }]
-export function recommendUnits(comps, { top = 20, count = 3 } = {}) {
+// The comps in the `tiers` highest trait counts (e.g. every 11- and 10-trait
+// comp, none with 9): the recommended units widget's pool.
+export function compsInTopTraitCounts(comps, tiers = 2) {
+  const traitCounts = [...new Set((comps || []).map(comp => comp.traitCount))].sort((a, b) => b - a).slice(0, tiers)
+  return { traitCounts, comps: (comps || []).filter(comp => traitCounts.includes(comp.traitCount)) }
+}
+
+// Units appearing in the most of the first `top` comps (all by default; each
+// comp counts a unit once): ties go to the cheaper unit, and units still tied
+// with the last pick (same count and cost) are all included, so this can
+// return more than `count`. [{ champion, appearances }]
+export function recommendUnits(comps, { top = Infinity, count = 3 } = {}) {
   const tally = new Map()
   for (const comp of (comps || []).slice(0, top)) {
     for (const { champion } of comp.units) {

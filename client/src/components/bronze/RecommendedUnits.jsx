@@ -3,15 +3,16 @@ import { HoverableUnit } from '../shared/HoverableBoardPieces.jsx'
 import { buildUnitPath } from '../../constants/routes.js'
 import styles from './BronzeComps.module.css'
 
-// Sticky side widget: the units that show up most in the top comps listed
-// (see recommendUnits; more than 3 when units tie on count and cost).
-export default function RecommendedUnits({ units, poolSize }) {
+// Sticky side widget: the units that show up most across the comps in the
+// highest trait counts (`traitCounts`, e.g. [11, 10]); see recommendUnits
+// (more than 3 when units tie on count and cost).
+export default function RecommendedUnits({ units, poolSize, traitCounts }) {
   const { t } = useTranslation()
   if (units.length === 0) return null
   return (
     <aside className={styles.recommended} aria-labelledby="bronze-recommended-heading">
       <h3 id="bronze-recommended-heading" className={styles.recommendedHeading}>{t('bronze.recommendedTitle')}</h3>
-      <p className={styles.recommendedNote}>{t('bronze.recommendedNote', { count: poolSize })}</p>
+      <p className={styles.recommendedNote}>{t('bronze.recommendedNote', { count: poolSize, tiers: traitCounts.join(' & ') })}</p>
       <ul className={styles.recommendedList}>
         {units.map(({ champion, appearances }) => (
           <li key={champion.id} className={styles.recommendedUnit}>

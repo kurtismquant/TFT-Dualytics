@@ -6,6 +6,7 @@ import {
   bronzeRanges,
   buildEmblemOptions,
   expandTraitChoices,
+  compsInTopTraitCounts,
   findBronzeComps,
   recommendUnits,
   traitRanges,
@@ -250,4 +251,13 @@ test('recommended units: most appearances in the top comps, cheaper first, ties 
   // Only the first `top` comps count.
   assert.deepEqual(recommendUnits(comps, { top: 1, count: 1 }).map(r => r.champion.id), ['B']) // all 1: cheapest first
   assert.deepEqual(recommendUnits([]), [])
+})
+
+test('the recommendation pool is every comp in the two highest trait counts', () => {
+  const comps = [11, 11, 10, 10, 10, 9, 9].map((traitCount, i) => ({ traitCount, key: String(i) }))
+  const pool = compsInTopTraitCounts(comps)
+  assert.deepEqual(pool.traitCounts, [11, 10])
+  assert.deepEqual(pool.comps.map(c => c.key), ['0', '1', '2', '3', '4'])
+  assert.deepEqual(compsInTopTraitCounts([{ traitCount: 7 }]).traitCounts, [7])
+  assert.deepEqual(compsInTopTraitCounts([]), { traitCounts: [], comps: [] })
 })
