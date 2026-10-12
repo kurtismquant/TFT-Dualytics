@@ -36,7 +36,7 @@ export default function RecommendedUnits({ comps }) {
   const canExpand = moreUnits.length > units.length
   const shown = expanded && canExpand ? moreUnits : units
   return (
-    <aside className={styles.recommended} aria-labelledby="bronze-recommended-heading">
+    <aside className={styles.recommended} aria-labelledby="bronze-recommended-heading" data-no-edge-glow>
       <h3 id="bronze-recommended-heading" className={styles.recommendedHeading}>{t('bronze.recommendedTitle')}</h3>
       <ul id="bronze-recommended-list" className={styles.recommendedList}>
         {shown.map(({ champion, appearances }) => (

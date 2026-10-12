@@ -26,11 +26,14 @@ function GlowLayer() {
     let frame = 0
     let x = 0
     let y = 0
+    let target = null
 
     const update = () => {
       frame = 0
       const { left, right } = contentBounds()
-      const inGutter = x < left || x > right
+      // Elements marked data-no-edge-glow (e.g. a widget placed in a gutter)
+      // switch the glow off while the cursor is over them.
+      const inGutter = (x < left || x > right) && !target?.closest?.('[data-no-edge-glow]')
       node.dataset.active = inGutter
       // Freeze the position over content so the glow fades out where it was.
       if (inGutter) {
@@ -41,6 +44,7 @@ function GlowLayer() {
     const onMove = (e) => {
       x = e.clientX
       y = e.clientY
+      target = e.target
       if (!frame) frame = requestAnimationFrame(update)
     }
     const onOut = (e) => {
