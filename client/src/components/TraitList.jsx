@@ -4,6 +4,7 @@ import { useTraits } from '../hooks/useTraits.js'
 import { useChampions } from '../hooks/useChampions.js'
 import { useHoverCard } from '../hooks/useHoverCard.js'
 import TraitCard from './TraitCard.jsx'
+import { traitBreakpoints } from '../utils/traitTier.js'
 import styles from './TraitList.module.css'
 
 const STYLE_TIER = {
@@ -16,14 +17,10 @@ const STYLE_TIER = {
 }
 
 function resolveBreakpoints(trait) {
-  const effects = trait?.effects || []
-  return effects
-    .map(e => ({
-      min: e.minUnits ?? 0,
-      style: typeof e.style === 'number' ? STYLE_TIER[e.style] : null,
-    }))
-    .filter(b => b.min > 0)
-    .sort((a, b) => a.min - b.min)
+  return traitBreakpoints(trait).map(b => ({
+    min: b.minUnits,
+    style: typeof b.style === 'number' ? STYLE_TIER[b.style] : null,
+  }))
 }
 
 function activeTier(breakpoints, count) {

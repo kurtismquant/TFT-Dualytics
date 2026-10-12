@@ -5,6 +5,7 @@ import { HoverableTraitChip, HoverableUnit } from '../shared/HoverableBoardPiece
 import { buildUnitPath } from '../../constants/routes.js'
 import { CURRENT_SET } from '../../constants/game.js'
 import { activeTraitStyle } from '../../utils/bronzeComps.js'
+import { CHIP_STYLE_BY_EFFECT_STYLE } from '../../utils/traitTier.js'
 import { encodeTeamPlannerCode } from '../../utils/teamPlannerCode.js'
 import styles from './BronzeComps.module.css'
 
@@ -37,7 +38,7 @@ export default function BronzeCompRow({ comp, traitByName, traits, champions, ch
     return (
       <HoverableTraitChip
         key={name}
-        trait={{ id: meta.id, numUnits: count, style }}
+        trait={{ id: meta.id, numUnits: count, style: CHIP_STYLE_BY_EFFECT_STYLE[style] ?? null }}
         traits={traits}
         allChampions={champions}
         countLabel={countLabel}

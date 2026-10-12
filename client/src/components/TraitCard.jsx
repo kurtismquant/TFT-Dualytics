@@ -4,6 +4,7 @@ import StatIcon from './StatIcon.jsx'
 import { Link } from 'react-router-dom'
 import DetailCardShell from './shared/DetailCardShell.jsx'
 import { buildUnitPath } from '../constants/routes.js'
+import { traitBreakpoints } from '../utils/traitTier.js'
 import styles from './TraitCard.module.css'
 
 const SCALE_TEXT = {
@@ -170,10 +171,13 @@ export default function TraitCard({ isOpen, data, style, allChampions, mode, onC
 
   const { preamble, rows, rules } = splitRowsAndRules(meta.desc)
 
-  // Active tier index: highest effect whose minUnits ≤ count.
+  // Description rows pair with `effects` by index; the breakpoint strip uses one
+  // entry per unit count (Rival lists two tiers at 1).
+  const breakpoints = traitBreakpoints(meta)
+  // Active breakpoint index: highest one whose minUnits ≤ count.
   let activeIdx = -1
-  for (let i = 0; i < effects.length; i++) {
-    if (count >= effects[i].minUnits) activeIdx = i
+  for (let i = 0; i < breakpoints.length; i++) {
+    if (count >= breakpoints[i].minUnits) activeIdx = i
     else break
   }
 
@@ -185,7 +189,7 @@ export default function TraitCard({ isOpen, data, style, allChampions, mode, onC
     .filter(c => (c.traits || []).includes(meta.name))
     .sort((a, b) => a.cost - b.cost || a.name.localeCompare(b.name))
 
-  const activeStyle = activeIdx >= 0 ? STYLE_TIER[effects[activeIdx].style] : null
+  const activeStyle = activeIdx >= 0 ? STYLE_TIER[breakpoints[activeIdx].style] : null
 
   return (
     <DetailCardShell mode={mode} style={style} onClose={onClose} cardClassName={styles.card} label={meta.name}>
@@ -196,9 +200,9 @@ export default function TraitCard({ isOpen, data, style, allChampions, mode, onC
           )}
           <span className={styles.traitName}>{meta.name}</span>
         </div>
-        {effects.length > 0 && (
+        {breakpoints.length > 0 && (
           <div className={styles.breakpoints}>
-            {effects.map((effect, i) => {
+            {breakpoints.map((effect, i) => {
               const isActive = i === activeIdx
               const isHit = i <= activeIdx
               const tierName = STYLE_TIER[effect.style]
@@ -211,7 +215,7 @@ export default function TraitCard({ isOpen, data, style, allChampions, mode, onC
               return (
                 <span key={effect.minUnits} className={styles.bpGroup}>
                   <span className={cls}>{effect.minUnits}</span>
-                  {i < effects.length - 1 && <span className={styles.bpSep}>{'>'}</span>}
+                  {i < breakpoints.length - 1 && <span className={styles.bpSep}>{'>'}</span>}
                 </span>
               )
             })}
