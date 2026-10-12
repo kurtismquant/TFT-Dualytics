@@ -40,7 +40,10 @@ export function buildUnitViewPath(unitId, view, search = '') {
 }
 
 // Stats sections, in nav order; the first is where /stats lands.
-export const STATS_TABS = ['units', 'traits', 'items', 'explorer']
+export const STATS_TABS = ['units', 'traits', 'items', 'explorer', 'bronze']
+
+// Sections with their own page body and controls (no patch table / toolbar).
+export const STANDALONE_STATS_TABS = new Set(['explorer', 'bronze'])
 
 export function buildStatsPath(tab, search = '') {
   return `/stats/${tab}${search}`

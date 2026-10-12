@@ -1,6 +1,7 @@
 import { useCallback, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import Button from '../ui/Button.jsx'
+import { STANDALONE_STATS_TABS } from '../../constants/routes.js'
 import styles from '../../pages/StatsPage.module.css'
 
 const COSTS = [1, 2, 3, 4, 5]
@@ -46,9 +47,9 @@ export default function StatsToolbar({
     [setCostFilter],
   )
 
-  // The explorer is reached from the top-nav Stats menu and has its own
-  // filters, so it shows none of these controls.
-  if (activeTab === 'explorer') return null
+  // The explorer and Bronze for Life are reached from the top-nav Stats menu
+  // and have their own controls, so they show none of these.
+  if (STANDALONE_STATS_TABS.has(activeTab)) return null
 
   return (
     <>

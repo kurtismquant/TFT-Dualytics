@@ -14,8 +14,8 @@ const fixture = () => [
 test('drops base Lux and renames forms to "<Form> Lux" with a double form trait', () => {
   const roster = toBuilderRoster(fixture())
   assert.deepEqual(roster, [
-    { id: 'DA_Lux18_Blossom', name: 'Blossom Lux', cost: 5, traits: ['Blossom', 'Avatar'], traitWeights: { Blossom: 2 } },
-    { id: 'DA_18_Lux_Moonbeam', name: 'Lunar Lux', cost: 5, traits: ['Lunar', 'Avatar'], traitWeights: { Lunar: 2 } },
+    { id: 'DA_Lux18_Blossom', name: 'Blossom Lux', cost: 5, traits: ['Blossom', 'Avatar'], traitWeights: { Blossom: 2 }, formOf: 'DA_Lux18_Base' },
+    { id: 'DA_18_Lux_Moonbeam', name: 'Lunar Lux', cost: 5, traits: ['Lunar', 'Avatar'], traitWeights: { Lunar: 2 }, formOf: 'DA_Lux18_Base' },
     { id: 'DA_18_Xayah', name: 'Xayah', cost: 4, traits: ['Fae', 'Sniper'] },
   ])
 })

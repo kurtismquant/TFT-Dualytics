@@ -1,7 +1,8 @@
 // Units that always take a trait "form" in game. CDragon lists the base unit
 // ("Lux", Avatar only) plus one entry per form ("Lux (Blossom)", traits
 // Blossom + Avatar). In game the base never appears on a board, so the builder
-// drops it and names the forms "Blossom Lux".
+// drops it and names the forms "Blossom Lux". Forms carry `formOf` (the base
+// id): a board fields one of them at most.
 // Set 18 Lux: a form counts formTraitWeight times toward its form trait
 // (Blossom Lux = 2 Blossom) but only once toward the base trait (Avatar).
 // Set-specific: update when the set changes.
@@ -37,6 +38,6 @@ export function toBuilderRoster(champions) {
       const traitWeights = Object.fromEntries(
         (c.traits || []).filter(t => !baseTraits.has(t)).map(t => [t, form.weight]),
       )
-      return { ...c, name, traitWeights }
+      return { ...c, name, traitWeights, formOf: form.base.id }
     })
 }

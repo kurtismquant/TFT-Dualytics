@@ -473,6 +473,10 @@ export const fetchAndCacheAssets = async () => {
       desc: trait.desc || '',
       effects: (trait.effects || []).map(e => ({
         minUnits: e.minUnits,
+        // Upper bound of the tier (25000 = open-ended). Needed to tell where a
+        // tier ends: some traits list overlapping tiers (Rival: 1-25000 gold,
+        // 1-1 bronze, 2-25000 gold), so it can't be derived from minUnits alone.
+        maxUnits: e.maxUnits,
         style: e.style,
         variables: unhashVariables(e.variables, trait.desc),
       })),

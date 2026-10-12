@@ -7,7 +7,8 @@
       "units": "Unidades",
       "traits": "Rasgos",
       "items": "Objetos",
-      "explorer": "Explorador de datos"
+      "explorer": "Explorador de datos",
+      "bronze": "Comps Bronce de por vida"
     },
     "teamBuilder": "Constructor",
     "leaderboard": "Clasificación",
@@ -109,6 +110,7 @@
     "tabItems": "Objetos",
     "tabTraits": "Rasgos",
     "tabExplorer": "Explorador de datos",
+    "tabBronze": "Comps Bronce de por vida",
     "colUnit": "Unidad",
     "colItem": "Objeto",
     "colTrait": "Rasgo",
@@ -514,5 +516,35 @@
     },
     "minStar": "Nivel de estrellas mínimo de {{name}}",
     "maxStar": "Nivel de estrellas máximo de {{name}}"
+  },
+  "bronze": {
+    "label": "Comps Bronce de por vida",
+    "intro": "Comps que activan más rasgos en su nivel de bronce para un tamaño de tablero. Los niveles de plata o superiores y los rasgos únicos no cuentan. Añade los emblemas que tengas: cada uno suma +1 a su rasgo.",
+    "sizeLabel": "Unidades",
+    "sizeOption_one": "{{count}} unidad",
+    "sizeOption_other": "{{count}} unidades",
+    "emblemsLabel": "Emblemas",
+    "emblemLabel": "Añadir un emblema",
+    "emblemPlaceholder": "Buscar emblemas",
+    "emblemFullPlaceholder": "Límite de emblemas alcanzado",
+    "emblemHelp": "Escribe el nombre de un emblema y pulsa Enter, o elige uno de la lista, hasta {{count}} emblemas. Puedes añadir el mismo emblema más de una vez. Pulsa Retroceso con el campo vacío para quitar el último.",
+    "emblemSuggestions": "Emblemas",
+    "activeEmblems": "Emblemas añadidos",
+    "removeEmblem": "Quitar {{emblem}}",
+    "emblemAdded": "{{emblem}} añadido.",
+    "emblemRemoved": "{{emblem}} quitado.",
+    "emblemMax": "Puedes añadir hasta {{count}} emblemas.",
+    "emblemNoMatch": "Ningún emblema coincide con \"{{query}}\".",
+    "clearEmblems": "Limpiar",
+    "bronzeLabel": "Bronce",
+    "gold": "{{count}} de oro",
+    "unitsLabel": "Unidades",
+    "swapIn": "Intercambiable con: {{units}}",
+    "resultsLabel_one": "Mejores comps de bronce con {{count}} unidad",
+    "resultsLabel_other": "Mejores comps de bronce con {{count}} unidades",
+    "loading": "Cargando unidades y rasgos...",
+    "error": "No se pudieron cargar las unidades y rasgos. ¿Está el servidor en marcha?",
+    "empty": "No se encontraron comps para este tamaño de tablero.",
+    "truncated": "La búsqueda se detuvo antes de tiempo; estas son las mejores comps encontradas."
   }
 }

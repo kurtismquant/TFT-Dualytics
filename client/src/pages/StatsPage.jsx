@@ -12,12 +12,15 @@ import { compareRows, DEFAULT_SORT, nextSort } from '../utils/statsSort.js'
 import { getTraitTierInfo } from '../utils/traitTier.js'
 import { PageShell } from '../components/layout/PageShell.jsx'
 import DataExplorer from '../components/explorer/DataExplorer.jsx'
-import { buildStatsPath, STATS_TABS } from '../constants/routes.js'
+import BronzeComps from '../components/bronze/BronzeComps.jsx'
+import { buildStatsPath, STANDALONE_STATS_TABS, STATS_TABS } from '../constants/routes.js'
 import styles from './StatsPage.module.css'
 
 // Items in this collection are filtered from the items table.
 // `TFT_Item_EmptyBag` is a Riot internal placeholder, not a real item.
 const ITEM_BLACKLIST = new Set(['TFT_Item_EmptyBag'])
+
+const STANDALONE_TITLES = { explorer: 'stats.tabExplorer', bronze: 'stats.tabBronze' }
 
 function buildTraitRow(row, traitsMap) {
   const traitId = row.traitId || row.id
@@ -40,7 +43,8 @@ export default function StatsPage() {
   const activeTab = STATS_TABS.includes(tab) ? tab : STATS_TABS[0]
   const navigate = useNavigate()
   const setActiveTab = useCallback(key => navigate(buildStatsPath(key)), [navigate])
-  const isExplorer = activeTab === 'explorer'
+  // Explorer and Bronze for Life bring their own body; no patch table.
+  const isStandalone = STANDALONE_STATS_TABS.has(activeTab)
   const [selectedPatch, setSelectedPatch] = useState(null)
   const [query, setQuery] = useState('')
   const [costFilter, setCostFilter] = useState(null)
@@ -50,7 +54,7 @@ export default function StatsPage() {
   const { data: champions } = useChampions()
   const { data: items } = useItems()
   const { data: traits } = useTraits()
-  const { data, isLoading, isError } = useStats({ type: activeTab, patch: selectedPatch, enabled: !isExplorer })
+  const { data, isLoading, isError } = useStats({ type: activeTab, patch: selectedPatch, enabled: !isStandalone })
 
   // Stable id->meta lookups. Rebuilt only when the underlying lists change,
   // not on every keystroke or sort flip.
@@ -101,11 +105,11 @@ export default function StatsPage() {
       <div className={styles.header}>
         <div>
           <p className={styles.eyebrow}>{t('stats.eyebrow')}</p>
-          <h1 className={styles.title}>{isExplorer ? t('stats.tabExplorer') : t('stats.title')}</h1>
+          <h1 className={styles.title}>{STANDALONE_TITLES[activeTab] ? t(STANDALONE_TITLES[activeTab]) : t('stats.title')}</h1>
         </div>
-        {!isExplorer && <div className={styles.meta}>{t('stats.gamesAnalyzed', { count: matchCount })}</div>}
+        {!isStandalone && <div className={styles.meta}>{t('stats.gamesAnalyzed', { count: matchCount })}</div>}
       </div>
-      {/* Renders nothing on the explorer. */}
+      {/* Renders nothing on the standalone sections. */}
       <StatsToolbar
         activeTab={activeTab}
         setActiveTab={setActiveTab}
@@ -119,12 +123,13 @@ export default function StatsPage() {
         itemCategory={itemCategory}
         setItemCategory={setItemCategory}
       />
-      {isExplorer && <DataExplorer />}
-      {!isExplorer && isLoading && <p className={styles.message} role="status" aria-live="polite">{t('stats.loading')}</p>}
-      {!isExplorer && isError && <p className={styles.message} role="alert">{t('stats.error')}</p>}
-      {!isExplorer && !isLoading && !isError && rows.length === 0
+      {activeTab === 'explorer' && <DataExplorer />}
+      {activeTab === 'bronze' && <BronzeComps />}
+      {!isStandalone && isLoading && <p className={styles.message} role="status" aria-live="polite">{t('stats.loading')}</p>}
+      {!isStandalone && isError && <p className={styles.message} role="alert">{t('stats.error')}</p>}
+      {!isStandalone && !isLoading && !isError && rows.length === 0
         && <p className={styles.message} role="status">{t('stats.empty')}</p>}
-      {!isExplorer && rows.length > 0 && (
+      {!isStandalone && rows.length > 0 && (
         <StatsTable
           type={activeTab}
           rows={rows}

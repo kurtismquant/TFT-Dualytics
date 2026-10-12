@@ -1,9 +1,5 @@
 import { create } from 'zustand'
-
-function getEmblemTrait(item) {
-  if (!item || !/emblem/i.test(item.name)) return null
-  return item.name.replace(/\s*emblem$/i, '').trim()
-}
+import { getEmblemTrait } from '../utils/bronzeComps.js'
 
 function computeTraits(board, roster, allItems) {
   const traitCounts = {}
