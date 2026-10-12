@@ -1,7 +1,8 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { HoverableUnit } from '../shared/HoverableBoardPieces.jsx'
 import { buildUnitPath } from '../../constants/routes.js'
+import { compsInTopTraitCounts, recommendUnits } from '../../utils/bronzeComps.js'
 import styles from './BronzeComps.module.css'
 
 function Chevron({ up }) {
@@ -12,13 +13,26 @@ function Chevron({ up }) {
   )
 }
 
-// Sticky side widget: the units that show up most across the comps in the
-// highest trait counts (`traitCounts`, e.g. [11, 10]); see recommendUnits
-// (more than 3 when units tie on count and cost). The arrow reveals
-// `moreUnits` (up to 10).
-export default function RecommendedUnits({ units, moreUnits = units, poolSize, traitCounts }) {
+// Units are counted across every loaded comp in this many of the highest
+// trait counts; the arrow reveals up to RECOMMEND_MAX.
+const RECOMMEND_TRAIT_TIERS = 2
+const RECOMMEND_MAX = 10
+
+// Sticky side widget: the units that show up most across the comps (in list
+// order) in the highest trait counts, e.g. every 11- and 10-trait comp; see
+// recommendUnits (more than 3 when units tie on count and cost).
+export default function RecommendedUnits({ comps }) {
   const { t } = useTranslation()
   const [expanded, setExpanded] = useState(false)
+  const pool = useMemo(() => compsInTopTraitCounts(comps, RECOMMEND_TRAIT_TIERS), [comps])
+  const units = useMemo(() => recommendUnits(pool.comps), [pool])
+  // Never drops a pick the collapsed list shows (ties can exceed 3).
+  const moreUnits = useMemo(
+    () => recommendUnits(pool.comps, { count: RECOMMEND_MAX }).slice(0, Math.max(RECOMMEND_MAX, units.length)),
+    [pool, units],
+  )
+  const poolSize = pool.comps.length
+  const { traitCounts } = pool
   if (units.length === 0) return null
   const canExpand = moreUnits.length > units.length
   const shown = expanded && canExpand ? moreUnits : units
