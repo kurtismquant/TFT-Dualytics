@@ -7,7 +7,7 @@ import styles from './BronzeComps.module.css'
 
 function Chevron({ up }) {
   return (
-    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
       <path d={up ? 'M6 15l6-6 6 6' : 'M6 9l6 6 6-6'} />
     </svg>
   )
@@ -32,14 +32,12 @@ export default function RecommendedUnits({ comps }) {
     [pool, units],
   )
   const poolSize = pool.comps.length
-  const { traitCounts } = pool
   if (units.length === 0) return null
   const canExpand = moreUnits.length > units.length
   const shown = expanded && canExpand ? moreUnits : units
   return (
     <aside className={styles.recommended} aria-labelledby="bronze-recommended-heading">
       <h3 id="bronze-recommended-heading" className={styles.recommendedHeading}>{t('bronze.recommendedTitle')}</h3>
-      <p className={styles.recommendedNote}>{t('bronze.recommendedNote', { count: poolSize, tiers: traitCounts.join(' & ') })}</p>
       <ul id="bronze-recommended-list" className={styles.recommendedList}>
         {shown.map(({ champion, appearances }) => (
           <li key={champion.id} className={styles.recommendedUnit}>
@@ -58,8 +56,9 @@ export default function RecommendedUnits({ comps }) {
           onClick={() => setExpanded(open => !open)}
           aria-expanded={expanded}
           aria-controls="bronze-recommended-list"
+          aria-label={t(expanded ? 'bronze.recommendedFewer' : 'bronze.recommendedMore')}
+          title={t(expanded ? 'bronze.recommendedFewer' : 'bronze.recommendedMore')}
         >
-          <span>{t(expanded ? 'bronze.recommendedFewer' : 'bronze.recommendedMore')}</span>
           <Chevron up={expanded} />
         </button>
       )}

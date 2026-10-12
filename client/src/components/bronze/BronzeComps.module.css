@@ -129,7 +129,7 @@
 }
 
 .recommendedHeading {
-  margin: 0;
+  margin: 0 0 0.625rem;
   color: var(--text-primary);
   font-family: var(--font-display);
   font-size: var(--text-base);
@@ -137,14 +137,6 @@
   letter-spacing: var(--track-wide);
   line-height: var(--leading-none);
   text-transform: uppercase;
-}
-
-.recommendedNote {
-  margin: 0.25rem 0 0.625rem;
-  color: var(--text-muted);
-  font-size: var(--text-2xs);
-  letter-spacing: var(--track-base);
-  line-height: 1.35;
 }
 
 /* A wrapping row in the strip; a column in the side widget. */
@@ -157,30 +149,24 @@
   list-style: none;
 }
 
-/* Arrow toggle under the list: reveals up to 10 units. */
+/* Borderless arrow under the list, centered: reveals up to 10 units. */
 .recommendedToggle {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.375rem;
   width: 100%;
-  min-height: 2.25rem;
-  margin-top: 0.625rem;
-  border: 1px solid var(--bg-border-muted);
+  min-height: 2rem;
+  margin-top: 0.375rem;
+  padding: 0;
+  border: 0;
   background: transparent;
   color: var(--text-secondary);
-  font-family: var(--font-body);
-  font-size: var(--text-2xs);
-  letter-spacing: var(--track-wide);
-  text-transform: uppercase;
   cursor: pointer;
-  transition: color var(--t-fast), border-color var(--t-fast), background var(--t-fast);
+  transition: color var(--t-fast);
 }
 
 .recommendedToggle:hover,
 .recommendedToggle:focus-visible {
-  border-color: var(--bg-border-bright);
-  background: var(--bg-hover);
   color: var(--text-primary);
 }
 

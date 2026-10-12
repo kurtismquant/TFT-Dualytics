@@ -572,8 +572,6 @@
     "highlyPlayedTitle_one": "Highly played: {{count}} board this patch, avg place {{avg}}",
     "highlyPlayedTitle_other": "Highly played: {{count}} boards this patch, avg place {{avg}}",
     "recommendedTitle": "Recommended units",
-    "recommendedNote_one": "Most common in the {{tiers}} trait comps ({{count}} comp)",
-    "recommendedNote_other": "Most common in the {{tiers}} trait comps ({{count}} comps)",
     "recommendedCount_one": "In {{count}} of {{total}}",
     "recommendedCount_other": "In {{count}} of {{total}}",
     "recommendedMore": "More units",
