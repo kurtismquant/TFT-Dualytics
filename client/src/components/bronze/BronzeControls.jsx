@@ -42,6 +42,9 @@ export default function BronzeControls({ filters, setFilter, emblemPicker, unitP
           <Checkbox checked={filters.excludeLegendary} onChange={value => setFilter('excludeLegendary', value)}>
             {t('bronze.excludeLegendary')}
           </Checkbox>
+          <Checkbox checked={filters.excludeKhaZix} onChange={value => setFilter('excludeKhaZix', value)}>
+            {t('bronze.excludeKhaZix')}
+          </Checkbox>
         </div>
       </div>
       <div className={styles.controlRow}>

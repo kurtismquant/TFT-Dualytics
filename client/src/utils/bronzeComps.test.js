@@ -191,13 +191,28 @@ test("Kha'Zix expands into each 3-trait evolution plus the full one", () => {
   assert.ok(variants.every(v => v.id === 'DA_18_KhaZix' && v.formOf === 'DA_18_KhaZix' && v.traits.includes('Rival')))
 })
 
-test('a 4th evolution that adds a trait ranks first within its trait count', () => {
+test('a 4th evolution that adds a trait still counts it', () => {
   const { comps } = findBronzeComps({ roster: [khazix, exe, rap, rav, spe], ranges: khaRanges, size: 5 })
   const top = comps[0]
   assert.equal(top.traitCount, 4)
   assert.equal(top.bonusEvolution, true)
   assert.deepEqual(top.units.find(u => u.champion.id === 'DA_18_KhaZix').champion.chosenTraits,
     ['Executioner', 'Rapidfire', 'Ravager', 'Spellweaver'])
+})
+
+test('4th-evolution comps rank last within their trait count, even when pricier', () => {
+  const spe2 = unit('Spellweaver2', 2, ['Spellweaver'])
+  // Only the 4th-evolution comp has a free slot for the 5-cost filler.
+  const filler5 = unit('Filler5', 5, ['Solar'])
+  const { comps } = findBronzeComps({ roster: [khazix, exe, rap, rav, spe, spe2, filler5], ranges: khaRanges, size: 6 })
+  const four = comps.filter(c => c.traitCount === 4)
+  assert.ok(four.some(c => c.bonusEvolution) && four.some(c => !c.bonusEvolution))
+  const firstBonus = four.findIndex(c => c.bonusEvolution)
+  assert.ok(four.slice(firstBonus).every(c => c.bonusEvolution), 'no 3-trait comp after a 4th-evolution one')
+  const cheapestPlain = Math.min(...four.filter(c => !c.bonusEvolution).map(c => c.totalCost))
+  assert.ok(four.some(c => c.bonusEvolution && c.totalCost > cheapestPlain), 'a pricier 4th-evolution comp still ranks lower')
+  // Comps with more traits still come first.
+  assert.ok(comps.every((c, i) => i === 0 || comps[i - 1].traitCount >= c.traitCount))
 })
 
 test('a 4th evolution that adds nothing is dropped for the 3-trait one', () => {

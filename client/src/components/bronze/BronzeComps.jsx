@@ -8,12 +8,14 @@ import { useChampions } from '../../hooks/useChampions.js'
 import { useItems } from '../../hooks/useItems.js'
 import { useTraits } from '../../hooks/useTraits.js'
 import { toBuilderRoster } from '../../utils/builderRoster.js'
-import { buildEmblemOptions, findBronzeComps, LEGENDARY_COST, traitRanges } from '../../utils/bronzeComps.js'
+import { buildEmblemOptions, findBronzeComps, LEGENDARY_COST, TRAIT_CHOICE_UNIT_IDS, traitRanges } from '../../utils/bronzeComps.js'
 import { makeMap } from '../../utils/statsFormatting.js'
 import statsStyles from '../../pages/StatsPage.module.css'
 import styles from './BronzeComps.module.css'
 
-const DEFAULT_FILTERS = { size: 8, includeSilverGold: false, excludeLegendary: false, requiredIds: [], emblemIds: [] }
+const DEFAULT_FILTERS = {
+  size: 8, includeSilverGold: false, excludeLegendary: false, excludeKhaZix: false, requiredIds: [], emblemIds: [],
+}
 
 // Bronze for Life: comps of N units with the most traits in their bronze tier
 // (optionally silver/gold too). Computed in the browser from the static asset
@@ -33,10 +35,10 @@ export default function BronzeComps() {
 
   // Same roster as the builder: base Lux dropped, forms count double.
   const fullRoster = useMemo(() => toBuilderRoster(champions || []), [champions])
-  const roster = useMemo(
-    () => (filters.excludeLegendary ? fullRoster.filter(unit => (unit.cost || 0) < LEGENDARY_COST) : fullRoster),
-    [filters.excludeLegendary, fullRoster],
-  )
+  const roster = useMemo(() => fullRoster.filter(unit => (
+    !(filters.excludeLegendary && (unit.cost || 0) >= LEGENDARY_COST)
+    && !(filters.excludeKhaZix && TRAIT_CHOICE_UNIT_IDS.has(unit.id))
+  )), [filters.excludeLegendary, filters.excludeKhaZix, fullRoster])
   const ranges = useMemo(() => traitRanges(traits, { includeSilverGold: filters.includeSilverGold }), [traits, filters.includeSilverGold])
   // Emblem choices don't change with the silver/gold option.
   const emblemOptions = useMemo(() => buildEmblemOptions(items, traitRanges(traits, { includeSilverGold: true })), [items, traits])
@@ -56,7 +58,7 @@ export default function BronzeComps() {
     nameFor: id => itemLookup.get(id)?.name || id,
   }), [emblemOptions, itemLookup])
 
-  // Required units the roster no longer has (5-costs after excluding them) drop out.
+  // Required units the roster no longer has (5-costs, Kha'Zix after excluding them) drop out.
   const requiredIds = useMemo(
     () => filters.requiredIds.filter(id => roster.some(unit => unit.id === id)),
     [filters.requiredIds, roster],

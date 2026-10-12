@@ -524,6 +524,7 @@
     "sizeOption_other": "{{count}} unidades",
     "includeSilverGold": "Incluir rasgos de plata y oro",
     "excludeLegendary": "Sin unidades de 5 de coste",
+    "excludeKhaZix": "Sin Kha'Zix",
     "unitFilterLabel": "Unidades",
     "unitLabel": "Exigir una unidad",
     "unitPlaceholder": "Buscar unidades",

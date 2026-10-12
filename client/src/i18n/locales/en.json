@@ -524,6 +524,7 @@
     "sizeOption_other": "{{count}} units",
     "includeSilverGold": "Include silver & gold traits",
     "excludeLegendary": "No 5-cost units",
+    "excludeKhaZix": "No Kha'Zix",
     "unitFilterLabel": "Units",
     "unitLabel": "Require a unit",
     "unitPlaceholder": "Search units",

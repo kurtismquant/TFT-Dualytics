@@ -18,11 +18,13 @@ const NODE_CAP = 3_000_000
 
 // Set-specific: units whose traits are chosen in game. Set 18 Kha'Zix evolves
 // with takedowns into 3 of these 4 traits (fully evolved). Taking all 4 is
-// only considered when the 4th adds a counted trait; such comps rank first
-// within their trait count. Update when the set changes.
+// only considered when the 4th adds a counted trait; since a 4th evolution is
+// rare, such comps rank last within their trait count. Update when the set changes.
 const TRAIT_CHOICE_UNITS = {
   DA_18_KhaZix: { pick: 3, from: ['Executioner', 'Rapidfire', 'Ravager', 'Spellweaver'] },
 }
+// For the "No Kha'Zix" option.
+export const TRAIT_CHOICE_UNIT_IDS = new Set(Object.keys(TRAIT_CHOICE_UNITS))
 
 // Emblems are named "<Trait> Emblem" and grant +1 to that trait.
 export function getEmblemTrait(item) {
@@ -144,9 +146,9 @@ function buildClasses(roster, traitIndex) {
   return list.sort((a, b) => b.weight - a.weight)
 }
 
-// > 0 when comp a ranks above comp b: more counted traits, then a Kha'Zix 4th
-// evolution, then higher total cost.
-const compareComps = (a, b) => a.traitCount - b.traitCount || a.bonus - b.bonus || a.cost - b.cost
+// > 0 when comp a ranks above comp b: more counted traits, then no Kha'Zix
+// 4th evolution, then higher total cost.
+const compareComps = (a, b) => a.traitCount - b.traitCount || b.bonus - a.bonus || a.cost - b.cost
 
 // Top `limit` comps of `size` units by counted trait count. `requiredIds` must
 // be in every comp. Branch and bound over unit classes: a branch is cut when
@@ -188,10 +190,9 @@ export function findBronzeComps({ roster, ranges, size, emblemTraits = [], requi
   const classes = buildClasses(free, traitIndex)
   // From class i on: supply[i][t] = most units of trait t still addable,
   // maxWeight[i] = most trait weight on one unit, topCost[i][r] = total cost
-  // of the r priciest units still pickable, bonusLeft[i] = a bonus variant left.
+  // of the r priciest units still pickable.
   const supply = [new Array(names.length).fill(0)]
   const maxWeight = [0]
-  const bonusLeft = [false]
   let costs = []
   const topCost = [[0]]
   for (let i = classes.length - 1; i >= 0; i--) {
@@ -200,7 +201,6 @@ export function findBronzeComps({ roster, ranges, size, emblemTraits = [], requi
     for (const [t, w] of cls.vector) next[t] += w * cls.cap
     supply.unshift(next)
     maxWeight.unshift(Math.max(maxWeight[0], cls.weight))
-    bonusLeft.unshift(bonusLeft[0] || cls.bonus)
     costs = [...costs, ...cls.units.slice(0, cls.cap).map(unit => unit.cost || 0)].sort((a, b) => b - a)
     const prefix = [0]
     for (const c of costs.slice(0, size)) prefix.push(prefix[prefix.length - 1] + c)
@@ -274,8 +274,9 @@ export function findBronzeComps({ roster, ranges, size, emblemTraits = [], requi
       const best = bound(i, remaining)
       if (best < worst.traitCount) return
       if (best === worst.traitCount) {
-        const bonus = bonusPick !== -1 || bonusLeft[i] ? 1 : 0
-        if (bonus < worst.bonus) return
+        // Best case on the 4th-evolution key: none, unless one is already picked.
+        const bonus = bonusPick !== -1 ? 1 : 0
+        if (bonus > worst.bonus) return
         const costCap = cost + (topCost[i][remaining] ?? topCost[i][topCost[i].length - 1])
         if (bonus === worst.bonus && costCap <= worst.cost) return
       }
@@ -306,7 +307,7 @@ export function findBronzeComps({ roster, ranges, size, emblemTraits = [], requi
   const comps = kept
     .map(entry => describeComp(entry, classes, fixed, ranges, emblemTraits))
     .sort((a, b) => b.traitCount - a.traitCount
-      || Number(b.bonusEvolution) - Number(a.bonusEvolution)
+      || Number(a.bonusEvolution) - Number(b.bonusEvolution)
       || b.totalCost - a.totalCost
       || a.key.localeCompare(b.key))
   return { comps, truncated, tooManyRequired: false }
