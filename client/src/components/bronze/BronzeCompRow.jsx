@@ -28,7 +28,8 @@ function ChosenTraits({ chosen, traitByName, bonus }) {
 // use; the traits (counted, then other active ones, then ones a unit or emblem
 // short in grey as have/need); then a button copying the Team Planner code.
 // The trait count is the heading of the group the row sits in.
-export default function BronzeCompRow({ comp, traitByName, traits, champions, championsById, emblemByTrait }) {
+// `played` ({ count, avgPlacement }) marks a highly played comp with a gold star.
+export default function BronzeCompRow({ comp, traitByName, traits, champions, championsById, emblemByTrait, played }) {
   const { t } = useTranslation()
   const teamCode = encodeTeamPlannerCode(comp.units.map(unit => unit.champion), championsById, CURRENT_SET)
   // style null + countLabel: an inactive (colorless) chip, used for near traits.
@@ -47,8 +48,15 @@ export default function BronzeCompRow({ comp, traitByName, traits, champions, ch
   }
   const emblems = comp.usedEmblemTraits.map(trait => emblemByTrait.get(trait)).filter(Boolean)
 
+  const playedLabel = played && t('bronze.highlyPlayedTitle', { count: played.count, avg: played.avgPlacement?.toFixed(2) })
   return (
     <li className={styles.row}>
+      {played && (
+        <span className={styles.playedStar} title={playedLabel}>
+          <span aria-hidden="true">★</span>
+          <span className="sr-only">{playedLabel}</span>
+        </span>
+      )}
       <div className={styles.board}>
         <ul className={styles.units} aria-label={t('bronze.unitsLabel')}>
           {comp.units.map(({ champion, alternatives, required }) => {

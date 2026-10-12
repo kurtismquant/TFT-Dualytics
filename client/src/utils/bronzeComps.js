@@ -10,6 +10,9 @@ export const BOARD_SIZES = [5, 6, 7, 8, 9, 10]
 export const MAX_EMBLEMS = 10
 // Legendary units and anything above, for the "no 5-costs" option.
 export const LEGENDARY_COST = 5
+// A comp gets the "highly played" star when at least this many boards on the
+// current patch fielded exactly its units (server board index).
+export const HIGHLY_PLAYED_MIN_BOARDS = 5
 const BRONZE_STYLES = new Set([1])
 const BRONZE_TO_GOLD_STYLES = new Set([1, 3, 5])
 // Safety net for the search below; real Set 18 searches (100 comps of 10 units)
@@ -156,7 +159,7 @@ const compareComps = (a, b) => a.traitCount - b.traitCount || b.bonus - a.bonus 
 // its optimistic score (counted traits now + under-count traits the remaining
 // picks could still lift into range, then the priciest units still pickable)
 // can't beat the worst comp kept.
-export function findBronzeComps({ roster, ranges, size, emblemTraits = [], requiredIds = [], limit = 20 }) {
+export function findBronzeComps({ roster, ranges, size, emblemTraits = [], requiredIds = [], limit = 20, nodeCap = NODE_CAP }) {
   const names = [...ranges.keys()]
   const traitIndex = new Map(names.map((name, i) => [name, i]))
   const lo = names.map(name => ranges.get(name).lo)
@@ -264,36 +267,55 @@ export function findBronzeComps({ roster, ranges, size, emblemTraits = [], requi
   let nodes = 0
   let truncated = false
 
+  // A board reached twice (see the 4th-evolution swap below) is kept once.
+  const keptKeys = new Set()
+  const keep = (candidate, candidatePicks) => {
+    if (kept.length === limit && compareComps(candidate, kept[kept.length - 1]) <= 0) return
+    const key = candidatePicks.join(',')
+    if (keptKeys.has(key)) return
+    let at = kept.length
+    while (at > 0 && compareComps(candidate, kept[at - 1]) > 0) at--
+    kept.splice(at, 0, { ...candidate, picks: candidatePicks })
+    keptKeys.add(key)
+    if (kept.length > limit) keptKeys.delete(kept.pop().picks.join(','))
+  }
+
   const leaf = () => {
     if (requiredGroups.some(group => !groupsUsed.get(group))) return
     const traitCount = score()
-    let bonus = 0
-    if (bonusPick !== -1) {
-      // Keep the 4th evolution only when it beats every 3-trait choice.
-      const group = classes[bonusPick].group
-      withVector(classes[bonusPick].vector, -1)
-      let bestChoice = -1
-      for (const cls of classes) {
-        if (cls.group !== group || cls.bonus) continue
-        withVector(cls.vector, 1)
-        bestChoice = Math.max(bestChoice, score())
-        withVector(cls.vector, -1)
-      }
-      withVector(classes[bonusPick].vector, 1)
-      if (traitCount <= bestChoice) return
-      bonus = 1
+    if (bonusPick === -1) {
+      keep({ traitCount, bonus: 0, cost }, picks.slice())
+      return
     }
-    const candidate = { traitCount, bonus, cost }
-    if (kept.length < limit || compareComps(candidate, kept[kept.length - 1]) > 0) {
-      let at = kept.length
-      while (at > 0 && compareComps(candidate, kept[at - 1]) > 0) at--
-      kept.splice(at, 0, { ...candidate, picks: picks.slice() })
-      if (kept.length > limit) kept.pop()
+    // The 4th evolution only counts when it beats every 3-trait choice. When it
+    // doesn't, keep the best 3-trait board instead of dropping the leaf: the
+    // bonus variant has the most weight, so its branch is searched first, and
+    // dropping every leaf there (e.g. with an Executioner emblem) left nothing
+    // to prune against, so the node budget ran out with no comps at 9+ units.
+    const group = classes[bonusPick].group
+    withVector(classes[bonusPick].vector, -1)
+    let bestChoice = -1
+    let bestIndex = -1
+    classes.forEach((cls, index) => {
+      if (cls.group !== group || cls.bonus) return
+      withVector(cls.vector, 1)
+      const choiceCount = score()
+      if (choiceCount > bestChoice) { bestChoice = choiceCount; bestIndex = index }
+      withVector(cls.vector, -1)
+    })
+    withVector(classes[bonusPick].vector, 1)
+    if (traitCount > bestChoice) {
+      keep({ traitCount, bonus: 1, cost }, picks.slice())
+    } else if (bestIndex !== -1) {
+      const choicePicks = picks.slice()
+      choicePicks[bonusPick] = 0
+      choicePicks[bestIndex] = 1
+      keep({ traitCount: bestChoice, bonus: 0, cost: cost - (classes[bonusPick].units[0].cost || 0) + (classes[bestIndex].units[0].cost || 0) }, choicePicks)
     }
   }
 
   const visit = (i, remaining) => {
-    if (++nodes > NODE_CAP) { truncated = true; return }
+    if (++nodes > nodeCap) { truncated = true; return }
     if (remaining === 0) { leaf(); return }
     if (i === classes.length) return
     if (requiredGroups.some(group => !groupsUsed.get(group) && groupLast.get(group) < i)) return
@@ -385,4 +407,26 @@ function describeComp({ traitCount, bonus, picks }, classes, fixed, ranges, embl
     // Emblems that put their trait in a counted tier, i.e. the ones in use.
     usedEmblemTraits: emblemTraits.filter(counted),
   }
+}
+
+// Units appearing in the most of the first `top` comps (each comp counts a
+// unit once): ties go to the cheaper unit, and units still tied with the last
+// pick (same count and cost) are all included, so this can return more than
+// `count`. [{ champion, appearances }]
+export function recommendUnits(comps, { top = 20, count = 3 } = {}) {
+  const tally = new Map()
+  for (const comp of (comps || []).slice(0, top)) {
+    for (const { champion } of comp.units) {
+      const row = tally.get(champion.id) || { champion, appearances: 0 }
+      row.appearances++
+      tally.set(champion.id, row)
+    }
+  }
+  const cost = row => row.champion.cost || 0
+  const rows = [...tally.values()].sort((a, b) => b.appearances - a.appearances
+    || cost(a) - cost(b)
+    || a.champion.name.localeCompare(b.champion.name))
+  if (rows.length <= count) return rows
+  const last = rows[count - 1]
+  return rows.filter((row, i) => i < count || (row.appearances === last.appearances && cost(row) === cost(last)))
 }

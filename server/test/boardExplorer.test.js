@@ -7,8 +7,13 @@ import {
   exploreBoards,
   exploreCurrentPatch,
   MIN_BREAKDOWN_GAMES,
+  lookupPlayed,
+  MAX_PLAYED_QUERIES,
   parseExplorerQuery,
+  parsePlayedQuery,
+  playedOnCurrentPatch,
   setBoardIndex,
+  tallyExactBoards,
 } from '../services/boardExplorer.js'
 
 const IE = 'DA_InfinityEdge'
@@ -162,5 +167,42 @@ describe('parseExplorerQuery', () => {
     const ids = Array.from({ length: 20 }, (_, i) => `DA_Item_${i}`)
     assert.equal(parseExplorerQuery({ items: ids.join(',') }).items.length, 20)
     assert.deepEqual(parseExplorerQuery({ units: `${AHRI}:2-3,${AHRI},${SETT}` }).units, [{ id: AHRI, minStar: 2, maxStar: 3 }, { id: SETT }])
+  })
+})
+
+describe('exact-board play counts (Bronze for Life star)', () => {
+  const board = (place, ...ids) => ({ place, units: ids.map(id => ({ id, star: 1, items: [] })), traits: [] })
+  const boards = [
+    board(1, 'DA_18_Xayah', 'DA_18_Rakan'),
+    board(3, 'DA_18_Rakan', 'DA_18_Xayah'), // same team, other order
+    board(2, 'DA_18_Xayah', 'DA_18_Rakan', 'DA_Lux18_Base'),
+  ]
+
+  it('counts boards with exactly the given units, ignoring order', () => {
+    const tally = tallyExactBoards(boards)
+    assert.deepEqual(lookupPlayed(tally, [['DA_18_Rakan', 'DA_18_Xayah'], ['DA_18_Xayah'], ['DA_18_Xayah', 'DA_18_Rakan', 'DA_Lux18_Base']]), [
+      { count: 2, avgPlacement: 2 },
+      { count: 0, avgPlacement: null },
+      { count: 1, avgPlacement: 2 },
+    ])
+  })
+
+  it('canonicalizes Lux forms like board units and drops duplicate ids', () => {
+    assert.deepEqual(parsePlayedQuery({ boards: [['DA_18_Lux_Coven', 'DA_18_Xayah', 'DA_18_Xayah']] }), [['DA_Lux18_Base', 'DA_18_Xayah']])
+  })
+
+  it('rejects malformed or oversized queries', () => {
+    assert.throws(() => parsePlayedQuery({}), /boards must be/)
+    assert.throws(() => parsePlayedQuery({ boards: Array.from({ length: MAX_PLAYED_QUERIES + 1 }, () => ['DA_18_Xayah']) }), /at most/)
+    assert.throws(() => parsePlayedQuery({ boards: [[]] }), /unit ids/)
+    assert.throws(() => parsePlayedQuery({ boards: [['bad id!']] }), /Invalid id/)
+  })
+
+  it('answers from the current patch index', () => {
+    setBoardIndex('18.1', boards, [], 3)
+    const result = playedOnCurrentPatch({ boards: [['DA_18_Xayah', 'DA_18_Rakan', 'DA_18_Lux_Fae']] })
+    assert.equal(result.ready, true)
+    assert.equal(result.totalBoards, 3)
+    assert.deepEqual(result.results, [{ count: 1, avgPlacement: 2 }])
   })
 })

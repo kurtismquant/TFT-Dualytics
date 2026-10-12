@@ -566,7 +566,16 @@
     "loadMore": "Mostrar más comps",
     "groupHeading_one": "{{count}} rasgo",
     "groupHeading_other": "{{count}} rasgos",
-    "nearTitle": "A una unidad o emblema de contar (tienes/necesitas)"
+    "nearTitle": "A una unidad o emblema de contar (tienes/necesitas)",
+    "legendHighlyPlayed_one": "Muy jugada: este equipo exacto apareció en {{count}}+ tablero este parche",
+    "legendHighlyPlayed_other": "Muy jugada: este equipo exacto apareció en {{count}}+ tableros este parche",
+    "highlyPlayedTitle_one": "Muy jugada: {{count}} tablero este parche, posición media {{avg}}",
+    "highlyPlayedTitle_other": "Muy jugada: {{count}} tableros este parche, posición media {{avg}}",
+    "recommendedTitle": "Unidades recomendadas",
+    "recommendedNote_one": "Las más comunes en la mejor comp",
+    "recommendedNote_other": "Las más comunes en las {{count}} mejores comps",
+    "recommendedCount_one": "En {{count}} de {{total}}",
+    "recommendedCount_other": "En {{count}} de {{total}}"
   },
   "teamCode": {
     "copy": "Copiar código",

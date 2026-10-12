@@ -1,4 +1,4 @@
-import { buildCompFingerprint, deduplicateUnits } from './unitUtils.js'
+import { buildCompFingerprint, canonicalUnitId, deduplicateUnits } from './unitUtils.js'
 import { toTeamPlacement } from './teamPlacement.js'
 
 // Board explorer: "how do boards with these units / traits / items do, and what
@@ -254,6 +254,59 @@ const resultCache = new Map()
 export function setBoardIndex(patch, boards, comps = [], games = 0) {
   current = { patch, boards, comps, games, builtAt: new Date().toISOString() }
   resultCache.clear()
+  exactBoards = null
+}
+
+// ── Exact-board lookups ("has this exact team been played?") ──────────────
+// Bronze for Life asks, for up to MAX_PLAYED_QUERIES comps at once, how many
+// boards this patch fielded exactly those units (stars and items ignored).
+export const MAX_PLAYED_QUERIES = 100
+const MAX_PLAYED_UNITS = 12
+let exactBoards = null
+
+// unit fingerprint -> { count, placementTotal } over the given boards.
+export function tallyExactBoards(boards) {
+  const tally = new Map()
+  for (const board of boards) {
+    const key = buildCompFingerprint(board.units.map(unit => unit.id))
+    const row = tally.get(key) || { count: 0, placementTotal: 0 }
+    row.count++
+    row.placementTotal += board.place
+    tally.set(key, row)
+  }
+  return tally
+}
+
+// Body { boards: [[unitId, ...], ...] } -> unit lists, canonicalized the way
+// board units are (Lux forms -> base Lux) and de-duplicated.
+export function parsePlayedQuery(body) {
+  const lists = body?.boards
+  if (!Array.isArray(lists) || lists.length > MAX_PLAYED_QUERIES) {
+    throw badRequest(`boards must be an array of at most ${MAX_PLAYED_QUERIES} unit lists`)
+  }
+  return lists.map(list => {
+    if (!Array.isArray(list) || list.length === 0 || list.length > MAX_PLAYED_UNITS) {
+      throw badRequest(`each board needs 1-${MAX_PLAYED_UNITS} unit ids`)
+    }
+    return [...new Set(list.map(id => canonicalUnitId(parseId(id))))]
+  })
+}
+
+export function lookupPlayed(tally, unitLists) {
+  return unitLists.map(units => {
+    const row = tally.get(buildCompFingerprint(units))
+    return row
+      ? { count: row.count, avgPlacement: Math.round((row.placementTotal / row.count) * 100) / 100 }
+      : { count: 0, avgPlacement: null }
+  })
+}
+
+// Route entry point; `ready: false` until the index exists (as above).
+export function playedOnCurrentPatch(body) {
+  const unitLists = parsePlayedQuery(body)
+  if (!current) return { ready: false, patch: null, results: [] }
+  exactBoards ??= tallyExactBoards(current.boards)
+  return { ready: true, patch: current.patch, totalBoards: current.boards.length, results: lookupPlayed(exactBoards, unitLists) }
 }
 
 function cacheKey(filters) {

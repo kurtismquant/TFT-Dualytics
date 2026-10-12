@@ -3,14 +3,16 @@ import { useTranslation } from 'react-i18next'
 import BronzeControls from './BronzeControls.jsx'
 import BronzeCompRow from './BronzeCompRow.jsx'
 import LoadMore from './LoadMore.jsx'
+import RecommendedUnits from './RecommendedUnits.jsx'
 import ItemIcon from '../ItemIcon.jsx'
 import UnitIcon from '../UnitIcon.jsx'
 import { useBronzeSearch } from '../../hooks/useBronzeSearch.js'
+import { usePlayedBoards } from '../../hooks/usePlayedBoards.js'
 import { useChampions } from '../../hooks/useChampions.js'
 import { useItems } from '../../hooks/useItems.js'
 import { useTraits } from '../../hooks/useTraits.js'
 import { toBuilderRoster } from '../../utils/builderRoster.js'
-import { buildEmblemOptions, LEGENDARY_COST, TRAIT_CHOICE_UNIT_IDS, traitRanges } from '../../utils/bronzeComps.js'
+import { buildEmblemOptions, HIGHLY_PLAYED_MIN_BOARDS, LEGENDARY_COST, recommendUnits, TRAIT_CHOICE_UNIT_IDS, traitRanges } from '../../utils/bronzeComps.js'
 import { makeMap } from '../../utils/statsFormatting.js'
 import statsStyles from '../../pages/StatsPage.module.css'
 import styles from './BronzeComps.module.css'
@@ -19,6 +21,8 @@ import styles from './BronzeComps.module.css'
 // each time the user scrolls to its end.
 const MAX_RESULTS = 100
 const PAGE_SIZE = 20
+// The recommended-units widget counts units across this many top comps.
+const RECOMMEND_POOL = 20
 // Comps arrive sorted by trait count; consecutive runs share one heading.
 function groupByTraitCount(comps) {
   const groups = []
@@ -97,7 +101,26 @@ export default function BronzeComps() {
   const [paging, setPaging] = useState({ result: null, shown: PAGE_SIZE })
   const shown = paging.result === result ? paging.shown : PAGE_SIZE
   const total = result?.comps.length || 0
-  const groups = useMemo(() => groupByTraitCount(result?.comps.slice(0, shown) || []), [result, shown])
+  // comp key -> { count, avgPlacement } for comps played often enough to star.
+  const played = usePlayedBoards(result?.comps)
+  const highlyPlayed = useMemo(() => {
+    const map = new Map()
+    const rows = played.data?.results || []
+    result?.comps.forEach((comp, i) => {
+      if ((rows[i]?.count || 0) >= HIGHLY_PLAYED_MIN_BOARDS) map.set(comp.key, rows[i])
+    })
+    return map
+  }, [played.data, result])
+  // Starred comps lead their trait count, ahead of the cost order (before
+  // paging, so a starred comp deep in the list still shows near the top).
+  const ordered = useMemo(() => (result?.comps || [])
+    .map((comp, index) => ({ comp, index }))
+    .sort((a, b) => b.comp.traitCount - a.comp.traitCount
+      || Number(highlyPlayed.has(b.comp.key)) - Number(highlyPlayed.has(a.comp.key))
+      || a.index - b.index)
+    .map(entry => entry.comp), [result, highlyPlayed])
+  const groups = useMemo(() => groupByTraitCount(ordered.slice(0, shown)), [ordered, shown])
+  const recommended = useMemo(() => recommendUnits(ordered, { top: RECOMMEND_POOL }), [ordered])
   const showMore = useCallback(() => setPaging(current => {
     const base = current.result === result ? current.shown : PAGE_SIZE
     return base >= total ? current : { result, shown: Math.min(base + PAGE_SIZE, total) }
@@ -125,34 +148,42 @@ export default function BronzeComps() {
       )}
       {result?.truncated && <p className={statsStyles.message} role="status">{t('bronze.truncated')}</p>}
       {total > 0 && (
-        <>
-          <div
-            className={`${styles.list} ${isSearching ? styles.updating : ''}`}
-            aria-busy={isSearching}
-            aria-label={t('bronze.resultsLabel', { count: filters.size })}
-            role="region"
-          >
-            {groups.map(group => (
-              <section key={group.traitCount} className={styles.group}>
-                <h3 className={styles.groupHeading}>{t('bronze.groupHeading', { count: group.traitCount })}</h3>
-                <ol className={styles.groupList}>
-                  {group.comps.map(comp => (
-                    <BronzeCompRow
-                      key={comp.key}
-                      comp={comp}
-                      traitByName={traitByName}
-                      traits={traits}
-                      champions={champions}
-                      championsById={championsById}
-                      emblemByTrait={emblemByTrait}
-                    />
-                  ))}
-                </ol>
-              </section>
-            ))}
+        <div className={styles.resultsLayout}>
+          <div className={styles.resultsMain}>
+            <div
+              className={`${styles.list} ${isSearching ? styles.updating : ''}`}
+              aria-busy={isSearching}
+              aria-label={t('bronze.resultsLabel', { count: filters.size })}
+              role="region"
+            >
+              <p className={styles.legend}>
+                <span className={styles.legendStar} aria-hidden="true">★</span>
+                {t('bronze.legendHighlyPlayed', { count: HIGHLY_PLAYED_MIN_BOARDS })}
+              </p>
+              {groups.map(group => (
+                <section key={group.traitCount} className={styles.group}>
+                  <h3 className={styles.groupHeading}>{t('bronze.groupHeading', { count: group.traitCount })}</h3>
+                  <ol className={styles.groupList}>
+                    {group.comps.map(comp => (
+                      <BronzeCompRow
+                        key={comp.key}
+                        comp={comp}
+                        traitByName={traitByName}
+                        traits={traits}
+                        champions={champions}
+                        championsById={championsById}
+                        emblemByTrait={emblemByTrait}
+                        played={highlyPlayed.get(comp.key)}
+                      />
+                    ))}
+                  </ol>
+                </section>
+              ))}
+            </div>
+            {shown < total && <LoadMore onMore={showMore} shown={shown} />}
           </div>
-          {shown < total && <LoadMore onMore={showMore} shown={shown} />}
-        </>
+          <RecommendedUnits units={recommended} poolSize={Math.min(RECOMMEND_POOL, total)} />
+        </div>
       )}
     </section>
   )

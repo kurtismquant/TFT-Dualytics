@@ -7,6 +7,7 @@ import {
   buildEmblemOptions,
   expandTraitChoices,
   findBronzeComps,
+  recommendUnits,
   traitRanges,
 } from './bronzeComps.js'
 
@@ -226,4 +227,27 @@ test('a 4th evolution that adds nothing is dropped for the 3-trait one', () => {
   }
   assert.equal(comps[0].traitCount, 1)
   assert.deepEqual(names(comps[0]), ['Executioner', 'DA_18_KhaZix'])
+})
+
+test("a 4th evolution that adds nothing is swapped for the 3-trait board, kept once", () => {
+  // Spellweaver doesn't count here, so the all-4 Kha'Zix never beats a
+  // 3-trait choice: those boards become the 3-trait one (not dropped, which
+  // starved the search with an Executioner emblem at 9+ units) without duplicates.
+  const ranges = new Map([...khaRanges].filter(([name]) => name !== 'Spellweaver'))
+  const { comps } = findBronzeComps({ roster: [khazix, exe, rap, rav, spe, filler], ranges, size: 4, emblemTraits: ['Executioner'], limit: 100 })
+  assert.ok(comps.length > 0)
+  assert.ok(comps.every(c => !c.bonusEvolution))
+  assert.equal(new Set(comps.map(c => c.key)).size, comps.length)
+})
+
+test('recommended units: most appearances in the top comps, cheaper first, ties at the cut all kept', () => {
+  const champ = (id, cost) => ({ id, name: id, cost })
+  const [a, b, c, d, e] = [champ('A', 4), champ('B', 1), champ('C', 2), champ('D', 2), champ('E', 5)]
+  const comp = (...units) => ({ units: units.map(champion => ({ champion })) })
+  const comps = [comp(a, b, c, d), comp(a, b, c, d), comp(a, b, e), comp(a, e)]
+  // A 4, B 3, then C/D/E 2: C and D (2-cost) beat E (5-cost) and tie each other.
+  assert.deepEqual(recommendUnits(comps).map(r => [r.champion.id, r.appearances]), [['A', 4], ['B', 3], ['C', 2], ['D', 2]])
+  // Only the first `top` comps count.
+  assert.deepEqual(recommendUnits(comps, { top: 1, count: 1 }).map(r => r.champion.id), ['B']) // all 1: cheapest first
+  assert.deepEqual(recommendUnits([]), [])
 })

@@ -566,7 +566,16 @@
     "loadMore": "Show more comps",
     "groupHeading_one": "{{count}} Trait",
     "groupHeading_other": "{{count}} Traits",
-    "nearTitle": "One unit or emblem away from counting (have/need)"
+    "nearTitle": "One unit or emblem away from counting (have/need)",
+    "legendHighlyPlayed_one": "Highly played: this exact team was fielded on {{count}}+ board this patch",
+    "legendHighlyPlayed_other": "Highly played: this exact team was fielded on {{count}}+ boards this patch",
+    "highlyPlayedTitle_one": "Highly played: {{count}} board this patch, avg place {{avg}}",
+    "highlyPlayedTitle_other": "Highly played: {{count}} boards this patch, avg place {{avg}}",
+    "recommendedTitle": "Recommended units",
+    "recommendedNote_one": "Most common in the top {{count}} comp",
+    "recommendedNote_other": "Most common in the top {{count}} comps",
+    "recommendedCount_one": "In {{count}} of {{total}}",
+    "recommendedCount_other": "In {{count}} of {{total}}"
   },
   "teamCode": {
     "copy": "Copy team code",

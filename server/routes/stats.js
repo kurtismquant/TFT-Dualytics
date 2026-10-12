@@ -4,7 +4,7 @@ import { gzip } from 'node:zlib'
 import { getStats } from '../services/statsAggregator.js'
 import { getUnitItemCombos, MIN_COMBO_GAMES } from '../services/unitItemCombosAggregator.js'
 import { getItemUnits } from '../services/itemUnitsAggregator.js'
-import { exploreCurrentPatch } from '../services/boardExplorer.js'
+import { exploreCurrentPatch, playedOnCurrentPatch } from '../services/boardExplorer.js'
 
 const router = Router()
 const gzipAsync = promisify(gzip)
@@ -93,6 +93,19 @@ router.get('/explorer', async (req, res) => {
     const status = err.status || 500
     if (status >= 500) console.error('Board explorer failed:', err.message)
     res.status(status).json({ ready: false, error: status === 400 ? err.message : 'Board explorer failed' })
+  }
+})
+
+// Exact-board play counts for a batch of unit lists (Bronze for Life's
+// "highly played" star): POST { boards: [[unitId, ...], ...] }.
+router.post('/explorer/played', (req, res) => {
+  try {
+    const result = playedOnCurrentPatch(req.body)
+    res.status(result.ready ? 200 : 503).json(result)
+  } catch (err) {
+    const status = err.status || 500
+    if (status >= 500) console.error('Played-board lookup failed:', err.message)
+    res.status(status).json({ ready: false, error: status === 400 ? err.message : 'Played-board lookup failed' })
   }
 })
 
