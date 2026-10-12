@@ -12,9 +12,10 @@ export const MAX_EMBLEMS = 10
 export const LEGENDARY_COST = 5
 const BRONZE_STYLES = new Set([1])
 const BRONZE_TO_GOLD_STYLES = new Set([1, 3, 5])
-// Safety net for the search below; real Set 18 searches finish well under it.
-// Hitting it returns the best comps found so far, flagged truncated.
-const NODE_CAP = 3_000_000
+// Safety net for the search below; real Set 18 searches (100 comps of 10 units)
+// finish well under it. Hitting it returns the best comps found so far,
+// flagged truncated.
+const NODE_CAP = 10_000_000
 
 // Set-specific: units whose traits are chosen in game. Set 18 Kha'Zix evolves
 // with takedowns into 3 of these 4 traits (fully evolved). Taking all 4 is
@@ -188,43 +189,69 @@ export function findBronzeComps({ roster, ranges, size, emblemTraits = [], requi
   }
 
   const classes = buildClasses(free, traitIndex)
-  // From class i on: supply[i][t] = most units of trait t still addable,
-  // maxWeight[i] = most trait weight on one unit, topCost[i][r] = total cost
-  // of the r priciest units still pickable.
+  // From class i on: supply[i][t] = most units of trait t still addable;
+  // topWeight[i][r] / topCost[i][r] = most trait weight / total cost r units
+  // can still bring. A group (Lux forms, Kha'Zix choices) fields one unit, so
+  // it enters those lists once, with its best weight and cost; counting each
+  // form separately made the bounds too loose to prune.
   const supply = [new Array(names.length).fill(0)]
-  const maxWeight = [0]
-  let costs = []
+  const topWeight = [[0]]
   const topCost = [[0]]
+  const plainWeights = []
+  const plainCosts = []
+  const groupBest = new Map()
+  const prefixSums = values => {
+    const sums = [0]
+    for (const v of values.sort((a, b) => b - a).slice(0, size)) sums.push(sums[sums.length - 1] + v)
+    return sums
+  }
   for (let i = classes.length - 1; i >= 0; i--) {
     const cls = classes[i]
     const next = supply[0].slice()
     for (const [t, w] of cls.vector) next[t] += w * cls.cap
     supply.unshift(next)
-    maxWeight.unshift(Math.max(maxWeight[0], cls.weight))
-    costs = [...costs, ...cls.units.slice(0, cls.cap).map(unit => unit.cost || 0)].sort((a, b) => b - a)
-    const prefix = [0]
-    for (const c of costs.slice(0, size)) prefix.push(prefix[prefix.length - 1] + c)
-    topCost.unshift(prefix)
+    if (cls.group) {
+      const best = groupBest.get(cls.group) || { weight: 0, cost: 0 }
+      groupBest.set(cls.group, { weight: Math.max(best.weight, cls.weight), cost: Math.max(best.cost, cls.units[0].cost || 0) })
+    } else {
+      for (const unit of cls.units) {
+        plainWeights.push(cls.weight)
+        plainCosts.push(unit.cost || 0)
+      }
+    }
+    const groups = [...groupBest.values()]
+    topWeight.unshift(prefixSums([...plainWeights, ...groups.map(g => g.weight)]))
+    topCost.unshift(prefixSums([...plainCosts, ...groups.map(g => g.cost)]))
   }
+  const topSum = (sums, r) => sums[Math.min(r, sums.length - 1)]
   const groupLast = new Map()
   classes.forEach((cls, i) => { if (cls.group) groupLast.set(cls.group, i) })
 
-  const inRange = t => counts[t] >= lo[t] && counts[t] <= hi[t]
-  const score = () => names.reduce((sum, _, t) => sum + Number(inRange(t)), 0)
+  const traitTotal = names.length
+  const score = () => {
+    let total = 0
+    for (let t = 0; t < traitTotal; t++) if (counts[t] >= lo[t] && counts[t] <= hi[t]) total++
+    return total
+  }
+  // Deficits are small (a trait needs at most a few more units), so they are
+  // tallied by size instead of sorted; this runs at every search node.
+  const maxDeficit = Math.max(1, ...lo)
+  const deficitsBySize = new Array(maxDeficit + 1).fill(0)
   const bound = (i, remaining) => {
     let total = 0
-    const deficits = []
-    for (let t = 0; t < names.length; t++) {
-      if (counts[t] > hi[t]) continue // past the range: counts only grow
-      if (counts[t] >= lo[t]) total++
-      else if (supply[i][t] >= lo[t] - counts[t]) deficits.push(lo[t] - counts[t])
+    deficitsBySize.fill(0)
+    const traitSupply = supply[i]
+    for (let t = 0; t < traitTotal; t++) {
+      const count = counts[t]
+      if (count > hi[t]) continue // past the range: counts only grow
+      if (count >= lo[t]) total++
+      else if (traitSupply[t] >= lo[t] - count) deficitsBySize[lo[t] - count]++
     }
-    deficits.sort((a, b) => a - b)
-    let budget = remaining * maxWeight[i]
-    for (const deficit of deficits) {
-      if (deficit > budget) break
-      budget -= deficit
-      total++
+    let budget = topSum(topWeight[i], remaining)
+    for (let size = 1; size <= maxDeficit && budget >= size; size++) {
+      const filled = Math.min(deficitsBySize[size], Math.floor(budget / size))
+      total += filled
+      budget -= filled * size
     }
     return total
   }
@@ -258,8 +285,9 @@ export function findBronzeComps({ roster, ranges, size, emblemTraits = [], requi
     }
     const candidate = { traitCount, bonus, cost }
     if (kept.length < limit || compareComps(candidate, kept[kept.length - 1]) > 0) {
-      kept.push({ ...candidate, picks: picks.slice() })
-      kept.sort((a, b) => compareComps(b, a))
+      let at = kept.length
+      while (at > 0 && compareComps(candidate, kept[at - 1]) > 0) at--
+      kept.splice(at, 0, { ...candidate, picks: picks.slice() })
       if (kept.length > limit) kept.pop()
     }
   }
@@ -277,7 +305,7 @@ export function findBronzeComps({ roster, ranges, size, emblemTraits = [], requi
         // Best case on the 4th-evolution key: none, unless one is already picked.
         const bonus = bonusPick !== -1 ? 1 : 0
         if (bonus > worst.bonus) return
-        const costCap = cost + (topCost[i][remaining] ?? topCost[i][topCost[i].length - 1])
+        const costCap = cost + topSum(topCost[i], remaining)
         if (bonus === worst.bonus && costCap <= worst.cost) return
       }
     }

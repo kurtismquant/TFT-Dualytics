@@ -6,6 +6,7 @@ import {
   isAbilityResolved,
   isCurrentSetId,
   normalizeOverrideToken,
+  plannerCodesFor,
   selectSetEntry,
   selectSetUnits,
   unhashVariables,
@@ -201,5 +202,26 @@ describe('normalizeOverrideToken', () => {
     assert.equal(normalizeOverrideToken(null), null)
     assert.equal(normalizeOverrideToken([1, 2]), null)
     assert.equal(normalizeOverrideToken({ values: ['x'] }), null)
+  })
+})
+
+describe('plannerCodesFor', () => {
+  // Shape of CDragon's tftchampions-teamplanner.json.
+  const data = {
+    TFTSet17: [{ character_id: 'TFT17_Ahri', team_planner_code: 12 }],
+    TFTSet18: [
+      { character_id: 'DA_Gromp18_AP', team_planner_code: 1026 },
+      { character_id: 'DA_Lux18_Base', team_planner_code: 1029 },
+      { character_id: 'DA_Broken18', team_planner_code: null },
+    ],
+  }
+
+  it('maps the current set only, skipping entries without a code', () => {
+    assert.deepEqual([...plannerCodesFor(data, 18)], [['DA_Gromp18_AP', 1026], ['DA_Lux18_Base', 1029]])
+  })
+
+  it('is empty when the file or the set is missing', () => {
+    assert.equal(plannerCodesFor(null, 18).size, 0)
+    assert.equal(plannerCodesFor(data, 19).size, 0)
   })
 })

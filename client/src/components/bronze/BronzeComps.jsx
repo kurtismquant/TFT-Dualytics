@@ -1,26 +1,31 @@
-import { useCallback, useDeferredValue, useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import BronzeControls from './BronzeControls.jsx'
 import BronzeCompRow from './BronzeCompRow.jsx'
+import LoadMore from './LoadMore.jsx'
 import ItemIcon from '../ItemIcon.jsx'
 import UnitIcon from '../UnitIcon.jsx'
+import { useBronzeSearch } from '../../hooks/useBronzeSearch.js'
 import { useChampions } from '../../hooks/useChampions.js'
 import { useItems } from '../../hooks/useItems.js'
 import { useTraits } from '../../hooks/useTraits.js'
 import { toBuilderRoster } from '../../utils/builderRoster.js'
-import { buildEmblemOptions, findBronzeComps, LEGENDARY_COST, TRAIT_CHOICE_UNIT_IDS, traitRanges } from '../../utils/bronzeComps.js'
+import { buildEmblemOptions, LEGENDARY_COST, TRAIT_CHOICE_UNIT_IDS, traitRanges } from '../../utils/bronzeComps.js'
 import { makeMap } from '../../utils/statsFormatting.js'
 import statsStyles from '../../pages/StatsPage.module.css'
 import styles from './BronzeComps.module.css'
 
+// The search returns up to MAX_RESULTS comps; the list shows PAGE_SIZE more
+// each time the user scrolls to its end.
+const MAX_RESULTS = 100
+const PAGE_SIZE = 20
 const DEFAULT_FILTERS = {
   size: 8, includeSilverGold: false, excludeLegendary: false, excludeKhaZix: false, requiredIds: [], emblemIds: [],
 }
 
 // Bronze for Life: comps of N units with the most traits in their bronze tier
 // (optionally silver/gold too). Computed in the browser from the static asset
-// lists by utils/bronzeComps.js; a few hundred ms at worst on Set 18, so the
-// search reads deferred filters and the controls stay responsive.
+// lists by utils/bronzeComps.js, in a Web Worker (up to ~0.5s on Set 18).
 export default function BronzeComps() {
   const { t } = useTranslation()
   const [filters, setFilters] = useState(DEFAULT_FILTERS)
@@ -69,18 +74,25 @@ export default function BronzeComps() {
   }, [filters.emblemIds, emblemOptions])
 
   const search = useMemo(
-    () => ({ roster, ranges, size: filters.size, emblemTraits, requiredIds }),
+    () => (roster.length > 0 && ranges.size > 0
+      ? { roster, ranges, size: filters.size, emblemTraits, requiredIds, limit: MAX_RESULTS }
+      : null),
     [roster, ranges, filters.size, emblemTraits, requiredIds],
   )
-  const deferredSearch = useDeferredValue(search)
-  const result = useMemo(
-    () => (deferredSearch.roster.length > 0 && deferredSearch.ranges.size > 0 ? findBronzeComps(deferredSearch) : null),
-    [deferredSearch],
-  )
-  const isUpdating = deferredSearch !== search
+  const { result, error: searchError, isSearching } = useBronzeSearch(search)
+  const championsById = useMemo(() => makeMap(champions), [champions])
+
+  // Pages shown, reset whenever a new result arrives.
+  const [paging, setPaging] = useState({ result: null, shown: PAGE_SIZE })
+  const shown = paging.result === result ? paging.shown : PAGE_SIZE
+  const total = result?.comps.length || 0
+  const showMore = useCallback(() => setPaging(current => {
+    const base = current.result === result ? current.shown : PAGE_SIZE
+    return base >= total ? current : { result, shown: Math.min(base + PAGE_SIZE, total) }
+  }), [result, total])
 
   const isLoading = champs.isLoading || traitsQuery.isLoading || itemsQuery.isLoading
-  const isError = champs.isError || traitsQuery.isError || itemsQuery.isError
+  const isError = champs.isError || traitsQuery.isError || itemsQuery.isError || Boolean(searchError)
   const tooManyRequired = requiredIds.length > filters.size || result?.tooManyRequired
 
   return (
@@ -91,31 +103,37 @@ export default function BronzeComps() {
         emblemPicker={emblemPicker}
         unitPicker={unitPicker}
       />
-      {isLoading && <p className={statsStyles.message} role="status" aria-live="polite">{t('bronze.loading')}</p>}
+      {(isLoading || (isSearching && !result)) && (
+        <p className={statsStyles.message} role="status" aria-live="polite">{t(isLoading ? 'bronze.loading' : 'bronze.searching')}</p>
+      )}
       {isError && <p className={statsStyles.message} role="alert">{t('bronze.error')}</p>}
       {tooManyRequired && <p className={statsStyles.message} role="status">{t('bronze.tooManyRequired')}</p>}
-      {!isLoading && !isError && !tooManyRequired && result?.comps.length === 0 && (
+      {!isLoading && !isError && !isSearching && !tooManyRequired && result?.comps.length === 0 && (
         <p className={statsStyles.message} role="status">{t('bronze.empty')}</p>
       )}
       {result?.truncated && <p className={statsStyles.message} role="status">{t('bronze.truncated')}</p>}
-      {result?.comps.length > 0 && (
-        <ol
-          className={`${styles.list} ${isUpdating ? styles.updating : ''}`}
-          aria-busy={isUpdating}
-          aria-label={t('bronze.resultsLabel', { count: deferredSearch.size })}
-        >
-          {result.comps.map((comp, index) => (
-            <BronzeCompRow
-              key={comp.key}
-              comp={comp}
-              rank={index + 1}
-              traitByName={traitByName}
-              traits={traits}
-              champions={champions}
-              emblemByTrait={emblemByTrait}
-            />
-          ))}
-        </ol>
+      {total > 0 && (
+        <>
+          <ol
+            className={`${styles.list} ${isSearching ? styles.updating : ''}`}
+            aria-busy={isSearching}
+            aria-label={t('bronze.resultsLabel', { count: filters.size })}
+          >
+            {result.comps.slice(0, shown).map((comp, index) => (
+              <BronzeCompRow
+                key={comp.key}
+                comp={comp}
+                rank={index + 1}
+                traitByName={traitByName}
+                traits={traits}
+                champions={champions}
+                championsById={championsById}
+                emblemByTrait={emblemByTrait}
+              />
+            ))}
+          </ol>
+          {shown < total && <LoadMore onMore={showMore} shown={shown} />}
+        </>
       )}
     </section>
   )

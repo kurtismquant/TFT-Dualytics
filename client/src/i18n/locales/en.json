@@ -564,6 +564,15 @@
     "error": "Could not load units and traits. Is the server running?",
     "empty": "No comps found for these filters.",
     "tooManyRequired": "More required units than the board holds. Remove a unit or pick a bigger board.",
-    "truncated": "The search stopped early; these are the best comps found so far."
+    "truncated": "The search stopped early; these are the best comps found so far.",
+    "searching": "Finding comps...",
+    "loadMore": "Show more comps",
+    "copy": "Copy",
+    "copied": "Copied",
+    "copyFailed": "Copy failed",
+    "copyLabel": "Copy team planner code",
+    "copyTitle": "Copy team planner code: {{code}}",
+    "copyUnavailable": "Team planner code unavailable",
+    "copiedStatus": "Team code copied. Paste it into the in-game Team Planner."
   }
 }

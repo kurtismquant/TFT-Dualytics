@@ -74,6 +74,17 @@ let ddVersion = null
 // The public CDN mirrors them under .../latest/game/assets/... and serves
 // .png conversions in place of the raw .tex/.dds files.
 const CDRAGON_BASE = 'https://raw.communitydragon.org/latest/game/'
+// Per-set champion list for the in-game Team Planner, with each unit's
+// team_planner_code (what planner share codes are built from). Keyed by
+// "TFTSet<n>"; trait forms (Lux (Coven)) aren't listed, only their base.
+const CDRAGON_TEAM_PLANNER_URL = 'https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/tftchampions-teamplanner.json'
+
+// character_id -> team_planner_code for the current set; empty when absent.
+export const plannerCodesFor = (teamPlannerData, setNumber = CURRENT_SET) => new Map(
+  (teamPlannerData?.[`TFTSet${setNumber}`] || [])
+    .filter(c => c.character_id && Number.isInteger(c.team_planner_code))
+    .map(c => [c.character_id, c.team_planner_code]),
+)
 
 // Startup awaits these CDN fetches before the server marks itself ready. axios
 // defaults to no timeout, so a stalled connection (CDragon is occasionally flaky)
@@ -251,11 +262,14 @@ export const fetchAndCacheAssets = async () => {
   console.log(`Data Dragon version: ${ddVersion}`)
 
   // Step 2: Fetch DD champion/item + Community Dragon data in parallel
-  const [champData, itemData, cdData] = await Promise.all([
+  const [champData, itemData, cdData, teamPlannerData] = await Promise.all([
     axios.get(`https://ddragon.leagueoflegends.com/cdn/${ddVersion}/data/en_US/tft-champion.json`, { timeout: ASSET_FETCH_TIMEOUT_MS }).then(r => r.data),
     axios.get(`https://ddragon.leagueoflegends.com/cdn/${ddVersion}/data/en_US/tft-item.json`, { timeout: ASSET_FETCH_TIMEOUT_MS }).then(r => r.data),
     axios.get('https://raw.communitydragon.org/latest/cdragon/tft/en_us.json', { timeout: ASSET_FETCH_TIMEOUT_MS }).then(r => r.data).catch(() => null),
+    // Optional: without it units just have no planner code (no copy button).
+    axios.get(CDRAGON_TEAM_PLANNER_URL, { timeout: ASSET_FETCH_TIMEOUT_MS }).then(r => r.data).catch(() => null),
   ])
+  const plannerCodes = plannerCodesFor(teamPlannerData)
 
   // Step 3: Build champion map from Community Dragon (has traits + icons)
   // Community Dragon setData has per-set champion lists with trait data
@@ -333,6 +347,7 @@ export const fetchAndCacheAssets = async () => {
         iconUrl,
         ability,
         stats,
+        plannerCode: plannerCodes.get(champ.apiName) ?? null,
       })
     }
     const clientBuild = clientData._meta?.branch ? ` (${clientData._meta.branch}, extracted ${clientData._meta.extractedAt})` : ''
@@ -358,10 +373,11 @@ export const fetchAndCacheAssets = async () => {
         cost: champ.cost || champ.tier || 1,
         traits: [],
         iconUrl,
+        plannerCode: plannerCodes.get(champ.id) ?? null,
       })
     }
   }
-  console.log(`Loaded ${championMap.size} champions for set ${CURRENT_SET}`)
+  console.log(`Loaded ${championMap.size} champions for set ${CURRENT_SET} (${plannerCodes.size} with Team Planner codes)`)
 
   // Step 4: Build item map — DD for icons, CDragon for categorization.
   // Restrict to items the current set actually uses (via setEntry.items).

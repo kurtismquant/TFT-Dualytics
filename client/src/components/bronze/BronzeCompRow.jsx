@@ -1,8 +1,11 @@
 import { useTranslation } from 'react-i18next'
 import ItemIcon from '../ItemIcon.jsx'
+import CopyCodeButton from './CopyCodeButton.jsx'
 import { HoverableTraitChip, HoverableUnit } from '../shared/HoverableBoardPieces.jsx'
 import { buildUnitPath } from '../../constants/routes.js'
+import { CURRENT_SET } from '../../constants/game.js'
 import { activeTraitStyle } from '../../utils/bronzeComps.js'
+import { encodeTeamPlannerCode } from '../../utils/teamPlannerCode.js'
 import styles from './BronzeComps.module.css'
 
 // Kha'Zix's chosen evolutions as small trait icons under his portrait.
@@ -47,9 +50,11 @@ function NearTraits({ near, traitByName, traits, champions }) {
 
 // One result: counted-trait total, the units (priciest of each interchangeable
 // group, swap-ins noted), the emblems in use, the counted traits and any other
-// active traits, and at the far right the traits one short of counting.
-export default function BronzeCompRow({ comp, rank, traitByName, traits, champions, emblemByTrait }) {
+// active traits, the traits one short of counting, and at the far right a
+// button copying the comp's in-game Team Planner code.
+export default function BronzeCompRow({ comp, rank, traitByName, traits, champions, championsById, emblemByTrait }) {
   const { t } = useTranslation()
+  const teamCode = encodeTeamPlannerCode(comp.units.map(unit => unit.champion), championsById, CURRENT_SET)
   const chip = (name, count) => {
     const meta = traitByName.get(name)
     const style = activeTraitStyle(meta, count)
@@ -114,6 +119,7 @@ export default function BronzeCompRow({ comp, rank, traitByName, traits, champio
         )}
       </div>
       <NearTraits near={comp.nearTraits} traitByName={traitByName} traits={traits} champions={champions} />
+      <CopyCodeButton code={teamCode} />
     </li>
   )
 }
