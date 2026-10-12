@@ -29,6 +29,7 @@ const PAGE_SIZE = 20
 // The recommended-units widget counts units across every loaded comp in this
 // many of the highest trait counts.
 const RECOMMEND_TRAIT_TIERS = 2
+const RECOMMEND_MAX = 10
 // Window width (rem) from which the widget fits in the left margin outside
 // the content box: the 77.5rem box plus two margins each holding the 9.5rem
 // widget, its 1.25rem gap and 0.75rem of room, less the 2rem page gutter,
@@ -125,6 +126,11 @@ export default function BronzeComps() {
   const groups = useMemo(() => groupByTraitCount(ordered.slice(0, shown)), [ordered, shown])
   const recommendPool = useMemo(() => compsInTopTraitCounts(ordered, RECOMMEND_TRAIT_TIERS), [ordered])
   const recommended = useMemo(() => recommendUnits(recommendPool.comps), [recommendPool])
+  // Behind the widget's arrow: up to RECOMMEND_MAX (never dropping a tied pick).
+  const recommendedMore = useMemo(() => {
+    const more = recommendUnits(recommendPool.comps, { count: RECOMMEND_MAX })
+    return more.slice(0, Math.max(RECOMMEND_MAX, recommended.length))
+  }, [recommendPool, recommended])
   const showMore = useCallback(() => setPaging(current => {
     const base = current.result === result ? current.shown : PAGE_SIZE
     return base >= total ? current : { result, shown: Math.min(base + PAGE_SIZE, total) }
@@ -186,7 +192,12 @@ export default function BronzeComps() {
             </div>
             {shown < total && <LoadMore onMore={showMore} shown={shown} />}
           </div>
-          <RecommendedUnits units={recommended} poolSize={recommendPool.comps.length} traitCounts={recommendPool.traitCounts} />
+          <RecommendedUnits
+            units={recommended}
+            moreUnits={recommendedMore}
+            poolSize={recommendPool.comps.length}
+            traitCounts={recommendPool.traitCounts}
+          />
         </div>
       )}
     </section>

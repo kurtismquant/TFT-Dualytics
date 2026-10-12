@@ -575,7 +575,9 @@
     "recommendedNote_one": "Most common in the {{tiers}} trait comps ({{count}} comp)",
     "recommendedNote_other": "Most common in the {{tiers}} trait comps ({{count}} comps)",
     "recommendedCount_one": "In {{count}} of {{total}}",
-    "recommendedCount_other": "In {{count}} of {{total}}"
+    "recommendedCount_other": "In {{count}} of {{total}}",
+    "recommendedMore": "More units",
+    "recommendedFewer": "Fewer units"
   },
   "teamCode": {
     "copy": "Copy team code",

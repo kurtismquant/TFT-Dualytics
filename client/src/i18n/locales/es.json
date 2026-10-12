@@ -575,7 +575,9 @@
     "recommendedNote_one": "Las más comunes en las comps de {{tiers}} rasgos ({{count}} comp)",
     "recommendedNote_other": "Las más comunes en las comps de {{tiers}} rasgos ({{count}} comps)",
     "recommendedCount_one": "En {{count}} de {{total}}",
-    "recommendedCount_other": "En {{count}} de {{total}}"
+    "recommendedCount_other": "En {{count}} de {{total}}",
+    "recommendedMore": "Más unidades",
+    "recommendedFewer": "Menos unidades"
   },
   "teamCode": {
     "copy": "Copiar código",
