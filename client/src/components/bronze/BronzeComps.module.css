@@ -117,8 +117,11 @@
 }
 
 .resultsLayout[data-widget='outside'] .recommended {
+  /* Centered vertically in the window: a sticky top of 50% is half the
+     viewport, and the transform lifts it by half its own height. */
   position: sticky;
-  top: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
   grid-column: 1;
   grid-row: 1;
   width: 9.5rem;
