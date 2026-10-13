@@ -5,6 +5,7 @@ import { useLeaderboard } from '../hooks/useLeaderboard.js'
 import { LEADERBOARD_REGION_OPTIONS } from '../constants/regions.js'
 import { buildSummonerPath } from '../constants/routes.js'
 import { PageShell } from '../components/layout/PageShell.jsx'
+import CopyRiotIdButton from '../components/shared/CopyRiotIdButton.jsx'
 import styles from './LeaderboardPage.module.css'
 import { getCSSVar } from '../utils/cssVars.js'
 import { getRankIconUrl } from '../utils/rankIcon.js'
@@ -15,16 +16,6 @@ const DIVISION_ORDER = { I: 0, II: 1, III: 2, IV: 3, '': 0 }
 const ROWS_PER_PAGE = 100
 
 const formatTier = (tier) => tier ? tier.charAt(0) + tier.slice(1).toLowerCase() : ''
-
-function getWinRateQualityKey(value) {
-  const winRate = Number(value)
-  if (!Number.isFinite(winRate)) return 'unknown'
-  const percent = winRate <= 1 ? winRate * 100 : winRate
-  if (percent >= 45) return 'excellent'
-  if (percent >= 35) return 'good'
-  if (percent >= 25) return 'average'
-  return 'low'
-}
 
 export default function LeaderboardPage() {
   const { t } = useTranslation()
@@ -221,8 +212,7 @@ export default function LeaderboardPage() {
                   </thead>
                   <tbody>
                     {pageData.map((p, i) => {
-                      const winRateValue = `${(p.winRate * 100).toFixed(1)}%`
-                      const winRateQuality = t(`stats.metric.${getWinRateQualityKey(p.winRate)}`)
+                      const rankIconUrl = getRankIconUrl(p.tier)
 
                       return (
                       <tr
@@ -232,24 +222,28 @@ export default function LeaderboardPage() {
                         <td className={`${styles.td} ${styles.tdRank}`}>{p.rank}</td>
                         <th scope="row" className={`${styles.td} ${styles.rowHeader}`}>
                           {p.gameName && p.tagLine ? (
-                            <Link
-                              to={buildSummonerPath(region, p)}
-                              className={styles.playerLink}
-                            >
-                              <span className={styles.playerName}>{p.gameName}</span>
-                              <span className={styles.playerTag}>#{p.tagLine}</span>
-                            </Link>
+                            <div className={styles.playerCell}>
+                              <Link
+                                to={buildSummonerPath(region, p)}
+                                className={styles.playerLink}
+                              >
+                                <span className={styles.playerName}>{p.gameName}</span>
+                                <span className={styles.playerTag}>#{p.tagLine}</span>
+                              </Link>
+                              <CopyRiotIdButton gameName={p.gameName} tagLine={p.tagLine} />
+                            </div>
                           ) : (
                             <span className={styles.playerName}>{p.gameName || '-'}</span>
                           )}
                         </th>
                         <td className={styles.td}>
                           <div className={styles.tierBadge}>
-                            {getRankIconUrl(p.tier) && (
+                            {rankIconUrl && (
                               <img
-                                src={getRankIconUrl(p.tier)}
-                                alt={formatTier(p.tier)}
-                                className={styles.rankIconMobile}
+                                src={rankIconUrl}
+                                alt=""
+                                aria-hidden="true"
+                                className={styles.rankIcon}
                                 loading="lazy"
                               />
                             )}
@@ -263,12 +257,8 @@ export default function LeaderboardPage() {
                           </div>
                         </td>
                         <td className={`${styles.td} ${styles.tdNum} ${styles.colHideMobile}`}>{p.games}</td>
-                        <td
-                          className={`${styles.td} ${styles.tdRate} ${styles.colHideMobile} ${p.winRate >= 0.45 ? styles.rateGold : ''}`}
-                          aria-label={`${t('leaderboard.colWinRate')}: ${winRateValue}. ${t('stats.metricLabel')}: ${winRateQuality}`}
-                        >
-                          {winRateValue}
-                          <span className={styles.rateLabel}>{winRateQuality}</span>
+                        <td className={`${styles.td} ${styles.tdRate} ${styles.colHideMobile} ${p.winRate >= 0.45 ? styles.rateGold : ''}`}>
+                          {(p.winRate * 100).toFixed(1)}%
                         </td>
                       </tr>
                       )

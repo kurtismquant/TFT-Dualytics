@@ -1,5 +1,5 @@
-import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import BackButton from '../BackButton.jsx'
 import ItemIcon from '../ItemIcon.jsx'
 import { buildStatsPath } from '../../constants/routes.js'
 import { formatAvg, formatPercent } from '../../utils/statsFormatting.js'
@@ -17,7 +17,7 @@ export default function ItemHeader({ item, itemName, summary }) {
 
   return (
     <div className={unitStyles.header}>
-      <Link to={buildStatsPath('items')} className={unitStyles.backLink}>← {t('item.backToStats')}</Link>
+      <BackButton fallback={buildStatsPath('items')} />
       <div className={unitStyles.identity}>
         {item && <ItemIcon item={item} size={72} />}
         <div className={unitStyles.identityText}>

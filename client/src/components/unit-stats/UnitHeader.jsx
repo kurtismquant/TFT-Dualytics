@@ -1,5 +1,5 @@
-import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import BackButton from '../BackButton.jsx'
 import UnitIcon from '../UnitIcon.jsx'
 import UnitRangeFilters from './UnitRangeFilters.jsx'
 import UnitRangeReadout from './UnitRangeReadout.jsx'
@@ -14,7 +14,7 @@ export default function UnitHeader({ champion, unitName, rangeFilters, showRange
 
   return (
     <div className={styles.header}>
-      <Link to={ROUTES.comps} className={styles.backLink}>← {t('unit.backToComps')}</Link>
+      <BackButton fallback={ROUTES.comps} />
       <div className={styles.identity}>
         {champion && <UnitIcon champion={champion} size={72} />}
         <div className={styles.identityText}>

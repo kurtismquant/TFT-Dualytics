@@ -4,7 +4,7 @@ import { gzip } from 'node:zlib'
 import { getStats } from '../services/statsAggregator.js'
 import { getUnitItemCombos, MIN_COMBO_GAMES } from '../services/unitItemCombosAggregator.js'
 import { getItemUnits } from '../services/itemUnitsAggregator.js'
-import { exploreCurrentPatch, playedOnCurrentPatch } from '../services/boardExplorer.js'
+import { exploreCurrentPatch, partnersOnCurrentPatch, playedOnCurrentPatch } from '../services/boardExplorer.js'
 
 const router = Router()
 const gzipAsync = promisify(gzip)
@@ -106,6 +106,19 @@ router.post('/explorer/played', (req, res) => {
     const status = err.status || 500
     if (status >= 500) console.error('Played-board lookup failed:', err.message)
     res.status(status).json({ ready: false, error: status === 400 ? err.message : 'Played-board lookup failed' })
+  }
+})
+
+// Units fielded alongside all of the given ones (the Team Builder's gold
+// "often played with" names): GET ?units=ID,ID.
+router.get('/explorer/partners', (req, res) => {
+  try {
+    const result = partnersOnCurrentPatch(req.query)
+    res.status(result.ready ? 200 : 503).json(result)
+  } catch (err) {
+    const status = err.status || 500
+    if (status >= 500) console.error('Unit partners lookup failed:', err.message)
+    res.status(status).json({ ready: false, error: status === 400 ? err.message : 'Unit partners lookup failed' })
   }
 })
 

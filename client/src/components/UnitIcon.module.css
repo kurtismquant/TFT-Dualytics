@@ -93,6 +93,11 @@
   text-overflow: ellipsis;
 }
 
+/* Team Builder: often played with every unit on the board. */
+.nameRecommended {
+  color: var(--accent-gold);
+}
+
 .hexBorder {
   position: relative;
   width: 100%;

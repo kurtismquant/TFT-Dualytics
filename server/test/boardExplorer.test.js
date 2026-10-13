@@ -10,10 +10,13 @@ import {
   lookupPlayed,
   MAX_PLAYED_QUERIES,
   parseExplorerQuery,
+  parsePartnersQuery,
   parsePlayedQuery,
+  partnersOnCurrentPatch,
   playedOnCurrentPatch,
   setBoardIndex,
   tallyExactBoards,
+  unitPartners,
 } from '../services/boardExplorer.js'
 
 const IE = 'DA_InfinityEdge'
@@ -142,6 +145,48 @@ describe('exploreCurrentPatch', () => {
     const result = exploreCurrentPatch({ units: AHRI })
     assert.equal(result.totalGames, 10)
     assert.equal(result.comps[0].count, 10)
+  })
+})
+
+describe('unit partners (Team Builder gold names)', () => {
+  // Ahri + Sett on 12 boards, Ahri + Kennen on 8, Ahri + Sett + Kennen on 0.
+  const index = buildBoardIndex([
+    ...boards(12, 1, [unit(AHRI), unit(SETT)]),
+    ...boards(8, 5, [unit(AHRI), unit(KENNEN)]),
+    ...boards(10, 3, [unit('DA_Lux18_Base'), unit(SETT)]),
+  ])
+
+  it('rates each other unit by its share of boards running all given units', () => {
+    // Kennen is on 8 Ahri boards: below the 10-board floor, so left out.
+    assert.deepEqual(unitPartners(index, [AHRI]), {
+      boards: 20,
+      minGames: MIN_BREAKDOWN_GAMES,
+      units: [{ id: SETT, count: 12, frequency: 0.6 }],
+    })
+    assert.deepEqual(unitPartners(index, [SETT]).units, [
+      { id: AHRI, count: 12, frequency: 0.5455 },
+      { id: 'DA_Lux18_Base', count: 10, frequency: 0.4545 },
+    ])
+    assert.deepEqual(unitPartners(index, [AHRI, SETT]), { boards: 12, minGames: MIN_BREAKDOWN_GAMES, units: [] })
+    assert.deepEqual(unitPartners(index, [AHRI, SETT, KENNEN]), { boards: 0, minGames: MIN_BREAKDOWN_GAMES, units: [] })
+  })
+
+  it('canonicalizes Lux forms and drops repeats', () => {
+    assert.deepEqual(parsePartnersQuery({ units: `DA_18_Lux_Coven,${SETT},${SETT}` }), ['DA_Lux18_Base', SETT])
+    assert.throws(() => parsePartnersQuery({}), err => err.status === 400)
+    assert.throws(() => parsePartnersQuery({ units: 'bad id!' }), /Invalid id/)
+  })
+
+  it('answers from the current patch index', () => {
+    setBoardIndex('18.2', index, [], 30)
+    const result = partnersOnCurrentPatch({ units: 'DA_18_Lux_Fae' })
+    assert.deepEqual(result, {
+      ready: true,
+      patch: '18.2',
+      boards: 10,
+      minGames: MIN_BREAKDOWN_GAMES,
+      units: [{ id: SETT, count: 10, frequency: 1 }],
+    })
   })
 })
 

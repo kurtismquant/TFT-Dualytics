@@ -14,7 +14,8 @@
     "leaderboard": "Leaderboard",
     "skipToMain": "Skip to main content",
     "openMenu": "Open menu",
-    "closeMenu": "Close menu"
+    "closeMenu": "Close menu",
+    "back": "Back"
   },
   "settings": {
     "title": "Settings",
@@ -153,7 +154,6 @@
   "unit": {
     "viewStats": "View {{unit}} item stats",
     "eyebrow": "Double Up Unit Stats",
-    "backToComps": "Back to Comps",
     "cost": "{{cost}} Cost",
     "gamesSummary": "{{games}} games · {{builds}} 3-item builds",
     "sectionTitle": "Best 3-Item Combos",
@@ -234,7 +234,6 @@
   },
   "item": {
     "eyebrow": "Double Up Item Stats",
-    "backToStats": "Back to Item Stats",
     "viewStats": "View {{item}} unit stats",
     "viewStatsLink": "View item stats",
     "overviewLabel": "{{name}} details",
@@ -306,7 +305,10 @@
     "page": "Page {{current}} of {{total}}",
     "sortBy": "Sort by {{column}}",
     "tableCaption": "{{region}} Double Up leaderboard",
-    "tableDescription": "Sortable leaderboard table. Win-rate labels describe performance without relying on color."
+    "tableDescription": "Sortable leaderboard table.",
+    "copyRiotId": "Copy {{riotId}}",
+    "riotIdCopied": "{{riotId}} copied.",
+    "copyFailed": "Copy failed"
   },
   "matchHistory": {
     "loading": "Loading match history...",

@@ -15,6 +15,7 @@ export default function UnitIcon2({
   tier,
   variant = 'rect',
   floatStars = false,
+  recommended = false,
   onClick,
   onContextMenu,
 }) {
@@ -71,7 +72,11 @@ export default function UnitIcon2({
         className={styles.img}
         loading="lazy"
       />
-      {showName && <span className={styles.name}>{champion.name}</span>}
+      {showName && (
+        <span className={recommended ? `${styles.name} ${styles.nameRecommended}` : styles.name}>
+          {champion.name}
+        </span>
+      )}
     </div>
   )
 

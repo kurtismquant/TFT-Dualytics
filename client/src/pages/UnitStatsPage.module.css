@@ -9,6 +9,10 @@
 .backLink {
   grid-column: 1 / -1;
   justify-self: start;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
   color: var(--text-muted);
   font-family: var(--font-body);
   font-size: var(--text-xs);

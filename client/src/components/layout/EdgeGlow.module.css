@@ -9,8 +9,8 @@
   background: radial-gradient(
     16rem circle at var(--glow-x, -100rem) var(--glow-y, -100rem),
     var(--cursor-glow),
-    var(--cursor-glow-soft) 35%,
-    transparent 100%
+    var(--cursor-glow-soft) 25%,
+    transparent 55%
   );
 }
 

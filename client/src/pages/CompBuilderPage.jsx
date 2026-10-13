@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { DndContext, DragOverlay, PointerSensor, useSensor, useSensors } from '@dnd-kit/core'
 import { useChampions } from '../hooks/useChampions.js'
 import { useItems } from '../hooks/useItems.js'
+import { useRecommendedUnits } from '../hooks/useUnitPartners.js'
 import { useBoardStore } from '../store/boardStore.js'
 import TFTBoard from '../components/TFTBoard.jsx'
 import UnitRoster from '../components/UnitRoster.jsx'
@@ -55,6 +56,8 @@ export default function CompBuilderPage() {
     Object.values(board).filter(cell => cell?.championId).map(cell => rosterById.get(cell.championId)).filter(Boolean),
     allChampionsById,
   ), [board, rosterById, allChampionsById])
+  // Roster units often played with everything on the board get gold names.
+  const recommendedIds = useRecommendedUnits(board, champions)
 
   const [draggedUnit, setDraggedUnit] = useState(null)
   const [draggedItem, setDraggedItem] = useState(null)
@@ -288,6 +291,7 @@ export default function CompBuilderPage() {
                     search={search}
                     sortMode={champSort}
                     layout="horizontal"
+                    recommendedIds={recommendedIds}
                   />
                 ) : (
                   <div className={styles.loading} role="status" aria-live="polite">{t('builder.loadingChampions')}</div>

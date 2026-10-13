@@ -10,6 +10,7 @@ export default function DraggableUnit({
   stars = false,
   fillParent = false,
   staticDuringDrag = false,
+  recommended = false,
   onClick,
   onDoubleClick,
   onContextMenu,
@@ -58,6 +59,7 @@ export default function DraggableUnit({
         showName={variant !== 'hex'}
         variant={variant}
         stars={stars}
+        recommended={recommended}
       />
     </div>
   )

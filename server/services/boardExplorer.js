@@ -245,6 +245,29 @@ export function exploreBoards(boards, filters, compResults = []) {
   }
 }
 
+// Pure: index boards + unit ids → how often each other unit is fielded on the
+// boards that run all of them (the Team Builder's "often played with" names).
+// A slim version of exploreBoards' `units` rows: the builder refetches it on
+// every placement, so it skips the items/traits/comps breakdowns.
+export function unitPartners(boards, unitIds) {
+  const ids = new Set(unitIds)
+  const filters = { units: unitIds.map(id => ({ id })), traits: [], items: [] }
+  const counts = new Map()
+  let n = 0
+  for (const board of boards) {
+    if (!boardMatches(board, filters)) continue
+    n++
+    for (const unit of board.units) {
+      if (!ids.has(unit.id)) counts.set(unit.id, (counts.get(unit.id) || 0) + 1)
+    }
+  }
+  const units = [...counts]
+    .filter(([, count]) => count >= MIN_BREAKDOWN_GAMES)
+    .map(([id, count]) => ({ id, count, frequency: round(count / n) }))
+    .sort((a, b) => b.count - a.count || a.id.localeCompare(b.id))
+  return { boards: n, minGames: MIN_BREAKDOWN_GAMES, units }
+}
+
 // ── Current-patch index, kept in memory ─────────────────────────────────────
 let current = null // { patch, boards, comps, games, builtAt }
 const resultCache = new Map()
@@ -307,6 +330,28 @@ export function playedOnCurrentPatch(body) {
   if (!current) return { ready: false, patch: null, results: [] }
   exactBoards ??= tallyExactBoards(current.boards)
   return { ready: true, patch: current.patch, totalBoards: current.boards.length, results: lookupPlayed(exactBoards, unitLists) }
+}
+
+// Query { units: 'ID,ID' } -> unit ids, canonicalized the way board units are
+// (Lux forms -> base Lux) and de-duplicated.
+export function parsePartnersQuery(query = {}) {
+  const ids = [...new Set(splitList(query.units).map(entry => canonicalUnitId(parseId(entry.split(':')[0]))))]
+  if (ids.length === 0 || ids.length > MAX_PLAYED_UNITS) {
+    throw badRequest(`units needs 1-${MAX_PLAYED_UNITS} unit ids`)
+  }
+  return ids
+}
+
+// Route entry point; `ready: false` until the index exists (as below).
+export function partnersOnCurrentPatch(query) {
+  const ids = parsePartnersQuery(query)
+  if (!current) return { ready: false, patch: null, units: [] }
+  const key = `partners:${[...ids].sort().join(',')}`
+  const cached = resultCache.get(key)
+  if (cached && Date.now() - cached.at < CACHE_TTL_MS) return cached.value
+  const value = { ready: true, patch: current.patch, ...unitPartners(current.boards, ids) }
+  resultCache.set(key, { at: Date.now(), value })
+  return value
 }
 
 function cacheKey(filters) {

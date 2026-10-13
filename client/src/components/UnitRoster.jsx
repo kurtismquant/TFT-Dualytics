@@ -11,7 +11,7 @@ import { buildUnitPath } from '../constants/routes.js'
 
 // Click places the unit; double-click opens its stats page instead, undoing the
 // placement its first click made.
-function RosterUnit({ champion, onPlace }) {
+function RosterUnit({ champion, recommended, onPlace }) {
   // Long-press for the detail sheet on touch (tap already places the unit).
   const { triggerProps, cardProps } = useHoverCard(champion, { touchTrigger: 'longpress' })
   const navigate = useNavigate()
@@ -32,6 +32,7 @@ function RosterUnit({ champion, onPlace }) {
           champion={champion}
           size={56}
           staticDuringDrag
+          recommended={recommended}
           onClick={() => { placedCellRef.current = onPlace() }}
           onDoubleClick={handleDoubleClick}
         />
@@ -69,7 +70,7 @@ function sortChampions(champions, mode) {
   }
 }
 
-export default function UnitRoster({ champions, search = '', sortMode = 'cost', layout = 'vertical' }) {
+export default function UnitRoster({ champions, search = '', sortMode = 'cost', layout = 'vertical', recommendedIds }) {
   const { t } = useTranslation()
   const placeInFirstAvailableHex = useBoardStore(s => s.placeInFirstAvailableHex)
   const normalizedSearch = search.trim().toLowerCase()
@@ -108,6 +109,7 @@ export default function UnitRoster({ champions, search = '', sortMode = 'cost', 
             <RosterUnit
               key={champ.id}
               champion={champ}
+              recommended={recommendedIds?.has(champ.id) ?? false}
               onPlace={() => placeInFirstAvailableHex(champ.id)}
             />
           ))}

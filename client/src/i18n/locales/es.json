@@ -14,7 +14,8 @@
     "leaderboard": "Clasificación",
     "skipToMain": "Saltar al contenido principal",
     "openMenu": "Abrir menú",
-    "closeMenu": "Cerrar menú"
+    "closeMenu": "Cerrar menú",
+    "back": "Volver"
   },
   "settings": {
     "title": "Configuración",
@@ -153,7 +154,6 @@
   "unit": {
     "viewStats": "Ver estadísticas de objetos de {{unit}}",
     "eyebrow": "Estadísticas de unidad de Dobles",
-    "backToComps": "Volver a composiciones",
     "cost": "Coste {{cost}}",
     "gamesSummary": "{{games}} partidas · {{builds}} builds de 3 objetos",
     "sectionTitle": "Mejores combinaciones de 3 objetos",
@@ -234,7 +234,6 @@
   },
   "item": {
     "eyebrow": "Estadísticas de Objetos Double Up",
-    "backToStats": "Volver a Objetos",
     "viewStats": "Ver estadísticas de unidades con {{item}}",
     "viewStatsLink": "Ver estadísticas del objeto",
     "overviewLabel": "Detalles de {{name}}",
@@ -306,7 +305,10 @@
     "page": "Página {{current}} de {{total}}",
     "sortBy": "Ordenar por {{column}}",
     "tableCaption": "Clasificación Double Up de {{region}}",
-    "tableDescription": "Tabla de clasificación ordenable. Las etiquetas de porcentaje de victoria describen el rendimiento sin depender del color."
+    "tableDescription": "Tabla de clasificación ordenable.",
+    "copyRiotId": "Copiar {{riotId}}",
+    "riotIdCopied": "{{riotId}} copiado.",
+    "copyFailed": "Error al copiar"
   },
   "matchHistory": {
     "loading": "Cargando historial de partidas...",
