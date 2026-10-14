@@ -210,7 +210,24 @@
   letter-spacing: var(--track-wider);
   text-transform: uppercase;
   white-space: nowrap;
+  position: relative;
   transition: color var(--t-fast), background var(--t-fast);
+}
+
+/* Left-edge bar — the nav underline turned vertical: grows center-out on
+   hover, stays drawn (white) on the active section. */
+.dropdownLink::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 2px;
+  background: var(--text-link-hover);
+  box-shadow: 0 0 8px var(--search-focus-glow);
+  transform: scaleY(0);
+  transform-origin: center;
+  transition: transform var(--t-fast);
 }
 
 .dropdownLink:hover,
@@ -221,8 +238,10 @@
   outline: none;
 }
 
-.dropdownLinkActive {
-  box-shadow: inset 2px 0 0 var(--text-primary);
+.dropdownLink:hover::before,
+.dropdownLink:focus-visible::before,
+.dropdownLinkActive::before {
+  transform: scaleY(1);
 }
 
 /* ── Nav right — gear + search, right-anchored ──────────── */
@@ -431,8 +450,9 @@
     background: transparent;
   }
 
-  .dropdownLinkActive {
-    box-shadow: none;
+  /* Drawer links sit flush left with no padding, so no side bar there. */
+  .dropdownLink::before {
+    display: none;
   }
 
   .backdrop {
@@ -490,7 +510,8 @@
   .gearBtnDrawer,
   .footerLink,
   .statsDropdown,
-  .dropdownLink {
+  .dropdownLink,
+  .dropdownLink::before {
     transition: none;
   }
 
