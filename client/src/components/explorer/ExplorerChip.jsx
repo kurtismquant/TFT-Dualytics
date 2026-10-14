@@ -13,12 +13,15 @@ function withStarRange(entry, { min, max }) {
   return { ...rest, ...(min > 1 ? { minStar: min } : {}), ...(max < 3 ? { maxStar: max } : {}) }
 }
 
-// Breakpoints of a trait as minimum active tiers ("3+ Blossom").
+// Breakpoints of a trait as minimum active tiers ("3+ Blossom"). A hidden
+// tier at an already-listed count (Rival's tier 2) is skipped: the lower
+// tier's "1+" filter already covers it.
 function traitBreakpoints(meta) {
   const options = []
   for (let tier = 1; tier <= 6; tier += 1) {
     const { minUnits } = getTraitTierInfo(meta, tier)
     if (minUnits == null) break
+    if (options.some(option => option.minUnits === minUnits)) continue
     options.push({ tier, minUnits })
   }
   return options

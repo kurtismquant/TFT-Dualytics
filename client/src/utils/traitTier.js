@@ -40,12 +40,56 @@ export function traitBreakpoints(meta) {
 // Returns the activation breakpoint for a given trait tier index (1-based,
 // matching the server's `tier` field). Tiers with `minUnits <= 0` are
 // filtered out because they represent inactive states, not real breakpoints.
+// Riot's `tier_current` indexes every effect, hidden ones included — Rival
+// reports tier 2 for its 1-1 bronze description row — so the style is the
+// one the game shows at that unit count (see traitBreakpoints).
 export function getTraitTierInfo(meta, tier) {
   const effects = (meta?.effects || [])
     .filter(e => (e.minUnits ?? 0) > 0)
     .sort((a, b) => a.minUnits - b.minUnits)
   const effect = effects[tier - 1]
   if (!effect) return { minUnits: null, style: null }
-  const style = typeof effect.style === 'number' ? TRAIT_STYLE_BY_TIER[effect.style] : null
+  const shown = traitBreakpoints(meta).find(b => b.minUnits === effect.minUnits)
+  const style = typeof shown?.style === 'number' ? TRAIT_STYLE_BY_TIER[shown.style] : null
   return { minUnits: effect.minUnits, style }
+}
+
+const MAX_POPULAR = 5 // matches the server's statsAggregator cap
+
+const weighted = (a, b, key) => (
+  (a[key] ?? 0) * a.count + (b[key] ?? 0) * b.count) / (a.count + b.count)
+
+function mergePopular(a = [], b = []) {
+  const counts = new Map()
+  for (const { id, count } of [...a, ...b]) counts.set(id, (counts.get(id) || 0) + count)
+  return [...counts.entries()]
+    .map(([id, count]) => ({ id, count }))
+    .sort((x, y) => y.count - x.count || x.id.localeCompare(y.id))
+    .slice(0, MAX_POPULAR)
+}
+
+// Folds decorated trait stats rows that read the same ("1 Rival") into one:
+// Rival's hidden tier 2 would otherwise be a second "1 Rival" row. Keeps the
+// bigger row's id/tier so row keys stay unique.
+export function mergeTraitTierRows(rows) {
+  const merged = new Map()
+  const out = []
+  for (const row of rows) {
+    if (row.tierMin == null) { out.push(row); continue }
+    const key = `${row.traitId || row.id}#${row.tierMin}`
+    const prev = merged.get(key)
+    if (prev === undefined) { merged.set(key, out.length); out.push(row); continue }
+    const a = out[prev]
+    const [major, minor] = a.count >= row.count ? [a, row] : [row, a]
+    out[prev] = {
+      ...major,
+      count: a.count + row.count,
+      frequency: (a.frequency || 0) + (row.frequency || 0),
+      avgPlacement: weighted(a, row, 'avgPlacement'),
+      winRate: weighted(a, row, 'winRate'),
+      avgUnits: a.avgUnits == null && row.avgUnits == null ? null : weighted(a, row, 'avgUnits'),
+      popularUnits: mergePopular(major.popularUnits, minor.popularUnits),
+    }
+  }
+  return out
 }

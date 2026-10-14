@@ -9,7 +9,7 @@ import { useStats } from '../hooks/useStats.js'
 import { useTraits } from '../hooks/useTraits.js'
 import { makeMap, normalizeName } from '../utils/statsFormatting.js'
 import { compareRows, DEFAULT_SORT, nextSort } from '../utils/statsSort.js'
-import { getTraitTierInfo } from '../utils/traitTier.js'
+import { getTraitTierInfo, mergeTraitTierRows } from '../utils/traitTier.js'
 import { PageShell } from '../components/layout/PageShell.jsx'
 import DataExplorer from '../components/explorer/DataExplorer.jsx'
 import BronzeComps from '../components/bronze/BronzeComps.jsx'
@@ -72,11 +72,9 @@ export default function StatsPage() {
     const isItemTab = activeTab === 'items'
     const isUnitTab = activeTab === 'units'
 
-    const decorated = (data?.rows || []).map(row => (
-      activeTab === 'traits'
-        ? buildTraitRow(row, maps.traits)
-        : buildSimpleRow(row, assetMap)
-    ))
+    const decorated = activeTab === 'traits'
+      ? mergeTraitTierRows((data?.rows || []).map(row => buildTraitRow(row, maps.traits)))
+      : (data?.rows || []).map(row => buildSimpleRow(row, assetMap))
 
     const filtered = decorated.filter(row => {
       if (isItemTab) {
