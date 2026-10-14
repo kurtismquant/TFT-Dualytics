@@ -215,7 +215,7 @@
 }
 
 .row:focus-visible {
-  outline: none;
+  outline-offset: -2px;
 }
 
 /* Active row — white left border + subtle neutral tint */

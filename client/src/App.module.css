@@ -132,16 +132,6 @@
   transform: scaleX(1);
 }
 
-.link:focus-visible,
-.activeLink:focus-visible,
-.logoLink:focus-visible,
-.gearBtn:focus-visible,
-.gearBtnDrawer:focus-visible,
-.hamburger:focus-visible,
-.footerLink:focus-visible {
-  outline: none;
-}
-
 /* ── Active nav link — same type, full opacity ──────── */
 .activeLink {
   color: var(--text-link-hover);
@@ -156,6 +146,7 @@
   align-items: center;
 }
 
+/* Gold marks the current page; hover keeps the white underline. */
 .activeLink::after {
   content: "";
   position: absolute;
@@ -163,8 +154,8 @@
   right: 0;
   bottom: -0.5rem;
   height: 2px;
-  background: var(--text-link-hover);
-  box-shadow: 0 0 8px var(--search-focus-glow);
+  background: var(--accent-gold);
+  box-shadow: 0 0 8px var(--accent-gold-glow);
 }
 
 /* ── Stats menu — sections flyout under the Stats link ───── */
@@ -511,10 +502,10 @@
 
 .disclaimer{
   font-family: var(--font-body);
-  font-size: var(--text-2xs);
+  font-size: var(--text-xs);
   font-weight: var(--fw-regular);
-  letter-spacing: var(--track-wider);
-  text-transform: uppercase;
+  letter-spacing: var(--track-tight);
+  text-transform: none;
   text-align: center;
   color: var(--text-secondary);
 }

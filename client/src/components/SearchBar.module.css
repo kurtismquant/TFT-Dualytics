@@ -106,6 +106,7 @@
   font-size: var(--text-sm);
   margin-top: 0.5rem;
   letter-spacing: var(--track-tight);
+  text-transform: none;
 }
 
 /* Mobile: collapse the three controls into one connected bar.

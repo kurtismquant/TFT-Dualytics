@@ -61,13 +61,16 @@
 [data-theme="dark"] {
   /* ── Backgrounds — pure black void ────────────────────── */
   --bg-base:           #000000;
-  --bg-elevated:       #333333;
-  --bg-card:           #1c1c1c;
-  --bg-card-hover:     rgba(255, 255, 255, 0.16);
-  --bg-hover:          rgba(255, 255, 255, 0.16);
-  --bg-border:         rgba(255, 255, 255, 0.45);
-  --bg-border-muted:   rgba(255, 255, 255, 0.35);
-  --bg-border-bright:  rgba(255, 255, 255, 0.65);
+  --bg-elevated:       #222227;
+  --bg-card:           #141417;
+  --bg-card-hover:     rgba(255, 255, 255, 0.08);
+  --bg-hover:          rgba(255, 255, 255, 0.08);
+  /* Borders stay quiet so icons and cost colours carry the page; surfaces
+     (base → card → elevated) do the layering. Bright = inputs and buttons,
+     kept at ≥3:1 against black. */
+  --bg-border:         rgba(255, 255, 255, 0.18);
+  --bg-border-muted:   rgba(255, 255, 255, 0.10);
+  --bg-border-bright:  rgba(255, 255, 255, 0.40);
   --bg-input:          #000000;
   --bg-input-focus:    rgba(255, 255, 255, 0.02);
   --bg-row-odd:        rgba(255, 255, 255, 0.06);
@@ -97,7 +100,8 @@
   --text-hero-sign:    #fafaff;
   --text-on-accent:    #ffffff;
 
-  /* ── Accents — monochrome only ── */
+  /* ── Accents — gold is the brand accent (logo, active state, focus);
+     cyan/red/green are reserved for data and status ── */
   --accent-gold:       #f5c542;
   --accent-gold-glow:  rgba(245, 197, 66, 0.25);
   --accent-cyan:       #22d3ee;
@@ -158,9 +162,9 @@
   --ghost-surface:     rgba(240, 240, 250, 0.10);
   --ghost-border:      rgba(240, 240, 250, 0.35);
   --overlay-dark:      rgba(0, 0, 0, 0.5);
-  --focus-border:      rgba(196, 149, 48, 0.50);
-  --focus-ring:        rgba(196, 149, 48, 0.14);
-  --focus-glow:        rgba(196, 149, 48, 0.10);
+  --focus-border:      #f5c542;  /* = --accent-gold, the one brand accent */
+  --focus-ring:        rgba(245, 197, 66, 0.14);
+  --focus-glow:        rgba(245, 197, 66, 0.10);
   --search-focus-border: rgba(250, 250, 255, 0.90);
   --search-focus-glow:   rgba(250, 250, 255, 0.10);
   --shadow-elevated:   rgba(0, 0, 0, 0.35);

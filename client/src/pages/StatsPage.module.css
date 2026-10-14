@@ -199,10 +199,6 @@
   color: var(--text-primary);
 }
 
-.sortButton:focus-visible {
-  outline: none;
-}
-
 .sortMark {
   color: var(--text-muted);
   font-size: var(--text-2xs);
@@ -329,6 +325,8 @@
 
 .message {
   padding: 1.125rem 0;
+  text-transform: none;
+  letter-spacing: var(--track-tight);
 }
 
 @media (--bp-lg) {

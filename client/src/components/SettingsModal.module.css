@@ -49,10 +49,6 @@
   border-color: var(--bg-border-bright);
 }
 
-.select:focus-visible {
-  outline: none;
-}
-
 .select:hover {
   border-color: var(--bg-border);
 }

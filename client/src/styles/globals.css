@@ -13,6 +13,41 @@
   font-display: swap;
 }
 
+/* Body typeface — D-DIN (Datto, SIL OFL; licence in /fonts/D-DIN-OFL.txt).
+   Self-hosted: without these the body falls back to Arial. */
+@font-face {
+  font-family: 'D-DIN';
+  src: url('/fonts/D-DIN.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'D-DIN';
+  src: url('/fonts/D-DIN-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Mono typeface — IBM Plex Mono, Latin subset (SIL OFL). Riot ID inputs only. */
+@font-face {
+  font-family: 'IBM Plex Mono';
+  src: url('/fonts/IBMPlexMono-400.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'IBM Plex Mono';
+  src: url('/fonts/IBMPlexMono-500.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
 /* Accent typeface — Rajdhani 700 (SIL OFL). Used only for the
    DUALYTICS landing-page wordmark. */
 @font-face {
@@ -77,13 +112,12 @@ a:hover {
   color: var(--text-link-hover); 
 }
 
-a:focus-visible,
-button:focus-visible,
-input:focus-visible,
-select:focus-visible,
-textarea:focus-visible,
-[tabindex]:focus-visible {
-  outline: none;
+/* Keyboard focus ring. :focus-visible keeps it off mouse clicks. Components
+   that show focus another way (input glow, highlighted list option) opt out
+   locally with outline: none. */
+:focus-visible {
+  outline: 2px solid var(--focus-border);
+  outline-offset: 2px;
 }
 
 img { 

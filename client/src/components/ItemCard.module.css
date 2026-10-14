@@ -69,8 +69,8 @@
 .desc {
   font-family: var(--font-body);
   font-size: var(--text-xs);
-  letter-spacing: var(--track-base);
-  text-transform: uppercase;
+  letter-spacing: var(--track-tight);
+  text-transform: none;
   color: var(--text-secondary);
   line-height: 1.5;
   margin: 0 0 0.5rem;

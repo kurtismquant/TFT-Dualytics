@@ -61,8 +61,9 @@
   cursor: pointer;
 }
 
+/* Inset: the card clips overflow, so an outside ring would be cut off. */
 .cardButton:focus-visible {
-  outline: none;
+  outline-offset: -2px;
 }
 
 .compact:hover .compactContent,

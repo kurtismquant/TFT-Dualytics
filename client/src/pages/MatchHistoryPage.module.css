@@ -61,8 +61,8 @@
   font-family: var(--font-body);
   font-size: var(--text-xs);
   font-weight: var(--fw-regular);
-  letter-spacing: var(--track-wide);
-  text-transform: uppercase;
+  letter-spacing: var(--track-tight);
+  text-transform: none;
   margin: 0;
   padding-left: 1.125rem;
 }
@@ -112,6 +112,8 @@
 
 .emptyCache {
   margin-top: 1.25rem;
+  text-transform: none;
+  letter-spacing: var(--track-tight);
 }
 
 .error {
@@ -120,8 +122,8 @@
   font-size: var(--text-sm);
   font-weight: var(--fw-bold);
   line-height: 0.94;
-  letter-spacing: var(--track-wider);
-  text-transform: uppercase;
+  letter-spacing: var(--track-tight);
+  text-transform: none;
   margin-top: 1.5rem;
   padding: 1.125rem 0;
   border-top: 1px solid var(--bg-border);

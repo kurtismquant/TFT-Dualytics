@@ -38,7 +38,7 @@
 
 .signWordmark {
   position: relative;
-  font-family: "Rajdhani", "Bebas Neue", "D-DIN-Bold", Arial, sans-serif;
+  font-family: var(--font-accent);
   font-size: 6rem;
   font-weight: 700;
   line-height: 0.9;
@@ -292,8 +292,8 @@
 .searchError {
   font-family: var(--font-body);
   font-size: var(--text-xs);
-  letter-spacing: var(--track-wider);
-  text-transform: uppercase;
+  letter-spacing: var(--track-tight);
+  text-transform: none;
   color: var(--accent-red);
   margin: 0.375rem 0 0;
   text-align: center;
@@ -442,8 +442,8 @@
 .destBody {
   font-family: var(--font-body);
   font-size: var(--text-sm);
-  letter-spacing: var(--track-wide);
-  text-transform: uppercase;
+  letter-spacing: var(--track-tight);
+  text-transform: none;
   color: var(--text-secondary);
   margin-bottom: 0.875rem;
   max-width: 22.5rem;

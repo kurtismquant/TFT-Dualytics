@@ -56,6 +56,11 @@
   background: var(--bg-hover);
 }
 
+/* Selected = gold underline, the same marker as the active nav link. */
+.tab[aria-pressed='true'] {
+  box-shadow: inset 0 -2px 0 var(--accent-gold);
+}
+
 /* ── Icon — 44px square, icon-only ────────────────────────── */
 .icon {
   width: 2.75rem;
@@ -72,10 +77,6 @@
   border-color: var(--search-focus-border);
   background-color: var(--bg-input-focus);
   box-shadow: 0 0 12px var(--search-focus-glow);
-}
-
-.btn:focus-visible {
-  outline: none;
 }
 
 @media (pointer: coarse) {

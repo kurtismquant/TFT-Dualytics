@@ -80,9 +80,9 @@
   max-width: 44rem;
   color: var(--text-secondary);
   font-size: var(--text-sm);
-  letter-spacing: var(--track-base);
+  letter-spacing: var(--track-tight);
   line-height: var(--leading-normal);
-  text-transform: uppercase;
+  text-transform: none;
 }
 
 /* ── Traits + base stats ─────────────────────────────── */

@@ -47,6 +47,8 @@
   line-height: var(--leading-relaxed);
   color: var(--text-secondary);
   margin-bottom: 1rem;
+  text-transform: none;
+  letter-spacing: var(--track-tight);
 }
 
 /* ── Bullet list ───────────────────────────────────────── */

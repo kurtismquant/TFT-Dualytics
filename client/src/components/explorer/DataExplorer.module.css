@@ -8,8 +8,9 @@
   margin: 0 0 1rem;
   color: var(--text-secondary);
   font-size: var(--text-xs);
-  letter-spacing: var(--track-base);
+  letter-spacing: var(--track-tight);
   line-height: var(--leading-normal);
+  text-transform: none;
 }
 
 .updating {
@@ -274,8 +275,8 @@
   margin: 0;
   color: var(--text-muted);
   font-size: var(--text-xs);
-  letter-spacing: var(--track-wide);
-  text-transform: uppercase;
+  letter-spacing: var(--track-tight);
+  text-transform: none;
 }
 
 /* ── Summary ─────────────────────────────────────────── */

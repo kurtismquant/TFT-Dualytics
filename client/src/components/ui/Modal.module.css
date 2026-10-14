@@ -80,10 +80,6 @@
   box-shadow: 0 0 12px var(--search-focus-glow);
 }
 
-.closeBtn:focus-visible {
-  outline: none;
-}
-
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }

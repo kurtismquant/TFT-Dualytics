@@ -27,7 +27,7 @@
 
 .metricValue {
   color: var(--metric-color, var(--text-primary));
-  font-family: var(--font-accent);
+  font-family: var(--font-body);
   font-size: var(--text-lg);
   font-weight: var(--fw-bold);
   line-height: 1;

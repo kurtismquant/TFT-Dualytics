@@ -115,8 +115,8 @@
 .error {
   font-family: var(--font-body);
   font-size: var(--text-xs);
-  letter-spacing: var(--track-wider);
-  text-transform: uppercase;
+  letter-spacing: var(--track-tight);
+  text-transform: none;
   color: var(--accent-red);
   margin: 0;
 }

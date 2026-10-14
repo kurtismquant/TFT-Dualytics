@@ -13,8 +13,8 @@
   font-family: var(--font-body);
   font-size: var(--text-2xs);
   font-weight: var(--fw-regular);
-  letter-spacing: var(--track-wider);
-  text-transform: uppercase;
+  letter-spacing: var(--track-tight);
+  text-transform: none;
   margin: 0 0 1rem;
 }
 
