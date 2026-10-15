@@ -59,6 +59,42 @@
   --leading-relaxed: 1.7;
 }
 
+/* ── Trait tier hex fills (theme-independent) ──
+   Sampled from the game's trait tracker atlas
+   (CDragon assets/ux/tft/tft_traits_texture_atlas.png). Silver and gold are
+   brushed metal with a horizon line just above center; unique is a faceted
+   orange gem; prismatic is a pastel conic burst around a white-hot center. */
+:root {
+  --trait-silver-bg: linear-gradient(180deg, #5a696b 0%, #758486 20%, #8c9a9c 47%,
+    #7e8c8e 52%, #627070 56%, #687678 72%, #738284 100%);
+  --trait-gold-bg: linear-gradient(180deg, #99854a 0%, #b29c54 20%, #d0b65d 47%,
+    #c0a754 52%, #9c8242 56%, #9c7b36 75%, #9c792e 100%);
+  /* Facet overlay: the side facets (between the side vertices) read redder
+     than the top and bottom ones. */
+  --trait-unique-bg:
+    conic-gradient(rgba(255, 255, 255, 0.1) 0deg 60deg, rgba(214, 40, 40, 0.22) 60deg 120deg,
+      rgba(0, 0, 0, 0.04) 120deg 240deg, rgba(214, 40, 40, 0.22) 240deg 300deg,
+      rgba(255, 255, 255, 0.1) 300deg 360deg),
+    linear-gradient(180deg, #fc826a 0%, #ef7923 50%, #e77508 78%, #f7a733 100%);
+  /* Prismatic is a faceted foil, not a smooth color wheel: hard-edged pastel
+     wedges (4deg blends), white starburst streaks, a white center bloom, and a
+     pearl inner rim (--trait-prismatic-rim, painted behind an inset fill). */
+  --trait-prismatic-rays: conic-gradient(#9dffb0 0deg 13deg, #8fe9ff 17deg 28deg,
+    #a4b4ff 32deg 43deg, #e290ff 47deg 58deg, #ff9cf0 62deg 72deg, #8ff4ff 76deg 86deg,
+    #f2fff6 90deg 98deg, #fff79a 102deg 112deg, #ffb895 116deg 124deg, #ff8f80 128deg 138deg,
+    #cdf59a 142deg 152deg, #9df7b5 156deg 168deg, #c6aaff 172deg 186deg, #a2d2ff 190deg 202deg,
+    #8ffbea 206deg 218deg, #9dffa8 222deg 236deg, #e9ffd0 240deg 250deg, #fffbe6 254deg 262deg,
+    #fff59a 266deg 278deg, #9ff7d8 282deg 290deg, #8fe6ff 294deg 303deg, #d2d9ff 307deg 314deg,
+    #f5a8ff 318deg 328deg, #ff98f2 332deg 343deg, #cbb8f2 347deg 358deg, #9dffb0 360deg);
+  --trait-prismatic-bg:
+    repeating-conic-gradient(from -3deg, rgba(255, 255, 255, 0) 0deg 54deg,
+      rgba(255, 255, 255, 0.55) 57deg, rgba(255, 255, 255, 0) 60deg),
+    radial-gradient(closest-side, #ffffff 0%, rgba(255, 255, 255, 0.92) 12%,
+      rgba(255, 255, 255, 0.5) 38%, rgba(255, 255, 255, 0.12) 75%, rgba(255, 255, 255, 0) 100%),
+    var(--trait-prismatic-rays);
+  --trait-prismatic-rim: linear-gradient(180deg, #ffffff 0%, #fdf2fb 55%, #f6d4f1 100%);
+}
+
 /* Dark theme — default. Also applied to :root for no-JS / flash prevention */
 :root,
 [data-theme="dark"] {

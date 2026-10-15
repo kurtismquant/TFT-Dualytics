@@ -172,19 +172,33 @@
   background: linear-gradient(145deg, #8a5a3b 0%, #4a2f1e 100%);
 }
 .tier_style3 .iconHex {
-  background: linear-gradient(145deg, #c7c9cc 0%, #6b6d70 100%);
+  background: var(--trait-silver-bg);
 }
 .tier_style4 .iconHex {
-  background: linear-gradient(145deg, rgba(230, 110, 80, 0.9) 0%, rgba(160, 50, 40, 0.9) 100%);
+  background: var(--trait-unique-bg);
 }
 .tier_style5 .iconHex {
-  background: linear-gradient(145deg, #e8c55a 0%, #9a7624 100%);
+  background: var(--trait-gold-bg);
 }
+/* Prismatic: the hex itself paints the pearl rim and an inset hex carries the
+   foil fill. The fill is near-white, so the white CDragon icon is drawn dark,
+   as the game does. */
 .tier_style6 .iconHex {
-  background: linear-gradient(145deg, #ff7ae0 0%, #7ad2ff 50%, #fff27a 100%);
+  background: var(--trait-prismatic-rim);
+}
+.tier_style6 .iconHex::before {
+  content: '';
+  position: absolute;
+  inset: 0.125rem;
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  background: var(--trait-prismatic-bg);
+}
+.tier_style6 .iconImg {
+  position: relative;
+  filter: brightness(0) opacity(0.82);
 }
 .tier_active .iconHex {
-  background: linear-gradient(145deg, #e8c55a 0%, #9a7624 100%);
+  background: var(--trait-gold-bg);
 }
 
 @media (--bp-lg) {

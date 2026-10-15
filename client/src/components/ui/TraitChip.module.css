@@ -1,5 +1,5 @@
 /* Canonical trait chip styling — shared by CompRow and MatchTable.
-   Trait style numbers: 1=bronze, 2=silver, 3=ruby, 4=gold, 5=prismatic/unique, 6=cyan */
+   Trait style numbers: 1=bronze, 2=silver, 3=unique (orange), 4=gold, 5=prismatic, 6=cyan */
 
 .traitChip {
   display: inline-flex;
@@ -34,30 +34,32 @@
   background: linear-gradient(145deg, rgba(255, 210, 170, 0.22), rgba(150, 95, 55, 0.12));
   color: #f2c29b;
 }
+/* Silver/unique/gold/prismatic hues follow the in-game hex fills
+   (--trait-*-bg in theme.css). */
 .style2 {
-  border-color: rgba(220, 220, 220, 0.7);
-  background: rgba(255, 255, 255, 0.18);
-  color: #e5e7eb;
+  border-color: rgba(148, 186, 189, 0.65);
+  background: linear-gradient(180deg, rgba(140, 154, 156, 0.3), rgba(98, 112, 112, 0.2));
+  color: #c9dadb;
 }
 .style3 {
-  border-color: rgba(230, 110, 80, 0.75);
-  background: linear-gradient(145deg, rgba(255, 170, 140, 0.25), rgba(160, 50, 40, 0.12));
-  color: #ffb3a0;
+  border-color: rgba(239, 121, 35, 0.7);
+  background: linear-gradient(180deg, rgba(252, 130, 106, 0.25), rgba(231, 117, 8, 0.15));
+  color: #ffb27a;
 }
 .style4 {
-  border-color: rgba(235, 200, 90, 0.75);
-  background: linear-gradient(145deg, rgba(255, 235, 150, 0.25), rgba(180, 135, 40, 0.12));
-  color: #ffe08a;
+  border-color: rgba(214, 182, 99, 0.7);
+  background: linear-gradient(180deg, rgba(208, 182, 93, 0.28), rgba(156, 121, 46, 0.16));
+  color: #e6cf7e;
 }
+/* The full in-game foil with dark text, as on the prismatic hex; same in
+   both themes. */
 .style5 {
-  border-color: rgba(255, 122, 224, 0.65);
-  background: linear-gradient(
-    145deg,
-    rgba(255, 122, 224, 0.22),
-    rgba(122, 210, 255, 0.15),
-    rgba(255, 242, 122, 0.15)
-  );
-  color: #f0f0fa;
+  border-color: #fbe6f7;
+  background: var(--trait-prismatic-bg);
+  color: #1a1a22;
+}
+.style5 .traitIcon {
+  filter: brightness(0) opacity(0.82);
 }
 .style6 {
   border-color: rgba(0, 212, 255, 0.55);
@@ -72,14 +74,14 @@
   color: #7c2d12;
 }
 :global([data-theme="light"]) .style2 {
-  border-color: rgba(75, 85, 99, 0.45);
-  background: rgba(75, 85, 99, 0.12);
-  color: #374151;
+  border-color: rgba(63, 85, 87, 0.45);
+  background: rgba(98, 112, 112, 0.14);
+  color: #3f5557;
 }
 :global([data-theme="light"]) .style3 {
-  border-color: rgba(153, 27, 27, 0.45);
-  background: rgba(220, 38, 38, 0.10);
-  color: #991b1b;
+  border-color: rgba(154, 52, 18, 0.45);
+  background: rgba(234, 88, 12, 0.10);
+  color: #9a3412;
 }
 :global([data-theme="light"]) .style4 {
   border-color: rgba(146, 64, 14, 0.48);
@@ -87,9 +89,7 @@
   color: #92400e;
 }
 :global([data-theme="light"]) .style5 {
-  border-color: rgba(76, 29, 149, 0.38);
-  background: linear-gradient(145deg, rgba(236, 72, 153, 0.12), rgba(14, 165, 233, 0.12), rgba(234, 179, 8, 0.10));
-  color: #4c1d95;
+  border-color: rgba(26, 26, 34, 0.3);
 }
 :global([data-theme="light"]) .style6 {
   border-color: rgba(14, 116, 144, 0.42);

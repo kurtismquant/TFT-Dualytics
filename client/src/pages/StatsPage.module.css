@@ -272,6 +272,25 @@
   padding: 0.3125rem;
 }
 
+/* Prismatic tile: pearl border as the in-game rim, and a dark fallback
+   letter since the foil fill is near-white. */
+.traitIconPrismatic {
+  border-color: #fbe6f7;
+}
+
+.fallbackIcon.traitIcon.traitIconPrismatic {
+  color: #1a1a22;
+}
+
+/* Inner icon of the prismatic tile wrapper (see StatsRowIcon). */
+.traitIconDark {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: brightness(0) opacity(0.82);
+}
+
 .fallbackIcon.traitIcon {
   color: #fafaff;
   font-weight: var(--fw-bold);
