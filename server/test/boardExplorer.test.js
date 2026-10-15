@@ -6,6 +6,7 @@ import {
   buildBoardIndex,
   exploreBoards,
   exploreCurrentPatch,
+  itemKind,
   MIN_BREAKDOWN_GAMES,
   lookupPlayed,
   MAX_PLAYED_QUERIES,
@@ -16,7 +17,9 @@ import {
   playedOnCurrentPatch,
   setBoardIndex,
   tallyExactBoards,
+  unitItemRoles,
   unitPartners,
+  unitRolesOnCurrentPatch,
 } from '../services/boardExplorer.js'
 
 const IE = 'DA_InfinityEdge'
@@ -158,8 +161,10 @@ describe('unit partners (Team Builder gold names)', () => {
 
   it('rates each other unit by its share of boards running all given units', () => {
     // Kennen is on 8 Ahri boards: below the 10-board floor, so left out.
+    // Ahri boards: 12 placing 1st, 8 placing 3rd (raw 5 -> team 3rd).
     assert.deepEqual(unitPartners(index, [AHRI]), {
       boards: 20,
+      avgPlacement: 1.8,
       minGames: MIN_BREAKDOWN_GAMES,
       units: [{ id: SETT, count: 12, frequency: 0.6 }],
     })
@@ -167,8 +172,8 @@ describe('unit partners (Team Builder gold names)', () => {
       { id: AHRI, count: 12, frequency: 0.5455 },
       { id: 'DA_Lux18_Base', count: 10, frequency: 0.4545 },
     ])
-    assert.deepEqual(unitPartners(index, [AHRI, SETT]), { boards: 12, minGames: MIN_BREAKDOWN_GAMES, units: [] })
-    assert.deepEqual(unitPartners(index, [AHRI, SETT, KENNEN]), { boards: 0, minGames: MIN_BREAKDOWN_GAMES, units: [] })
+    assert.deepEqual(unitPartners(index, [AHRI, SETT]), { boards: 12, avgPlacement: 1, minGames: MIN_BREAKDOWN_GAMES, units: [] })
+    assert.deepEqual(unitPartners(index, [AHRI, SETT, KENNEN]), { boards: 0, avgPlacement: null, minGames: MIN_BREAKDOWN_GAMES, units: [] })
   })
 
   it('canonicalizes Lux forms and drops repeats', () => {
@@ -184,8 +189,51 @@ describe('unit partners (Team Builder gold names)', () => {
       ready: true,
       patch: '18.2',
       boards: 10,
+      avgPlacement: 2,
       minGames: MIN_BREAKDOWN_GAMES,
       units: [{ id: SETT, count: 10, frequency: 1 }],
+    })
+  })
+})
+
+describe('unit item roles (Team Builder auto-arrange)', () => {
+  const WARMOG = 'DA_WarmogsArmor'
+  const BT = 'DA_Bloodthirster'
+  const JG = 'DA_JeweledGauntlet'
+  const catalog = [
+    { id: WARMOG, effects: [{ name: 'Health' }] },
+    { id: BT, effects: [{ name: 'AttackDamage' }, { name: 'MagicResist' }] },
+    { id: IE, effects: [{ name: 'AttackDamage' }, { name: 'CritChance' }] },
+    { id: JG, effects: [{ name: 'AbilityPower' }, { name: 'CritChance' }] },
+  ]
+  const kinds = new Map(catalog.map(item => [item.id, itemKind(item)]))
+
+  it('only counts pure defensive items as tank items', () => {
+    assert.deepEqual(itemKind(catalog[0]), { tank: true, ad: false, ap: false })
+    assert.deepEqual(itemKind(catalog[1]), { tank: false, ad: true, ap: false })
+    assert.deepEqual(itemKind(undefined), { tank: false, ad: false, ap: false })
+  })
+
+  it('rates each unit by the items it holds', () => {
+    // Sett holds Warmog's on 10 boards; Ahri holds IE + BT on 5 and JG + JG
+    // on 5; Kennen is on 5 boards only (below the floor).
+    const index = buildBoardIndex([
+      ...boards(5, 1, [unit(SETT, 2, [WARMOG]), unit(AHRI, 2, [IE, BT])]),
+      ...boards(5, 3, [unit(SETT, 2, [WARMOG]), unit(AHRI, 2, [JG])]),
+      ...boards(5, 5, [unit(KENNEN)]),
+    ])
+    assert.deepEqual(unitItemRoles(index, kinds), [
+      { id: AHRI, boards: 10, itemsPerBoard: 1.5, tank: 0, ad: 0.6667, ap: 0.3333 },
+      { id: SETT, boards: 10, itemsPerBoard: 1, tank: 1, ad: 0, ap: 0 },
+    ])
+  })
+
+  it('answers from the current patch index', () => {
+    setBoardIndex('18.4', buildBoardIndex(boards(10, 1, [unit(SETT, 2, [WARMOG])])), [], 10)
+    assert.deepEqual(unitRolesOnCurrentPatch(catalog), {
+      ready: true,
+      patch: '18.4',
+      units: [{ id: SETT, boards: 10, itemsPerBoard: 1, tank: 1, ad: 0, ap: 0 }],
     })
   })
 })

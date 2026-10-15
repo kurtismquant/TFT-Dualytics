@@ -1,40 +1,37 @@
-import { useRef } from 'react'
 import { createPortal } from 'react-dom'
-import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import DraggableUnit from './DraggableUnit.jsx'
 import UnitCard from './UnitCard.jsx'
 import styles from './UnitRoster.module.css'
 import { useBoardStore } from '../store/boardStore'
 import { useHoverCard } from '../hooks/useHoverCard.js'
-import { buildUnitPath } from '../constants/routes.js'
 
-// Click places the unit; double-click opens its stats page instead, undoing the
-// placement its first click made.
-function RosterUnit({ champion, recommended, onPlace }) {
+// Click places the unit. `onHover(championId | null)`: the trait list previews
+// what it would add.
+function RosterUnit({ champion, recommended, onPlace, onHover }) {
   // Long-press for the detail sheet on touch (tap already places the unit).
   const { triggerProps, cardProps } = useHoverCard(champion, { touchTrigger: 'longpress' })
-  const navigate = useNavigate()
-  const placedCellRef = useRef(null)
-
-  const handleDoubleClick = () => {
-    const cellId = placedCellRef.current
-    const { board, removeUnit } = useBoardStore.getState()
-    if (cellId && board[cellId]?.championId === champion.id) removeUnit(cellId)
-    navigate(buildUnitPath(champion.id))
-  }
 
   return (
     <>
-      <div {...triggerProps}>
+      <div
+        {...triggerProps}
+        onMouseEnter={(e) => {
+          triggerProps.onMouseEnter?.(e)
+          onHover?.(champion.id)
+        }}
+        onMouseLeave={(e) => {
+          triggerProps.onMouseLeave?.(e)
+          onHover?.(null)
+        }}
+      >
         <DraggableUnit
           id={`roster-${champion.id}`}
           champion={champion}
           size={56}
           staticDuringDrag
           recommended={recommended}
-          onClick={() => { placedCellRef.current = onPlace() }}
-          onDoubleClick={handleDoubleClick}
+          onClick={onPlace}
         />
       </div>
       {cardProps.isOpen && createPortal(
@@ -70,7 +67,8 @@ function sortChampions(champions, mode) {
   }
 }
 
-export default function UnitRoster({ champions, search = '', sortMode = 'cost', layout = 'vertical', recommendedIds }) {
+// `onPlace(championId)` places a clicked unit (default: the first free hex).
+export default function UnitRoster({ champions, search = '', sortMode = 'cost', layout = 'vertical', recommendedIds, onPlace, onHoverUnit }) {
   const { t } = useTranslation()
   const placeInFirstAvailableHex = useBoardStore(s => s.placeInFirstAvailableHex)
   const normalizedSearch = search.trim().toLowerCase()
@@ -110,7 +108,8 @@ export default function UnitRoster({ champions, search = '', sortMode = 'cost', 
               key={champ.id}
               champion={champ}
               recommended={recommendedIds?.has(champ.id) ?? false}
-              onPlace={() => placeInFirstAvailableHex(champ.id)}
+              onHover={onHoverUnit}
+              onPlace={() => (onPlace ?? placeInFirstAvailableHex)(champ.id)}
             />
           ))}
         </div>

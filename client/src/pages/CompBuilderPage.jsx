@@ -1,53 +1,69 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { DndContext, DragOverlay, PointerSensor, useSensor, useSensors } from '@dnd-kit/core'
+import { DndContext } from '@dnd-kit/core'
 import { useChampions } from '../hooks/useChampions.js'
 import { useItems } from '../hooks/useItems.js'
 import { useRecommendedUnits } from '../hooks/useUnitPartners.js'
+import { useUnitPlacement } from '../hooks/useUnitPlacement.js'
+import { useBuilderDrag } from '../hooks/useBuilderDrag.js'
+import { useSharedBoardLink } from '../hooks/useSharedBoardLink.js'
 import { useBoardStore } from '../store/boardStore.js'
 import TFTBoard from '../components/TFTBoard.jsx'
 import UnitRoster from '../components/UnitRoster.jsx'
+import UnitInspector from '../components/builder/UnitInspector.jsx'
+import BuilderToolbar from '../components/builder/BuilderToolbar.jsx'
+import BuilderDragOverlay from '../components/builder/BuilderDragOverlay.jsx'
 import ItemPicker from '../components/ItemPicker.jsx'
 import TraitList from '../components/TraitList.jsx'
 import FilterBar from '../components/FilterBar.jsx'
-import UnitIcon from '../components/UnitIcon.jsx'
-import ItemIcon from '../components/ItemIcon.jsx'
 import { PageShell } from '../components/layout/PageShell.jsx'
 import { useIsMobile } from '../hooks/useMediaQuery.js'
-import { buildUnitPath } from '../constants/routes.js'
-import { toBuilderRoster } from '../utils/builderRoster.js'
+import { listedRoster, toBuilderRoster, withFormBases } from '../utils/builderRoster.js'
+import { TRAIT_CHOICE_UNITS } from '../utils/bronzeComps.js'
 import { makeMap } from '../utils/statsFormatting.js'
 import { encodeTeamPlannerCode } from '../utils/teamPlannerCode.js'
-import CopyTeamCodeButton from '../components/shared/CopyTeamCodeButton.jsx'
 import styles from './CompBuilderPage.module.css'
 
 const BOARD_UNIT_SIZE = 90
-const ROSTER_UNIT_SIZE = 52
+
+// Page-wide keys and guards: Ctrl/Cmd+F jumps to the roster search, and no
+// native browser drags (pressing on a blank spot inside a text selection would
+// drag a ghost of every selected icon; units and items use dnd-kit's pointer
+// dragging, and text fields keep their own).
+function usePageGuards(searchInputRef) {
+  useEffect(() => {
+    const onKeyDown = (e) => {
+      if (!(e.ctrlKey || e.metaKey) || e.key.toLowerCase() !== 'f') return
+      e.preventDefault()
+      searchInputRef.current?.focus()
+      searchInputRef.current?.select()
+    }
+    const blockNativeDrag = (e) => {
+      if (!/^(INPUT|TEXTAREA)$/.test(e.target?.nodeName)) e.preventDefault()
+    }
+    window.addEventListener('keydown', onKeyDown)
+    document.addEventListener('dragstart', blockNativeDrag)
+    return () => {
+      window.removeEventListener('keydown', onKeyDown)
+      document.removeEventListener('dragstart', blockNativeDrag)
+    }
+  }, [searchInputRef])
+}
 
 export default function CompBuilderPage() {
   const { t } = useTranslation()
   const { data: allChampions } = useChampions()
-  // Builder view of the roster: Lux forms renamed, base Lux dropped.
+  // Builder view of the roster: Lux forms renamed, plus base Lux (pickForm),
+  // which desktop lists instead of the forms (picked in the unit inspector).
   const champions = useMemo(
-    () => (allChampions ? toBuilderRoster(allChampions) : undefined),
+    () => (allChampions ? withFormBases(toBuilderRoster(allChampions), allChampions) : undefined),
     [allChampions],
   )
   const { data: items } = useItems()
-  const {
-    board,
-    activeTraits,
-    setRoster,
-    setItems,
-    placeUnit,
-    moveUnit,
-    removeUnit,
-    toggleStars,
-    addItem,
-    removeItem,
-    clearBoard,
-    setIsDragging,
-  } = useBoardStore()
+  const { board, activeTraits, setRoster, setItems, moveUnit, removeUnit, addItem, removeItem, clearBoard } = useBoardStore()
+  useEffect(() => { if (champions) setRoster(champions) }, [champions, setRoster])
+  useEffect(() => { if (items) setItems(items) }, [items, setItems])
+  useSharedBoardLink(Boolean(champions))
 
   // In-game Team Planner code for the units on the board (null when empty).
   const rosterById = useMemo(() => makeMap(champions), [champions])
@@ -56,25 +72,83 @@ export default function CompBuilderPage() {
     Object.values(board).filter(cell => cell?.championId).map(cell => rosterById.get(cell.championId)).filter(Boolean),
     allChampionsById,
   ), [board, rosterById, allChampionsById])
-  // Roster units often played with everything on the board get gold names.
-  const recommendedIds = useRecommendedUnits(board, champions)
+  // Roster units often played with everything on the board get gold names;
+  // `partners` (boards, avg placement) feeds the summary line.
+  const { recommendedIds, partners } = useRecommendedUnits(board, champions)
+  // Clicked roster units go where their role usually stands; Auto-arrange
+  // lays the whole board out that way.
+  const { placeUnit: placeByRole, autoArrange } = useUnitPlacement(champions)
 
-  const [draggedUnit, setDraggedUnit] = useState(null)
-  const [draggedItem, setDraggedItem] = useState(null)
   const searchInputRef = useRef(null)
+  usePageGuards(searchInputRef)
   const isMobile = useIsMobile()
-  const navigate = useNavigate()
   // Live hex size reported by the board, so the drag overlay matches it.
   const [boardHexSize, setBoardHexSize] = useState(BOARD_UNIT_SIZE)
+  // Hovered trait (its units light up) and roster unit (its traits preview).
+  const [hoveredTrait, setHoveredTrait] = useState(null)
+  const [hoveredRosterId, setHoveredRosterId] = useState(null)
 
   // Mobile tap interactions: a single `selected` slot is either a board unit
-  // queued to move, or an item queued to attach. Desktop keeps drag + star/remove.
+  // queued to move, or an item queued to attach. Desktop clicks a unit to open
+  // the unit inspector on it instead.
   const [selected, setSelected] = useState(null)
+  // Desktop unit inspector: the board cell it shows. It closes by itself when
+  // that cell empties (unit removed, dragged off, board cleared).
+  const [inspectedCellId, setInspectedCellId] = useState(null)
+  const inspectedCell = isMobile ? null : board[inspectedCellId]
+  const inspected = inspectedCell?.championId ? rosterById.get(inspectedCell.championId) : null
+  const closeInspector = useCallback(() => setInspectedCellId(null), [])
+
+  // Desktop: placing a unit whose traits are picked in game (base Lux,
+  // Kha'Zix) opens the inspector on it, so its trait picker is right there.
+  useEffect(() => {
+    if (isMobile) return undefined
+    const count = board => Object.values(board).filter(cell => cell?.championId).length
+    return useBoardStore.subscribe((state, prev) => {
+      // Only a placement adds a unit (moves and Auto-arrange don't).
+      if (count(state.board) <= count(prev.board)) return
+      for (const [cellId, cell] of Object.entries(state.board)) {
+        const id = cell?.championId
+        if (!id || prev.board[cellId]?.championId === id) continue
+        const champion = state.roster.find(c => c.id === id)
+        if (champion?.pickForm || TRAIT_CHOICE_UNITS[id]) setInspectedCellId(cellId)
+      }
+    })
+  }, [isMobile])
+
+  const { sensors, dragged, onDragStart, onDragEnd, onDragCancel } = useBuilderDrag({
+    champions,
+    items,
+    // The inspector follows its unit (either side of a swap).
+    onUnitMoved: (from, to, swapped) => setInspectedCellId(current => (
+      current === from ? to : swapped && current === to ? from : current
+    )),
+  })
+
+  // A pasted Team Planner code replaces the board, laid out by Auto-arrange,
+  // as one undo step. Placing Lux / Kha'Zix opens the inspector on them (the
+  // subscription above); the functional update then follows that unit.
+  const handleImportCode = (championIds) => {
+    setInspectedCellId(null)
+    const moves = useBoardStore.getState().batch(() => {
+      const { clearBoard: clear, placeInFirstAvailableHex } = useBoardStore.getState()
+      clear()
+      for (const id of championIds) placeInFirstAvailableHex(id)
+      return autoArrange()
+    })
+    setInspectedCellId(current => moves.get(current) ?? current)
+  }
+
+  // The inspector follows its unit to its new hex.
+  const handleAutoArrange = () => {
+    const moves = autoArrange()
+    setInspectedCellId(current => moves.get(current) ?? current)
+  }
 
   // Tap on a placed unit.
   const handleUnitClick = (cellId) => {
     if (!isMobile) {
-      toggleStars(cellId)
+      setInspectedCellId(current => (current === cellId ? null : cellId))
       return
     }
     if (selected?.type === 'item') {
@@ -82,28 +156,12 @@ export default function CompBuilderPage() {
       setSelected(null)
       return
     }
-    if (selected?.type === 'boardUnit' && selected.cellId === cellId) {
-      setSelected(null)
-      return
-    }
-    setSelected({ type: 'boardUnit', cellId })
-  }
-
-  // Double-click opens the unit's stats page. Its first click already ran
-  // handleUnitClick, so undo that: re-toggle 3★ on desktop, drop the selection
-  // on mobile.
-  const handleUnitDoubleClick = (cellId) => {
-    const championId = board[cellId]?.championId
-    if (!championId) return
-    if (isMobile) setSelected(null)
-    else toggleStars(cellId)
-    navigate(buildUnitPath(championId))
+    setSelected(selected?.type === 'boardUnit' && selected.cellId === cellId ? null : { type: 'boardUnit', cellId })
   }
 
   // Tap on an empty hex (occupied cells stopPropagation in TFTBoard).
   const handleEmptyHexClick = (cellId) => {
-    if (!isMobile) return
-    if (board[cellId]?.championId) return
+    if (!isMobile || board[cellId]?.championId) return
     if (selected?.type === 'boardUnit') {
       moveUnit(selected.cellId, cellId)
       setSelected(null)
@@ -117,20 +175,13 @@ export default function CompBuilderPage() {
     )
   }
 
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      const isFind = (e.ctrlKey || e.metaKey) && (e.key === 'f' || e.key === 'F')
-      if (!isFind) return
-      e.preventDefault()
-      const input = searchInputRef.current
-      if (input) {
-        input.focus()
-        input.select()
-      }
-    }
-    window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [])
+  // What the hovered roster unit would add to the traits (nothing if it's on
+  // the board already: a unit counts once).
+  const traitPreview = useMemo(() => {
+    const champion = rosterById.get(hoveredRosterId)
+    if (!champion || Object.values(board).some(cell => cell?.championId === champion.id)) return null
+    return Object.fromEntries((champion.traits || []).map(trait => [trait, champion.traitWeights?.[trait] ?? 1]))
+  }, [hoveredRosterId, rosterById, board])
 
   const [search, setSearch] = useState('')
   const [champSort, setChampSort] = useState('cost')
@@ -138,113 +189,21 @@ export default function CompBuilderPage() {
   // Mobile roster panel: 'units' (default) or 'items'. Ignored on desktop (both show).
   const [mode, setMode] = useState('units')
 
-  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 4 } }))
-
-  useEffect(() => {
-    if (champions) setRoster(champions)
-  }, [champions, setRoster])
-
-  useEffect(() => {
-    if (items) setItems(items)
-  }, [items, setItems])
-
-  const handleDragStart = ({ active }) => {
-    setIsDragging(true)
-    const id = active.id
-    if (id.startsWith('roster-')) {
-      const championId = id.replace('roster-', '')
-      const champion = champions?.find(c => c.id === championId) || null
-      setDraggedUnit(champion ? { champion, source: 'roster' } : null)
-    } else if (id.startsWith('board-')) {
-      const cellId = id.replace('board-', '')
-      const unit = board[cellId]
-      const champion = unit ? champions?.find(c => c.id === unit.championId) || null : null
-      setDraggedUnit(champion ? { champion, source: 'board' } : null)
-    } else if (id.startsWith('item-')) {
-      const itemId = id.replace('item-', '')
-      setDraggedItem(items?.find(i => i.id === itemId) || null)
-    }
-  }
-
-  const handleDragEnd = ({ active, over }) => {
-    setIsDragging(false)
-    setDraggedUnit(null)
-    setDraggedItem(null)
-    const activeId = active.id
-
-    // Items: only valid target is a board cell that already has a unit.
-    // Store's addItem silently no-ops when cell is empty or already has 3 items.
-    if (activeId.startsWith('item-')) {
-      if (!over) return
-      const cellId = String(over.id)
-      if (!cellId.startsWith('cell-')) return
-      addItem(cellId, activeId.replace('item-', ''))
-      return
-    }
-
-    if (!over) {
-      if (activeId.startsWith('board-')) {
-        removeUnit(activeId.replace('board-', ''))
-      }
-      return
-    }
-
-    const targetCellId = String(over.id)
-    if (!targetCellId.startsWith('cell-')) return
-
-    if (activeId.startsWith('roster-')) {
-      placeUnit(targetCellId, activeId.replace('roster-', ''))
-    } else if (activeId.startsWith('board-')) {
-      const fromCellId = activeId.replace('board-', '')
-      if (fromCellId !== targetCellId) moveUnit(fromCellId, targetCellId)
-    }
-  }
-
-  const handleDragCancel = () => {
-    setIsDragging(false)
-    setDraggedUnit(null)
-    setDraggedItem(null)
-  }
-
-  const renderDragOverlay = () => {
-    if (draggedUnit?.source === 'board') {
-      return (
-        <div style={{ width: boardHexSize, height: boardHexSize }}>
-          <UnitIcon champion={draggedUnit.champion} variant="hex" />
-        </div>
-      )
-    }
-
-    if (draggedUnit?.source === 'roster') {
-      return <UnitIcon champion={draggedUnit.champion} size={ROSTER_UNIT_SIZE} />
-    }
-
-    if (draggedItem) {
-      return <ItemIcon item={draggedItem} size={42} />
-    }
-
-    return null
-  }
-
   return (
-    <PageShell wide>
-      <div className={styles.toolbar}>
-        <h1 className={styles.title}>{t('builder.title')}</h1>
-        {/* Shown on every screen size: the mobile board corner only has room for Clear. */}
-        <CopyTeamCodeButton code={teamCode} labeled />
-        {/* Desktop position; on mobile this is hidden and re-shown below the traits. */}
-        <button className={styles.clearBtn} onClick={clearBoard}>{t('builder.clearBoard')}</button>
-      </div>
+    <PageShell wide className={inspected ? styles.shellWithInspector : undefined}>
+      <BuilderToolbar
+        board={board}
+        champions={champions}
+        teamCode={teamCode}
+        partners={partners}
+        onImportCode={handleImportCode}
+        onAutoArrange={handleAutoArrange}
+      />
 
-      <DndContext
-        sensors={sensors}
-        onDragStart={handleDragStart}
-        onDragEnd={handleDragEnd}
-        onDragCancel={handleDragCancel}
-      >
+      <DndContext sensors={sensors} onDragStart={onDragStart} onDragEnd={onDragEnd} onDragCancel={onDragCancel}>
         <div className={styles.layout}>
           <div className={styles.topRow}>
-            <TraitList activeTraits={activeTraits} />
+            <TraitList activeTraits={activeTraits} preview={traitPreview} onHoverTrait={setHoveredTrait} />
 
             <div className={styles.boardWrap}>
               <TFTBoard
@@ -254,11 +213,13 @@ export default function CompBuilderPage() {
                 isMobile={isMobile}
                 selectedCellId={selected?.type === 'boardUnit' ? selected.cellId : null}
                 onUnitClick={handleUnitClick}
-                onUnitDoubleClick={handleUnitDoubleClick}
                 onEmptyHexClick={handleEmptyHexClick}
                 onRemoveUnit={removeUnit}
                 onRemoveItem={removeItem}
                 onHexSizeChange={setBoardHexSize}
+                draggingCellId={dragged?.source === 'board' ? dragged.cellId : null}
+                highlightTrait={hoveredTrait}
+                inspectedCellId={inspected ? inspectedCellId : null}
                 /* Mobile-only: clear sits inside the board, top-right corner. */
                 overlay={isMobile ? (
                   <button className={styles.clearBtnMobile} onClick={clearBoard}>
@@ -287,11 +248,13 @@ export default function CompBuilderPage() {
               <div className={styles.unitsPanel}>
                 {champions ? (
                   <UnitRoster
-                    champions={champions}
+                    champions={listedRoster(champions, { collapseForms: !isMobile })}
                     search={search}
                     sortMode={champSort}
                     layout="horizontal"
                     recommendedIds={recommendedIds}
+                    onPlace={placeByRole}
+                    onHoverUnit={setHoveredRosterId}
                   />
                 ) : (
                   <div className={styles.loading} role="status" aria-live="polite">{t('builder.loadingChampions')}</div>
@@ -315,10 +278,19 @@ export default function CompBuilderPage() {
           </section>
         </div>
 
-        <DragOverlay adjustScale={false} dropAnimation={null}>
-          {renderDragOverlay()}
-        </DragOverlay>
+        <BuilderDragOverlay dragged={dragged} items={items} hexSize={boardHexSize} />
       </DndContext>
+
+      {inspected && (
+        <UnitInspector
+          cellId={inspectedCellId}
+          cell={inspectedCell}
+          champion={inspected}
+          roster={champions}
+          allItems={items}
+          onClose={closeInspector}
+        />
+      )}
     </PageShell>
   )
 }

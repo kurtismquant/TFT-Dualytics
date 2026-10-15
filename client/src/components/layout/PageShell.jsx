@@ -1,6 +1,6 @@
 import styles from './PageShell.module.css'
 
-export function PageShell({ children, grid = false, wide = false }) {
+export function PageShell({ children, grid = false, wide = false, className }) {
   return (
     <div
       data-page-shell
@@ -8,6 +8,7 @@ export function PageShell({ children, grid = false, wide = false }) {
         styles.shell,
         grid ? styles.grid : '',
         wide ? styles.wide : '',
+        className,
       ].filter(Boolean).join(' ')}
     >
       {children}

@@ -15,6 +15,9 @@
 :root {
   --page-max-width: 77.5rem;
   --page-gutter:    2rem;    /* 32px — horizontal padding; collapses at mobile */
+  /* Team Builder unit inspector: fixed to the window's right edge. */
+  --unit-inspector-width:  18rem;
+  --unit-inspector-offset: 1.5rem;
   --grid-cols:      12;
   --grid-gap:       1.5rem;  /* 24px column gap when grid is active */
 }

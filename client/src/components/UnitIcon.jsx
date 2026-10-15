@@ -71,6 +71,7 @@ export default function UnitIcon2({
         alt={champion.name}
         className={styles.img}
         loading="lazy"
+        draggable={false}
       />
       {showName && (
         <span className={recommended ? `${styles.name} ${styles.nameRecommended}` : styles.name}>

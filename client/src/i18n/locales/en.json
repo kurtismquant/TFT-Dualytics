@@ -268,8 +268,51 @@
   "builder": {
     "title": "Team Builder",
     "clearBoard": "Clear Board",
+    "autoArrange": "Auto-arrange",
+    "importCode": {
+      "button": "Paste team code",
+      "label": "Team Planner code",
+      "placeholder": "Paste team code",
+      "invalid": "That isn't a Team Planner code.",
+      "wrongSet": "That code is for Set {{set}}. The builder is on Set {{current}}.",
+      "noUnits": "No units in that code."
+    },
     "loadingChampions": "Loading champions...",
-    "loadingItems": "Loading items..."
+    "loadingItems": "Loading items...",
+    "inspector": {
+      "close": "Close unit details",
+      "threeStar": "3-star",
+      "topCombos": "Most played items",
+      "games_one": "{{formatted}} game",
+      "games_other": "{{formatted}} games",
+      "loadingCombos": "Loading items...",
+      "combosError": "Couldn't load item stats.",
+      "luxTraitLabel": "Trait (counts as 2)",
+      "luxTraitPlaceholder": "Choose Lux's trait",
+      "evolutionsLabel": "Evolutions (+1 each)",
+      "evolutionsPlaceholder": "Choose evolutions",
+      "equip": "Equip",
+      "equipped": "Equipped",
+      "equipLabel": "Equip {{items}}"
+    },
+    "undo": "Undo (Ctrl+Z)",
+    "redo": "Redo (Ctrl+Shift+Z)",
+    "link": {
+      "copy": "Copy link",
+      "copied": "Copied",
+      "failed": "Copy failed",
+      "title": "Copy a link to this exact board: positions, items, 3-star and traits",
+      "copiedStatus": "Board link copied."
+    },
+    "summary": {
+      "units_one": "{{count}} unit",
+      "units_other": "{{count}} units",
+      "cost": "{{cost}} gold",
+      "boards_one": "{{formatted}} board this patch",
+      "boards_other": "{{formatted}} boards this patch",
+      "avg": "avg place",
+      "none": "No boards with all of these units yet"
+    }
   },
   "filterBar": {
     "searchPlaceholder": "Search units, items, or traits",

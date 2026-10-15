@@ -1,8 +1,10 @@
-import { useState, useRef, useEffect } from 'react'
-import DroppableHex from "./DroppableHex.jsx";
-import DraggableUnit from "./DraggableUnit.jsx";
+import { useState, useRef, useEffect, useMemo } from 'react'
+import BoardCell from "./BoardCell.jsx";
 import EquippedItems from "./EquippedItems.jsx";
+import UnitIcon from "./UnitIcon.jsx";
+import StarBadge from "./StarBadge.jsx";
 import { useUiScale } from "../contexts/useUiScale.js";
+import { getEmblemTrait } from "../utils/bronzeComps.js";
 import styles from "./TFTBoard.module.css";
 
 const ROWS = 4;
@@ -22,6 +24,26 @@ function calcHexSize(wrapperWidth, gap, minSize, scale) {
   return Math.min(Math.round(MAX_HEX_SIZE * scale), Math.max(minSize, Math.floor(size)));
 }
 
+// Does this board unit count toward `trait`: its own traits, picked traits
+// (Kha'Zix) or an emblem it holds?
+function givesTrait(trait, unit, champion, itemsById) {
+  return (champion?.traits || []).includes(trait)
+    || (unit.chosenTraits || []).includes(trait)
+    || (unit.items || []).some(id => getEmblemTrait(itemsById.get(id)) === trait);
+}
+
+// What follows the cursor while a board unit is dragged: its hex with its
+// 3★ badge and items, so they move with it instead of waiting in the old hex.
+export function BoardUnitDragPreview({ champion, unit, items, size }) {
+  return (
+    <div className={styles.dragPreview} style={{ width: size, height: size, '--hex-size': `${size}px` }}>
+      <UnitIcon champion={champion} variant="hex" />
+      {unit.stars && <StarBadge />}
+      <EquippedItems itemIds={unit.items} items={items || []} />
+    </div>
+  );
+}
+
 export default function TFTBoard({
   board,
   champions,
@@ -29,11 +51,15 @@ export default function TFTBoard({
   isMobile = false,
   selectedCellId = null,
   onUnitClick,
-  onUnitDoubleClick,
   onEmptyHexClick,
   onRemoveUnit,
   onRemoveItem,
   onHexSizeChange,
+  draggingCellId = null,
+  // Trait hovered in the trait list: its units light up, the rest dim.
+  highlightTrait = null,
+  // The unit the inspector shows has no hover card (its panel is open).
+  inspectedCellId = null,
   overlay = null,
 }) {
   const wrapperRef = useRef(null);
@@ -58,6 +84,29 @@ export default function TFTBoard({
   useEffect(() => {
     onHexSizeChange?.(hexSize);
   }, [hexSize, onHexSizeChange]);
+
+  // E removes the unit under the pointer, like selling in game. Ignored while
+  // typing in a field, with modifier keys, on key repeat and mid-drag.
+  const hoveredCellRef = useRef(null);
+  const onCellHover = (cellId, leftCellId) => {
+    if (cellId) hoveredCellRef.current = cellId;
+    else if (hoveredCellRef.current === leftCellId) hoveredCellRef.current = null;
+  };
+  const itemsById = useMemo(() => new Map((items || []).map(item => [item.id, item])), [items]);
+  useEffect(() => {
+    const onKeyDown = (e) => {
+      if (e.key !== "e" && e.key !== "E") return;
+      if (e.repeat || e.ctrlKey || e.metaKey || e.altKey) return;
+      const target = e.target;
+      if (target?.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(target?.tagName)) return;
+      const cellId = hoveredCellRef.current;
+      if (!cellId || draggingCellId || !board[cellId]?.championId) return;
+      e.preventDefault();
+      onRemoveUnit?.(cellId);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [board, draggingCellId, onRemoveUnit]);
 
   const horizSpacing = hexSize + HEX_GAP;
   const vertSpacing = hexSize * 0.75 + HEX_GAP;
@@ -84,65 +133,36 @@ export default function TFTBoard({
             const champion = unit
               ? champions?.find((c) => c.id === unit.championId)
               : null;
+            const highlight = highlightTrait && champion
+              ? (givesTrait(highlightTrait, unit, champion, itemsById) ? "on" : "dim")
+              : null;
 
             return (
-              <div
+              <BoardCell
                 key={cellId}
-                className={styles.cellWrap}
+                cellId={cellId}
+                unit={unit}
+                champion={champion}
+                items={items || []}
+                size={hexSize}
                 style={{
                   left,
                   top,
                   width: hexSize,
                   height: hexSize,
+                  // StarBadge sizes its stars from the hex.
+                  '--hex-size': `${hexSize}px`,
                 }}
-              >
-                <DroppableHex
-                  cellId={cellId}
-                  size={hexSize}
-                  selected={selectedCellId === cellId}
-                  onClick={() => onEmptyHexClick?.(cellId)}
-                >
-                  {champion && (
-                    <>
-                      <DraggableUnit
-                        id={`board-${cellId}`}
-                        champion={champion}
-                        variant="hex"
-                        fillParent
-                        stars={!!unit.stars}
-                        onClick={(e) => {
-                          // Stop the click from also reaching the hex's onClick
-                          // (the empty-hex / move-target handler).
-                          e.stopPropagation();
-                          onUnitClick?.(cellId);
-                        }}
-                        onDoubleClick={() => onUnitDoubleClick?.(cellId)}
-                        onContextMenu={(e) => {
-                          e.preventDefault();
-                          onRemoveUnit?.(cellId);
-                        }}
-                      />
-                      <div className={styles.unitName}>{champion.name}</div>
-                    </>
-                  )}
-                </DroppableHex>
-
-                {champion && unit.stars && (
-                  <div className={styles.starBadge} aria-hidden="true">
-                    <span className={styles.badgeStar}>★</span>
-                    <span className={styles.badgeStar}>★</span>
-                    <span className={styles.badgeStar}>★</span>
-                  </div>
-                )}
-
-                {champion && unit.items?.length > 0 && (
-                  <EquippedItems
-                    itemIds={unit.items}
-                    items={items || []}
-                    onRemove={(itemId) => onRemoveItem?.(cellId, itemId)}
-                  />
-                )}
-              </div>
+                selected={selectedCellId === cellId}
+                isDragged={cellId === draggingCellId}
+                highlight={highlight}
+                hoverCard={cellId !== inspectedCellId}
+                onUnitClick={onUnitClick}
+                onEmptyHexClick={onEmptyHexClick}
+                onRemoveUnit={onRemoveUnit}
+                onRemoveItem={onRemoveItem}
+                onHover={onCellHover}
+              />
             );
           }),
         )}

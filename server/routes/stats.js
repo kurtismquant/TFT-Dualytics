@@ -4,7 +4,8 @@ import { gzip } from 'node:zlib'
 import { getStats } from '../services/statsAggregator.js'
 import { getUnitItemCombos, MIN_COMBO_GAMES } from '../services/unitItemCombosAggregator.js'
 import { getItemUnits } from '../services/itemUnitsAggregator.js'
-import { exploreCurrentPatch, partnersOnCurrentPatch, playedOnCurrentPatch } from '../services/boardExplorer.js'
+import { exploreCurrentPatch, partnersOnCurrentPatch, playedOnCurrentPatch, unitRolesOnCurrentPatch } from '../services/boardExplorer.js'
+import { getAllItems } from '../services/assetResolver.js'
 
 const router = Router()
 const gzipAsync = promisify(gzip)
@@ -119,6 +120,18 @@ router.get('/explorer/partners', (req, res) => {
     const status = err.status || 500
     if (status >= 500) console.error('Unit partners lookup failed:', err.message)
     res.status(status).json({ ready: false, error: status === 400 ? err.message : 'Unit partners lookup failed' })
+  }
+})
+
+// Per-unit item roles (share of tank / AD / AP items held) for the Team
+// Builder's auto-arrange: GET, no params.
+router.get('/explorer/unit-roles', (req, res) => {
+  try {
+    const result = unitRolesOnCurrentPatch(getAllItems())
+    res.status(result.ready ? 200 : 503).json(result)
+  } catch (err) {
+    console.error('Unit roles lookup failed:', err.message)
+    res.status(500).json({ ready: false, error: 'Unit roles lookup failed' })
   }
 })
 

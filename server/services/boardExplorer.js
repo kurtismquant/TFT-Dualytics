@@ -245,8 +245,9 @@ export function exploreBoards(boards, filters, compResults = []) {
   }
 }
 
-// Pure: index boards + unit ids → how often each other unit is fielded on the
-// boards that run all of them (the Team Builder's "often played with" names).
+// Pure: index boards + unit ids → how many boards run all of them, how they
+// place on average (the Team Builder's summary line), and how often each other
+// unit is fielded on them (its "often played with" names).
 // A slim version of exploreBoards' `units` rows: the builder refetches it on
 // every placement, so it skips the items/traits/comps breakdowns.
 export function unitPartners(boards, unitIds) {
@@ -254,9 +255,11 @@ export function unitPartners(boards, unitIds) {
   const filters = { units: unitIds.map(id => ({ id })), traits: [], items: [] }
   const counts = new Map()
   let n = 0
+  let placementTotal = 0
   for (const board of boards) {
     if (!boardMatches(board, filters)) continue
     n++
+    placementTotal += board.place
     for (const unit of board.units) {
       if (!ids.has(unit.id)) counts.set(unit.id, (counts.get(unit.id) || 0) + 1)
     }
@@ -265,7 +268,52 @@ export function unitPartners(boards, unitIds) {
     .filter(([, count]) => count >= MIN_BREAKDOWN_GAMES)
     .map(([id, count]) => ({ id, count, frequency: round(count / n) }))
     .sort((a, b) => b.count - a.count || a.id.localeCompare(b.id))
-  return { boards: n, minGames: MIN_BREAKDOWN_GAMES, units }
+  return { boards: n, avgPlacement: n ? round(placementTotal / n) : null, minGames: MIN_BREAKDOWN_GAMES, units }
+}
+
+// What an item says about its holder, from its stat effects: `tank` only for
+// pure defensive items (Health / Armor / MR and no damage stat), so hybrid
+// items like Bloodthirster don't make a carry look like a tank.
+export function itemKind(item) {
+  const stats = new Set((item?.effects || []).map(effect => effect.name))
+  const ad = stats.has('AttackDamage')
+  const ap = stats.has('AbilityPower')
+  const tank = !ad && !ap && (stats.has('Health') || stats.has('Armor') || stats.has('MagicResist'))
+  return { tank, ad, ap }
+}
+
+// Pure: index boards + item kinds (Map itemId -> itemKind) → per unit, how
+// many items it holds per board and what share of them are tank / AD / AP
+// items. The Team Builder's auto-arrange reads roles (tank vs assassin, AD vs
+// AP carry) from it. Units on fewer than MIN_BREAKDOWN_GAMES boards are left out.
+export function unitItemRoles(boards, kinds) {
+  const rows = new Map()
+  for (const board of boards) {
+    for (const unit of board.units) {
+      let row = rows.get(unit.id)
+      if (!row) rows.set(unit.id, row = { id: unit.id, boards: 0, items: 0, tank: 0, ad: 0, ap: 0 })
+      row.boards++
+      for (const item of unit.items) {
+        const kind = kinds.get(item)
+        if (!kind) continue
+        row.items++
+        if (kind.tank) row.tank++
+        if (kind.ad) row.ad++
+        if (kind.ap) row.ap++
+      }
+    }
+  }
+  return [...rows.values()]
+    .filter(row => row.boards >= MIN_BREAKDOWN_GAMES)
+    .map(({ id, boards, items, tank, ad, ap }) => ({
+      id,
+      boards,
+      itemsPerBoard: round(items / boards),
+      tank: items ? round(tank / items) : 0,
+      ad: items ? round(ad / items) : 0,
+      ap: items ? round(ap / items) : 0,
+    }))
+    .sort((a, b) => a.id.localeCompare(b.id))
 }
 
 // ── Current-patch index, kept in memory ─────────────────────────────────────
@@ -278,6 +326,19 @@ export function setBoardIndex(patch, boards, comps = [], games = 0) {
   current = { patch, boards, comps, games, builtAt: new Date().toISOString() }
   resultCache.clear()
   exactBoards = null
+  itemRoles = null
+}
+
+// Route entry point; `ready: false` until the index exists. `items` is the
+// item catalog (assetResolver.getAllItems). Computed once per index build.
+let itemRoles = null
+export function unitRolesOnCurrentPatch(items) {
+  if (!current) return { ready: false, patch: null, units: [] }
+  if (!itemRoles) {
+    const kinds = new Map(items.map(item => [String(item.id), itemKind(item)]))
+    itemRoles = { ready: true, patch: current.patch, units: unitItemRoles(current.boards, kinds) }
+  }
+  return itemRoles
 }
 
 // ── Exact-board lookups ("has this exact team been played?") ──────────────

@@ -268,8 +268,51 @@
   "builder": {
     "title": "Constructor de Equipo",
     "clearBoard": "Limpiar Tablero",
+    "autoArrange": "Auto-organizar",
+    "importCode": {
+      "button": "Pegar código de equipo",
+      "label": "Código del Planificador",
+      "placeholder": "Pega el código de equipo",
+      "invalid": "Eso no es un código del Planificador.",
+      "wrongSet": "Ese código es del Set {{set}}. El constructor está en el Set {{current}}.",
+      "noUnits": "No hay unidades en ese código."
+    },
     "loadingChampions": "Cargando campeones...",
-    "loadingItems": "Cargando objetos..."
+    "loadingItems": "Cargando objetos...",
+    "inspector": {
+      "close": "Cerrar detalles de la unidad",
+      "threeStar": "3 estrellas",
+      "topCombos": "Objetos más jugados",
+      "games_one": "{{formatted}} partida",
+      "games_other": "{{formatted}} partidas",
+      "loadingCombos": "Cargando objetos...",
+      "combosError": "No se pudieron cargar las estadísticas de objetos.",
+      "luxTraitLabel": "Rasgo (cuenta como 2)",
+      "luxTraitPlaceholder": "Elige el rasgo de Lux",
+      "evolutionsLabel": "Evoluciones (+1 cada una)",
+      "evolutionsPlaceholder": "Elige evoluciones",
+      "equip": "Equipar",
+      "equipped": "Equipado",
+      "equipLabel": "Equipar {{items}}"
+    },
+    "undo": "Deshacer (Ctrl+Z)",
+    "redo": "Rehacer (Ctrl+Shift+Z)",
+    "link": {
+      "copy": "Copiar enlace",
+      "copied": "Copiado",
+      "failed": "Error al copiar",
+      "title": "Copia un enlace a este tablero exacto: posiciones, objetos, 3 estrellas y rasgos",
+      "copiedStatus": "Enlace del tablero copiado."
+    },
+    "summary": {
+      "units_one": "{{count}} unidad",
+      "units_other": "{{count}} unidades",
+      "cost": "{{cost}} de oro",
+      "boards_one": "{{formatted}} tablero este parche",
+      "boards_other": "{{formatted}} tableros este parche",
+      "avg": "posición media",
+      "none": "Aún no hay tableros con todas estas unidades"
+    }
   },
   "filterBar": {
     "searchPlaceholder": "Buscar unidades, objetos o rasgos",

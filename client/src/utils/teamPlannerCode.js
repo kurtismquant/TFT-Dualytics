@@ -33,3 +33,34 @@ export function encodeTeamPlannerCode(units, championsById, setNumber = CURRENT_
 // For boards rendered from resolveUnits() output ({ champion, ... }).
 export const teamCodeForResolvedUnits = resolvedUnits =>
   encodeTeamPlannerCode((resolvedUnits || []).map(unit => unit.champion))
+
+const CODE_RE = /^0([12])([0-9a-f]+)TFTSet(\d+)$/i
+
+// A pasted share code -> { setNumber, codes: [team_planner_code, ...] } (empty
+// slots dropped), or null when it isn't one. Whitespace around it is ignored.
+export function decodeTeamPlannerCode(text) {
+  const match = CODE_RE.exec(String(text ?? '').trim())
+  if (!match) return null
+  const digits = match[1] === '2' ? 3 : 2
+  const slots = match[2]
+  if (slots.length !== digits * TEAM_PLANNER_SLOTS) return null
+  const codes = []
+  for (let i = 0; i < slots.length; i += digits) {
+    const code = parseInt(slots.slice(i, i + digits), 16)
+    if (code > 0 && !codes.includes(code)) codes.push(code)
+  }
+  return { setNumber: Number(match[3]), codes }
+}
+
+// Planner codes -> champion ids from `champions` (the builder roster). Lux
+// forms share base Lux's code, so the unit without a formOf wins: base Lux,
+// whose form the builder picks. Codes with no champion are skipped.
+export function championIdsForPlannerCodes(codes, champions) {
+  const byCode = new Map()
+  for (const champion of champions || []) {
+    const code = champion.plannerCode
+    if (!Number.isInteger(code) || code <= 0) continue
+    if (!byCode.has(code) || !champion.formOf) byCode.set(code, champion.id)
+  }
+  return codes.map(code => byCode.get(code)).filter(Boolean)
+}

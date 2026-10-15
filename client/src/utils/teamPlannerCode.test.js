@@ -1,7 +1,7 @@
 // Run with: node --test client/src/utils/teamPlannerCode.test.js
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { encodeTeamPlannerCode } from './teamPlannerCode.js'
+import { championIdsForPlannerCodes, decodeTeamPlannerCode, encodeTeamPlannerCode } from './teamPlannerCode.js'
 
 // plannerCode values are Set 18's real team_planner_code numbers.
 const gromp = { id: 'DA_Gromp18_AP', plannerCode: 1026 }
@@ -41,4 +41,23 @@ test('more than 10 units keeps the 10 priciest', () => {
 
 test('defaults to the current set', () => {
   assert.match(encodeTeamPlannerCode([gromp]), /TFTSet18$/)
+})
+
+test('decodes a share code back into its planner codes', () => {
+  const code = encodeTeamPlannerCode([gromp, blossomLux, khazix], championsById, 18)
+  assert.deepEqual(decodeTeamPlannerCode(`  ${code}
+`), { setNumber: 18, codes: [1026, 1029, 1036] })
+  assert.deepEqual(decodeTeamPlannerCode(`01010a${'00'.repeat(8)}TFTSet13`), { setNumber: 13, codes: [1, 10] })
+  assert.deepEqual(decodeTeamPlannerCode(`02${'000'.repeat(10)}TFTSet18`), { setNumber: 18, codes: [] })
+})
+
+test('rejects text that is not a share code', () => {
+  for (const text of ['', 'hello', `02402${'000'.repeat(8)}TFTSet18`, `03402${'000'.repeat(9)}TFTSet18`, `02402${'000'.repeat(9)}`, null]) {
+    assert.equal(decodeTeamPlannerCode(text), null, String(text))
+  }
+})
+
+test('planner codes map to roster ids, base Lux over her forms', () => {
+  const roster = [gromp, { ...blossomLux, plannerCode: 1029 }, luxBase, { ...khazix, formOf: undefined }]
+  assert.deepEqual(championIdsForPlannerCodes([1029, 1026, 1036, 9999], roster), ['DA_Lux18_Base', 'DA_Gromp18_AP', 'DA_18_KhaZix'])
 })

@@ -25,8 +25,9 @@ export const useUnitPartners = unitIds => {
   })
 }
 
-// Builder board + roster -> Set of roster ids to show in gold: units on at
-// least RECOMMEND_MIN_FREQUENCY of the boards that run every placed unit.
+// Builder board + roster -> { recommendedIds, partners }: the roster ids to
+// show in gold (units on at least RECOMMEND_MIN_FREQUENCY of the boards that run
+// every placed unit) and the partners answer itself (boards, avg placement).
 // Board units are sent by base id (Lux forms -> base Lux, as the server's board
 // index stores them); a base id in the answer lights up all of its forms.
 export const useRecommendedUnits = (board, champions) => {
@@ -39,7 +40,7 @@ export const useRecommendedUnits = (board, champions) => {
   }, [board, champions])
   const { data } = useUnitPartners(placedIds)
 
-  return useMemo(() => {
+  const recommendedIds = useMemo(() => {
     const recommended = new Set()
     if (!placedIds.length || !data?.ready) return recommended
     // Placed units are dropped here too: `data` may still be the previous board's.
@@ -50,4 +51,5 @@ export const useRecommendedUnits = (board, champions) => {
     }
     return recommended
   }, [data, placedIds, champions])
+  return { recommendedIds, partners: placedIds.length ? data : null }
 }

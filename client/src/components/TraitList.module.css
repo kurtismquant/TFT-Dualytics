@@ -194,3 +194,18 @@
     max-height: 15rem;
   }
 }
+
+/* Roster-hover preview: what the hovered unit would add. */
+.added {
+  margin-left: 0.375rem;
+  color: var(--accent-gold);
+  letter-spacing: 0;
+}
+
+.bpPreview {
+  color: var(--accent-gold);
+}
+
+.previewRow {
+  opacity: 0.7;
+}

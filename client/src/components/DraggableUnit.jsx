@@ -12,7 +12,6 @@ export default function DraggableUnit({
   staticDuringDrag = false,
   recommended = false,
   onClick,
-  onDoubleClick,
   onContextMenu,
 }) {
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({ id })
@@ -24,8 +23,8 @@ export default function DraggableUnit({
     onClick(event)
   }
 
-  // The second click of a double-click is skipped so a double-click runs the
-  // click action once, then onDoubleClick (which can undo it).
+  // The second click of a double-click is skipped, so a quick double-click
+  // places a roster unit once and doesn't open then close the inspector.
   const handleClick = (event) => {
     if (event.detail > 1) return
     onClick(event)
@@ -46,7 +45,6 @@ export default function DraggableUnit({
       {...attributes}
       style={wrapperStyle}
       onClick={onClick ? handleClick : undefined}
-      onDoubleClick={onDoubleClick}
       onKeyDown={handleKeyDown}
       onContextMenu={onContextMenu}
       role={onClick ? 'button' : attributes.role}

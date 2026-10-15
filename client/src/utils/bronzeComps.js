@@ -24,7 +24,7 @@ const NODE_CAP = 10_000_000
 // with takedowns into 3 of these 4 traits (fully evolved). Taking all 4 is
 // only considered when the 4th adds a counted trait; since a 4th evolution is
 // rare, such comps rank last within their trait count. Update when the set changes.
-const TRAIT_CHOICE_UNITS = {
+export const TRAIT_CHOICE_UNITS = {
   DA_18_KhaZix: { pick: 3, from: ['Executioner', 'Rapidfire', 'Ravager', 'Spellweaver'] },
 }
 // For the "No Kha'Zix" option.

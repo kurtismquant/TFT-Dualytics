@@ -41,3 +41,19 @@ export function toBuilderRoster(champions) {
       return { ...c, name, traitWeights, formOf: form.base.id }
     })
 }
+
+// Adds back the base of each form unit, flagged `pickForm`, so a board can hold
+// a base Lux whose form is still to be picked (desktop builder: the unit
+// inspector's trait picker swaps her for a form). Use for unit lookups.
+export function withFormBases(roster, champions) {
+  const baseIds = new Set(roster.map(c => c.formOf).filter(Boolean))
+  const bases = champions.filter(c => baseIds.has(c.id)).map(c => ({ ...c, pickForm: true }))
+  return [...roster, ...bases]
+}
+
+// The units the roster lists: one base per form unit when `collapseForms`
+// (desktop, forms picked in the inspector), else every form (mobile, which has
+// no inspector).
+export function listedRoster(roster, { collapseForms }) {
+  return roster.filter(c => (collapseForms ? !c.formOf : !c.pickForm))
+}

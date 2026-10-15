@@ -14,6 +14,7 @@ export default function ItemIcon({ item, size = 28 }) {
         alt={item.name}
         className={styles.img}
         loading="lazy"
+        draggable={false}
       />
     </div>
   )

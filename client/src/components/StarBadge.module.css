@@ -1,0 +1,61 @@
+/* Laid over the hex's box (pointy-top: top point at 50% 0, top edges sloping
+   down to 0/100% 25%). Stars are sized from --hex-size so they scale with the
+   board. Flat brand gold (--accent-gold), with a thin dark
+   outline so they read on any unit art. */
+.badge {
+  --star: calc(var(--hex-size, 5.625rem) * 0.2);
+  position: absolute;
+  inset: 0;
+  z-index: 100;
+  pointer-events: none;
+}
+
+.star {
+  position: absolute;
+  width: var(--star);
+  height: var(--star);
+  overflow: visible;
+  transform: rotate(var(--tilt, 0deg));
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.55));
+  animation: appear 180ms ease-out both;
+}
+
+.star path {
+  fill: var(--accent-gold);
+  stroke: rgba(0, 0, 0, 0.7);
+  stroke-width: 1.1;
+  stroke-linejoin: miter;
+  paint-order: stroke;
+}
+
+/* Side stars sit on the top edges, tilted with them (the edge slope is ~27°). */
+.left,
+.right {
+  top: calc(var(--hex-size, 5.625rem) * 0.12 - var(--star) / 2);
+}
+
+.left {
+  left: calc(27% - var(--star) / 2);
+  --tilt: -27deg;
+}
+
+.right {
+  left: calc(73% - var(--star) / 2);
+  --tilt: 27deg;
+}
+
+/* The middle star on the top point, a touch larger. */
+.center {
+  --star: calc(var(--hex-size, 5.625rem) * 0.24);
+  top: calc(var(--star) * -0.45);
+  left: calc(50% - var(--star) / 2);
+  z-index: 1;
+}
+
+@keyframes appear {
+  from { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .star { animation: none; }
+}

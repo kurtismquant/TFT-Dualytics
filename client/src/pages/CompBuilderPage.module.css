@@ -1,14 +1,27 @@
 /* ── Toolbar ────────────────────────────────────────────── */
 .toolbar {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 1.5rem;
+  gap: 1rem 1.5rem;
   margin-bottom: 2rem;
   padding-bottom: 1.125rem;
   border-bottom: 1px solid var(--bg-border);
 }
 
+.heading {
+  flex: 1 0 auto;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+
 .title {
+  margin: 0;
   font-family: var(--font-display);
   font-size: var(--text-4xl);
   font-weight: var(--fw-bold);
@@ -16,11 +29,44 @@
   letter-spacing: var(--track-tight);
   text-transform: uppercase;
   color: var(--text-primary);
-  flex: 1;
+  white-space: nowrap;
+}
+
+/* "8 units · 31 gold · 4,572 boards · 2.35 avg place" under the title. */
+.summary {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0.5rem 0 0;
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  letter-spacing: var(--track-wider);
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.summary > span {
+  white-space: nowrap;
+}
+
+.summary > span + span::before {
+  content: '·';
+  margin: 0 0.5rem;
+  color: var(--bg-border-bright);
+}
+
+.summaryAvg {
+  font-weight: var(--fw-bold);
+}
+
+/* Undo / redo pair. */
+.history {
+  display: flex;
+  gap: 0.25rem;
 }
 
 /* ── Ghost button — the sole interactive style ─────────── */
-.clearBtn {
+.clearBtn,
+.arrangeBtn {
   background: var(--ghost-surface);
   border: 1px solid var(--ghost-border);
   color: var(--text-primary);
@@ -38,7 +84,8 @@
     color var(--t-fast);
 }
 
-.clearBtn:hover {
+.clearBtn:hover,
+.arrangeBtn:hover {
   background: var(--bg-hover);
   color: var(--text-primary);
 }
@@ -78,6 +125,10 @@
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+  /* Traits, board and roster: sweeps never select (and highlight) icons. The
+     search field still selects its own text. */
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 /* ── Top row: traits left of board ──────────────────────── */
@@ -109,6 +160,9 @@
   grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr);
   gap: 1rem;
   align-items: stretch;
+  /* Dragging roster units and items never selects their icons or names. */
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 .loading {
@@ -165,11 +219,23 @@
 }
 
 @media (--bp-sm) {
-  .title {
+  .heading {
     flex-basis: 100%;
   }
 
   .bottomPanel {
     padding: 0.75rem;
   }
+}
+
+/* While the unit inspector is open (desktop) the page makes room for it at the
+   window's right edge: it stays centred while its right margin fits the panel,
+   then slides left, then narrows. 100% is the window-wide <main>; 90rem is
+   PageShell's .wide max-width. The attribute outranks PageShell's .shell
+   width/margin whatever order the stylesheets load in. */
+[data-page-shell].shellWithInspector {
+  --inspector-room: calc(var(--unit-inspector-width) + 2 * var(--unit-inspector-offset));
+  width: auto;
+  margin-right: max(calc((100% - 90rem) / 2), var(--inspector-room));
+  margin-left: max(0px, min(calc((100% - 90rem) / 2), calc(100% - 90rem - var(--inspector-room))));
 }
