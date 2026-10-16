@@ -29,7 +29,7 @@ function ChosenTraits({ chosen, traitByName, bonus }) {
 // short in grey as have/need); then a button copying the Team Planner code.
 // The trait count is the heading of the group the row sits in.
 // `played` ({ count, avgPlacement }) marks a highly played comp with a gold star.
-export default function BronzeCompRow({ comp, traitByName, traits, champions, championsById, emblemByTrait, played }) {
+export default function BronzeCompRow({ comp, traitByName, traits, champions, championsById, emblemByTrait, toolItems = {}, played }) {
   const { t } = useTranslation()
   const teamCode = encodeTeamPlannerCode(comp.units.map(unit => unit.champion), championsById, CURRENT_SET)
   // style null + countLabel: an inactive (colorless) chip, used for near traits.
@@ -47,6 +47,10 @@ export default function BronzeCompRow({ comp, traitByName, traits, champions, ch
     )
   }
   const emblems = comp.usedEmblemTraits.map(trait => emblemByTrait.get(trait)).filter(Boolean)
+  // Emblems to make with the Spatula / Frying Pan held, before the owned ones.
+  const crafted = (comp.craftedEmblems || [])
+    .map(({ tool, trait }) => ({ tool, item: emblemByTrait.get(trait) }))
+    .filter(entry => entry.item)
 
   const playedLabel = played && t('bronze.highlyPlayedTitle', { count: played.count, avg: played.avgPlacement?.toFixed(2) })
   return (
@@ -78,8 +82,18 @@ export default function BronzeCompRow({ comp, traitByName, traits, champions, ch
             )
           })}
         </ul>
-        {emblems.length > 0 && (
+        {(crafted.length > 0 || emblems.length > 0) && (
           <ul className={styles.emblems} aria-label={t('bronze.emblemsUsed')}>
+            {crafted.map(({ tool, item }) => {
+              const label = t('bronze.craftTitle', { tool: t(`bronze.tool_${tool}`), emblem: item.name })
+              return (
+                <li key={`craft-${tool}`} className={styles.craftedEmblem} title={label}>
+                  <ItemIcon item={item} size={28} />
+                  <span className={styles.craftBadge} aria-hidden="true"><ItemIcon item={toolItems[tool]} size={14} /></span>
+                  <span className="sr-only">{label}</span>
+                </li>
+              )
+            })}
             {emblems.map((item, index) => (
               <li key={`${item.id}-${index}`} title={item.name}>
                 <ItemIcon item={item} size={28} />

@@ -7,6 +7,8 @@ import {
   buildEmblemOptions,
   expandTraitChoices,
   compsInTopTraitCounts,
+  bestCraftedEmblems,
+  craftToolsFor,
   findBronzeComps,
   recommendUnits,
   traitRanges,
@@ -76,15 +78,15 @@ test('Rival is gold at 1 and 2 despite its 1-1 bronze row', () => {
 
 test('emblem options: one per name, only traits that can count', () => {
   const items = [
-    { id: 'DA_18_EmblemCoven', name: 'Coven Emblem', category: 'emblem' },
-    { id: 'DA_18_EmblemSlayer', name: 'Ravager Emblem', category: 'emblem' },
+    { id: 'DA_18_EmblemCoven', name: 'Coven Emblem', category: 'emblem', composition: [] },
+    { id: 'DA_18_EmblemSlayer', name: 'Ravager Emblem', category: 'emblem', composition: ['DA_Component_FryingPan', 'DA_NegatronCloak'] },
     { id: 'DA_18_EmblemCovenAugment', name: 'Coven Emblem', category: 'emblem' },
     { id: 'DA_PhantomEmblem18', name: 'Phantom Emblem', category: 'emblem' },
     { id: 'DA_Deathblade', name: 'Deathblade', category: 'craftable' },
   ]
   assert.deepEqual(buildEmblemOptions(items, ranges), [
-    { id: 'DA_18_EmblemCoven', name: 'Coven Emblem', trait: 'Coven' },
-    { id: 'DA_18_EmblemSlayer', name: 'Ravager Emblem', trait: 'Ravager' },
+    { id: 'DA_18_EmblemCoven', name: 'Coven Emblem', trait: 'Coven', craftedFrom: null },
+    { id: 'DA_18_EmblemSlayer', name: 'Ravager Emblem', trait: 'Ravager', craftedFrom: 'pan' },
   ])
 })
 
@@ -107,6 +109,7 @@ test('finds the comp with the most bronze traits, fields one Lux at most', () =>
     otherTraits: [{ name: 'Avatar', count: 1 }],
     nearTraits: [],
     usedEmblemTraits: [],
+    craftedEmblems: [],
   })
   for (const comp of comps) {
     assert.equal(comp.units.length, 2)
@@ -260,4 +263,76 @@ test('the recommendation pool is every comp in the two highest trait counts', ()
   assert.deepEqual(pool.comps.map(c => c.key), ['0', '1', '2', '3', '4'])
   assert.deepEqual(compsInTopTraitCounts([{ traitCount: 7 }]).traitCounts, [7])
   assert.deepEqual(compsInTopTraitCounts([]), { traitCounts: [], comps: [] })
+})
+
+// ── Spatula / Frying Pan: craft the best emblem ────────────────────────────
+const spatula = { tool: 'spatula', traits: ['Coven', 'Blossom'] }
+const pan = { tool: 'pan', traits: ['Ravager', 'Fae'] }
+
+test('craft tools come from emblem recipes, one entry per tool held', () => {
+  const options = [
+    { trait: 'Blossom', craftedFrom: 'spatula' }, { trait: 'Fae', craftedFrom: 'spatula' },
+    { trait: 'Ravager', craftedFrom: 'pan' }, { trait: 'Coven', craftedFrom: null },
+  ]
+  assert.deepEqual(craftToolsFor({ hasSpatula: true, hasFryingPan: false }, options), [{ tool: 'spatula', traits: ['Blossom', 'Fae'] }])
+  assert.deepEqual(craftToolsFor({ hasSpatula: true, hasFryingPan: true }, options).map(t => t.tool), ['spatula', 'pan'])
+  assert.deepEqual(craftToolsFor({}, options), [])
+})
+
+test('a Spatula lifts a trait one short into range and names the emblem to make', () => {
+  // Two Coven units + a Spatula Coven Emblem = Coven 3 (bronze 3-3).
+  const roster2 = [covenRavager1, covenRavager2, solar]
+  const without = findBronzeComps({ roster: roster2, ranges, size: 2 })
+  const withSpatula = findBronzeComps({ roster: roster2, ranges, size: 2, craftTools: [spatula] })
+  assert.equal(without.comps[0].traitCount, 1) // Ravager 2
+  const top = withSpatula.comps[0]
+  assert.equal(top.traitCount, 2)
+  assert.deepEqual(top.craftedEmblems, [{ tool: 'spatula', trait: 'Coven' }])
+  assert.deepEqual(top.countedTraits, [{ name: 'Coven', count: 3 }, { name: 'Ravager', count: 2 }])
+  assert.deepEqual(top.usedEmblemTraits, []) // owned emblems stay separate
+})
+
+test('no crafting is suggested when it would not add a trait, or would overshoot', () => {
+  // Ravager 2 is already bronze (2-3); a third would still be bronze, so no gain.
+  const { comps } = findBronzeComps({ roster: [covenRavager1, covenRavager2], ranges, size: 2, craftTools: [pan] })
+  assert.deepEqual(comps[0].craftedEmblems, [])
+  assert.equal(comps[0].traitCount, 1)
+})
+
+test('Spatula and Frying Pan each craft from their own set', () => {
+  // Fae Lux gives Fae 2 (bronze); Flora 1 bronze. Pan can make Ravager 1 -> 2
+  // with covenRavager1; Spatula can make Coven, but Coven 1 + 1 < 3: no use.
+  const { comps } = findBronzeComps({ roster: [covenRavager1, flora, faeLux], ranges, size: 2, craftTools: [spatula, pan] })
+  const top = comps[0]
+  assert.ok(top.craftedEmblems.every(c => (c.tool === 'spatula' ? spatula : pan).traits.includes(c.trait)))
+  assert.ok(top.craftedEmblems.length <= 2)
+  const withRavager = comps.find(c => c.units.some(u => u.champion.id === 'CovenRavager1') && c.craftedEmblems.some(e => e.trait === 'Ravager'))
+  assert.ok(withRavager, 'pan suggested for Ravager on a board with one Ravager')
+  assert.equal(withRavager.craftedEmblems.find(e => e.trait === 'Ravager').tool, 'pan')
+})
+
+test("the Kha'Zix 4th-evolution check compares with crafting on both sides", () => {
+  const khaTools = [{ tool: 'pan', traits: ['Executioner', 'Rapidfire', 'Ravager', 'Spellweaver'] }]
+  const { comps } = findBronzeComps({ roster: [khazix, exe, rap, rav, spe, filler], ranges: khaRanges, size: 4, craftTools: khaTools, limit: 100 })
+  assert.ok(comps.length > 0)
+  assert.equal(new Set(comps.map(c => c.key)).size, comps.length)
+  for (const comp of comps.filter(c => c.bonusEvolution)) {
+    // A kept 4th evolution must beat every 3-trait choice even after crafting.
+    const kha = comp.units.find(u => u.champion.id === 'DA_18_KhaZix')
+    assert.equal(kha.champion.chosenTraits.length, 4)
+  }
+})
+
+test('best crafted emblem per tool across comps', () => {
+  const comps = [
+    { craftedEmblems: [{ tool: 'spatula', trait: 'Fae' }, { tool: 'pan', trait: 'Ravager' }] },
+    { craftedEmblems: [{ tool: 'spatula', trait: 'Blossom' }] },
+    { craftedEmblems: [{ tool: 'spatula', trait: 'Fae' }] },
+    { craftedEmblems: [] },
+  ]
+  assert.deepEqual(bestCraftedEmblems(comps), [
+    { tool: 'spatula', trait: 'Fae', count: 2 },
+    { tool: 'pan', trait: 'Ravager', count: 1 },
+  ])
+  assert.deepEqual(bestCraftedEmblems([]), [])
 })

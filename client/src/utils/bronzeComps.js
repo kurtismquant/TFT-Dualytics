@@ -83,16 +83,44 @@ export function activeTraitStyle(trait, count) {
   return tier ? tier.style : null
 }
 
+// Set-specific: the components emblems are crafted from (Set 18: a Spatula
+// makes Blossom/Elderwood/Fae/... emblems, a Frying Pan makes Brawler/Hunter/
+// Ravager/...). Coven, Defender, Flora Fatalis and Juggernaut emblems have no
+// recipe. Read from each emblem's `composition` (component item ids).
+export const CRAFT_COMPONENT_IDS = { spatula: 'DA_Component_Spatula', pan: 'DA_Component_FryingPan' }
+
+const craftedFrom = item => {
+  const composition = item?.composition || []
+  return Object.keys(CRAFT_COMPONENT_IDS).find(tool => composition.includes(CRAFT_COMPONENT_IDS[tool])) || null
+}
+
 // Emblems the user can add: one per name, only for traits that can count
-// (Phantom Emblem and the like map to no trait).
+// (Phantom Emblem and the like map to no trait). `craftedFrom` names the tool
+// that makes it ('spatula' | 'pan'), or null.
 export function buildEmblemOptions(items, ranges) {
   const byName = new Map()
   for (const item of items || []) {
     if (item?.category !== 'emblem' || byName.has(item.name)) continue
     const trait = getEmblemTrait(item)
-    if (trait && ranges.has(trait)) byName.set(item.name, { id: String(item.id), name: item.name, trait })
+    if (trait && ranges.has(trait)) byName.set(item.name, { id: String(item.id), name: item.name, trait, craftedFrom: craftedFrom(item) })
   }
   return [...byName.values()].sort((a, b) => a.name.localeCompare(b.name))
+}
+
+// { spatula: [trait, ...], pan: [trait, ...] }: what each tool can make.
+export function craftableTraits(emblemOptions) {
+  const byTool = Object.fromEntries(Object.keys(CRAFT_COMPONENT_IDS).map(tool => [tool, []]))
+  for (const option of emblemOptions || []) if (option.craftedFrom) byTool[option.craftedFrom].push(option.trait)
+  return byTool
+}
+
+// The search's craftTools for the tools the user holds (one of each).
+export function craftToolsFor({ hasSpatula, hasFryingPan }, emblemOptions) {
+  const byTool = craftableTraits(emblemOptions)
+  return [
+    ...(hasSpatula ? [{ tool: 'spatula', traits: byTool.spatula }] : []),
+    ...(hasFryingPan ? [{ tool: 'pan', traits: byTool.pan }] : []),
+  ]
 }
 
 function combinations(list, size) {
@@ -155,11 +183,16 @@ function buildClasses(roster, traitIndex) {
 const compareComps = (a, b) => a.traitCount - b.traitCount || b.bonus - a.bonus || a.cost - b.cost
 
 // Top `limit` comps of `size` units by counted trait count. `requiredIds` must
-// be in every comp. Branch and bound over unit classes: a branch is cut when
-// its optimistic score (counted traits now + under-count traits the remaining
-// picks could still lift into range, then the priciest units still pickable)
-// can't beat the worst comp kept.
-export function findBronzeComps({ roster, ranges, size, emblemTraits = [], requiredIds = [], limit = 20, nodeCap = NODE_CAP }) {
+// be in every comp. `craftTools` ([{ tool, traits }], one per Spatula / Frying
+// Pan held) may each add +1 to one trait it can make: every board takes its
+// best crafting (or none, if it doesn't help), reported as craftedEmblems.
+// Branch and bound over unit classes: a branch is cut when its optimistic
+// score (counted traits now + under-count traits the remaining picks and tools
+// could still lift into range, then the priciest units still pickable) can't
+// beat the worst comp kept.
+export function findBronzeComps({
+  roster, ranges, size, emblemTraits = [], requiredIds = [], craftTools = [], limit = 20, nodeCap = NODE_CAP,
+}) {
   const names = [...ranges.keys()]
   const traitIndex = new Map(names.map((name, i) => [name, i]))
   const lo = names.map(name => ranges.get(name).lo)
@@ -236,6 +269,43 @@ export function findBronzeComps({ roster, ranges, size, emblemTraits = [], requi
     for (let t = 0; t < traitTotal; t++) if (counts[t] >= lo[t] && counts[t] <= hi[t]) total++
     return total
   }
+
+  // Tools: trait indices each can make, and per trait how many tools can.
+  const tools = craftTools.map(({ tool, traits }) => ({
+    tool,
+    traits: [...new Set(traits.map(trait => traitIndex.get(trait)).filter(index => index != null))],
+  }))
+  const toolSupply = new Array(traitTotal).fill(0)
+  for (const { traits } of tools) for (const t of traits) toolSupply[t]++
+  const NO_CRAFT = []
+  // Best score with each tool crafting one emblem (or none), and that crafting
+  // as [{ tool, t }]. Only traits a +1 could lift into range are tried; a
+  // crafting is kept only when it strictly beats crafting less.
+  const scoreWithTools = () => {
+    const base = score()
+    if (tools.length === 0) return { traitCount: base, crafted: NO_CRAFT }
+    let best = base
+    let bestCrafted = NO_CRAFT
+    const chosen = []
+    const tryTool = k => {
+      if (k === tools.length) {
+        const total = score()
+        if (total > best) { best = total; bestCrafted = chosen.slice() }
+        return
+      }
+      tryTool(k + 1) // this tool makes nothing
+      for (const t of tools[k].traits) {
+        if (counts[t] >= lo[t] || counts[t] + tools.length < lo[t]) continue
+        counts[t]++
+        chosen.push({ tool: tools[k].tool, t })
+        tryTool(k + 1)
+        chosen.pop()
+        counts[t]--
+      }
+    }
+    tryTool(0)
+    return { traitCount: best, crafted: bestCrafted }
+  }
   // Deficits are small (a trait needs at most a few more units), so they are
   // tallied by size instead of sorted; this runs at every search node.
   const maxDeficit = Math.max(1, ...lo)
@@ -248,9 +318,9 @@ export function findBronzeComps({ roster, ranges, size, emblemTraits = [], requi
       const count = counts[t]
       if (count > hi[t]) continue // past the range: counts only grow
       if (count >= lo[t]) total++
-      else if (traitSupply[t] >= lo[t] - count) deficitsBySize[lo[t] - count]++
+      else if (traitSupply[t] + toolSupply[t] >= lo[t] - count) deficitsBySize[lo[t] - count]++
     }
-    let budget = topSum(topWeight[i], remaining)
+    let budget = topSum(topWeight[i], remaining) + tools.length
     for (let size = 1; size <= maxDeficit && budget >= size; size++) {
       const filled = Math.min(deficitsBySize[size], Math.floor(budget / size))
       total += filled
@@ -282,9 +352,9 @@ export function findBronzeComps({ roster, ranges, size, emblemTraits = [], requi
 
   const leaf = () => {
     if (requiredGroups.some(group => !groupsUsed.get(group))) return
-    const traitCount = score()
+    const { traitCount, crafted } = scoreWithTools()
     if (bonusPick === -1) {
-      keep({ traitCount, bonus: 0, cost }, picks.slice())
+      keep({ traitCount, bonus: 0, cost, crafted }, picks.slice())
       return
     }
     // The 4th evolution only counts when it beats every 3-trait choice. When it
@@ -296,21 +366,27 @@ export function findBronzeComps({ roster, ranges, size, emblemTraits = [], requi
     withVector(classes[bonusPick].vector, -1)
     let bestChoice = -1
     let bestIndex = -1
+    let bestChoiceCrafted = NO_CRAFT
     classes.forEach((cls, index) => {
       if (cls.group !== group || cls.bonus) return
       withVector(cls.vector, 1)
-      const choiceCount = score()
-      if (choiceCount > bestChoice) { bestChoice = choiceCount; bestIndex = index }
+      const choice = scoreWithTools()
+      if (choice.traitCount > bestChoice) {
+        bestChoice = choice.traitCount
+        bestIndex = index
+        bestChoiceCrafted = choice.crafted
+      }
       withVector(cls.vector, -1)
     })
     withVector(classes[bonusPick].vector, 1)
     if (traitCount > bestChoice) {
-      keep({ traitCount, bonus: 1, cost }, picks.slice())
+      keep({ traitCount, bonus: 1, cost, crafted }, picks.slice())
     } else if (bestIndex !== -1) {
       const choicePicks = picks.slice()
       choicePicks[bonusPick] = 0
       choicePicks[bestIndex] = 1
-      keep({ traitCount: bestChoice, bonus: 0, cost: cost - (classes[bonusPick].units[0].cost || 0) + (classes[bestIndex].units[0].cost || 0) }, choicePicks)
+      const choiceCost = cost - (classes[bonusPick].units[0].cost || 0) + (classes[bestIndex].units[0].cost || 0)
+      keep({ traitCount: bestChoice, bonus: 0, cost: choiceCost, crafted: bestChoiceCrafted }, choicePicks)
     }
   }
 
@@ -355,7 +431,7 @@ export function findBronzeComps({ roster, ranges, size, emblemTraits = [], requi
   visit(0, open)
 
   const comps = kept
-    .map(entry => describeComp(entry, classes, fixed, ranges, emblemTraits))
+    .map(entry => describeComp(entry, classes, fixed, ranges, emblemTraits, names))
     .sort((a, b) => b.traitCount - a.traitCount
       || Number(a.bonusEvolution) - Number(b.bonusEvolution)
       || b.totalCost - a.totalCost
@@ -365,7 +441,8 @@ export function findBronzeComps({ roster, ranges, size, emblemTraits = [], requi
 
 const byCostThenName = (a, b) => (a.champion.cost || 0) - (b.champion.cost || 0) || a.champion.name.localeCompare(b.champion.name)
 
-function describeComp({ traitCount, bonus, picks }, classes, fixed, ranges, emblemTraits) {
+function describeComp({ traitCount, bonus, picks, crafted = [] }, classes, fixed, ranges, emblemTraits, traitNames) {
+  const craftedEmblems = crafted.map(({ tool, t }) => ({ tool, trait: traitNames[t] }))
   const units = fixed.map(champion => ({ champion, alternatives: [], required: true }))
   picks.forEach((take, i) => {
     const members = classes[i].units
@@ -379,6 +456,7 @@ function describeComp({ traitCount, bonus, picks }, classes, fixed, ranges, embl
     for (const trait of champion.traits || []) add(trait, champion.traitWeights?.[trait] ?? 1)
   }
   for (const trait of emblemTraits) add(trait, 1)
+  for (const { trait } of craftedEmblems) add(trait, 1)
 
   const counted = trait => {
     const range = ranges.get(trait)
@@ -396,7 +474,8 @@ function describeComp({ traitCount, bonus, picks }, classes, fixed, ranges, embl
   }
   const byCount = (a, b) => b.count - a.count || a.name.localeCompare(b.name)
   return {
-    key: units.map(({ champion }) => [champion.id, ...(champion.chosenTraits || [])].join('+')).join('|'),
+    key: units.map(({ champion }) => [champion.id, ...(champion.chosenTraits || [])].join('+')).join('|')
+      + craftedEmblems.map(({ trait }) => `#${trait}`).join(''),
     traitCount,
     bonusEvolution: bonus === 1,
     totalCost: units.reduce((sum, { champion }) => sum + (champion.cost || 0), 0),
@@ -406,6 +485,8 @@ function describeComp({ traitCount, bonus, picks }, classes, fixed, ranges, embl
     nearTraits: nearTraits.sort(byCount),
     // Emblems that put their trait in a counted tier, i.e. the ones in use.
     usedEmblemTraits: emblemTraits.filter(counted),
+    // Emblems to make with the Spatula / Frying Pan held: [{ tool, trait }].
+    craftedEmblems,
   }
 }
 
@@ -448,4 +529,23 @@ export function groupByTraitCount(comps) {
     else groups.push({ traitCount: comp.traitCount, comps: [comp] })
   }
   return groups
+}
+
+// For the widget: per tool, the emblem the most `comps` craft with it,
+// [{ tool, trait, count }] (ties: trait name order).
+export function bestCraftedEmblems(comps) {
+  const tally = new Map() // tool -> Map(trait -> count)
+  for (const comp of comps || []) {
+    for (const { tool, trait } of comp.craftedEmblems || []) {
+      if (!tally.has(tool)) tally.set(tool, new Map())
+      const byTrait = tally.get(tool)
+      byTrait.set(trait, (byTrait.get(trait) || 0) + 1)
+    }
+  }
+  return Object.keys(CRAFT_COMPONENT_IDS)
+    .filter(tool => tally.has(tool))
+    .map(tool => {
+      const [trait, count] = [...tally.get(tool)].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))[0]
+      return { tool, trait, count }
+    })
 }

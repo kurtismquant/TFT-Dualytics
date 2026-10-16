@@ -70,6 +70,47 @@
   cursor: pointer;
 }
 
+/* Spatula / Frying Pan checkbox labels carry the item's icon. */
+.toolLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+/* An emblem to craft: dashed gold frame, the tool's icon in the corner. */
+.craftedEmblem {
+  position: relative;
+  display: inline-flex;
+  flex: 0 0 auto;
+  outline: 1px dashed var(--accent-gold);
+  outline-offset: 1px;
+}
+
+.craftBadge {
+  position: absolute;
+  right: -0.375rem;
+  bottom: -0.375rem;
+  display: inline-flex;
+  border: 1px solid var(--bg-border-bright);
+  background: var(--bg-card);
+}
+
+/* Widget: best emblem to make per tool, under the units. */
+.bestCraft {
+  margin-top: 0.75rem;
+  padding-top: 0.625rem;
+  border-top: 1px solid var(--bg-border-muted);
+}
+
+.bestCraftHeading {
+  margin: 0 0 0.5rem;
+  color: var(--text-secondary);
+  font-size: var(--text-2xs);
+  font-weight: var(--fw-bold);
+  letter-spacing: var(--track-wider);
+  text-transform: uppercase;
+}
+
 .checkbox:hover {
   color: var(--text-primary);
 }

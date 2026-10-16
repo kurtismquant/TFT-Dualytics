@@ -620,7 +620,15 @@
     "recommendedCount_one": "In {{count}} of {{total}}",
     "recommendedCount_other": "In {{count}} of {{total}}",
     "recommendedMore": "More units",
-    "recommendedFewer": "Fewer units"
+    "recommendedFewer": "Fewer units",
+    "hasSpatula": "Spatula",
+    "hasFryingPan": "Frying Pan",
+    "tool_spatula": "Spatula",
+    "tool_pan": "Frying Pan",
+    "craftTitle": "Make with your {{tool}}: {{emblem}}",
+    "bestCraftTitle": "Best emblem to make",
+    "bestCraftCount_one": "{{tool}} · in {{count}} of {{total}}",
+    "bestCraftCount_other": "{{tool}} · in {{count}} of {{total}}"
   },
   "teamCode": {
     "copy": "Copy team code",

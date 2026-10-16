@@ -2,7 +2,8 @@ import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { HoverableUnit } from '../shared/HoverableBoardPieces.jsx'
 import { buildUnitPath } from '../../constants/routes.js'
-import { compsInTopTraitCounts, recommendUnits } from '../../utils/bronzeComps.js'
+import ItemIcon from '../ItemIcon.jsx'
+import { bestCraftedEmblems, compsInTopTraitCounts, recommendUnits } from '../../utils/bronzeComps.js'
 import styles from './BronzeComps.module.css'
 
 function Chevron({ up }) {
@@ -21,7 +22,9 @@ const RECOMMEND_MAX = 10
 // Sticky side widget: the units that show up most across the comps (in list
 // order) in the highest trait counts, e.g. every 11- and 10-trait comp; see
 // recommendUnits (more than 3 when units tie on count and cost).
-export default function RecommendedUnits({ comps }) {
+// With a Spatula / Frying Pan held, it also names the emblem to make with each:
+// the one the most of those comps craft.
+export default function RecommendedUnits({ comps, emblemByTrait, toolItems = {} }) {
   const { t } = useTranslation()
   const [expanded, setExpanded] = useState(false)
   const pool = useMemo(() => compsInTopTraitCounts(comps, RECOMMEND_TRAIT_TIERS), [comps])
@@ -32,6 +35,7 @@ export default function RecommendedUnits({ comps }) {
     [pool, units],
   )
   const poolSize = pool.comps.length
+  const bestCrafts = useMemo(() => bestCraftedEmblems(pool.comps), [pool])
   if (units.length === 0) return null
   const canExpand = moreUnits.length > units.length
   const shown = expanded && canExpand ? moreUnits : units
@@ -49,6 +53,30 @@ export default function RecommendedUnits({ comps }) {
           </li>
         ))}
       </ul>
+      {bestCrafts.length > 0 && (
+        <div className={styles.bestCraft}>
+          <h4 className={styles.bestCraftHeading}>{t('bronze.bestCraftTitle')}</h4>
+          <ul className={styles.recommendedList}>
+            {bestCrafts.map(({ tool, trait, count }) => {
+              const item = emblemByTrait?.get(trait)
+              return (
+                <li key={tool} className={styles.recommendedUnit}>
+                  <span className={styles.craftedEmblem}>
+                    <ItemIcon item={item} size={32} />
+                    <span className={styles.craftBadge} aria-hidden="true"><ItemIcon item={toolItems[tool]} size={14} /></span>
+                  </span>
+                  <span className={styles.recommendedText}>
+                    <span className={styles.recommendedName}>{item?.name || trait}</span>
+                    <span className={styles.recommendedCount}>
+                      {t('bronze.bestCraftCount', { tool: t(`bronze.tool_${tool}`), count, total: poolSize })}
+                    </span>
+                  </span>
+                </li>
+              )
+            })}
+          </ul>
+        </div>
+      )}
       {canExpand && (
         <button
           type="button"

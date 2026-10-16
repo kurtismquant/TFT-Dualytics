@@ -620,7 +620,15 @@
     "recommendedCount_one": "En {{count}} de {{total}}",
     "recommendedCount_other": "En {{count}} de {{total}}",
     "recommendedMore": "Más unidades",
-    "recommendedFewer": "Menos unidades"
+    "recommendedFewer": "Menos unidades",
+    "hasSpatula": "Espátula",
+    "hasFryingPan": "Sartén",
+    "tool_spatula": "Espátula",
+    "tool_pan": "Sartén",
+    "craftTitle": "Fabrícalo con tu {{tool}}: {{emblem}}",
+    "bestCraftTitle": "Mejor emblema a fabricar",
+    "bestCraftCount_one": "{{tool}} · en {{count}} de {{total}}",
+    "bestCraftCount_other": "{{tool}} · en {{count}} de {{total}}"
   },
   "teamCode": {
     "copy": "Copiar código",

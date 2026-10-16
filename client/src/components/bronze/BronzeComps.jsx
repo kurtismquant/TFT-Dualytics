@@ -7,6 +7,7 @@ import RecommendedUnits from './RecommendedUnits.jsx'
 import ItemIcon from '../ItemIcon.jsx'
 import UnitIcon from '../UnitIcon.jsx'
 import { useBronzeSearch } from '../../hooks/useBronzeSearch.js'
+import { useBronzeEmblems } from '../../hooks/useBronzeEmblems.js'
 import { usePlayedBoards } from '../../hooks/usePlayedBoards.js'
 import { useChampions } from '../../hooks/useChampions.js'
 import { useItems } from '../../hooks/useItems.js'
@@ -15,7 +16,7 @@ import { useMediaQuery } from '../../hooks/useMediaQuery.js'
 import { useUiScale } from '../../contexts/useUiScale.js'
 import { toBuilderRoster } from '../../utils/builderRoster.js'
 import {
-  buildEmblemOptions, groupByTraitCount, HIGHLY_PLAYED_MIN_BOARDS, LEGENDARY_COST, TRAIT_CHOICE_UNIT_IDS, traitRanges,
+  groupByTraitCount, HIGHLY_PLAYED_MIN_BOARDS, LEGENDARY_COST, TRAIT_CHOICE_UNIT_IDS, traitRanges,
 } from '../../utils/bronzeComps.js'
 import { makeMap } from '../../utils/statsFormatting.js'
 import statsStyles from '../../pages/StatsPage.module.css'
@@ -33,6 +34,7 @@ const PAGE_SIZE = 20
 const SIDE_WIDGET_MIN_REM = 97.5
 const DEFAULT_FILTERS = {
   size: 8, includeSilverGold: false, excludeLegendary: false, excludeKhaZix: false, requiredIds: [], emblemIds: [],
+  hasSpatula: false, hasFryingPan: false,
 }
 
 // Bronze for Life: comps of N units with the most traits in their bronze tier
@@ -57,12 +59,11 @@ export default function BronzeComps() {
     && !(filters.excludeKhaZix && TRAIT_CHOICE_UNIT_IDS.has(unit.id))
   )), [filters.excludeLegendary, filters.excludeKhaZix, fullRoster])
   const ranges = useMemo(() => traitRanges(traits, { includeSilverGold: filters.includeSilverGold }), [traits, filters.includeSilverGold])
-  // Emblem choices don't change with the silver/gold option.
-  const emblemOptions = useMemo(() => buildEmblemOptions(items, traitRanges(traits, { includeSilverGold: true })), [items, traits])
-  const itemLookup = useMemo(() => makeMap(items), [items])
+  const { emblemOptions, itemLookup, emblemByTrait, toolItems, craftTools, emblemTraits } = useBronzeEmblems({
+    items, traits, emblemIds: filters.emblemIds, hasSpatula: filters.hasSpatula, hasFryingPan: filters.hasFryingPan,
+  })
   const unitLookup = useMemo(() => makeMap(fullRoster), [fullRoster])
   const traitByName = useMemo(() => new Map((traits || []).map(trait => [trait.name, trait])), [traits])
-  const emblemByTrait = useMemo(() => new Map(emblemOptions.map(option => [option.trait, itemLookup.get(option.id)])), [emblemOptions, itemLookup])
 
   const unitPicker = useMemo(() => ({
     options: [...roster].sort((a, b) => a.name.localeCompare(b.name)).map(unit => ({ id: unit.id, name: unit.name })),
@@ -80,16 +81,12 @@ export default function BronzeComps() {
     () => filters.requiredIds.filter(id => roster.some(unit => unit.id === id)),
     [filters.requiredIds, roster],
   )
-  const emblemTraits = useMemo(() => {
-    const traitById = new Map(emblemOptions.map(option => [option.id, option.trait]))
-    return filters.emblemIds.map(id => traitById.get(id)).filter(Boolean)
-  }, [filters.emblemIds, emblemOptions])
 
   const search = useMemo(
     () => (roster.length > 0 && ranges.size > 0
-      ? { roster, ranges, size: filters.size, emblemTraits, requiredIds, limit: MAX_RESULTS }
+      ? { roster, ranges, size: filters.size, emblemTraits, requiredIds, craftTools, limit: MAX_RESULTS }
       : null),
-    [roster, ranges, filters.size, emblemTraits, requiredIds],
+    [roster, ranges, filters.size, emblemTraits, requiredIds, craftTools],
   )
   const { result, error: searchError, isSearching } = useBronzeSearch(search)
   const championsById = useMemo(() => makeMap(champions), [champions])
@@ -135,6 +132,7 @@ export default function BronzeComps() {
         setFilter={setFilter}
         emblemPicker={emblemPicker}
         unitPicker={unitPicker}
+        toolItems={toolItems}
       />
       {(isLoading || (isSearching && !result)) && (
         <p className={statsStyles.message} role="status" aria-live="polite">{t(isLoading ? 'bronze.loading' : 'bronze.searching')}</p>
@@ -171,6 +169,7 @@ export default function BronzeComps() {
                         champions={champions}
                         championsById={championsById}
                         emblemByTrait={emblemByTrait}
+                        toolItems={toolItems}
                         played={highlyPlayed.get(comp.key)}
                       />
                     ))}
@@ -180,7 +179,7 @@ export default function BronzeComps() {
             </div>
             {shown < total && <LoadMore onMore={showMore} shown={shown} />}
           </div>
-          <RecommendedUnits comps={ordered} />
+          <RecommendedUnits comps={ordered} emblemByTrait={emblemByTrait} toolItems={toolItems} />
         </div>
       )}
     </section>

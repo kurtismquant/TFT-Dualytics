@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import Button from '../ui/Button.jsx'
 import ChipPicker from './ChipPicker.jsx'
+import ItemIcon from '../ItemIcon.jsx'
 import { BOARD_SIZES, MAX_EMBLEMS } from '../../utils/bronzeComps.js'
 import styles from './BronzeComps.module.css'
 
@@ -13,9 +14,10 @@ function Checkbox({ checked, onChange, children }) {
   )
 }
 
-// Board size, counting options, required units and the emblems the search
-// may count on.
-export default function BronzeControls({ filters, setFilter, emblemPicker, unitPicker }) {
+// Board size, counting options, required units, the emblems the search may
+// count on, and the Spatula / Frying Pan held (the search then suggests which
+// emblem to make with each).
+export default function BronzeControls({ filters, setFilter, emblemPicker, unitPicker, toolItems }) {
   const { t } = useTranslation()
   return (
     <div className={styles.controls}>
@@ -81,6 +83,14 @@ export default function BronzeControls({ filters, setFilter, emblemPicker, unitP
             {t('bronze.clear')}
           </Button>
         )}
+        <div className={styles.checkboxes}>
+          <Checkbox checked={filters.hasSpatula} onChange={value => setFilter('hasSpatula', value)}>
+            <span className={styles.toolLabel}><ItemIcon item={toolItems.spatula} size={20} />{t('bronze.hasSpatula')}</span>
+          </Checkbox>
+          <Checkbox checked={filters.hasFryingPan} onChange={value => setFilter('hasFryingPan', value)}>
+            <span className={styles.toolLabel}><ItemIcon item={toolItems.pan} size={20} />{t('bronze.hasFryingPan')}</span>
+          </Checkbox>
+        </div>
       </div>
     </div>
   )
