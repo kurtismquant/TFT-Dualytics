@@ -3,16 +3,9 @@ import { useTranslation } from 'react-i18next'
 import { HoverableUnit } from '../shared/HoverableBoardPieces.jsx'
 import { buildUnitPath } from '../../constants/routes.js'
 import ItemIcon from '../ItemIcon.jsx'
+import Chevron from './Chevron.jsx'
 import { bestCraftedEmblems, compsInTopTraitCounts, recommendUnits } from '../../utils/bronzeComps.js'
 import styles from './BronzeComps.module.css'
-
-function Chevron({ up }) {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d={up ? 'M6 15l6-6 6 6' : 'M6 9l6 6 6-6'} />
-    </svg>
-  )
-}
 
 // Units are counted across every loaded comp in this many of the highest
 // trait counts; the arrow reveals up to RECOMMEND_MAX.
@@ -87,7 +80,7 @@ export default function RecommendedUnits({ comps, emblemByTrait, toolItems = {} 
           aria-label={t(expanded ? 'bronze.recommendedFewer' : 'bronze.recommendedMore')}
           title={t(expanded ? 'bronze.recommendedFewer' : 'bronze.recommendedMore')}
         >
-          <Chevron up={expanded} />
+          <Chevron direction={expanded ? 'up' : 'down'} />
         </button>
       )}
     </aside>

@@ -531,6 +531,38 @@ export function groupByTraitCount(comps) {
   return groups
 }
 
+// The groups to render for the first `shown` comps, where the user can
+// collapse whole trait counts (`collapsed`: Set of traitCount). A collapsed
+// group is listed as its heading only and uses none of the `shown` budget, so
+// the next tier moves straight up under it. Groups past the budget wait for
+// the next page. visibleTotal (comps in expanded groups) caps the paging.
+// -> { groups: [{ traitCount, total, collapsed, comps }], shownCount, visibleTotal }
+export function pageGroups(comps, shown, collapsed = new Set()) {
+  const groups = []
+  let budget = shown
+  let shownCount = 0
+  let visibleTotal = 0
+  // Set once an expanded group is cut short: nothing after it shows yet. A
+  // collapsed heading still shows while everything above it is fully shown
+  // (else trailing collapsed groups would never appear: nothing left to page).
+  let cut = false
+  for (const group of groupByTraitCount(comps || [])) {
+    const total = group.comps.length
+    if (collapsed.has(group.traitCount)) {
+      if (!cut) groups.push({ traitCount: group.traitCount, total, collapsed: true, comps: [] })
+      continue
+    }
+    visibleTotal += total
+    if (cut || budget <= 0) { cut = true; continue }
+    const take = Math.min(budget, total)
+    groups.push({ traitCount: group.traitCount, total, collapsed: false, comps: group.comps.slice(0, take) })
+    budget -= take
+    shownCount += take
+    if (take < total) cut = true
+  }
+  return { groups, shownCount, visibleTotal }
+}
+
 // For the widget: per tool, the emblem the most `comps` craft with it,
 // [{ tool, trait, count }] (ties: trait name order).
 export function bestCraftedEmblems(comps) {

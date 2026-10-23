@@ -628,7 +628,9 @@
     "craftTitle": "Make with your {{tool}}: {{emblem}}",
     "bestCraftTitle": "Best emblem to make",
     "bestCraftCount_one": "{{tool}} · in {{count}} of {{total}}",
-    "bestCraftCount_other": "{{tool}} · in {{count}} of {{total}}"
+    "bestCraftCount_other": "{{tool}} · in {{count}} of {{total}}",
+    "groupHidden_one": "{{count}} comp hidden",
+    "groupHidden_other": "{{count}} comps hidden"
   },
   "teamCode": {
     "copy": "Copy team code",

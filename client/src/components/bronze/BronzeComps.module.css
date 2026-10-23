@@ -268,6 +268,47 @@
   text-transform: uppercase;
 }
 
+/* The heading is the collapse toggle: arrow, then "13 Traits". */
+.groupToggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  cursor: pointer;
+  transition: color var(--t-fast);
+}
+
+.groupToggle:hover {
+  color: var(--text-secondary);
+}
+
+.groupToggle:focus-visible {
+  outline: 2px solid var(--accent-gold);
+  outline-offset: 2px;
+}
+
+.groupChevron {
+  flex: 0 0 auto;
+}
+
+/* Shown beside a collapsed heading: how many comps it holds. */
+.groupHidden {
+  margin-left: 0.625rem;
+  color: var(--text-muted);
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  font-weight: normal;
+  letter-spacing: var(--track-base);
+  text-transform: none;
+}
+
 .groupList {
   margin: 0;
   padding: 0;

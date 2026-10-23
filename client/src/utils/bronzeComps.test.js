@@ -10,6 +10,7 @@ import {
   bestCraftedEmblems,
   craftToolsFor,
   findBronzeComps,
+  pageGroups,
   recommendUnits,
   traitRanges,
 } from './bronzeComps.js'
@@ -335,4 +336,29 @@ test('best crafted emblem per tool across comps', () => {
     { tool: 'pan', trait: 'Ravager', count: 1 },
   ])
   assert.deepEqual(bestCraftedEmblems([]), [])
+})
+
+test('pageGroups: collapsed trait counts show as headings and free up the page', () => {
+  const comps = [13, 13, 12, 12, 12, 11].map((traitCount, i) => ({ traitCount, key: String(i) }))
+  const shape = page => page.groups.map(g => [g.traitCount, g.collapsed, g.comps.length, g.total])
+
+  const open = pageGroups(comps, 3)
+  assert.deepEqual(shape(open), [[13, false, 2, 2], [12, false, 1, 3]])
+  assert.equal(open.shownCount, 3)
+  assert.equal(open.visibleTotal, 6)
+
+  const top = pageGroups(comps, 3, new Set([13]))
+  assert.deepEqual(shape(top), [[13, true, 0, 2], [12, false, 3, 3]])
+  assert.equal(top.visibleTotal, 4)
+
+  const all = pageGroups(comps, 3, new Set([13, 12, 11]))
+  assert.deepEqual(shape(all), [[13, true, 0, 2], [12, true, 0, 3], [11, true, 0, 1]])
+  assert.equal(all.visibleTotal, 0) // nothing left to page in
+
+  // The page ends exactly at 13's end; the collapsed 12 below still shows.
+  const trailing = pageGroups(comps, 2, new Set([12]))
+  assert.deepEqual(shape(trailing), [[13, false, 2, 2], [12, true, 0, 3]])
+  assert.equal(trailing.visibleTotal, 3) // 11 still to page in
+
+  assert.deepEqual(pageGroups([], 20), { groups: [], shownCount: 0, visibleTotal: 0 })
 })

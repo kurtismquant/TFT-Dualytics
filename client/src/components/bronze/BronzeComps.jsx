@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import BronzeControls from './BronzeControls.jsx'
-import BronzeCompRow from './BronzeCompRow.jsx'
+import BronzeGroups from './BronzeGroups.jsx'
 import LoadMore from './LoadMore.jsx'
 import RecommendedUnits from './RecommendedUnits.jsx'
 import ItemIcon from '../ItemIcon.jsx'
@@ -16,7 +16,7 @@ import { useMediaQuery } from '../../hooks/useMediaQuery.js'
 import { useUiScale } from '../../contexts/useUiScale.js'
 import { toBuilderRoster } from '../../utils/builderRoster.js'
 import {
-  groupByTraitCount, HIGHLY_PLAYED_MIN_BOARDS, LEGENDARY_COST, TRAIT_CHOICE_UNIT_IDS, traitRanges,
+  HIGHLY_PLAYED_MIN_BOARDS, LEGENDARY_COST, pageGroups, TRAIT_CHOICE_UNIT_IDS, traitRanges,
 } from '../../utils/bronzeComps.js'
 import { makeMap } from '../../utils/statsFormatting.js'
 import statsStyles from '../../pages/StatsPage.module.css'
@@ -26,6 +26,7 @@ import styles from './BronzeComps.module.css'
 // each time the user scrolls to its end.
 const MAX_RESULTS = 100
 const PAGE_SIZE = 20
+const NONE_COLLAPSED = new Set()
 // Window width (rem) from which the widget fits in the left margin outside
 // the content box: the 77.5rem box plus two margins each holding the 9.5rem
 // widget, its 1.25rem gap and 0.75rem of room, less the 2rem page gutter,
@@ -93,9 +94,9 @@ export default function BronzeComps() {
   const uiScale = useUiScale()
   const widgetOutside = useMediaQuery(`(min-width: ${Math.round(SIDE_WIDGET_MIN_REM * 16 * uiScale)}px)`)
 
-  // Pages shown, reset whenever a new result arrives.
-  const [paging, setPaging] = useState({ result: null, shown: PAGE_SIZE })
-  const shown = paging.result === result ? paging.shown : PAGE_SIZE
+  // Pages shown and collapsed trait counts, reset whenever a new result arrives.
+  const [paging, setPaging] = useState({ result: null, shown: PAGE_SIZE, collapsed: NONE_COLLAPSED })
+  const current = paging.result === result ? paging : { shown: PAGE_SIZE, collapsed: NONE_COLLAPSED }
   const total = result?.comps.length || 0
   // comp key -> { count, avgPlacement } for comps played often enough to star.
   const played = usePlayedBoards(result?.comps)
@@ -115,11 +116,23 @@ export default function BronzeComps() {
       || Number(highlyPlayed.has(b.comp.key)) - Number(highlyPlayed.has(a.comp.key))
       || a.index - b.index)
     .map(entry => entry.comp), [result, highlyPlayed])
-  const groups = useMemo(() => groupByTraitCount(ordered.slice(0, shown)), [ordered, shown])
-  const showMore = useCallback(() => setPaging(current => {
-    const base = current.result === result ? current.shown : PAGE_SIZE
-    return base >= total ? current : { result, shown: Math.min(base + PAGE_SIZE, total) }
-  }), [result, total])
+  const page = useMemo(() => pageGroups(ordered, current.shown, current.collapsed), [ordered, current.shown, current.collapsed])
+  const showMore = useCallback(() => setPaging(prev => {
+    const base = prev.result === result ? prev : { shown: PAGE_SIZE, collapsed: NONE_COLLAPSED }
+    if (base.shown >= page.visibleTotal) return prev
+    return { result, collapsed: base.collapsed, shown: Math.min(base.shown + PAGE_SIZE, page.visibleTotal) }
+  }), [result, page.visibleTotal])
+  const toggleGroup = useCallback(traitCount => setPaging(prev => {
+    const base = prev.result === result ? prev : { shown: PAGE_SIZE, collapsed: NONE_COLLAPSED }
+    const collapsed = new Set(base.collapsed)
+    if (collapsed.has(traitCount)) collapsed.delete(traitCount)
+    else collapsed.add(traitCount)
+    return { result, shown: base.shown, collapsed }
+  }), [result])
+  const rowProps = useMemo(
+    () => ({ traitByName, traits, champions, championsById, emblemByTrait, toolItems }),
+    [traitByName, traits, champions, championsById, emblemByTrait, toolItems],
+  )
 
   const isLoading = champs.isLoading || traitsQuery.isLoading || itemsQuery.isLoading
   const isError = champs.isError || traitsQuery.isError || itemsQuery.isError || Boolean(searchError)
@@ -156,28 +169,9 @@ export default function BronzeComps() {
                 <span className={styles.legendStar} aria-hidden="true">★</span>
                 {t('bronze.legendHighlyPlayed', { count: HIGHLY_PLAYED_MIN_BOARDS })}
               </p>
-              {groups.map(group => (
-                <section key={group.traitCount} className={styles.group}>
-                  <h3 className={styles.groupHeading}>{t('bronze.groupHeading', { count: group.traitCount })}</h3>
-                  <ol className={styles.groupList}>
-                    {group.comps.map(comp => (
-                      <BronzeCompRow
-                        key={comp.key}
-                        comp={comp}
-                        traitByName={traitByName}
-                        traits={traits}
-                        champions={champions}
-                        championsById={championsById}
-                        emblemByTrait={emblemByTrait}
-                        toolItems={toolItems}
-                        played={highlyPlayed.get(comp.key)}
-                      />
-                    ))}
-                  </ol>
-                </section>
-              ))}
+              <BronzeGroups groups={page.groups} onToggle={toggleGroup} rowProps={rowProps} highlyPlayed={highlyPlayed} />
             </div>
-            {shown < total && <LoadMore onMore={showMore} shown={shown} />}
+            {page.shownCount < page.visibleTotal && <LoadMore onMore={showMore} shown={page.shownCount} />}
           </div>
           <RecommendedUnits comps={ordered} emblemByTrait={emblemByTrait} toolItems={toolItems} />
         </div>
