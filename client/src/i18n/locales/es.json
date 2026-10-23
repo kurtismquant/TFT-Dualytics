@@ -635,7 +635,7 @@
     "ownedLabel": "Añadir una unidad que tienes",
     "ownedPlaceholder": "Tus unidades",
     "ownedFullPlaceholder": "Tablero lleno",
-    "ownedHelp": "Escribe el nombre de una unidad y pulsa Enter, o elige una de la lista. Con \"Mi tablero actual\" activo, son las unidades que tienes ahora; las comps se ordenan por rasgos y por cuántas unidades te faltaría comprar. Pulsa Retroceso con el campo vacío para quitar la última.",
+    "ownedHelp": "Escribe el nombre de una unidad y pulsa Enter, o elige una de la lista. Con \"Mostrar tableros recomendados\" activo, son las unidades que tienes ahora; las comps se ordenan por rasgos y por cuántas unidades te faltaría comprar. Pulsa Retroceso con el campo vacío para quitar la última.",
     "ownedSuggestions": "Unidades",
     "ownedActive": "Tus unidades",
     "ownedRemove": "Quitar {{name}}",

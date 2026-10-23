@@ -635,7 +635,7 @@
     "ownedLabel": "Add a unit you have",
     "ownedPlaceholder": "Your units",
     "ownedFullPlaceholder": "Board is full",
-    "ownedHelp": "Type a unit name and press Enter, or pick one from the list. With \"My current board\" on, these are the units you have now; comps are ranked by traits and how few units you would still need to buy. Press Backspace on an empty field to remove the last one.",
+    "ownedHelp": "Type a unit name and press Enter, or pick one from the list. With \"Show recommended boards\" on, these are the units you have now; comps are ranked by traits and how few units you would still need to buy. Press Backspace on an empty field to remove the last one.",
     "ownedSuggestions": "Units",
     "ownedActive": "Your units",
     "ownedRemove": "Remove {{name}}",
