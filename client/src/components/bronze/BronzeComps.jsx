@@ -16,7 +16,7 @@ import { useMediaQuery } from '../../hooks/useMediaQuery.js'
 import { useUiScale } from '../../contexts/useUiScale.js'
 import { toBuilderRoster } from '../../utils/builderRoster.js'
 import {
-  HIGHLY_PLAYED_MIN_BOARDS, LEGENDARY_COST, pageGroups, traitChoiceCount, TRAIT_CHOICE_UNIT_IDS, traitRanges,
+  BOARD_MAX_SWAPS, HIGHLY_PLAYED_MIN_BOARDS, LEGENDARY_COST, pageGroups, traitChoiceCount, TRAIT_CHOICE_UNIT_IDS, traitRanges,
 } from '../../utils/bronzeComps.js'
 import { makeMap } from '../../utils/statsFormatting.js'
 import statsStyles from '../../pages/StatsPage.module.css'
@@ -93,7 +93,7 @@ export default function BronzeComps() {
         roster, ranges, size: filters.size, emblemTraits, craftTools, limit: MAX_RESULTS,
         choiceTraitCount: Math.min(filters.choiceTraitCount, choiceMax || filters.choiceTraitCount),
         // My-board mode: the picked units are the player's board, not requirements.
-        ...(filters.boardMode ? { ownedIds: requiredIds } : { requiredIds }),
+        ...(filters.boardMode ? { ownedIds: requiredIds, maxSwaps: BOARD_MAX_SWAPS } : { requiredIds }),
       }
       : null),
     [roster, ranges, filters.size, emblemTraits, requiredIds, craftTools, filters.boardMode, filters.choiceTraitCount, choiceMax],
