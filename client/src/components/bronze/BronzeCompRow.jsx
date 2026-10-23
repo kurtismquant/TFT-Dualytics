@@ -26,11 +26,27 @@ function ChosenTraits({ chosen, traitByName, bonus }) {
 
 // My-board mode: what to buy and which of the player's units to sell to get
 // from their board to this one.
-function FromBoard({ fromBoard }) {
+// Ends with the board's score, its breakdown on hover.
+function FromBoard({ comp, weights }) {
   const { t } = useTranslation()
-  const { buy, sell } = fromBoard
+  const { buy, sell, score, sharedCount, ownedTraitCount, penalty } = comp.fromBoard
+  const breakdown = t('bronze.scoreBreakdown', {
+    traits: comp.traitCount, traitWeight: weights.trait, kept: sharedCount, total: ownedTraitCount,
+    keptWeight: weights.sharedTrait, penalty,
+  })
+  const scoreBadge = (
+    <span className={styles.boardScore} title={breakdown}>
+      {t('bronze.scoreLabel', { score: Number(score.toFixed(2)) })}
+      <span className="sr-only"> ({breakdown})</span>
+    </span>
+  )
   if (buy.length === 0 && sell.length === 0) {
-    return <p className={styles.fromBoard}><span className={styles.fromBoardReady}>{t('bronze.fromBoardReady')}</span></p>
+    return (
+      <p className={styles.fromBoard}>
+        <span className={styles.fromBoardReady}>{t('bronze.fromBoardReady')}</span>
+        {scoreBadge}
+      </p>
+    )
   }
   const icons = (units, sold) => units.map(champion => (
     <span key={champion.id} className={sold ? styles.fromBoardSold : undefined} title={champion.name}>
@@ -54,6 +70,7 @@ function FromBoard({ fromBoard }) {
       <span className="sr-only">
         {t('bronze.fromBoardSummary', { buy: buy.map(c => c.name).join(', ') || '-', sell: sell.map(c => c.name).join(', ') || '-' })}
       </span>
+      {scoreBadge}
     </p>
   )
 }
@@ -64,7 +81,9 @@ function FromBoard({ fromBoard }) {
 // short in grey as have/need); then a button copying the Team Planner code.
 // The trait count is the heading of the group the row sits in.
 // `played` ({ count, avgPlacement }) marks a highly played comp with a gold star.
-export default function BronzeCompRow({ comp, traitByName, traits, champions, championsById, emblemByTrait, toolItems = {}, played }) {
+export default function BronzeCompRow({
+  comp, traitByName, traits, champions, championsById, emblemByTrait, toolItems = {}, boardWeights, played,
+}) {
   const { t } = useTranslation()
   const teamCode = encodeTeamPlannerCode(comp.units.map(unit => unit.champion), championsById, CURRENT_SET)
   // style null + countLabel: an inactive (colorless) chip, used for near traits.
@@ -117,7 +136,7 @@ export default function BronzeCompRow({ comp, traitByName, traits, champions, ch
             )
           })}
         </ul>
-        {comp.fromBoard && <FromBoard fromBoard={comp.fromBoard} />}
+        {comp.fromBoard && boardWeights && <FromBoard comp={comp} weights={boardWeights} />}
         {(crafted.length > 0 || emblems.length > 0) && (
           <ul className={styles.emblems} aria-label={t('bronze.emblemsUsed')}>
             {crafted.map(({ tool, item }) => {

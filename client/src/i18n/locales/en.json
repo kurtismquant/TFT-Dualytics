@@ -656,7 +656,17 @@
     "fewerOptions": "Show fewer options",
     "optionsCounting": "Search",
     "optionsUnits": "Units",
-    "optionsCraft": "Emblems to make"
+    "optionsCraft": "Emblems to make",
+    "tuningTitle": "Tuning",
+    "tuningHint": "Applies to Build from my units",
+    "tuningTrait": "Per trait",
+    "tuningShared": "Per trait of yours kept",
+    "tuningMissing": "Buy a {{cost}}-cost",
+    "tuningSwaps": "Max swaps",
+    "tuningNoCap": "No cap",
+    "tuningReset": "Reset tuning",
+    "scoreLabel": "Score {{score}}",
+    "scoreBreakdown": "{{traits}} traits × {{traitWeight}} + {{kept}}/{{total}} of your traits kept × {{keptWeight}} − {{penalty}} to buy"
   },
   "teamCode": {
     "copy": "Copy team code",

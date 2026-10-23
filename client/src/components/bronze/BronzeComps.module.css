@@ -489,6 +489,71 @@
   color: var(--accent-gold);
 }
 
+/* The board's Build-from-my-units score, at the end of its buy/sell line. */
+.boardScore {
+  margin-left: auto;
+  padding: 0.0625rem 0.375rem;
+  border: 1px solid var(--bg-border-muted);
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+  cursor: help;
+}
+
+/* Tuning sliders (testing aid). */
+.slider {
+  display: grid;
+  grid-template-columns: 7.5rem minmax(5rem, 9rem) 2.75rem;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 1.75rem;
+  color: var(--text-secondary);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--track-wide);
+  text-transform: uppercase;
+}
+
+.slider input {
+  width: 100%;
+  accent-color: var(--accent-gold);
+  cursor: pointer;
+}
+
+.sliderValue {
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.tuningIdle .slider {
+  opacity: 0.55;
+}
+
+.tuningHint {
+  margin: 0 0 0.25rem;
+  color: var(--text-muted);
+  font-size: var(--text-2xs);
+}
+
+.tuningReset {
+  align-self: flex-start;
+  margin-top: 0.25rem;
+  padding: 0.25rem 0;
+  border: 0;
+  background: transparent;
+  color: var(--text-secondary);
+  font-family: var(--font-body);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--track-wide);
+  text-transform: uppercase;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.tuningReset:hover,
+.tuningReset:focus-visible {
+  color: var(--text-primary);
+}
+
 .emblems {
   display: flex;
   flex-wrap: wrap;

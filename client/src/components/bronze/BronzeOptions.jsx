@@ -2,6 +2,7 @@ import { useId } from 'react'
 import { useTranslation } from 'react-i18next'
 import Button from '../ui/Button.jsx'
 import ItemIcon from '../ItemIcon.jsx'
+import BronzeTuning from './BronzeTuning.jsx'
 import styles from './BronzeComps.module.css'
 
 function Checkbox({ checked, onChange, children }) {
@@ -72,6 +73,7 @@ export default function BronzeOptions({ id, filters, setFilter, toolItems, choic
           <span className={styles.toolLabel}><ItemIcon item={toolItems.pan} size={20} />{t('bronze.hasFryingPan')}</span>
         </Checkbox>
       </fieldset>
+      <BronzeTuning filters={filters} setFilter={setFilter} />
     </div>
   )
 }

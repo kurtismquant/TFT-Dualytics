@@ -16,7 +16,7 @@ import { useMediaQuery } from '../../hooks/useMediaQuery.js'
 import { useUiScale } from '../../contexts/useUiScale.js'
 import { toBuilderRoster } from '../../utils/builderRoster.js'
 import {
-  BOARD_MAX_SWAPS, HIGHLY_PLAYED_MIN_BOARDS, LEGENDARY_COST, pageGroups, traitChoiceCount, TRAIT_CHOICE_UNIT_IDS, traitRanges,
+  BOARD_MAX_SWAPS, BOARD_WEIGHTS, HIGHLY_PLAYED_MIN_BOARDS, LEGENDARY_COST, pageGroups, traitChoiceCount, TRAIT_CHOICE_UNIT_IDS, traitRanges,
 } from '../../utils/bronzeComps.js'
 import { makeMap } from '../../utils/statsFormatting.js'
 import statsStyles from '../../pages/StatsPage.module.css'
@@ -36,6 +36,8 @@ const SIDE_WIDGET_MIN_REM = 97.5
 const DEFAULT_FILTERS = {
   size: 8, includeSilverGold: false, excludeLegendary: false, excludeChoiceUnits: false, requiredIds: [], emblemIds: [],
   hasSpatula: false, hasFryingPan: false, boardMode: false, choiceTraitCount: 4,
+  // Build-from-my-units scoring, adjustable from the Tuning sliders.
+  boardWeights: BOARD_WEIGHTS, maxSwaps: BOARD_MAX_SWAPS,
 }
 
 // Bronze for Life: comps of N units with the most traits in their bronze tier
@@ -93,10 +95,13 @@ export default function BronzeComps() {
         roster, ranges, size: filters.size, emblemTraits, craftTools, limit: MAX_RESULTS,
         choiceTraitCount: Math.min(filters.choiceTraitCount, choiceMax || filters.choiceTraitCount),
         // My-board mode: the picked units are the player's board, not requirements.
-        ...(filters.boardMode ? { ownedIds: requiredIds, maxSwaps: BOARD_MAX_SWAPS } : { requiredIds }),
+        ...(filters.boardMode
+          ? { ownedIds: requiredIds, maxSwaps: filters.maxSwaps, boardWeights: filters.boardWeights }
+          : { requiredIds }),
       }
       : null),
-    [roster, ranges, filters.size, emblemTraits, requiredIds, craftTools, filters.boardMode, filters.choiceTraitCount, choiceMax],
+    [roster, ranges, filters.size, emblemTraits, requiredIds, craftTools, filters.boardMode, filters.choiceTraitCount, choiceMax,
+      filters.maxSwaps, filters.boardWeights],
   )
   const { result, error: searchError, isSearching } = useBronzeSearch(search)
   const championsById = useMemo(() => makeMap(champions), [champions])
@@ -139,8 +144,8 @@ export default function BronzeComps() {
     return { result, shown: base.shown, collapsed }
   }), [result])
   const rowProps = useMemo(
-    () => ({ traitByName, traits, champions, championsById, emblemByTrait, toolItems }),
-    [traitByName, traits, champions, championsById, emblemByTrait, toolItems],
+    () => ({ traitByName, traits, champions, championsById, emblemByTrait, toolItems, boardWeights: filters.boardWeights }),
+    [traitByName, traits, champions, championsById, emblemByTrait, toolItems, filters.boardWeights],
   )
 
   const isLoading = champs.isLoading || traitsQuery.isLoading || itemsQuery.isLoading

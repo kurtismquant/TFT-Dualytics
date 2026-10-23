@@ -656,7 +656,17 @@
     "fewerOptions": "Mostrar menos opciones",
     "optionsCounting": "Búsqueda",
     "optionsUnits": "Unidades",
-    "optionsCraft": "Emblemas a fabricar"
+    "optionsCraft": "Emblemas a fabricar",
+    "tuningTitle": "Ajustes",
+    "tuningHint": "Se aplica a Partir de mis unidades",
+    "tuningTrait": "Por rasgo",
+    "tuningShared": "Por rasgo tuyo mantenido",
+    "tuningMissing": "Comprar de {{cost}} de coste",
+    "tuningSwaps": "Cambios máx.",
+    "tuningNoCap": "Sin límite",
+    "tuningReset": "Restablecer ajustes",
+    "scoreLabel": "Puntos {{score}}",
+    "scoreBreakdown": "{{traits}} rasgos × {{traitWeight}} + {{kept}}/{{total}} de tus rasgos × {{keptWeight}} − {{penalty}} por comprar"
   },
   "teamCode": {
     "copy": "Copiar código",
