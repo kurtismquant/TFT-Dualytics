@@ -648,7 +648,10 @@
     "fromBoardSell_one": "Sell",
     "fromBoardSell_other": "Sell",
     "fromBoardReady": "Already your board",
-    "fromBoardSummary": "From your board: buy {{buy}}; sell {{sell}}."
+    "fromBoardSummary": "From your board: buy {{buy}}; sell {{sell}}.",
+    "choiceTraitsLabel": "{{units}} traits",
+    "choiceTraitsOption_one": "{{count}} trait",
+    "choiceTraitsOption_other": "{{count}} traits"
   },
   "teamCode": {
     "copy": "Copy team code",

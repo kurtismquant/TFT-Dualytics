@@ -29,6 +29,8 @@ export const TRAIT_CHOICE_UNITS = {
 }
 // For the "No Kha'Zix" option.
 export const TRAIT_CHOICE_UNIT_IDS = new Set(Object.keys(TRAIT_CHOICE_UNITS))
+// How many traits a trait-choice unit can pick from (Kha'Zix: 4); 0 otherwise.
+export const traitChoiceCount = unitId => TRAIT_CHOICE_UNITS[unitId]?.from.length ?? 0
 
 // Emblems are named "<Trait> Emblem" and grant +1 to that trait.
 export function getEmblemTrait(item) {
@@ -129,9 +131,11 @@ function combinations(list, size) {
 }
 
 // Replaces each trait-choice unit with one variant per choice, plus the
-// all-traits "bonus" variant. Variants share the unit's id and a group
+// all-traits "bonus" variant. With `traitCount` (the page's evolutions
+// setting) every variant takes exactly that many of the traits instead, and
+// there is no bonus variant. Variants share the unit's id and a group
 // (formOf), so a comp fields one of them at most.
-export function expandTraitChoices(roster) {
+export function expandTraitChoices(roster, traitCount = null) {
   return roster.flatMap(unit => {
     const choice = TRAIT_CHOICE_UNITS[unit.id]
     if (!choice) return [unit]
@@ -142,6 +146,10 @@ export function expandTraitChoices(roster) {
       bonusEvolution,
       formOf: unit.id,
     })
+    if (traitCount != null) {
+      const n = Math.min(Math.max(1, traitCount), choice.from.length)
+      return combinations(choice.from, n).map(chosen => variant(chosen, false))
+    }
     return [
       ...combinations(choice.from, choice.pick).map(chosen => variant(chosen, false)),
       variant(choice.from, true),
@@ -211,7 +219,8 @@ const compareBoardComps = (a, b) => a.score - b.score || a.traitCount - b.traitC
 // by score (see BOARD_TRAIT_SCORE) and say what to buy and sell; requiredIds
 // are ignored then.
 export function findBronzeComps({
-  roster, ranges, size, emblemTraits = [], requiredIds = [], craftTools = [], ownedIds = [], limit = 20, nodeCap = NODE_CAP,
+  roster, ranges, size, emblemTraits = [], requiredIds = [], craftTools = [], ownedIds = [], choiceTraitCount = null,
+  limit = 20, nodeCap = NODE_CAP,
 }) {
   const owned = new Set(ownedIds)
   const boardMode = owned.size > 0
@@ -230,7 +239,7 @@ export function findBronzeComps({
   // Required units are placed up front, except a trait-choice unit: its
   // variants stay in the search and one of them must be picked.
   const required = new Set(requiredIds)
-  const units = expandTraitChoices(roster || [])
+  const units = expandTraitChoices(roster || [], choiceTraitCount)
   const fixed = units.filter(unit => required.has(unit.id) && !unit.chosenTraits)
   const requiredGroups = [...new Set(units.filter(u => required.has(u.id) && u.chosenTraits).map(u => u.formOf))]
   const fixedGroups = new Set(fixed.map(unit => unit.formOf).filter(Boolean))

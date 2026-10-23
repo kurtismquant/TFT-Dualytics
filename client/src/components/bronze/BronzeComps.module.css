@@ -70,6 +70,22 @@
   cursor: pointer;
 }
 
+/* "Kha'Zix traits [4 traits v]": label beside the evolutions dropdown. */
+.selectLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-secondary);
+  font-size: var(--text-xs);
+  letter-spacing: var(--track-wide);
+  text-transform: uppercase;
+}
+
+.choiceSelect {
+  min-height: 2.25rem;
+  min-width: 0;
+}
+
 /* Spatula / Frying Pan checkbox labels carry the item's icon. */
 .toolLabel {
   display: inline-flex;

@@ -648,7 +648,10 @@
     "fromBoardSell_one": "Vender",
     "fromBoardSell_other": "Vender",
     "fromBoardReady": "Ya es tu tablero",
-    "fromBoardSummary": "Desde tu tablero: comprar {{buy}}; vender {{sell}}."
+    "fromBoardSummary": "Desde tu tablero: comprar {{buy}}; vender {{sell}}.",
+    "choiceTraitsLabel": "Rasgos de {{units}}",
+    "choiceTraitsOption_one": "{{count}} rasgo",
+    "choiceTraitsOption_other": "{{count}} rasgos"
   },
   "teamCode": {
     "copy": "Copiar código",

@@ -6,6 +6,7 @@ import { BOARD_SIZES, MAX_EMBLEMS } from '../../utils/bronzeComps.js'
 
 // Most units a player's current board can hold (my-board mode).
 const MAX_BOARD_UNITS = 10
+import statsStyles from '../../pages/StatsPage.module.css'
 import styles from './BronzeComps.module.css'
 
 function Checkbox({ checked, onChange, children }) {
@@ -22,7 +23,11 @@ function Checkbox({ checked, onChange, children }) {
 // emblem to make with each).
 // `choiceUnitNames`: trait-choice units in this set (Kha'Zix); none hides the
 // option to exclude them.
-export default function BronzeControls({ filters, setFilter, emblemPicker, unitPicker, toolItems, choiceUnitNames = [] }) {
+// `choiceMax`: most traits such a unit picks from; the evolutions dropdown
+// (shown while those units are in) chooses how many it has.
+export default function BronzeControls({
+  filters, setFilter, emblemPicker, unitPicker, toolItems, choiceUnitNames = [], choiceMax = 0,
+}) {
   const { t } = useTranslation()
   return (
     <div className={styles.controls}>
@@ -53,6 +58,20 @@ export default function BronzeControls({ filters, setFilter, emblemPicker, unitP
             <Checkbox checked={filters.excludeChoiceUnits} onChange={value => setFilter('excludeChoiceUnits', value)}>
               {t('bronze.excludeChoiceUnits', { units: choiceUnitNames.join(' / ') })}
             </Checkbox>
+          )}
+          {choiceUnitNames.length > 0 && !filters.excludeChoiceUnits && choiceMax > 0 && (
+            <label className={styles.selectLabel}>
+              <span>{t('bronze.choiceTraitsLabel', { units: choiceUnitNames.join(' / ') })}</span>
+              <select
+                className={`${statsStyles.select} ${styles.choiceSelect}`}
+                value={Math.min(filters.choiceTraitCount, choiceMax)}
+                onChange={event => { setFilter('choiceTraitCount', Number(event.target.value)); event.target.blur() }}
+              >
+                {Array.from({ length: choiceMax }, (_, i) => i + 1).map(n => (
+                  <option key={n} value={n}>{t('bronze.choiceTraitsOption', { count: n })}</option>
+                ))}
+              </select>
+            </label>
           )}
         </div>
       </div>

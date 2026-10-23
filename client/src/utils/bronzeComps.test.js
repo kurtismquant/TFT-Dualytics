@@ -191,6 +191,22 @@ const khazix = unit('DA_18_KhaZix', 3, ['Rival'])
 const [exe, rap, rav, spe] = ['Executioner', 'Rapidfire', 'Ravager', 'Spellweaver'].map(t => unit(t, 1, [t]))
 const filler = unit('Filler', 1, ['Solar'])
 
+test("an evolutions setting gives Kha'Zix exactly that many traits, no bonus variant", () => {
+  const four = expandTraitChoices([khazix], 4)
+  assert.equal(four.length, 1)
+  assert.deepEqual(four[0].chosenTraits, ['Executioner', 'Rapidfire', 'Ravager', 'Spellweaver'])
+  assert.equal(four[0].bonusEvolution, false)
+  assert.equal(expandTraitChoices([khazix], 2).length, 6)
+  assert.equal(expandTraitChoices([khazix], 9).length, 1) // capped at 4
+  const { comps } = findBronzeComps({ roster: [khazix, exe, rap, rav, spe, filler], ranges: khaRanges, size: 3, choiceTraitCount: 2, limit: 50 })
+  const withKha = comps.filter(c => c.units.some(u => u.champion.id === 'DA_18_KhaZix'))
+  assert.ok(withKha.length > 0)
+  for (const comp of withKha) {
+    assert.equal(comp.units.find(u => u.champion.id === 'DA_18_KhaZix').champion.chosenTraits.length, 2)
+    assert.equal(comp.bonusEvolution, false)
+  }
+})
+
 test("Kha'Zix expands into each 3-trait evolution plus the full one", () => {
   const variants = expandTraitChoices([khazix])
   assert.equal(variants.length, 5)
