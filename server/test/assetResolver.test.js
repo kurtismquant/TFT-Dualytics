@@ -10,6 +10,7 @@ import {
   plannerCodesFor,
   selectSetEntry,
   selectSetUnits,
+  traitIconUrl,
   unhashVariables,
 } from '../services/assetResolver.js'
 
@@ -237,5 +238,20 @@ describe('fillFormPlannerCodes', () => {
     ]
     fillFormPlannerCodes(champions)
     assert.deepEqual(champions.map(c => c.plannerCode), [1029, 1029, 1026, null])
+  })
+})
+
+describe('traitIconUrl', () => {
+  const TRAIT_ICONS = 'https://raw.communitydragon.org/latest/game/assets/ux/traiticons/'
+
+  it("swaps CDragon's placeholder Invoker icon for the glyph the client uses", () => {
+    const trait = { apiName: 'DA_18_Invoker', icon: 'ASSETS/UX/TraitIcons/Trait_Icon_18_Invoker.tex' }
+    assert.equal(traitIconUrl(trait), `${TRAIT_ICONS}trait_icon_16_invoker.png`)
+  })
+
+  it("passes other traits' icons through", () => {
+    const trait = { apiName: 'DA_18_Summoner', icon: 'ASSETS/UX/TraitIcons/Trait_Icon_18_Summoner.tex' }
+    assert.equal(traitIconUrl(trait), `${TRAIT_ICONS}trait_icon_18_summoner.png`)
+    assert.equal(traitIconUrl({ apiName: 'DA_18_Fae', icon: 'None' }), '')
   })
 })

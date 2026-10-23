@@ -124,6 +124,15 @@ const toCDragonUrl = (rawPath) => {
   return `${CDRAGON_BASE}${p}`
 }
 
+// CDragon's Set 18 Invoker icon is placeholder art (a chalice); the Live TFT
+// client (T_TraitIcon_18_Invoker) uses the Set 16 glyph, which CDragon has.
+// Review on each new set against the client's Traits/_TraitIcons textures.
+const TRAIT_ICON_OVERRIDES = {
+  DA_18_Invoker: 'ASSETS/UX/TraitIcons/Trait_Icon_16_Invoker.tex',
+}
+export const traitIconUrl = (trait) =>
+  toCDragonUrl(TRAIT_ICON_OVERRIDES[trait?.apiName] || trait?.icon)
+
 // Hand-curated ability values for sets CDragon ships without them (see
 // data/abilityOverrides.set18.json and scripts/scaffoldAbilityOverrides.js).
 export const loadAbilityOverrides = (setNumber = CURRENT_SET) => {
@@ -494,7 +503,7 @@ export const fetchAndCacheAssets = async () => {
   // Step 6: Build trait map from Community Dragon set entry
   traitMap.clear()
   for (const trait of cdTraits) {
-    const iconUrl = toCDragonUrl(trait.icon)
+    const iconUrl = traitIconUrl(trait)
     traitMap.set(trait.apiName, {
       id: trait.apiName,
       name: trait.name,
