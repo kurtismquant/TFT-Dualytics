@@ -133,6 +133,14 @@ const TRAIT_ICON_OVERRIDES = {
 export const traitIconUrl = (trait) =>
   toCDragonUrl(TRAIT_ICON_OVERRIDES[trait?.apiName] || trait?.icon)
 
+// The augment-granted Flora Fatalis emblem has its own green-framed icon in the
+// TFT client (T_TraitItemIcon_Augment_18_FloraFatalis); Data Dragon and CDragon
+// ship the plain emblem art for it. Exported from the Live client into
+// client/public. Review on each new set.
+const ITEM_ICON_OVERRIDES = {
+  DA_18_EmblemFloraFatalisAugment: '/assets/items/set18/DA_18_EmblemFloraFatalisAugment.png',
+}
+
 // Hand-curated ability values for sets CDragon ships without them (see
 // data/abilityOverrides.set18.json and scripts/scaffoldAbilityOverrides.js).
 export const loadAbilityOverrides = (setNumber = CURRENT_SET) => {
@@ -419,16 +427,18 @@ export const fetchAndCacheAssets = async () => {
   const isCurrentSetItem = ([key]) => key.startsWith(`TFTSet${CURRENT_SET}/`)
   const itemEntries = Object.entries(itemData.data || {})
     .sort((a, b) => Number(isCurrentSetItem(b)) - Number(isCurrentSetItem(a)))
-    .map(([, item]) => item)
-  for (const item of itemEntries) {
+  for (const [key, item] of itemEntries) {
     if (!item.name) continue
     if (setItemAllowlist && !setItemAllowlist.has(item.id)) continue
-    if (seenNames.has(nameKey(item.name))) continue
+    // Current-set items are all kept: two can share a display name and both
+    // appear in matches (DA_18_EmblemFloraFatalis and its augment-granted
+    // DA_18_EmblemFloraFatalisAugment are both "Flora Fatalis Emblem").
+    if (seenNames.has(nameKey(item.name)) && !isCurrentSetItem([key])) continue
 
     const imgFile = typeof item.image === 'object' ? item.image?.full : item.image
-    const iconUrl = imgFile
+    const iconUrl = ITEM_ICON_OVERRIDES[item.id] || (imgFile
       ? `https://ddragon.leagueoflegends.com/cdn/${ddVersion}/img/tft-item/${imgFile}`
-      : ''
+      : '')
 
     const cdItem = cdItemMap.get(String(item.id))
     const category = classifyItem(item, cdItem)
