@@ -19,6 +19,8 @@ import styles from './StatsPage.module.css'
 // Items in this collection are filtered from the items table.
 // `TFT_Item_EmptyBag` is a Riot internal placeholder, not a real item.
 const ITEM_BLACKLIST = new Set(['TFT_Item_EmptyBag'])
+// Consumable potions (Set 18: DA_HealthPotion18, DA_ManaPotion18_Radiant, …).
+const isPotion = (id) => /Potion/i.test(id)
 
 const STANDALONE_TITLES = { explorer: 'stats.tabExplorer', bronze: 'stats.tabBronze' }
 
@@ -78,7 +80,7 @@ export default function StatsPage() {
 
     const filtered = decorated.filter(row => {
       if (isItemTab) {
-        if (ITEM_BLACKLIST.has(row.id)) return false
+        if (ITEM_BLACKLIST.has(row.id) || isPotion(row.id)) return false
         if ((row.meta?.category || 'other') !== itemCategory) return false
       }
       if (isUnitTab && costFilter && row.meta?.cost !== costFilter) return false
