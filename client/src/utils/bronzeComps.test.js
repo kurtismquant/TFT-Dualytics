@@ -8,7 +8,9 @@ import {
   expandTraitChoices,
   compsInTopTraitCounts,
   bestCraftedEmblems,
+  BOARD_TRAIT_SCORE,
   craftToolsFor,
+  MISSING_UNIT_PENALTY,
   findBronzeComps,
   pageGroups,
   recommendUnits,
@@ -111,6 +113,7 @@ test('finds the comp with the most bronze traits, fields one Lux at most', () =>
     nearTraits: [],
     usedEmblemTraits: [],
     craftedEmblems: [],
+    fromBoard: null,
   })
   for (const comp of comps) {
     assert.equal(comp.units.length, 2)
@@ -361,4 +364,48 @@ test('pageGroups: collapsed trait counts show as headings and free up the page',
   assert.equal(trailing.visibleTotal, 3) // 11 still to page in
 
   assert.deepEqual(pageGroups([], 20), { groups: [], shownCount: 0, visibleTotal: 0 })
+})
+
+// ── My board: closest boards to the player's units ─────────────────────────
+test('my-board mode: owned units are free, and the board says what to buy and sell', () => {
+  const roster3 = [covenRavager1, covenRavager2, ravager, flora]
+  const { comps } = findBronzeComps({ roster: roster3, ranges, size: 2, ownedIds: ['CovenRavager1', 'Ravager'], limit: 100 })
+  const byKey = new Map(comps.map(c => [c.key, c]))
+  // Both owned: Ravager 2, nothing to buy.
+  const ownedOnly = byKey.get('CovenRavager1|Ravager')
+  assert.deepEqual(ownedOnly.fromBoard, { buy: [], sell: [], penalty: 0, score: BOARD_TRAIT_SCORE * 1 })
+  assert.ok(ownedOnly.units.every(u => u.owned))
+  // Same trait count, but buys a 2-cost and leaves Ravager on the bench.
+  const buyOne = byKey.get('CovenRavager1|CovenRavager2')
+  assert.deepEqual(buyOne.fromBoard.buy.map(c => c.id), ['CovenRavager2'])
+  assert.deepEqual(buyOne.fromBoard.sell.map(c => c.id), ['Ravager'])
+  assert.equal(buyOne.fromBoard.penalty, MISSING_UNIT_PENALTY[2])
+  // Within a trait count the closest board comes first.
+  const oneTrait = comps.filter(c => c.traitCount === 1)
+  assert.equal(oneTrait[0].key, 'CovenRavager1|Ravager')
+  assert.ok(oneTrait.every((c, i) => i === 0 || oneTrait[i - 1].fromBoard.penalty <= c.fromBoard.penalty))
+})
+
+test('my-board mode: a far-off board with more traits loses to a close one', () => {
+  // Blossom Lux + Flora = 2 traits but buys a 5-cost and a 4-cost:
+  // 2*2 - (1.5 + 1) = 1.5 < owned Ravager pair 2*1 - 0 = 2.
+  const roster4 = [covenRavager1, ravager, flora, blossomLux]
+  const best = findBronzeComps({ roster: roster4, ranges, size: 2, ownedIds: ['CovenRavager1', 'Ravager'], limit: 1 })
+  assert.equal(best.comps.length, 1)
+  assert.equal(best.comps[0].key, 'CovenRavager1|Ravager')
+  const all = findBronzeComps({ roster: roster4, ranges, size: 2, ownedIds: ['CovenRavager1', 'Ravager'], limit: 100 })
+  const far = all.comps.find(c => c.key === 'Flora|Blossom Lux')
+  assert.equal(far.fromBoard.score, BOARD_TRAIT_SCORE * 2 - MISSING_UNIT_PENALTY[5] - MISSING_UNIT_PENALTY[4])
+  // Groups stay by trait count: the 2-trait board is listed first, if kept.
+  assert.equal(all.comps[0].traitCount, 2)
+})
+
+test('my-board mode ignores required units and never asks to buy an owned unit', () => {
+  const { comps } = findBronzeComps({ roster, ranges, size: 3, ownedIds: ['Flora', 'Blossom Lux'], requiredIds: ['Coven3'], limit: 50 })
+  assert.ok(comps.length > 0)
+  for (const comp of comps) {
+    assert.ok(comp.fromBoard.buy.every(c => c.id !== 'Flora' && c.id !== 'Blossom Lux'))
+    const penalty = comp.fromBoard.buy.reduce((sum, c) => sum + MISSING_UNIT_PENALTY[c.cost], 0)
+    assert.equal(comp.fromBoard.penalty, penalty)
+  }
 })

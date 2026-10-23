@@ -149,11 +149,22 @@ export function expandTraitChoices(roster) {
   })
 }
 
+// "My board" mode: the units picked are the player's current board. A board's
+// score is its traits x BOARD_TRAIT_SCORE, less a penalty for each unit the
+// player would still have to buy, by cost (weights chosen by the user; owned
+// units and selling are free). Far-off boards score too low to be kept.
+export const BOARD_TRAIT_SCORE = 2
+export const MISSING_UNIT_PENALTY = { 1: 0.5, 2: 0.25, 3: 0.25, 4: 1, 5: 1.5 }
+const missingPenalty = unit => MISSING_UNIT_PENALTY[unit.cost] ?? MISSING_UNIT_PENALTY[5]
+
 // Units with identical counted-trait contributions are interchangeable for the
 // search, so it picks how many to take from each class instead of which units.
 // Classes with more trait weight go first so good comps are found early and
-// prune more; the priciest units of a class are the ones shown.
-function buildClasses(roster, traitIndex) {
+// prune more; the priciest units of a class are the ones shown. With `owned`
+// (my-board mode) owned units form their own classes, and elsewhere the
+// cheapest unit to buy is shown first; penaltyPrefix[k] is the penalty of
+// taking k units from a class.
+function buildClasses(roster, traitIndex, owned = null) {
   const classes = new Map()
   for (const unit of roster) {
     const vector = []
@@ -162,25 +173,32 @@ function buildClasses(roster, traitIndex) {
       if (index != null) vector.push([index, unit.traitWeights?.[trait] ?? 1])
     }
     vector.sort((a, b) => a[0] - b[0])
-    const key = `${unit.formOf || ''}|${unit.bonusEvolution ? 'bonus' : ''}|${vector.join(';')}`
+    const isOwned = Boolean(owned?.has(unit.id))
+    const key = `${isOwned ? 'own' : ''}|${unit.formOf || ''}|${unit.bonusEvolution ? 'bonus' : ''}|${vector.join(';')}`
     if (!classes.has(key)) {
       const weight = vector.reduce((sum, [, w]) => sum + w, 0)
-      classes.set(key, { vector, weight, group: unit.formOf || null, bonus: Boolean(unit.bonusEvolution), units: [] })
+      classes.set(key, { vector, weight, group: unit.formOf || null, bonus: Boolean(unit.bonusEvolution), owned: isOwned, units: [] })
     }
     classes.get(key).units.push(unit)
   }
   const list = [...classes.values()]
   for (const cls of list) {
-    cls.units.sort((a, b) => (b.cost || 0) - (a.cost || 0) || a.name.localeCompare(b.name))
+    const penalty = unit => (owned && !cls.owned ? missingPenalty(unit) : 0)
+    cls.units.sort((a, b) => penalty(a) - penalty(b) || (b.cost || 0) - (a.cost || 0) || a.name.localeCompare(b.name))
     // A group (Lux forms, Kha'Zix choices) fields one unit per board.
     cls.cap = cls.group ? 1 : cls.units.length
+    cls.penaltyPrefix = [0]
+    for (const unit of cls.units) cls.penaltyPrefix.push(cls.penaltyPrefix[cls.penaltyPrefix.length - 1] + penalty(unit))
   }
-  return list.sort((a, b) => b.weight - a.weight)
+  return list.sort((a, b) => b.weight - a.weight || Number(b.owned) - Number(a.owned))
 }
 
 // > 0 when comp a ranks above comp b: more counted traits, then no Kha'Zix
-// 4th evolution, then higher total cost.
+// 4th evolution, then higher total cost. In my-board mode: higher score, then
+// more traits, then less to buy.
 const compareComps = (a, b) => a.traitCount - b.traitCount || b.bonus - a.bonus || a.cost - b.cost
+const compareBoardComps = (a, b) => a.score - b.score || a.traitCount - b.traitCount || b.penalty - a.penalty
+  || b.bonus - a.bonus || a.cost - b.cost
 
 // Top `limit` comps of `size` units by counted trait count. `requiredIds` must
 // be in every comp. `craftTools` ([{ tool, traits }], one per Spatula / Frying
@@ -189,10 +207,16 @@ const compareComps = (a, b) => a.traitCount - b.traitCount || b.bonus - a.bonus 
 // Branch and bound over unit classes: a branch is cut when its optimistic
 // score (counted traits now + under-count traits the remaining picks and tools
 // could still lift into range, then the priciest units still pickable) can't
-// beat the worst comp kept.
+// beat the worst comp kept. With `ownedIds` (my-board mode) comps are ranked
+// by score (see BOARD_TRAIT_SCORE) and say what to buy and sell; requiredIds
+// are ignored then.
 export function findBronzeComps({
-  roster, ranges, size, emblemTraits = [], requiredIds = [], craftTools = [], limit = 20, nodeCap = NODE_CAP,
+  roster, ranges, size, emblemTraits = [], requiredIds = [], craftTools = [], ownedIds = [], limit = 20, nodeCap = NODE_CAP,
 }) {
+  const owned = new Set(ownedIds)
+  const boardMode = owned.size > 0
+  if (boardMode) requiredIds = []
+  const compare = boardMode ? compareBoardComps : compareComps
   const names = [...ranges.keys()]
   const traitIndex = new Map(names.map((name, i) => [name, i]))
   const lo = names.map(name => ranges.get(name).lo)
@@ -224,7 +248,7 @@ export function findBronzeComps({
     }
   }
 
-  const classes = buildClasses(free, traitIndex)
+  const classes = buildClasses(free, traitIndex, boardMode ? owned : null)
   // From class i on: supply[i][t] = most units of trait t still addable;
   // topWeight[i][r] / topCost[i][r] = most trait weight / total cost r units
   // can still bring. A group (Lux forms, Kha'Zix choices) fields one unit, so
@@ -236,6 +260,11 @@ export function findBronzeComps({
   const plainWeights = []
   const plainCosts = []
   const groupBest = new Map()
+  // lowPenalty[i][r]: the least penalty r more picks from class i on can add
+  // (my-board mode; a group counts once, with its cheapest unit).
+  const lowPenalty = [[0]]
+  const plainPenalties = []
+  const groupLowPenalty = new Map()
   const prefixSums = values => {
     const sums = [0]
     for (const v of values.sort((a, b) => b - a).slice(0, size)) sums.push(sums[sums.length - 1] + v)
@@ -258,6 +287,14 @@ export function findBronzeComps({
     const groups = [...groupBest.values()]
     topWeight.unshift(prefixSums([...plainWeights, ...groups.map(g => g.weight)]))
     topCost.unshift(prefixSums([...plainCosts, ...groups.map(g => g.cost)]))
+    if (boardMode) {
+      if (cls.group) groupLowPenalty.set(cls.group, Math.min(groupLowPenalty.get(cls.group) ?? Infinity, cls.penaltyPrefix[1]))
+      else for (let k = 1; k < cls.penaltyPrefix.length; k++) plainPenalties.push(cls.penaltyPrefix[k] - cls.penaltyPrefix[k - 1])
+      const low = [...plainPenalties, ...groupLowPenalty.values()].sort((a, b) => a - b).slice(0, size)
+      const sums = [0]
+      for (const v of low) sums.push(sums[sums.length - 1] + v)
+      lowPenalty.unshift(sums)
+    }
   }
   const topSum = (sums, r) => sums[Math.min(r, sums.length - 1)]
   const groupLast = new Map()
@@ -334,27 +371,32 @@ export function findBronzeComps({
   const picks = new Array(classes.length).fill(0)
   const groupsUsed = new Map()
   let bonusPick = -1
+  let penalty = 0 // my-board mode: penalty of the units picked so far
   let nodes = 0
   let truncated = false
 
   // A board reached twice (see the 4th-evolution swap below) is kept once.
   const keptKeys = new Set()
   const keep = (candidate, candidatePicks) => {
-    if (kept.length === limit && compareComps(candidate, kept[kept.length - 1]) <= 0) return
+    if (kept.length === limit && compare(candidate, kept[kept.length - 1]) <= 0) return
     const key = candidatePicks.join(',')
     if (keptKeys.has(key)) return
     let at = kept.length
-    while (at > 0 && compareComps(candidate, kept[at - 1]) > 0) at--
+    while (at > 0 && compare(candidate, kept[at - 1]) > 0) at--
     kept.splice(at, 0, { ...candidate, picks: candidatePicks })
     keptKeys.add(key)
     if (kept.length > limit) keptKeys.delete(kept.pop().picks.join(','))
   }
 
+  const candidate = (traitCount, bonus, candidateCost, candidatePenalty, crafted) => ({
+    traitCount, bonus, cost: candidateCost, crafted, penalty: candidatePenalty,
+    score: boardMode ? BOARD_TRAIT_SCORE * traitCount - candidatePenalty : traitCount,
+  })
   const leaf = () => {
     if (requiredGroups.some(group => !groupsUsed.get(group))) return
     const { traitCount, crafted } = scoreWithTools()
     if (bonusPick === -1) {
-      keep({ traitCount, bonus: 0, cost, crafted }, picks.slice())
+      keep(candidate(traitCount, 0, cost, penalty, crafted), picks.slice())
       return
     }
     // The 4th evolution only counts when it beats every 3-trait choice. When it
@@ -380,13 +422,14 @@ export function findBronzeComps({
     })
     withVector(classes[bonusPick].vector, 1)
     if (traitCount > bestChoice) {
-      keep({ traitCount, bonus: 1, cost, crafted }, picks.slice())
+      keep(candidate(traitCount, 1, cost, penalty, crafted), picks.slice())
     } else if (bestIndex !== -1) {
       const choicePicks = picks.slice()
       choicePicks[bonusPick] = 0
       choicePicks[bestIndex] = 1
       const choiceCost = cost - (classes[bonusPick].units[0].cost || 0) + (classes[bestIndex].units[0].cost || 0)
-      keep({ traitCount: bestChoice, bonus: 0, cost: choiceCost, crafted: bestChoiceCrafted }, choicePicks)
+      const choicePenalty = penalty - classes[bonusPick].penaltyPrefix[1] + classes[bestIndex].penaltyPrefix[1]
+      keep(candidate(bestChoice, 0, choiceCost, choicePenalty, bestChoiceCrafted), choicePicks)
     }
   }
 
@@ -395,7 +438,12 @@ export function findBronzeComps({
     if (remaining === 0) { leaf(); return }
     if (i === classes.length) return
     if (requiredGroups.some(group => !groupsUsed.get(group) && groupLast.get(group) < i)) return
-    if (kept.length === limit) {
+    if (kept.length === limit && boardMode) {
+      // Best case: every reachable trait, at the least penalty still possible.
+      // Strict: comps tying the worst kept score may be skipped.
+      const bestScore = BOARD_TRAIT_SCORE * bound(i, remaining) - penalty - topSum(lowPenalty[i], remaining)
+      if (bestScore <= kept[kept.length - 1].score) return
+    } else if (kept.length === limit) {
       const worst = kept[kept.length - 1]
       const best = bound(i, remaining)
       if (best < worst.traitCount) return
@@ -414,6 +462,7 @@ export function findBronzeComps({
       if (take > 0) {
         for (const [t, w] of cls.vector) counts[t] += w * take
         for (const unit of cls.units.slice(0, take)) cost += unit.cost || 0
+        penalty += cls.penaltyPrefix[take]
         if (cls.group) groupsUsed.set(cls.group, (groupsUsed.get(cls.group) || 0) + take)
         if (cls.bonus) bonusPick = i
       }
@@ -422,6 +471,7 @@ export function findBronzeComps({
       if (take > 0) {
         for (const [t, w] of cls.vector) counts[t] -= w * take
         for (const unit of cls.units.slice(0, take)) cost -= unit.cost || 0
+        penalty -= cls.penaltyPrefix[take]
         if (cls.group) groupsUsed.set(cls.group, groupsUsed.get(cls.group) - take)
         if (cls.bonus) bonusPick = -1
       }
@@ -430,9 +480,12 @@ export function findBronzeComps({
   }
   visit(0, open)
 
+  const ownedUnits = boardMode ? (roster || []).filter(unit => owned.has(unit.id)) : []
+  // My-board mode keeps the trait-count groups; within one, closest first.
   const comps = kept
-    .map(entry => describeComp(entry, classes, fixed, ranges, emblemTraits, names))
+    .map(entry => describeComp(entry, classes, fixed, ranges, emblemTraits, names, boardMode ? ownedUnits : null))
     .sort((a, b) => b.traitCount - a.traitCount
+      || (boardMode ? a.fromBoard.penalty - b.fromBoard.penalty : 0)
       || Number(a.bonusEvolution) - Number(b.bonusEvolution)
       || b.totalCost - a.totalCost
       || a.key.localeCompare(b.key))
@@ -441,14 +494,27 @@ export function findBronzeComps({
 
 const byCostThenName = (a, b) => (a.champion.cost || 0) - (b.champion.cost || 0) || a.champion.name.localeCompare(b.champion.name)
 
-function describeComp({ traitCount, bonus, picks, crafted = [] }, classes, fixed, ranges, emblemTraits, traitNames) {
+function describeComp({ traitCount, bonus, picks, crafted = [], penalty = 0, score }, classes, fixed, ranges, emblemTraits, traitNames, ownedUnits) {
   const craftedEmblems = crafted.map(({ tool, t }) => ({ tool, trait: traitNames[t] }))
+  const ownedIds = new Set((ownedUnits || []).map(unit => unit.id))
   const units = fixed.map(champion => ({ champion, alternatives: [], required: true }))
   picks.forEach((take, i) => {
     const members = classes[i].units
-    for (const champion of members.slice(0, take)) units.push({ champion, alternatives: members.slice(take), required: false })
+    for (const champion of members.slice(0, take)) {
+      const entry = { champion, alternatives: members.slice(take), required: false }
+      if (ownedUnits) entry.owned = ownedIds.has(champion.id)
+      units.push(entry)
+    }
   })
   units.sort(byCostThenName)
+  // My-board mode: how to get here from the player's units.
+  const inComp = new Set(units.map(({ champion }) => champion.id))
+  const fromBoard = ownedUnits ? {
+    buy: units.filter(unit => !unit.owned).map(unit => unit.champion),
+    sell: ownedUnits.filter(unit => !inComp.has(unit.id)),
+    penalty,
+    score,
+  } : null
 
   const traitCounts = new Map()
   const add = (trait, n) => traitCounts.set(trait, (traitCounts.get(trait) || 0) + n)
@@ -487,6 +553,8 @@ function describeComp({ traitCount, bonus, picks, crafted = [] }, classes, fixed
     usedEmblemTraits: emblemTraits.filter(counted),
     // Emblems to make with the Spatula / Frying Pan held: [{ tool, trait }].
     craftedEmblems,
+    // My-board mode: { buy: [champion], sell: [champion], penalty, score }; else null.
+    fromBoard,
   }
 }
 

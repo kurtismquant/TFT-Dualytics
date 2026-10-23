@@ -3,6 +3,9 @@ import Button from '../ui/Button.jsx'
 import ChipPicker from './ChipPicker.jsx'
 import ItemIcon from '../ItemIcon.jsx'
 import { BOARD_SIZES, MAX_EMBLEMS } from '../../utils/bronzeComps.js'
+
+// Most units a player's current board can hold (my-board mode).
+const MAX_BOARD_UNITS = 10
 import styles from './BronzeComps.module.css'
 
 function Checkbox({ checked, onChange, children }) {
@@ -17,7 +20,9 @@ function Checkbox({ checked, onChange, children }) {
 // Board size, counting options, required units, the emblems the search may
 // count on, and the Spatula / Frying Pan held (the search then suggests which
 // emblem to make with each).
-export default function BronzeControls({ filters, setFilter, emblemPicker, unitPicker, toolItems }) {
+// `choiceUnitNames`: trait-choice units in this set (Kha'Zix); none hides the
+// option to exclude them.
+export default function BronzeControls({ filters, setFilter, emblemPicker, unitPicker, toolItems, choiceUnitNames = [] }) {
   const { t } = useTranslation()
   return (
     <div className={styles.controls}>
@@ -44,27 +49,34 @@ export default function BronzeControls({ filters, setFilter, emblemPicker, unitP
           <Checkbox checked={filters.excludeLegendary} onChange={value => setFilter('excludeLegendary', value)}>
             {t('bronze.excludeLegendary')}
           </Checkbox>
-          <Checkbox checked={filters.excludeKhaZix} onChange={value => setFilter('excludeKhaZix', value)}>
-            {t('bronze.excludeKhaZix')}
-          </Checkbox>
+          {choiceUnitNames.length > 0 && (
+            <Checkbox checked={filters.excludeChoiceUnits} onChange={value => setFilter('excludeChoiceUnits', value)}>
+              {t('bronze.excludeChoiceUnits', { units: choiceUnitNames.join(' / ') })}
+            </Checkbox>
+          )}
         </div>
       </div>
       <div className={styles.controlRow}>
         <span className={styles.controlLabel}>{t('bronze.unitFilterLabel')}</span>
         <ChipPicker
-          i18nKey="unit"
+          i18nKey={filters.boardMode ? 'owned' : 'unit'}
           selectedIds={filters.requiredIds}
           options={unitPicker.options}
           renderIcon={unitPicker.renderIcon}
           nameFor={unitPicker.nameFor}
           onChange={ids => setFilter('requiredIds', ids)}
-          max={filters.size}
+          max={filters.boardMode ? MAX_BOARD_UNITS : filters.size}
         />
         {filters.requiredIds.length > 0 && (
           <Button variant="ghost" className={styles.clearButton} onClick={() => setFilter('requiredIds', [])}>
             {t('bronze.clear')}
           </Button>
         )}
+        <div className={styles.checkboxes}>
+          <Checkbox checked={filters.boardMode} onChange={value => setFilter('boardMode', value)}>
+            {t('bronze.boardMode')}
+          </Checkbox>
+        </div>
       </div>
       <div className={styles.controlRow}>
         <span className={styles.controlLabel}>{t('bronze.emblemsLabel')}</span>

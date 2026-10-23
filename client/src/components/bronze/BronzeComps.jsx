@@ -34,8 +34,8 @@ const NONE_COLLAPSED = new Set()
 // it's converted with the Interface Size factor (16px per rem at Compact).
 const SIDE_WIDGET_MIN_REM = 97.5
 const DEFAULT_FILTERS = {
-  size: 8, includeSilverGold: false, excludeLegendary: false, excludeKhaZix: false, requiredIds: [], emblemIds: [],
-  hasSpatula: false, hasFryingPan: false,
+  size: 8, includeSilverGold: false, excludeLegendary: false, excludeChoiceUnits: false, requiredIds: [], emblemIds: [],
+  hasSpatula: false, hasFryingPan: false, boardMode: false,
 }
 
 // Bronze for Life: comps of N units with the most traits in their bronze tier
@@ -57,8 +57,13 @@ export default function BronzeComps() {
   const fullRoster = useMemo(() => toBuilderRoster(champions || []), [champions])
   const roster = useMemo(() => fullRoster.filter(unit => (
     !(filters.excludeLegendary && (unit.cost || 0) >= LEGENDARY_COST)
-    && !(filters.excludeKhaZix && TRAIT_CHOICE_UNIT_IDS.has(unit.id))
-  )), [filters.excludeLegendary, filters.excludeKhaZix, fullRoster])
+    && !(filters.excludeChoiceUnits && TRAIT_CHOICE_UNIT_IDS.has(unit.id))
+  )), [filters.excludeLegendary, filters.excludeChoiceUnits, fullRoster])
+  // Trait-choice units (Kha'Zix) in this set; their "No ..." option hides without them.
+  const choiceUnitNames = useMemo(
+    () => fullRoster.filter(unit => TRAIT_CHOICE_UNIT_IDS.has(unit.id)).map(unit => unit.name),
+    [fullRoster],
+  )
   const ranges = useMemo(() => traitRanges(traits, { includeSilverGold: filters.includeSilverGold }), [traits, filters.includeSilverGold])
   const { emblemOptions, itemLookup, emblemByTrait, toolItems, craftTools, emblemTraits } = useBronzeEmblems({
     items, traits, emblemIds: filters.emblemIds, hasSpatula: filters.hasSpatula, hasFryingPan: filters.hasFryingPan,
@@ -85,9 +90,13 @@ export default function BronzeComps() {
 
   const search = useMemo(
     () => (roster.length > 0 && ranges.size > 0
-      ? { roster, ranges, size: filters.size, emblemTraits, requiredIds, craftTools, limit: MAX_RESULTS }
+      ? {
+        roster, ranges, size: filters.size, emblemTraits, craftTools, limit: MAX_RESULTS,
+        // My-board mode: the picked units are the player's board, not requirements.
+        ...(filters.boardMode ? { ownedIds: requiredIds } : { requiredIds }),
+      }
       : null),
-    [roster, ranges, filters.size, emblemTraits, requiredIds, craftTools],
+    [roster, ranges, filters.size, emblemTraits, requiredIds, craftTools, filters.boardMode],
   )
   const { result, error: searchError, isSearching } = useBronzeSearch(search)
   const championsById = useMemo(() => makeMap(champions), [champions])
@@ -136,7 +145,7 @@ export default function BronzeComps() {
 
   const isLoading = champs.isLoading || traitsQuery.isLoading || itemsQuery.isLoading
   const isError = champs.isError || traitsQuery.isError || itemsQuery.isError || Boolean(searchError)
-  const tooManyRequired = requiredIds.length > filters.size || result?.tooManyRequired
+  const tooManyRequired = !filters.boardMode && (requiredIds.length > filters.size || result?.tooManyRequired)
 
   return (
     <section className={styles.page} aria-label={t('bronze.label')}>
@@ -146,6 +155,7 @@ export default function BronzeComps() {
         emblemPicker={emblemPicker}
         unitPicker={unitPicker}
         toolItems={toolItems}
+        choiceUnitNames={choiceUnitNames}
       />
       {(isLoading || (isSearching && !result)) && (
         <p className={statsStyles.message} role="status" aria-live="polite">{t(isLoading ? 'bronze.loading' : 'bronze.searching')}</p>

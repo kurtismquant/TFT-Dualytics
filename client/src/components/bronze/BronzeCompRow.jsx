@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import ItemIcon from '../ItemIcon.jsx'
+import UnitIcon from '../UnitIcon.jsx'
 import CopyTeamCodeButton from '../shared/CopyTeamCodeButton.jsx'
 import { HoverableTraitChip, HoverableUnit } from '../shared/HoverableBoardPieces.jsx'
 import { buildUnitPath } from '../../constants/routes.js'
@@ -20,6 +21,40 @@ function ChosenTraits({ chosen, traitByName, bonus }) {
       ))}
       <span className="sr-only">{label}</span>
     </span>
+  )
+}
+
+// My-board mode: what to buy and which of the player's units to sell to get
+// from their board to this one.
+function FromBoard({ fromBoard }) {
+  const { t } = useTranslation()
+  const { buy, sell } = fromBoard
+  if (buy.length === 0 && sell.length === 0) {
+    return <p className={styles.fromBoard}><span className={styles.fromBoardReady}>{t('bronze.fromBoardReady')}</span></p>
+  }
+  const icons = (units, sold) => units.map(champion => (
+    <span key={champion.id} className={sold ? styles.fromBoardSold : undefined} title={champion.name}>
+      <UnitIcon champion={champion} size={20} />
+    </span>
+  ))
+  return (
+    <p className={styles.fromBoard}>
+      {buy.length > 0 && (
+        <span className={styles.fromBoardPart}>
+          <span className={styles.fromBoardLabel}>{t('bronze.fromBoardBuy', { count: buy.length })}</span>
+          {icons(buy, false)}
+        </span>
+      )}
+      {sell.length > 0 && (
+        <span className={styles.fromBoardPart}>
+          <span className={styles.fromBoardLabel}>{t('bronze.fromBoardSell', { count: sell.length })}</span>
+          {icons(sell, true)}
+        </span>
+      )}
+      <span className="sr-only">
+        {t('bronze.fromBoardSummary', { buy: buy.map(c => c.name).join(', ') || '-', sell: sell.map(c => c.name).join(', ') || '-' })}
+      </span>
+    </p>
   )
 }
 
@@ -63,10 +98,10 @@ export default function BronzeCompRow({ comp, traitByName, traits, champions, ch
       )}
       <div className={styles.board}>
         <ul className={styles.units} aria-label={t('bronze.unitsLabel')}>
-          {comp.units.map(({ champion, alternatives, required }) => {
+          {comp.units.map(({ champion, alternatives, required, owned }) => {
             const swapIns = alternatives.map(alt => alt.name).join(', ')
             return (
-              <li key={champion.id} className={`${styles.unit} ${required ? styles.requiredUnit : ''}`}>
+              <li key={champion.id} className={`${styles.unit} ${required || owned ? styles.requiredUnit : ''}`}>
                 <HoverableUnit unit={{ champion }} href={buildUnitPath(champion.id)} />
                 <span className={styles.unitName}>{champion.name}</span>
                 {champion.chosenTraits && (
@@ -82,6 +117,7 @@ export default function BronzeCompRow({ comp, traitByName, traits, champions, ch
             )
           })}
         </ul>
+        {comp.fromBoard && <FromBoard fromBoard={comp.fromBoard} />}
         {(crafted.length > 0 || emblems.length > 0) && (
           <ul className={styles.emblems} aria-label={t('bronze.emblemsUsed')}>
             {crafted.map(({ tool, item }) => {
