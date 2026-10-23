@@ -631,7 +631,7 @@
     "groupHidden_one": "{{count}} comp hidden",
     "groupHidden_other": "{{count}} comps hidden",
     "excludeChoiceUnits": "No {{units}}",
-    "boardMode": "My current board",
+    "boardMode": "Show recommended boards",
     "ownedLabel": "Add a unit you have",
     "ownedPlaceholder": "Your units",
     "ownedFullPlaceholder": "Board is full",
@@ -651,7 +651,12 @@
     "fromBoardSummary": "From your board: buy {{buy}}; sell {{sell}}.",
     "choiceTraitsLabel": "{{units}} traits",
     "choiceTraitsOption_one": "{{count}} trait",
-    "choiceTraitsOption_other": "{{count}} traits"
+    "choiceTraitsOption_other": "{{count}} traits",
+    "moreOptions": "Show more options",
+    "fewerOptions": "Show fewer options",
+    "optionsCounting": "Counting",
+    "optionsUnits": "Units",
+    "optionsCraft": "Emblems to make"
   },
   "teamCode": {
     "copy": "Copy team code",

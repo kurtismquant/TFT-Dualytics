@@ -1,34 +1,24 @@
+import { useId, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import Button from '../ui/Button.jsx'
 import ChipPicker from './ChipPicker.jsx'
-import ItemIcon from '../ItemIcon.jsx'
+import Chevron from './Chevron.jsx'
+import BronzeOptions from './BronzeOptions.jsx'
 import { BOARD_SIZES, MAX_EMBLEMS } from '../../utils/bronzeComps.js'
-
-// Most units a player's current board can hold (my-board mode).
-const MAX_BOARD_UNITS = 10
-import statsStyles from '../../pages/StatsPage.module.css'
 import styles from './BronzeComps.module.css'
 
-function Checkbox({ checked, onChange, children }) {
-  return (
-    <label className={styles.checkbox}>
-      <input type="checkbox" checked={checked} onChange={event => onChange(event.target.checked)} />
-      <span>{children}</span>
-    </label>
-  )
-}
+// Most units a player's current board can hold (recommended-boards mode).
+const MAX_BOARD_UNITS = 10
 
-// Board size, counting options, required units, the emblems the search may
-// count on, and the Spatula / Frying Pan held (the search then suggests which
-// emblem to make with each).
-// `choiceUnitNames`: trait-choice units in this set (Kha'Zix); none hides the
-// option to exclude them.
-// `choiceMax`: most traits such a unit picks from; the evolutions dropdown
-// (shown while those units are in) chooses how many it has.
+// Board size, required units (or, in recommended-boards mode, the player's
+// units) and the emblems the search may count on; a "more options" toggle
+// under them opens every checkbox and dropdown (BronzeOptions).
 export default function BronzeControls({
   filters, setFilter, emblemPicker, unitPicker, toolItems, choiceUnitNames = [], choiceMax = 0,
 }) {
   const { t } = useTranslation()
+  const optionsId = useId()
+  const [optionsOpen, setOptionsOpen] = useState(false)
   return (
     <div className={styles.controls}>
       <div className={styles.controlRow}>
@@ -47,33 +37,6 @@ export default function BronzeControls({
             </Button>
           ))}
         </div>
-        <div className={styles.checkboxes}>
-          <Checkbox checked={filters.includeSilverGold} onChange={value => setFilter('includeSilverGold', value)}>
-            {t('bronze.includeSilverGold')}
-          </Checkbox>
-          <Checkbox checked={filters.excludeLegendary} onChange={value => setFilter('excludeLegendary', value)}>
-            {t('bronze.excludeLegendary')}
-          </Checkbox>
-          {choiceUnitNames.length > 0 && (
-            <Checkbox checked={filters.excludeChoiceUnits} onChange={value => setFilter('excludeChoiceUnits', value)}>
-              {t('bronze.excludeChoiceUnits', { units: choiceUnitNames.join(' / ') })}
-            </Checkbox>
-          )}
-          {choiceUnitNames.length > 0 && !filters.excludeChoiceUnits && choiceMax > 0 && (
-            <label className={styles.selectLabel}>
-              <span>{t('bronze.choiceTraitsLabel', { units: choiceUnitNames.join(' / ') })}</span>
-              <select
-                className={`${statsStyles.select} ${styles.choiceSelect}`}
-                value={Math.min(filters.choiceTraitCount, choiceMax)}
-                onChange={event => { setFilter('choiceTraitCount', Number(event.target.value)); event.target.blur() }}
-              >
-                {Array.from({ length: choiceMax }, (_, i) => i + 1).map(n => (
-                  <option key={n} value={n}>{t('bronze.choiceTraitsOption', { count: n })}</option>
-                ))}
-              </select>
-            </label>
-          )}
-        </div>
       </div>
       <div className={styles.controlRow}>
         <span className={styles.controlLabel}>{t('bronze.unitFilterLabel')}</span>
@@ -91,11 +54,6 @@ export default function BronzeControls({
             {t('bronze.clear')}
           </Button>
         )}
-        <div className={styles.checkboxes}>
-          <Checkbox checked={filters.boardMode} onChange={value => setFilter('boardMode', value)}>
-            {t('bronze.boardMode')}
-          </Checkbox>
-        </div>
       </div>
       <div className={styles.controlRow}>
         <span className={styles.controlLabel}>{t('bronze.emblemsLabel')}</span>
@@ -114,15 +72,27 @@ export default function BronzeControls({
             {t('bronze.clear')}
           </Button>
         )}
-        <div className={styles.checkboxes}>
-          <Checkbox checked={filters.hasSpatula} onChange={value => setFilter('hasSpatula', value)}>
-            <span className={styles.toolLabel}><ItemIcon item={toolItems.spatula} size={20} />{t('bronze.hasSpatula')}</span>
-          </Checkbox>
-          <Checkbox checked={filters.hasFryingPan} onChange={value => setFilter('hasFryingPan', value)}>
-            <span className={styles.toolLabel}><ItemIcon item={toolItems.pan} size={20} />{t('bronze.hasFryingPan')}</span>
-          </Checkbox>
-        </div>
       </div>
+      <button
+        type="button"
+        className={styles.moreToggle}
+        onClick={() => setOptionsOpen(open => !open)}
+        aria-expanded={optionsOpen}
+        aria-controls={optionsId}
+      >
+        <span>{t(optionsOpen ? 'bronze.fewerOptions' : 'bronze.moreOptions')}</span>
+        <Chevron direction={optionsOpen ? 'up' : 'down'} size={14} />
+      </button>
+      {optionsOpen && (
+        <BronzeOptions
+          id={optionsId}
+          filters={filters}
+          setFilter={setFilter}
+          toolItems={toolItems}
+          choiceUnitNames={choiceUnitNames}
+          choiceMax={choiceMax}
+        />
+      )}
     </div>
   )
 }

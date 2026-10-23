@@ -631,7 +631,7 @@
     "groupHidden_one": "{{count}} comp oculta",
     "groupHidden_other": "{{count}} comps ocultas",
     "excludeChoiceUnits": "Sin {{units}}",
-    "boardMode": "Mi tablero actual",
+    "boardMode": "Mostrar tableros recomendados",
     "ownedLabel": "Añadir una unidad que tienes",
     "ownedPlaceholder": "Tus unidades",
     "ownedFullPlaceholder": "Tablero lleno",
@@ -651,7 +651,12 @@
     "fromBoardSummary": "Desde tu tablero: comprar {{buy}}; vender {{sell}}.",
     "choiceTraitsLabel": "Rasgos de {{units}}",
     "choiceTraitsOption_one": "{{count}} rasgo",
-    "choiceTraitsOption_other": "{{count}} rasgos"
+    "choiceTraitsOption_other": "{{count}} rasgos",
+    "moreOptions": "Mostrar más opciones",
+    "fewerOptions": "Mostrar menos opciones",
+    "optionsCounting": "Recuento",
+    "optionsUnits": "Unidades",
+    "optionsCraft": "Emblemas a fabricar"
   },
   "teamCode": {
     "copy": "Copiar código",
