@@ -1,6 +1,7 @@
+import { useId } from 'react'
 import { useTranslation } from 'react-i18next'
+import Button from '../ui/Button.jsx'
 import ItemIcon from '../ItemIcon.jsx'
-import statsStyles from '../../pages/StatsPage.module.css'
 import styles from './BronzeComps.module.css'
 
 function Checkbox({ checked, onChange, children }) {
@@ -12,13 +13,15 @@ function Checkbox({ checked, onChange, children }) {
   )
 }
 
-// The "more options" panel: every checkbox and dropdown, in three groups.
+// The "more options" panel: every checkbox and setting, in three groups.
 // `choiceUnitNames`: trait-choice units in this set (Kha'Zix); none hides
-// their options. `choiceMax`: most traits such a unit picks from; the
-// evolutions dropdown chooses how many it has.
+// their options. `choiceMax`: most traits such a unit picks from; the 1..max
+// buttons under "Exclude ..." choose how many it has.
 export default function BronzeOptions({ id, filters, setFilter, toolItems, choiceUnitNames = [], choiceMax = 0 }) {
   const { t } = useTranslation()
   const choiceUnits = choiceUnitNames.join(' / ')
+  const choiceLabelId = useId()
+  const choiceValue = Math.min(filters.choiceTraitCount, choiceMax)
   return (
     <div id={id} className={styles.optionsPanel}>
       <fieldset className={styles.optionGroup}>
@@ -41,18 +44,23 @@ export default function BronzeOptions({ id, filters, setFilter, toolItems, choic
           </Checkbox>
         )}
         {choiceUnitNames.length > 0 && !filters.excludeChoiceUnits && choiceMax > 0 && (
-          <label className={styles.selectLabel}>
-            <span>{t('bronze.choiceTraitsLabel', { units: choiceUnits })}</span>
-            <select
-              className={`${statsStyles.select} ${styles.choiceSelect}`}
-              value={Math.min(filters.choiceTraitCount, choiceMax)}
-              onChange={event => { setFilter('choiceTraitCount', Number(event.target.value)); event.target.blur() }}
-            >
+          <div className={styles.subOption}>
+            <span id={choiceLabelId}>{t('bronze.choiceTraitsLabel', { units: choiceUnits })}</span>
+            <div className={styles.segmented} role="group" aria-labelledby={choiceLabelId}>
               {Array.from({ length: choiceMax }, (_, i) => i + 1).map(n => (
-                <option key={n} value={n}>{t('bronze.choiceTraitsOption', { count: n })}</option>
+                <Button
+                  key={n}
+                  variant="tab"
+                  className={styles.segmentButton}
+                  pressed={choiceValue === n}
+                  onClick={() => setFilter('choiceTraitCount', n)}
+                  aria-label={t('bronze.choiceTraitsOption', { count: n })}
+                >
+                  {n}
+                </Button>
               ))}
-            </select>
-          </label>
+            </div>
+          </div>
         )}
       </fieldset>
       <fieldset className={styles.optionGroup}>
