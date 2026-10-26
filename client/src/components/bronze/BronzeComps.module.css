@@ -679,14 +679,29 @@
     width: 100%;
   }
 
+  /* Phones: the sizes join into one segmented bar (shared borders, no
+     gaps) so all eight fit across the screen. */
   .sizeButton {
+    position: relative;
     flex: 1 1 0;
     min-width: 0;
+    padding: 0;
+  }
+
+  .sizeButton + .sizeButton {
+    margin-left: -1px;
+  }
+
+  /* Hovered / selected segment draws its full border over its neighbours'. */
+  .sizeButton:hover,
+  .sizeButton[aria-pressed='true'] {
+    z-index: 1;
   }
 
   .sizeGroup {
     width: 100%;
     flex-wrap: nowrap;
+    gap: 0;
   }
 
   .groupHeading {
