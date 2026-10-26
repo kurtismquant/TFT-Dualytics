@@ -675,6 +675,7 @@
     "label": "Copiar código del planificador de equipo",
     "title": "Copiar código del planificador de equipo: {{code}}",
     "unavailable": "Código del planificador no disponible",
-    "copiedStatus": "Código copiado. Pégalo en el planificador de equipo del juego."
+    "copiedStatus": "Código copiado. Pégalo en el planificador de equipo del juego.",
+    "tooManyUnits": "El planificador admite {{count}} unidades: se omiten las más baratas"
   }
 }

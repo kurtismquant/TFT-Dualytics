@@ -675,6 +675,7 @@
     "label": "Copy team planner code",
     "title": "Copy team planner code: {{code}}",
     "unavailable": "Team planner code unavailable",
-    "copiedStatus": "Team code copied. Paste it into the in-game Team Planner."
+    "copiedStatus": "Team code copied. Paste it into the in-game Team Planner.",
+    "tooManyUnits": "The Team Planner holds {{count}} units: the cheapest are left out"
   }
 }

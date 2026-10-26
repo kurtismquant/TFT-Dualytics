@@ -6,7 +6,7 @@
 // last counted tier stops a trait counting, so each trait is a count range,
 // e.g. Coven 3-3 (bronze only) or 3-6 (bronze to gold).
 
-export const BOARD_SIZES = [5, 6, 7, 8, 9, 10]
+export const BOARD_SIZES = [5, 6, 7, 8, 9, 10, 11, 12]
 export const MAX_EMBLEMS = 10
 // Legendary units and anything above, for the "no 5-costs" option.
 export const LEGENDARY_COST = 5

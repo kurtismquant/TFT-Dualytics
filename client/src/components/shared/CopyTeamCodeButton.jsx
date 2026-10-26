@@ -49,7 +49,8 @@ async function copyText(text) {
 // no code (no unit with a planner code, e.g. assets cached before codes were
 // served). Clicks don't reach row/card expand handlers. `className` is for the
 // wrapper's placement in the parent layout.
-export default function CopyTeamCodeButton({ code, labeled = false, className = '' }) {
+// `note` adds a line to the tooltip (e.g. the planner's 10-unit limit).
+export default function CopyTeamCodeButton({ code, labeled = false, className = '', note = null }) {
   const { t } = useTranslation()
   const [status, setStatus] = useState('idle') // idle | copied | failed
   const timerRef = useRef(null)
@@ -75,7 +76,7 @@ export default function CopyTeamCodeButton({ code, labeled = false, className = 
         className={`${labeled ? styles.labeled : styles.icon} ${status === 'copied' ? styles.done : ''}`}
         onClick={handleCopy}
         disabled={!code}
-        title={code ? t('teamCode.title', { code }) : t('teamCode.unavailable')}
+        title={code ? [t('teamCode.title', { code }), note].filter(Boolean).join(' · ') : t('teamCode.unavailable')}
         aria-label={code ? t('teamCode.label') : t('teamCode.unavailable')}
       >
         <StatusIcon status={status} />

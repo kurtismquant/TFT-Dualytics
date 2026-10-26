@@ -7,7 +7,7 @@ import { buildUnitPath } from '../../constants/routes.js'
 import { CURRENT_SET } from '../../constants/game.js'
 import { activeTraitStyle } from '../../utils/bronzeComps.js'
 import { CHIP_STYLE_BY_EFFECT_STYLE } from '../../utils/traitTier.js'
-import { encodeTeamPlannerCode } from '../../utils/teamPlannerCode.js'
+import { encodeTeamPlannerCode, TEAM_PLANNER_SLOTS } from '../../utils/teamPlannerCode.js'
 import styles from './BronzeComps.module.css'
 
 // Kha'Zix's chosen evolutions as small trait icons under his portrait.
@@ -170,7 +170,12 @@ export default function BronzeCompRow({
           </span>
         )}
       </div>
-      <CopyTeamCodeButton code={teamCode} className={styles.copyCell} />
+      <CopyTeamCodeButton
+        code={teamCode}
+        className={styles.copyCell}
+        // The in-game planner holds 10 units; bigger boards drop the cheapest.
+        note={comp.units.length > TEAM_PLANNER_SLOTS ? t('teamCode.tooManyUnits', { count: TEAM_PLANNER_SLOTS }) : null}
+      />
     </li>
   )
 }

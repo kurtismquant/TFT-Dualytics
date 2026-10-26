@@ -8,7 +8,7 @@ import { BOARD_SIZES, MAX_EMBLEMS } from '../../utils/bronzeComps.js'
 import styles from './BronzeComps.module.css'
 
 // Most units a player's current board can hold (recommended-boards mode).
-const MAX_BOARD_UNITS = 10
+const MAX_BOARD_UNITS = 12
 
 // Board size, required units (or, in recommended-boards mode, the player's
 // units) and the emblems the search may count on; a "more options" toggle
