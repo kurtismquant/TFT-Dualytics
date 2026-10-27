@@ -10,6 +10,9 @@ import { CHIP_STYLE_BY_EFFECT_STYLE } from '../../utils/traitTier.js'
 import { encodeTeamPlannerCode, TEAM_PLANNER_SLOTS } from '../../utils/teamPlannerCode.js'
 import styles from './BronzeComps.module.css'
 
+// Swap-in icons shown on a unit before the rest collapse into "+N".
+const MAX_SWAP_ICONS = 2
+
 // Kha'Zix's chosen evolutions as small trait icons under his portrait.
 function ChosenTraits({ chosen, traitByName, bonus }) {
   const { t } = useTranslation()
@@ -146,8 +149,22 @@ export default function BronzeCompRow({
                   <ChosenTraits chosen={champion.chosenTraits} traitByName={traitByName} bonus={comp.bonusEvolution} />
                 )}
                 {alternatives.length > 0 && (
+                  // Units that could take this one's place: their icons (two at
+                  // most, then "+N"), cost-coloured like the unit icons.
                   <span className={styles.altBadge} title={t('bronze.swapIn', { units: swapIns })}>
-                    <span aria-hidden="true">+{alternatives.length}</span>
+                    {alternatives.slice(0, MAX_SWAP_ICONS).map(alt => (
+                      <img
+                        key={alt.id}
+                        src={alt.iconUrl}
+                        alt=""
+                        aria-hidden="true"
+                        className={styles.altIcon}
+                        style={{ borderColor: `var(--cost-${alt.cost}, var(--bg-border-bright))` }}
+                      />
+                    ))}
+                    {alternatives.length > MAX_SWAP_ICONS && (
+                      <span className={styles.altMore} aria-hidden="true">+{alternatives.length - MAX_SWAP_ICONS}</span>
+                    )}
                     <span className="sr-only">{t('bronze.swapIn', { units: swapIns })}</span>
                   </span>
                 )}

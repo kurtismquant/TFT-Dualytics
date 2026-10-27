@@ -695,20 +695,37 @@
   object-fit: contain;
 }
 
-/* "+N" marks a unit that other units could replace without changing the result. */
+/* Small icons (top-right of a unit) of units that could replace it without
+   changing the result; more than two collapse into "+N". */
 .altBadge {
   position: absolute;
-  top: -0.25rem;
-  right: -0.125rem;
-  min-width: 1.125rem;
+  top: -0.375rem;
+  right: -0.375rem;
+  display: flex;
+  align-items: center;
+  cursor: help;
+}
+
+.altIcon {
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 1px solid;
+  background: var(--bg-card);
+  object-fit: cover;
+}
+
+.altIcon + .altIcon {
+  margin-left: -0.375rem;
+}
+
+.altMore {
+  margin-left: 0.125rem;
   padding: 0 0.1875rem;
   border: 1px solid var(--bg-border-bright);
   background: var(--bg-card);
   color: var(--text-secondary);
   font-size: var(--text-2xs);
   line-height: 1.4;
-  text-align: center;
-  cursor: help;
 }
 
 .traits {
