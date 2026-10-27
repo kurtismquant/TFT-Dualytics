@@ -697,7 +697,8 @@
     "modeLabel": "Rank comps by",
     "modeBest": "Best comps",
     "modeBoard": "From my units",
-    "resetFilters": "Reset filters"
+    "resetFilters": "Reset filters",
+    "formOptions": "Lux forms that fit: {{forms}}"
   },
   "teamCode": {
     "copy": "Copy team code",

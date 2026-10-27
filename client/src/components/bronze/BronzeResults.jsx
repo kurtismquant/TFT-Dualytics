@@ -6,7 +6,7 @@ import RecommendedUnits from './RecommendedUnits.jsx'
 import { usePlayedBoards } from '../../hooks/usePlayedBoards.js'
 import { useMediaQuery } from '../../hooks/useMediaQuery.js'
 import { useUiScale } from '../../contexts/useUiScale.js'
-import { HIGHLY_PLAYED_MIN_BOARDS, pageGroups } from '../../utils/bronzeComps.js'
+import { HIGHLY_PLAYED_MIN_BOARDS, mergeFormVariants, pageGroups } from '../../utils/bronzeComps.js'
 import styles from './BronzeComps.module.css'
 
 // The list shows PAGE_SIZE more comps each time the user scrolls to its end.
@@ -40,14 +40,16 @@ export default function BronzeResults({ result, isSearching, size, rowProps }) {
     })
     return map
   }, [played.data, result])
+  // Comps differing only by Lux form become one row listing the forms.
+  const merged = useMemo(() => mergeFormVariants(result?.comps || []), [result])
   // Starred comps lead their trait count, ahead of the cost order (before
   // paging, so a starred comp deep in the list still shows near the top).
-  const ordered = useMemo(() => (result?.comps || [])
+  const ordered = useMemo(() => merged
     .map((comp, index) => ({ comp, index }))
     .sort((a, b) => b.comp.traitCount - a.comp.traitCount
       || Number(highlyPlayed.has(b.comp.key)) - Number(highlyPlayed.has(a.comp.key))
       || a.index - b.index)
-    .map(entry => entry.comp), [result, highlyPlayed])
+    .map(entry => entry.comp), [merged, highlyPlayed])
   const page = useMemo(() => pageGroups(ordered, current.shown, current.collapsed), [ordered, current.shown, current.collapsed])
   const showMore = useCallback(() => setPaging(prev => {
     const base = prev.result === result ? prev : { shown: PAGE_SIZE, collapsed: NONE_COLLAPSED }

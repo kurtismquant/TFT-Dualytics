@@ -75,6 +75,21 @@ function FromBoard({ comp, weights }) {
   )
 }
 
+// A merged Lux (or other trait-form unit): one small icon per form that fits
+// here, each the trait it adds; the shown traits are for the first form.
+function FormOptions({ forms, traitByName }) {
+  const { t } = useTranslation()
+  const label = t('bronze.formOptions', { forms: forms.map(form => form.champion.name).join(', ') })
+  return (
+    <span className={styles.chosenTraits} title={label}>
+      {forms.map(({ champion, trait }) => (
+        <img key={champion.id} src={traitByName.get(trait)?.iconUrl} alt="" className={styles.chosenTraitIcon} aria-hidden="true" />
+      ))}
+      <span className="sr-only">{label}</span>
+    </span>
+  )
+}
+
 // One result, kept to a single line of units where the width allows: the units
 // (priciest of each interchangeable group, swap-ins noted) and the emblems in
 // use; the traits (counted, then other active ones, then ones a unit or emblem
@@ -119,10 +134,14 @@ export default function BronzeCompRow({
         <ul className={styles.units} aria-label={t('bronze.unitsLabel')}>
           {comp.units.map(({ champion, alternatives, required, owned }) => {
             const swapIns = alternatives.map(alt => alt.name).join(', ')
+            // Merged Lux forms: named as the base unit, with the forms that fit.
+            const forms = comp.formOptions?.find(option => option.formOf === champion.formOf)?.forms
+            const merged = forms?.length > 1
             return (
               <li key={champion.id} className={`${styles.unit} ${required || owned ? styles.requiredUnit : ''}`}>
                 <HoverableUnit unit={{ champion }} href={buildUnitPath(champion.id)} />
-                <span className={styles.unitName}>{champion.name}</span>
+                <span className={styles.unitName}>{merged ? championsById?.get(champion.formOf)?.name || champion.name : champion.name}</span>
+                {merged && <FormOptions forms={forms} traitByName={traitByName} />}
                 {champion.chosenTraits && (
                   <ChosenTraits chosen={champion.chosenTraits} traitByName={traitByName} bonus={comp.bonusEvolution} />
                 )}

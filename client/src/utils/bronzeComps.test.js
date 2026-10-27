@@ -11,6 +11,7 @@ import {
   BOARD_WEIGHTS,
   craftToolsFor,
   findBronzeComps,
+  mergeFormVariants,
   pageGroups,
   recommendUnits,
   traitRanges,
@@ -482,4 +483,23 @@ test('requiredTraits: a crafted emblem may supply the required trait', () => {
 
 test('requiredTraits: a trait that cannot count in this mode gives no comps', () => {
   assert.deepEqual(findBronzeComps({ roster, ranges, size: 3, requiredTraits: ['Solar'] }).comps, [])
+})
+
+test('comps that differ only by Lux form merge into one, listing every form', () => {
+  const comp = (units, traitCount = 3, crafted = []) => ({ key: units.map(u => u.id).join('|'), traitCount, units: units.map(champion => ({ champion })), craftedEmblems: crafted })
+  const comps = [
+    comp([ravager, blossomLux]),
+    comp([covenRavager1, flora]), // no Lux: untouched
+    comp([ravager, faeLux]), // same board, other form -> merged into the first
+    comp([ravager, faeLux], 2), // other trait count -> separate
+    comp([solar, blossomLux]), // other units -> separate
+  ]
+  const merged = mergeFormVariants(comps)
+  assert.deepEqual(merged.map(c => c.key), ['Ravager|Blossom Lux', 'CovenRavager1|Flora', 'Ravager|Fae Lux', 'Solar|Blossom Lux'])
+  assert.deepEqual(merged[0].formOptions, [{ formOf: 'Lux', forms: [{ champion: blossomLux, trait: 'Blossom' }, { champion: faeLux, trait: 'Fae' }] }])
+  assert.equal(merged[1].formOptions, undefined)
+  assert.equal(merged[2].formOptions[0].forms.length, 1)
+  // Different crafting keeps them apart.
+  const crafted = mergeFormVariants([comp([ravager, blossomLux], 3, [{ tool: 'spatula', trait: 'Fae' }]), comp([ravager, faeLux])])
+  assert.equal(crafted.length, 2)
 })

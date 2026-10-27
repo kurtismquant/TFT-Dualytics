@@ -747,3 +747,40 @@ export function bestCraftedEmblems(comps) {
       return { tool, trait, count }
     })
 }
+
+// Trait-form units (Lux forms: formOf points at another unit, the base) make
+// near-duplicate comps: the same board with a different form, each adding its
+// own trait. Comps with the same trait count, other units and crafting are
+// merged into the first (best-ranked) one, which gains
+// formOptions: [{ formOf, forms: [{ champion, trait }] }] listing every form
+// that fits; `trait` is the trait the form adds. Order is kept.
+export function mergeFormVariants(comps) {
+  const merged = []
+  const byKey = new Map()
+  const isForm = champion => champion.formOf && champion.formOf !== champion.id
+  const formTrait = champion => Object.keys(champion.traitWeights || {})[0] ?? null
+  for (const comp of comps || []) {
+    const forms = comp.units.filter(({ champion }) => isForm(champion))
+    if (forms.length === 0) { merged.push(comp); continue }
+    const key = [
+      comp.traitCount,
+      comp.units.map(({ champion }) => (isForm(champion) ? `form:${champion.formOf}` : [champion.id, ...(champion.chosenTraits || [])].join('+'))).sort().join('|'),
+      (comp.craftedEmblems || []).map(({ trait }) => trait).join(','),
+    ].join('#')
+    const existing = byKey.get(key)
+    if (!existing) {
+      const first = {
+        ...comp,
+        formOptions: forms.map(({ champion }) => ({ formOf: champion.formOf, forms: [{ champion, trait: formTrait(champion) }] })),
+      }
+      byKey.set(key, first)
+      merged.push(first)
+      continue
+    }
+    for (const { champion } of forms) {
+      const option = existing.formOptions.find(entry => entry.formOf === champion.formOf)
+      if (option && !option.forms.some(form => form.champion.id === champion.id)) option.forms.push({ champion, trait: formTrait(champion) })
+    }
+  }
+  return merged
+}

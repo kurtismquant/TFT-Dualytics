@@ -697,7 +697,8 @@
     "modeLabel": "Ordenar comps por",
     "modeBest": "Mejores comps",
     "modeBoard": "Desde mis unidades",
-    "resetFilters": "Restablecer filtros"
+    "resetFilters": "Restablecer filtros",
+    "formOptions": "Formas de Lux que encajan: {{forms}}"
   },
   "teamCode": {
     "copy": "Copiar código",
