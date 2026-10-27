@@ -17,7 +17,7 @@ test('every filter round-trips through the URL', () => {
     avoidIds: ['DA_18_Akali_AD'],
     emblemIds: ['DA_18_EmblemCoven', 'DA_18_EmblemCoven'],
     traitLadder: true,
-    choiceTraitCount: 0,
+    choiceTraitCount: 2, // 0 (Any) is the default
     hasSpatula: true,
     hasFryingPan: true,
   }

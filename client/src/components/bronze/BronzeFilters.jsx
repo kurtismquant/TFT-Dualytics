@@ -118,7 +118,7 @@ export default function BronzeFilters({
                 value={Math.min(filters.choiceTraitCount, choiceMax)}
                 onChange={value => setFilter('choiceTraitCount', value)}
                 options={[
-                  { value: 0, label: t('bronze.choiceOff') },
+                  { value: 0, label: t('bronze.choiceAny'), ariaLabel: t('bronze.choiceAnyLabel') },
                   ...Array.from({ length: choiceMax }, (_, i) => ({
                     value: i + 1, label: i + 1, ariaLabel: t('bronze.choiceTraitsOption', { count: i + 1 }),
                   })),

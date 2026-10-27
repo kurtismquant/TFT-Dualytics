@@ -675,7 +675,6 @@
     "sectionUnits": "Unidades",
     "sectionItems": "Objetos",
     "sectionMode": "Modo",
-    "choiceOff": "No",
     "toolsLabel": "Tengo",
     "modeLabel": "Ordenar comps por",
     "modeBest": "Mejores comps",
@@ -686,7 +685,9 @@
     "playBronze": "Bronce de por vida",
     "playLadder": "Escalera de rasgos",
     "playBronzeHint": "Solo cuentan los niveles de bronce.",
-    "playLadderHint": "Cuenta cualquier nivel activo, de bronce a prismático."
+    "playLadderHint": "Cuenta cualquier nivel activo, de bronce a prismático.",
+    "choiceAny": "Cualq.",
+    "choiceAnyLabel": "Cualquier número de rasgos, menos primero"
   },
   "teamCode": {
     "copy": "Copiar código",

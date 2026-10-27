@@ -479,3 +479,14 @@ test('comps that differ only by Lux form merge into one, listing every form', ()
   const crafted = mergeFormVariants([comp([ravager, blossomLux], 3, [{ tool: 'spatula', trait: 'Fae' }]), comp([ravager, faeLux])])
   assert.equal(crafted.length, 2)
 })
+
+test("Kha'Zix 'any': every evolution count, and fewer evolutions rank first on equal traits", () => {
+  assert.equal(expandTraitChoices([khazix], 'any').length, 4 + 6 + 4 + 1)
+  const { comps } = findBronzeComps({ roster: [khazix, exe, rap, rav, spe, filler], ranges: khaRanges, size: 4, choiceTraitCount: 'any', limit: 100 })
+  const evolutions = c => c.units.find(u => u.champion.id === 'DA_18_KhaZix')?.champion.chosenTraits.length ?? 0
+  assert.ok(comps.some(c => evolutions(c) === 1) && comps.some(c => evolutions(c) >= 2))
+  for (let i = 1; i < comps.length; i++) {
+    const [a, b] = [comps[i - 1], comps[i]]
+    assert.ok(a.traitCount > b.traitCount || (a.traitCount === b.traitCount && evolutions(a) <= evolutions(b)))
+  }
+})

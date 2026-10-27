@@ -675,7 +675,6 @@
     "sectionUnits": "Units",
     "sectionItems": "Items",
     "sectionMode": "Mode",
-    "choiceOff": "Off",
     "toolsLabel": "I have",
     "modeLabel": "Rank comps by",
     "modeBest": "Best comps",
@@ -686,7 +685,9 @@
     "playBronze": "Bronze for Life",
     "playLadder": "Trait Ladder",
     "playBronzeHint": "Only bronze tiers count.",
-    "playLadderHint": "Every active tier counts, bronze to prismatic."
+    "playLadderHint": "Every active tier counts, bronze to prismatic.",
+    "choiceAny": "Any",
+    "choiceAnyLabel": "Any number of traits, fewest first"
   },
   "teamCode": {
     "copy": "Copy team code",

@@ -13,7 +13,7 @@ export const DEFAULT_FILTERS = Object.freeze({
   avoidIds: [], // units no comp may use
   emblemIds: [], // emblems owned (repeats allowed)
   traitLadder: false, // playstyle: Bronze for Life (false) or Trait Ladder
-  choiceTraitCount: 4, // Kha'Zix evolutions; 0 = leave him out
+  choiceTraitCount: 0, // Kha'Zix evolutions 1-4; 0 = any (fewer ranked first)
   hasSpatula: false,
   hasFryingPan: false,
 })

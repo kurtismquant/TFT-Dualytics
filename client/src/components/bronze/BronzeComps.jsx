@@ -40,13 +40,12 @@ export default function BronzeComps() {
   const items = itemsQuery.data
 
   // Same roster as the builder: base Lux dropped, forms count double. Then
-  // avoided units, and trait-choice units when set to Off.
+  // avoided units drop out.
   const fullRoster = useMemo(() => toBuilderRoster(champions || []), [champions])
   const avoid = useMemo(() => new Set(filters.avoidIds), [filters.avoidIds])
   const roster = useMemo(() => fullRoster.filter(unit => (
     !avoid.has(unit.id)
-    && !(filters.choiceTraitCount === 0 && TRAIT_CHOICE_UNIT_IDS.has(unit.id))
-  )), [fullRoster, avoid, filters.choiceTraitCount])
+  )), [fullRoster, avoid])
   const choiceUnits = useMemo(() => fullRoster.filter(unit => TRAIT_CHOICE_UNIT_IDS.has(unit.id)), [fullRoster])
   const choiceMax = Math.max(0, ...choiceUnits.map(unit => traitChoiceCount(unit.id)))
   const ranges = useMemo(() => traitRanges(traits, { ladder: filters.traitLadder }), [traits, filters.traitLadder])
@@ -70,7 +69,7 @@ export default function BronzeComps() {
     }
   }, [roster, fullRoster, filters.requiredIds, unitLookup, emblemOptions, itemLookup])
 
-  // Required units the roster no longer has (avoided, Kha'Zix off) drop out.
+  // Required units the roster no longer has (avoided) drop out.
   const requiredIds = useMemo(
     () => filters.requiredIds.filter(id => roster.some(unit => unit.id === id)),
     [filters.requiredIds, roster],
@@ -79,7 +78,8 @@ export default function BronzeComps() {
     () => (roster.length > 0 && ranges.size > 0
       ? {
         roster, ranges, size: filters.size, emblemTraits, craftTools, limit: MAX_RESULTS,
-        choiceTraitCount: filters.choiceTraitCount > 0 ? Math.min(filters.choiceTraitCount, choiceMax || 4) : null,
+        // 0 = Any: every evolution count, fewer ranked first.
+        choiceTraitCount: filters.choiceTraitCount > 0 ? Math.min(filters.choiceTraitCount, choiceMax || 4) : 'any',
         // From my units: the picked units are the player's board, not requirements.
         ...(filters.boardMode
           ? { ownedIds: requiredIds, maxSwaps: tuning.maxSwaps, boardWeights: tuning.boardWeights }

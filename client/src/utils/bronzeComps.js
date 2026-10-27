@@ -146,6 +146,9 @@ export function expandTraitChoices(roster, traitCount = null) {
       bonusEvolution,
       formOf: unit.id,
     })
+    if (traitCount === 'any') {
+      return choice.from.flatMap((_, i) => combinations(choice.from, i + 1).map(chosen => variant(chosen, false)))
+    }
     if (traitCount != null) {
       const n = Math.min(Math.max(1, traitCount), choice.from.length)
       return combinations(choice.from, n).map(chosen => variant(chosen, false))
@@ -196,7 +199,10 @@ function buildClasses(roster, traitIndex, owned = null, missingPenalty = () => 0
     const key = `${isOwned ? 'own' : ''}|${unit.formOf || ''}|${unit.bonusEvolution ? 'bonus' : ''}|${vector.join(';')}`
     if (!classes.has(key)) {
       const weight = vector.reduce((sum, [, w]) => sum + w, 0)
-      classes.set(key, { vector, weight, group: unit.formOf || null, bonus: Boolean(unit.bonusEvolution), owned: isOwned, units: [] })
+      classes.set(key, {
+        vector, weight, group: unit.formOf || null, bonus: Boolean(unit.bonusEvolution), owned: isOwned,
+        evo: unit.chosenTraits?.length ?? 0, units: [],
+      })
     }
     classes.get(key).units.push(unit)
   }
@@ -217,9 +223,12 @@ function buildClasses(roster, traitIndex, owned = null, missingPenalty = () => 0
 // > 0 when comp a ranks above comp b: more counted traits, then no Kha'Zix
 // 4th evolution, then higher total cost. In my-board mode: higher score, then
 // more traits, then less to buy.
-const compareComps = (a, b) => a.traitCount - b.traitCount || b.bonus - a.bonus || a.cost - b.cost
+// With choiceTraitCount 'any', fewer trait-choice evolutions (Kha'Zix) come
+// right after the trait count / score: they're easier to get. `evo` is 0
+// otherwise, so the key is inert.
+const compareComps = (a, b) => a.traitCount - b.traitCount || b.evo - a.evo || b.bonus - a.bonus || a.cost - b.cost
 const compareBoardComps = (a, b) => a.score - b.score || a.traitCount - b.traitCount || b.penalty - a.penalty
-  || b.bonus - a.bonus || a.cost - b.cost
+  || b.evo - a.evo || b.bonus - a.bonus || a.cost - b.cost
 
 // Top `limit` comps of `size` units by counted trait count. `requiredIds` must
 // be in every comp. `craftTools` ([{ tool, traits }], one per Spatula / Frying
@@ -254,6 +263,7 @@ export function findBronzeComps({
   // variants stay in the search and one of them must be picked.
   const required = new Set(requiredIds)
   const units = expandTraitChoices(roster || [], choiceTraitCount)
+  const anyEvo = choiceTraitCount === 'any'
   const fixed = units.filter(unit => required.has(unit.id) && !unit.chosenTraits)
   const requiredGroups = [...new Set(units.filter(u => required.has(u.id) && u.chosenTraits).map(u => u.formOf))]
   const fixedGroups = new Set(fixed.map(unit => unit.formOf).filter(Boolean))
@@ -413,6 +423,7 @@ export function findBronzeComps({
   const picks = new Array(classes.length).fill(0)
   const groupsUsed = new Map()
   let bonusPick = -1
+  let evo = 0 // evolutions of the trait-choice variant picked ('any' mode ranks fewer first)
   let penalty = 0 // my-board mode: penalty of the units picked so far
   let bought = 0 // my-board mode: units picked that the player doesn't own
   // My-board mode: buy at most the empty slots plus `maxSwaps` replacements
@@ -447,8 +458,8 @@ export function findBronzeComps({
     if (kept.length > limit) keptKeys.delete(kept.pop().picks.join(','))
   }
 
-  const candidate = (traitCount, shared, bonus, candidateCost, candidatePenalty, crafted) => ({
-    traitCount, shared, bonus, cost: candidateCost, crafted, penalty: candidatePenalty,
+  const candidate = (traitCount, shared, bonus, candidateCost, candidatePenalty, crafted, candidateEvo = evo) => ({
+    traitCount, shared, bonus, cost: candidateCost, crafted, penalty: candidatePenalty, evo: anyEvo ? candidateEvo : 0,
     score: boardMode ? weights.trait * traitCount + weights.sharedTrait * shared - candidatePenalty : traitCount,
   })
   const leaf = () => {
@@ -520,11 +531,16 @@ export function findBronzeComps({
       const best = bound(i, remaining)
       if (best < worst.traitCount) return
       if (best === worst.traitCount) {
-        // Best case on the 4th-evolution key: none, unless one is already picked.
-        const bonus = bonusPick !== -1 ? 1 : 0
-        if (bonus > worst.bonus) return
-        const costCap = cost + topSum(topCost[i], remaining)
-        if (bonus === worst.bonus && costCap <= worst.cost) return
+        // Best case on the evolutions key ('any' mode): the ones picked so far.
+        if (anyEvo && evo > worst.evo) return
+        // Fewer evolutions can still beat it; a tie falls to the next keys.
+        if (!anyEvo || evo === worst.evo) {
+          // Best case on the 4th-evolution key: none, unless one is already picked.
+          const bonus = bonusPick !== -1 ? 1 : 0
+          if (bonus > worst.bonus) return
+          const costCap = cost + topSum(topCost[i], remaining)
+          if (bonus === worst.bonus && costCap <= worst.cost) return
+        }
       }
     }
 
@@ -538,6 +554,7 @@ export function findBronzeComps({
         if (boardMode && !cls.owned) bought += take
         if (cls.group) groupsUsed.set(cls.group, (groupsUsed.get(cls.group) || 0) + take)
         if (cls.bonus) bonusPick = i
+        evo += cls.evo * take
       }
       picks[i] = take
       visit(i + 1, remaining - take)
@@ -548,6 +565,7 @@ export function findBronzeComps({
         if (boardMode && !cls.owned) bought -= take
         if (cls.group) groupsUsed.set(cls.group, groupsUsed.get(cls.group) - take)
         if (cls.bonus) bonusPick = -1
+        evo -= cls.evo * take
       }
       picks[i] = 0
     }
@@ -561,11 +579,14 @@ export function findBronzeComps({
     .map(entry => describeComp(entry, classes, fixed, ranges, emblemTraits, names, boardMode ? ownedUnits : null, ownedTraits))
     .sort((a, b) => b.traitCount - a.traitCount
       || (boardMode ? b.fromBoard.score - a.fromBoard.score || a.fromBoard.penalty - b.fromBoard.penalty : 0)
+      || (anyEvo ? evolutionsIn(a) - evolutionsIn(b) : 0)
       || Number(a.bonusEvolution) - Number(b.bonusEvolution)
       || b.totalCost - a.totalCost
       || a.key.localeCompare(b.key))
   return { comps, truncated, tooManyRequired: false }
 }
+
+const evolutionsIn = comp => comp.units.reduce((sum, { champion }) => sum + (champion.chosenTraits?.length ?? 0), 0)
 
 const byCostThenName = (a, b) => (a.champion.cost || 0) - (b.champion.cost || 0) || a.champion.name.localeCompare(b.champion.name)
 
