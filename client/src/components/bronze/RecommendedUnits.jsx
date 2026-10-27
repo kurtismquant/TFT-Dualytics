@@ -33,56 +33,60 @@ export default function RecommendedUnits({ comps, emblemByTrait, toolItems = {} 
   const canExpand = moreUnits.length > units.length
   const shown = expanded && canExpand ? moreUnits : units
   return (
-    <aside className={styles.recommended} aria-labelledby="bronze-recommended-heading" data-no-edge-glow>
-      <h3 id="bronze-recommended-heading" className={styles.recommendedHeading}>{t('bronze.recommendedTitle')}</h3>
-      <ul id="bronze-recommended-list" className={styles.recommendedList}>
-        {shown.map(({ champion, appearances }) => (
-          <li key={champion.id} className={styles.recommendedUnit}>
-            <HoverableUnit unit={{ champion }} href={buildUnitPath(champion.id)} />
-            <span className={styles.recommendedText}>
-              <span className={styles.recommendedName}>{champion.name}</span>
-              <span className={styles.recommendedCount}>{t('bronze.recommendedCount', { count: appearances, total: poolSize })}</span>
-            </span>
-          </li>
-        ))}
-      </ul>
-      {canExpand && (
-        <button
-          type="button"
-          className={styles.recommendedToggle}
-          onClick={() => setExpanded(open => !open)}
-          aria-expanded={expanded}
-          aria-controls="bronze-recommended-list"
-          aria-label={t(expanded ? 'bronze.recommendedFewer' : 'bronze.recommendedMore')}
-          title={t(expanded ? 'bronze.recommendedFewer' : 'bronze.recommendedMore')}
-        >
-          <Chevron direction={expanded ? 'up' : 'down'} size={20} />
-        </button>
-      )}
-      {bestCrafts.length > 0 && (
-        <div className={styles.bestCraft}>
-          <h4 className={styles.bestCraftHeading}>{t('bronze.bestCraftTitle')}</h4>
-          <ul className={styles.recommendedList}>
-            {bestCrafts.map(({ tool, trait, count }) => {
-              const item = emblemByTrait?.get(trait)
-              return (
-                <li key={tool} className={styles.recommendedUnit}>
-                  <span className={styles.craftedEmblem}>
-                    <ItemIcon item={item} size={32} />
-                    <span className={styles.craftBadge} aria-hidden="true"><ItemIcon item={toolItems[tool]} size={14} /></span>
-                  </span>
-                  <span className={styles.recommendedText}>
-                    <span className={styles.recommendedName}>{item?.name || trait}</span>
-                    <span className={styles.recommendedCount}>
-                      {t('bronze.bestCraftCount', { tool: t(`bronze.tool_${tool}`), count, total: poolSize })}
+    // The dock places the widget (a strip above the list, or centred in the
+    // right margin on wide windows); see .recommendedDock.
+    <div className={styles.recommendedDock}>
+      <aside className={styles.recommended} aria-labelledby="bronze-recommended-heading" data-no-edge-glow>
+        <h3 id="bronze-recommended-heading" className={styles.recommendedHeading}>{t('bronze.recommendedTitle')}</h3>
+        <ul id="bronze-recommended-list" className={styles.recommendedList}>
+          {shown.map(({ champion, appearances }) => (
+            <li key={champion.id} className={styles.recommendedUnit}>
+              <HoverableUnit unit={{ champion }} href={buildUnitPath(champion.id)} />
+              <span className={styles.recommendedText}>
+                <span className={styles.recommendedName}>{champion.name}</span>
+                <span className={styles.recommendedCount}>{t('bronze.recommendedCount', { count: appearances, total: poolSize })}</span>
+              </span>
+            </li>
+          ))}
+        </ul>
+        {canExpand && (
+          <button
+            type="button"
+            className={styles.recommendedToggle}
+            onClick={() => setExpanded(open => !open)}
+            aria-expanded={expanded}
+            aria-controls="bronze-recommended-list"
+            aria-label={t(expanded ? 'bronze.recommendedFewer' : 'bronze.recommendedMore')}
+            title={t(expanded ? 'bronze.recommendedFewer' : 'bronze.recommendedMore')}
+          >
+            <Chevron direction={expanded ? 'up' : 'down'} size={20} />
+          </button>
+        )}
+        {bestCrafts.length > 0 && (
+          <div className={styles.bestCraft}>
+            <h4 className={styles.bestCraftHeading}>{t('bronze.bestCraftTitle')}</h4>
+            <ul className={styles.recommendedList}>
+              {bestCrafts.map(({ tool, trait, count }) => {
+                const item = emblemByTrait?.get(trait)
+                return (
+                  <li key={tool} className={styles.recommendedUnit}>
+                    <span className={styles.craftedEmblem}>
+                      <ItemIcon item={item} size={32} />
+                      <span className={styles.craftBadge} aria-hidden="true"><ItemIcon item={toolItems[tool]} size={14} /></span>
                     </span>
-                  </span>
-                </li>
-              )
-            })}
-          </ul>
-        </div>
-      )}
-    </aside>
+                    <span className={styles.recommendedText}>
+                      <span className={styles.recommendedName}>{item?.name || trait}</span>
+                      <span className={styles.recommendedCount}>
+                        {t('bronze.bestCraftCount', { tool: t(`bronze.tool_${tool}`), count, total: poolSize })}
+                      </span>
+                    </span>
+                  </li>
+                )
+              })}
+            </ul>
+          </div>
+        )}
+      </aside>
+    </div>
   )
 }
