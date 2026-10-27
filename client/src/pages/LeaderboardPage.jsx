@@ -99,10 +99,12 @@ export default function LeaderboardPage() {
   }
 
   // hideMobile columns drop off at --bp-md so Rank / Player / Tier-LP fit the screen.
+  // className sets the fixed mobile column widths; shortLabel replaces the label
+  // on mobile (the sort button's aria-label keeps the full name).
   const columns = [
-    { key: 'rank', label: t('leaderboard.colRank'), align: 'center' },
+    { key: 'rank', label: t('leaderboard.colRank'), shortLabel: '#', align: 'center', className: styles.colRank },
     { key: 'name', label: t('leaderboard.colPlayer'), align: 'left' },
-    { key: 'tier', label: t('leaderboard.colLP'), align: 'left' },
+    { key: 'tier', label: t('leaderboard.colLP'), align: 'left', className: styles.colTier },
     { key: 'games', label: t('leaderboard.colGames'), align: 'right', hideMobile: true },
     { key: 'winRate', label: t('leaderboard.colWinRate'), align: 'right', hideMobile: true },
   ]
@@ -190,7 +192,7 @@ export default function LeaderboardPage() {
                       {columns.map(col => (
                         <th
                           key={col.key}
-                          className={`${styles.th} ${sortKey === col.key ? styles.thActive : ''} ${col.hideMobile ? styles.colHideMobile : ''}`}
+                          className={`${styles.th} ${sortKey === col.key ? styles.thActive : ''} ${col.hideMobile ? styles.colHideMobile : ''} ${col.className || ''}`}
                           style={{ textAlign: col.align }}
                           scope="col"
                           aria-sort={sortKey === col.key ? (sortAsc ? 'ascending' : 'descending') : 'none'}
@@ -201,7 +203,12 @@ export default function LeaderboardPage() {
                             onClick={() => handleSort(col.key)}
                             aria-label={t('leaderboard.sortBy', { column: col.label })}
                           >
-                            {col.label}
+                            {col.shortLabel ? (
+                              <>
+                                <span className={styles.labelFull}>{col.label}</span>
+                                <span className={styles.labelShort}>{col.shortLabel}</span>
+                              </>
+                            ) : col.label}
                             {sortKey === col.key && (
                               <span className={styles.sortArrow} aria-hidden="true">{sortAsc ? '▲' : '▼'}</span>
                             )}
