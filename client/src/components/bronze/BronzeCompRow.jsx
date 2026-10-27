@@ -142,7 +142,7 @@ export default function BronzeCompRow({
                 <HoverableUnit unit={{ champion }} href={buildUnitPath(champion.id)} />
                 <span className={styles.unitName}>{merged ? championsById?.get(champion.formOf)?.name || champion.name : champion.name}</span>
                 {merged && <FormOptions forms={forms} traitByName={traitByName} />}
-                {champion.chosenTraits && (
+                {champion.chosenTraits?.length > 0 && (
                   <ChosenTraits chosen={champion.chosenTraits} traitByName={traitByName} bonus={comp.bonusEvolution} />
                 )}
                 {alternatives.length > 0 && (

@@ -34,9 +34,10 @@ function Section({ title, children }) {
 // toggle buttons. On tablets and phones it collapses behind a "Filters"
 // button showing how many filters are on.
 // `pickers`: { unit, emblem } option sets for ChipPicker;
-// `choiceUnitNames` / `choiceMax`: trait-choice units (Kha'Zix) in this set.
+// `choiceUnitNames` / `choiceOptions`: trait-choice units (Kha'Zix) in this
+// set and the evolution traits they pick from, toggled on and off here.
 export default function BronzeFilters({
-  filters, setFilter, resetFilters, activeCount, pickers, toolItems, choiceUnitNames = [], choiceMax = 0,
+  filters, setFilter, resetFilters, activeCount, pickers, toolItems, choiceUnitNames = [], choiceOptions = [], traitByName,
   tuning, setTuning,
 }) {
   const { t } = useTranslation()
@@ -106,20 +107,29 @@ export default function BronzeFilters({
         </Field>
 
         {/* Only trait-choice units (Kha'Zix) are set here; no section without them. */}
-        {choiceUnitNames.length > 0 && choiceMax > 0 && (
+        {choiceUnitNames.length > 0 && choiceOptions.length > 0 && (
           <Section title={t('bronze.sectionUnits')}>
             <Field id={`${id}-choice`} label={t('bronze.choiceTraitsLabel', { units: choiceUnitNames.join(' / ') })}>
-              <Segmented
-                labelledBy={`${id}-choice`}
-                value={Math.min(filters.choiceTraitCount, choiceMax)}
-                onChange={value => setFilter('choiceTraitCount', value)}
-                options={[
-                  { value: 0, label: t('bronze.choiceAny'), ariaLabel: t('bronze.choiceAnyLabel') },
-                  ...Array.from({ length: choiceMax }, (_, i) => ({
-                    value: i + 1, label: i + 1, ariaLabel: t('bronze.choiceTraitsOption', { count: i + 1 }),
-                  })),
-                ]}
-              />
+              <div className={styles.toolToggles} role="group" aria-labelledby={`${id}-choice`}>
+                {choiceOptions.map(trait => {
+                  const on = !filters.choiceTraitsOff.includes(trait)
+                  return (
+                    <button
+                      key={trait}
+                      type="button"
+                      className={styles.toolToggle}
+                      aria-pressed={on}
+                      onClick={() => setFilter('choiceTraitsOff', on
+                        ? [...filters.choiceTraitsOff, trait]
+                        : filters.choiceTraitsOff.filter(name => name !== trait))}
+                    >
+                      <img src={traitByName?.get(trait)?.iconUrl} alt="" className={styles.traitToggleIcon} />
+                      <span>{trait}</span>
+                    </button>
+                  )
+                })}
+              </div>
+              <p className={styles.fieldHint}>{t('bronze.choiceTraitsHint', { units: choiceUnitNames.join(' / ') })}</p>
             </Field>
           </Section>
         )}

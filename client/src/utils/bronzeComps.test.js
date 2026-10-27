@@ -207,6 +207,23 @@ test("an evolutions setting gives Kha'Zix exactly that many traits, no bonus var
   }
 })
 
+test("Kha'Zix takes any non-empty set of the traits switched on, or none if all are off", () => {
+  assert.equal(expandTraitChoices([khazix], null, ['Executioner', 'Rapidfire', 'Ravager', 'Spellweaver']).length, 15)
+  const two = expandTraitChoices([khazix], null, ['Ravager', 'Executioner'])
+  assert.deepEqual(two.map(v => v.chosenTraits), [['Executioner'], ['Ravager'], ['Executioner', 'Ravager']])
+  const none = expandTraitChoices([khazix], null, [])
+  assert.deepEqual(none.map(v => v.chosenTraits), [[]])
+  assert.deepEqual(none[0].traits, ['Rival'])
+  // Search: only switched-on traits appear, fewer first at equal trait count.
+  const { comps } = findBronzeComps({ roster: [khazix, exe, rap, rav, spe, filler], ranges: khaRanges, size: 4, choiceTraits: ['Executioner', 'Ravager'], limit: 100 })
+  const kha = c => c.units.find(u => u.champion.id === 'DA_18_KhaZix')?.champion.chosenTraits
+  for (const comp of comps) for (const trait of kha(comp) || []) assert.ok(['Executioner', 'Ravager'].includes(trait))
+  for (let i = 1; i < comps.length; i++) {
+    const [a, b] = [comps[i - 1], comps[i]]
+    assert.ok(a.traitCount > b.traitCount || (kha(a)?.length ?? 0) <= (kha(b)?.length ?? 0))
+  }
+})
+
 test("Kha'Zix expands into each 3-trait evolution plus the full one", () => {
   const variants = expandTraitChoices([khazix])
   assert.equal(variants.length, 5)

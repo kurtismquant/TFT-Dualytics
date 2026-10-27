@@ -645,8 +645,6 @@
     "fromBoardReady": "Ya es tu tablero",
     "fromBoardSummary": "Desde tu tablero: comprar {{buy}}; vender {{sell}}.",
     "choiceTraitsLabel": "Rasgos de {{units}}",
-    "choiceTraitsOption_one": "{{count}} rasgo",
-    "choiceTraitsOption_other": "{{count}} rasgos",
     "tuningTitle": "Ajustes",
     "tuningHint": "Se aplica a Partir de mis unidades",
     "tuningTrait": "Por rasgo",
@@ -674,8 +672,7 @@
     "playLadder": "Escalera de rasgos",
     "playBronzeHint": "Solo cuentan los niveles de bronce.",
     "playLadderHint": "Cuenta cualquier nivel activo, de bronce a prismático.",
-    "choiceAny": "Cualq.",
-    "choiceAnyLabel": "Cualquier número de rasgos, menos primero"
+    "choiceTraitsHint": "{{units}} puede tomar cualquiera de los rasgos activos; primero los tableros que necesitan menos."
   },
   "teamCode": {
     "copy": "Copiar código",

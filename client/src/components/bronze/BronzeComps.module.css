@@ -174,6 +174,12 @@
   box-shadow: inset 0 -2px 0 var(--accent-gold);
 }
 
+.traitToggleIcon {
+  width: 1.125rem;
+  height: 1.125rem;
+  object-fit: contain;
+}
+
 .toolToggle:focus-visible {
   outline: 2px solid var(--accent-gold);
   outline-offset: 2px;

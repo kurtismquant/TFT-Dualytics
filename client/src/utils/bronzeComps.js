@@ -29,8 +29,8 @@ export const TRAIT_CHOICE_UNITS = {
 }
 // For the "No Kha'Zix" option.
 export const TRAIT_CHOICE_UNIT_IDS = new Set(Object.keys(TRAIT_CHOICE_UNITS))
-// How many traits a trait-choice unit can pick from (Kha'Zix: 4); 0 otherwise.
-export const traitChoiceCount = unitId => TRAIT_CHOICE_UNITS[unitId]?.from.length ?? 0
+// The traits a trait-choice unit picks from (Kha'Zix: 4); [] otherwise.
+export const traitChoiceOptions = unitId => TRAIT_CHOICE_UNITS[unitId]?.from ?? []
 
 // Emblems are named "<Trait> Emblem" and grant +1 to that trait.
 export function getEmblemTrait(item) {
@@ -131,11 +131,12 @@ function combinations(list, size) {
 }
 
 // Replaces each trait-choice unit with one variant per choice, plus the
-// all-traits "bonus" variant. With `traitCount` (the page's evolutions
-// setting) every variant takes exactly that many of the traits instead, and
-// there is no bonus variant. Variants share the unit's id and a group
-// (formOf), so a comp fields one of them at most.
-export function expandTraitChoices(roster, traitCount = null) {
+// all-traits "bonus" variant. With `allowed` (trait names the page has
+// switched on) a variant takes any non-empty set of those instead, or none
+// when every trait is off; with `traitCount` it takes exactly that many
+// ('any' = any number); neither has a bonus variant. Variants share the
+// unit's id and a group (formOf), so a comp fields one of them at most.
+export function expandTraitChoices(roster, traitCount = null, allowed = null) {
   return roster.flatMap(unit => {
     const choice = TRAIT_CHOICE_UNITS[unit.id]
     if (!choice) return [unit]
@@ -146,6 +147,11 @@ export function expandTraitChoices(roster, traitCount = null) {
       bonusEvolution,
       formOf: unit.id,
     })
+    if (allowed) {
+      const pool = choice.from.filter(trait => allowed.includes(trait))
+      if (pool.length === 0) return [variant([], false)]
+      return pool.flatMap((_, i) => combinations(pool, i + 1).map(chosen => variant(chosen, false)))
+    }
     if (traitCount === 'any') {
       return choice.from.flatMap((_, i) => combinations(choice.from, i + 1).map(chosen => variant(chosen, false)))
     }
@@ -223,7 +229,7 @@ function buildClasses(roster, traitIndex, owned = null, missingPenalty = () => 0
 // > 0 when comp a ranks above comp b: more counted traits, then no Kha'Zix
 // 4th evolution, then higher total cost. In my-board mode: higher score, then
 // more traits, then less to buy.
-// With choiceTraitCount 'any', fewer trait-choice evolutions (Kha'Zix) come
+// With choiceTraitCount 'any' or choiceTraits, fewer trait-choice evolutions (Kha'Zix) come
 // right after the trait count / score: they're easier to get. `evo` is 0
 // otherwise, so the key is inert.
 const compareComps = (a, b) => a.traitCount - b.traitCount || b.evo - a.evo || b.bonus - a.bonus || a.cost - b.cost
@@ -241,7 +247,7 @@ const compareBoardComps = (a, b) => a.score - b.score || a.traitCount - b.traitC
 // by score (see BOARD_WEIGHTS; `boardWeights` overrides it) and say what to
 // buy and sell; requiredIds are ignored then.
 export function findBronzeComps({
-  roster, ranges, size, emblemTraits = [], requiredIds = [], craftTools = [], ownedIds = [], choiceTraitCount = null,
+  roster, ranges, size, emblemTraits = [], requiredIds = [], craftTools = [], ownedIds = [], choiceTraitCount = null, choiceTraits = null,
   boardWeights = {}, maxSwaps = null, limit = 20, nodeCap = NODE_CAP,
 }) {
   const owned = new Set(ownedIds)
@@ -262,8 +268,9 @@ export function findBronzeComps({
   // Required units are placed up front, except a trait-choice unit: its
   // variants stay in the search and one of them must be picked.
   const required = new Set(requiredIds)
-  const units = expandTraitChoices(roster || [], choiceTraitCount)
-  const anyEvo = choiceTraitCount === 'any'
+  const units = expandTraitChoices(roster || [], choiceTraitCount, choiceTraits)
+  // Fewer evolutions rank first when the unit may take a varying number.
+  const anyEvo = choiceTraitCount === 'any' || choiceTraits != null
   const fixed = units.filter(unit => required.has(unit.id) && !unit.chosenTraits)
   const requiredGroups = [...new Set(units.filter(u => required.has(u.id) && u.chosenTraits).map(u => u.formOf))]
   const fixedGroups = new Set(fixed.map(unit => unit.formOf).filter(Boolean))

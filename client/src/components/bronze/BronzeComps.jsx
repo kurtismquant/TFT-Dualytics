@@ -11,7 +11,7 @@ import { useChampions } from '../../hooks/useChampions.js'
 import { useItems } from '../../hooks/useItems.js'
 import { useTraits } from '../../hooks/useTraits.js'
 import { toBuilderRoster } from '../../utils/builderRoster.js'
-import { BOARD_MAX_SWAPS, BOARD_WEIGHTS, traitChoiceCount, TRAIT_CHOICE_UNIT_IDS, traitRanges } from '../../utils/bronzeComps.js'
+import { BOARD_MAX_SWAPS, BOARD_WEIGHTS, traitChoiceOptions, TRAIT_CHOICE_UNIT_IDS, traitRanges } from '../../utils/bronzeComps.js'
 import { countActiveFilters } from '../../utils/bronzeParams.js'
 import { makeMap } from '../../utils/statsFormatting.js'
 import statsStyles from '../../pages/StatsPage.module.css'
@@ -42,7 +42,12 @@ export default function BronzeComps() {
   // Same roster as the builder: base Lux dropped, forms count double.
   const roster = useMemo(() => toBuilderRoster(champions || []), [champions])
   const choiceUnits = useMemo(() => roster.filter(unit => TRAIT_CHOICE_UNIT_IDS.has(unit.id)), [roster])
-  const choiceMax = Math.max(0, ...choiceUnits.map(unit => traitChoiceCount(unit.id)))
+  // Their evolution traits (Kha'Zix's 4), each switchable in the sidebar.
+  const choiceOptions = useMemo(() => [...new Set(choiceUnits.flatMap(unit => traitChoiceOptions(unit.id)))], [choiceUnits])
+  const choiceTraits = useMemo(
+    () => choiceOptions.filter(trait => !filters.choiceTraitsOff.includes(trait)),
+    [choiceOptions, filters.choiceTraitsOff],
+  )
   const ranges = useMemo(() => traitRanges(traits, { ladder: filters.traitLadder }), [traits, filters.traitLadder])
   const { emblemOptions, itemLookup, emblemByTrait, toolItems, craftTools, emblemTraits } = useBronzeEmblems({
     items, traits, emblemIds: filters.emblemIds, hasSpatula: filters.hasSpatula, hasFryingPan: filters.hasFryingPan,
@@ -72,15 +77,15 @@ export default function BronzeComps() {
     () => (roster.length > 0 && ranges.size > 0
       ? {
         roster, ranges, size: filters.size, emblemTraits, craftTools, limit: MAX_RESULTS,
-        // 0 = Any: every evolution count, fewer ranked first.
-        choiceTraitCount: filters.choiceTraitCount > 0 ? Math.min(filters.choiceTraitCount, choiceMax || 4) : 'any',
+        // Any set of the switched-on evolution traits; fewer ranked first.
+        choiceTraits,
         // From my units: the picked units are the player's board, not requirements.
         ...(filters.boardMode
           ? { ownedIds: requiredIds, maxSwaps: tuning.maxSwaps, boardWeights: tuning.boardWeights }
           : { requiredIds }),
       }
       : null),
-    [roster, ranges, filters.size, emblemTraits, craftTools, filters.choiceTraitCount, choiceMax,
+    [roster, ranges, filters.size, emblemTraits, craftTools, choiceTraits,
       filters.boardMode, requiredIds, tuning],
   )
   const { result, error: searchError, isSearching } = useBronzeSearch(search)
@@ -104,7 +109,8 @@ export default function BronzeComps() {
         pickers={pickers}
         toolItems={toolItems}
         choiceUnitNames={choiceUnits.map(unit => unit.name)}
-        choiceMax={choiceMax}
+        choiceOptions={choiceOptions}
+        traitByName={traitByName}
         tuning={tuning}
         setTuning={setTuning}
       />

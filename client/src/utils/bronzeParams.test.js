@@ -16,7 +16,7 @@ test('every filter round-trips through the URL', () => {
     boardMode: true,
     emblemIds: ['DA_18_EmblemCoven', 'DA_18_EmblemCoven'],
     traitLadder: true,
-    choiceTraitCount: 2, // 0 (Any) is the default
+    choiceTraitsOff: ['Rapidfire', 'Spellweaver'],
     hasSpatula: true,
     hasFryingPan: true,
   }
@@ -26,9 +26,8 @@ test('every filter round-trips through the URL', () => {
 })
 
 test('bad values fall back; lists are cleaned, deduped (not emblems) and capped', () => {
-  const parsed = parseBronzeParams(new URLSearchParams('n=99&kz=-1&u=A,A,<x>,B&e=E,E&play=x&mode=yes'))
+  const parsed = parseBronzeParams(new URLSearchParams('n=99&u=A,A,<x>,B&e=E,E&play=x&mode=yes'))
   assert.equal(parsed.size, DEFAULT_FILTERS.size)
-  assert.equal(parsed.choiceTraitCount, DEFAULT_FILTERS.choiceTraitCount)
   assert.deepEqual(parsed.requiredIds, ['A', 'B'])
   assert.deepEqual(parsed.emblemIds, ['E', 'E'])
   assert.equal(parsed.traitLadder, false)
