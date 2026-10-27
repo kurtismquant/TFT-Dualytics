@@ -1,14 +1,15 @@
-/* Star slider | items slider | readout, side by side in the unit header. */
+/* Star slider | items slider | readout, side by side in the unit header. On
+   tablets the readout wraps beneath the sliders when the row runs short. */
 .row {
   display: flex;
+  flex-wrap: wrap;
   align-items: flex-end;
-  gap: 1.75rem;
+  gap: 1rem 1.75rem;
 }
 
 @media (--bp-md) {
-  /* Phones: the two sliders share a line; the readout wraps beneath them. */
+  /* Phones: the two sliders share a line; the readout always sits beneath them. */
   .row {
-    flex-wrap: wrap;
     gap: 1rem 1.25rem;
   }
 

@@ -100,7 +100,8 @@ export function buildItemLookup(allItems) {
 }
 
 // ── Combo table sorting ────────────────────────────────────────────────────
-export const DEFAULT_COMBO_SORT = { key: 'avgPlacement', direction: 'asc' }
+// Most games first by default.
+export const DEFAULT_COMBO_SORT = { key: 'count', direction: 'desc' }
 
 // First click on a column: avg placement ascends (lower is better), rates and
 // game counts descend (higher first).

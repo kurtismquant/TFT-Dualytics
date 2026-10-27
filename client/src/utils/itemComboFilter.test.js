@@ -4,6 +4,7 @@ import assert from 'node:assert/strict'
 import {
   buildItemCandidates,
   buildItemLookup,
+  DEFAULT_COMBO_SORT,
   nextComboSort,
   sortCombos,
   comboMatchesFilters,
@@ -82,4 +83,13 @@ test('sortCombos sorts by the chosen column and breaks ties by games', () => {
   assert.deepEqual(sortCombos(combos, { key: 'winRate', direction: 'desc' }).map(c => c.items[0]), ['c', 'a', 'b'])
   assert.deepEqual(nextComboSort({ key: 'avgPlacement', direction: 'asc' }, 'count'), { key: 'count', direction: 'desc' })
   assert.deepEqual(nextComboSort({ key: 'count', direction: 'desc' }, 'count'), { key: 'count', direction: 'asc' })
+})
+
+test('the default sort puts the most games first', () => {
+  const combos = [
+    { items: ['a'], count: 10, avgPlacement: 1.5 },
+    { items: ['b'], count: 50, avgPlacement: 2.5 },
+    { items: ['c'], count: 20, avgPlacement: 2.0 },
+  ]
+  assert.deepEqual(sortCombos(combos, DEFAULT_COMBO_SORT).map(c => c.items[0]), ['b', 'c', 'a'])
 })

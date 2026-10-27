@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next'
 import SortHeader from '../stats/SortHeader.jsx'
 import ItemComboRow from './ItemComboRow.jsx'
 import statsStyles from '../../pages/StatsPage.module.css'
+import styles from './ItemComboTable.module.css'
 
 // Sortable table of a unit's item rows — 3-item combos, or single items (rows
 // with `items: [id]`). Reuses the Stats page table styles, including hiding the
@@ -13,7 +14,7 @@ export default function ItemComboTable({ combos, sort, onSort, itemLookup, allIt
   return (
     <div className={statsStyles.tableWrap}>
       <p id={descId} className="sr-only">{t('stats.tableDescription')}</p>
-      <table className={statsStyles.table} aria-describedby={descId}>
+      <table className={`${statsStyles.table} ${styles.comboTable}`} aria-describedby={descId}>
         <caption className="sr-only">{caption || t('unit.tableCaption', { unit: unitName })}</caption>
         <thead>
           <tr>

@@ -8,8 +8,9 @@ import compStyles from '../../pages/CompPage.module.css'
 import statsStyles from '../../pages/StatsPage.module.css'
 import styles from '../../pages/UnitStatsPage.module.css'
 
-// Top comps that field the unit, best avg placement first. Reuses the Comps
-// page's all-comps response (same query key), filtered client-side.
+// Top comps that field the unit, most played first (best avg placement breaks
+// ties). Reuses the Comps page's all-comps response (same query key),
+// filtered client-side.
 export default function UnitCompsView({ unitId, patch, champions, items, traits }) {
   const { t } = useTranslation()
   const { data, isLoading, isError } = useTopComps({ limit: 0, patch })
@@ -18,7 +19,7 @@ export default function UnitCompsView({ unitId, patch, champions, items, traits 
   const comps = useMemo(
     () => (data?.comps || [])
       .filter(comp => comp.units?.some(unit => unit.id === unitId))
-      .sort((a, b) => a.avgPlacement - b.avgPlacement || b.playCount - a.playCount),
+      .sort((a, b) => b.playCount - a.playCount || a.avgPlacement - b.avgPlacement),
     [data?.comps, unitId]
   )
   const uniqueTraitIds = useMemo(() => getUniqueTraitIds(champions || [], traits || []), [champions, traits])

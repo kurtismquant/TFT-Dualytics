@@ -302,6 +302,13 @@
     flex: 1 1 9.5rem;
     min-width: 0;
   }
+
+  /* Phones can't hover, and a tooltip as wide as the slider would run off
+     screen. Tapping a stop selects it, so the readout shows its numbers
+     instead; the button's aria-label still carries them. */
+  .tip {
+    display: none;
+  }
 }
 
 /* The phone rule above stretches .wrap; the compact slider keeps its size. */
