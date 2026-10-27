@@ -20,7 +20,8 @@
   background: var(--bg-card);
 }
 
-/* The "Filters (n)" toggle only shows when the sidebar collapses (tablet). */
+/* The "Filters (n)" toggle only shows when the sidebar moves above the
+   results (data-sidebar='top'). */
 .filtersToggle {
   display: none;
   align-items: center;
@@ -334,8 +335,7 @@
 }
 
 .resultsLayout[data-widget='outside'] .recommendedList {
-  flex-direction: column;
-  flex-wrap: nowrap;
+  grid-template-columns: minmax(0, 1fr);
   gap: 0.5rem;
 }
 
@@ -373,10 +373,11 @@
   text-transform: uppercase;
 }
 
-/* A wrapping row in the strip; a column in the side widget. */
+/* Equal columns in the strip, so entries line up when they wrap onto more
+   lines (long names truncate); a single column in the side widget. */
 .recommendedList {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr));
   gap: 0.5rem 1.25rem;
   margin: 0;
   padding: 0;
@@ -548,17 +549,43 @@
   text-transform: uppercase;
 }
 
-/* Units get the free width so up to 10 (plus emblems) fit on one line on
-   desktop; traits wrap in their own column; the copy icon sits at the end.
-   The left gutter holds the highly-played star. */
+/* Units, traits (wrapping in their own column) and the copy icon side by side.
+   --unit-cols (set per row from data-unit-layout, see utils/bronzeLayout.js) is
+   how many units go on a line: the units column never gets narrower than
+   that, and the units list never wider, so the board takes one or two lines.
+   The traits take 12-19rem of what's left. The left gutter holds the
+   highly-played star. */
 .row {
+  --units-width: calc(var(--unit-cols) * 3.125rem + (var(--unit-cols) - 1) * 0.375rem);
   position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 19rem) auto;
+  grid-template-columns: minmax(var(--units-width), 1fr) minmax(12rem, 19rem) auto;
   align-items: center;
   gap: 0.5rem 1rem;
   padding: 0.5rem 0.75rem 0.5rem 1.25rem;
   border-bottom: 1px solid var(--bg-border-muted);
+}
+
+.row:not([data-unit-layout='stacked']) .units {
+  max-width: var(--units-width);
+}
+
+/* Mobile layout, used once the sidebar is above the results and two lines of
+   units still won't fit beside the traits: units and the copy icon share the
+   first line; traits go under. */
+.row[data-unit-layout='stacked'] {
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.row[data-unit-layout='stacked'] .traits {
+  grid-column: 1 / -1;
+  grid-row: 2;
+}
+
+.row[data-unit-layout='stacked'] .copyCell {
+  grid-column: 2;
+  grid-row: 1;
+  align-self: start;
 }
 
 .row:last-child {
@@ -734,6 +761,20 @@
   object-fit: contain;
 }
 
+/* Every row reserves the height of that icon line (plus its gap), so rows
+   with a Kha'Zix or Lux aren't taller than the rest. In those rows the other
+   units keep it as an empty line underneath, so all the icons line up; rows
+   without one split it above and below each unit, centring them. Margins,
+   not padding, so the swap badge stays on the icon's corner. */
+.units:has(.chosenTraits) > .unit:not(:has(.chosenTraits))::after {
+  content: '';
+  height: 0.75rem;
+}
+
+.units:not(:has(.chosenTraits)) > .unit {
+  margin-block: calc((0.1875rem + 0.75rem) / 2);
+}
+
 /* "+N" (top-right of a unit): units that could replace it without changing
    the result. Hover / focus / tap opens a card listing them (SwapBadge). */
 .swapWrap {
@@ -840,40 +881,25 @@
   padding: 1rem 0;
 }
 
-@media (--bp-lg) {
-  /* Sidebar above the results, collapsed behind its "Filters" toggle. */
-  .page {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 1rem;
-  }
+/* Sidebar above the results, collapsed behind its "Filters" toggle: on tablets
+   and phones, and on desktops too narrow for the rows to keep their traits
+   beside the units with the sidebar alongside (data-sidebar, set from the
+   page's width in BronzeComps.jsx via utils/bronzeLayout.js). */
+.page[data-sidebar='top'] {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1rem;
+}
 
-  .filtersToggle {
-    display: flex;
-  }
+.page[data-sidebar='top'] .filtersToggle {
+  display: flex;
+}
 
-  .sidebar[data-open='false'] .filtersBody {
-    display: none;
-  }
+.page[data-sidebar='top'] .sidebar[data-open='false'] .filtersBody {
+  display: none;
+}
 
-  .sidebar[data-open='true'] .filtersBody {
-    margin-top: 0.75rem;
-  }
-
-  /* Units and the copy icon share the first line; traits go under them. */
-  .row {
-    grid-template-columns: minmax(0, 1fr) auto;
-  }
-
-  .traits {
-    grid-column: 1 / -1;
-    grid-row: 2;
-  }
-
-  .copyCell {
-    grid-column: 2;
-    grid-row: 1;
-    align-self: start;
-  }
+.page[data-sidebar='top'] .sidebar[data-open='true'] .filtersBody {
+  margin-top: 0.75rem;
 }
 
 @media (--bp-md) {

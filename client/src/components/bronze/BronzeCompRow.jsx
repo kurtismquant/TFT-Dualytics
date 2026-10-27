@@ -99,8 +99,11 @@ function FormOptions({ forms, traitByName }) {
 // The trait count is the heading of the group the row sits in.
 // `played` ({ count, avgPlacement }) marks a highly played comp with a gold
 // star; `plays` (the same, any count) adds a line with it under the units.
+// `unitLayout` ('one' | 'two' | 'stacked', from BronzeResults) sets how many
+// units go on each line: all of them, half (rounded up), or as many as fit.
 export default function BronzeCompRow({
   comp, traitByName, traits, champions, championsById, emblemByTrait, toolItems = {}, boardWeights, played, plays,
+  unitLayout = 'stacked',
 }) {
   const { t } = useTranslation()
   const teamCode = encodeTeamPlannerCode(comp.units.map(unit => unit.champion), championsById, CURRENT_SET)
@@ -123,9 +126,12 @@ export default function BronzeCompRow({
   const crafted = (comp.craftedEmblems || [])
     .map(({ tool, trait }) => ({ tool, item: emblemByTrait.get(trait) }))
     .filter(entry => entry.item)
+  const unitCols = unitLayout === 'one' ? comp.units.length
+    : unitLayout === 'two' ? Math.ceil(comp.units.length / 2)
+      : null
 
   return (
-    <li className={styles.row}>
+    <li className={styles.row} data-unit-layout={unitLayout} style={unitCols ? { '--unit-cols': unitCols } : undefined}>
       {played && <PlayedStar played={played} />}
       <div className={styles.board}>
         <ul className={styles.units} aria-label={t('bronze.unitsLabel')}>

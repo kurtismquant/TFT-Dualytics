@@ -7,11 +7,15 @@ import UnitIcon from '../UnitIcon.jsx'
 import { useBronzeSearch } from '../../hooks/useBronzeSearch.js'
 import { useBronzeEmblems } from '../../hooks/useBronzeEmblems.js'
 import { useBronzeFilters } from '../../hooks/useBronzeFilters.js'
+import { useElementWidth } from '../../hooks/useElementWidth.js'
+import { useIsTabletDown } from '../../hooks/useMediaQuery.js'
 import { useChampions } from '../../hooks/useChampions.js'
 import { useItems } from '../../hooks/useItems.js'
 import { useTraits } from '../../hooks/useTraits.js'
+import { useUiScale } from '../../contexts/useUiScale.js'
 import { toBuilderRoster } from '../../utils/builderRoster.js'
 import { BOARD_MAX_SWAPS, BOARD_WEIGHTS, LEGENDARY_COST, traitChoiceOptions, TRAIT_CHOICE_UNIT_IDS, traitRanges } from '../../utils/bronzeComps.js'
+import { bronzeLayout } from '../../utils/bronzeLayout.js'
 import { countActiveFilters } from '../../utils/bronzeParams.js'
 import { makeMap } from '../../utils/statsFormatting.js'
 import statsStyles from '../../pages/StatsPage.module.css'
@@ -106,8 +110,20 @@ export default function BronzeComps() {
   const isError = champs.isError || traitsQuery.isError || itemsQuery.isError || Boolean(searchError)
   const tooManyRequired = !boardMode && (requiredIds.length > filters.size || result?.tooManyRequired)
 
+  // Sidebar left of or above the results, and how rows set out their units,
+  // from the page's width in rem (16px per rem at Compact, scaled by
+  // Interface Size) and the biggest board listed.
+  const uiScale = useUiScale()
+  const tabletDown = useIsTabletDown()
+  const [pageElement, setPageElement] = useState(null)
+  const pageWidth = useElementWidth(pageElement)
+  const maxUnits = result?.comps.length
+    ? result.comps.reduce((max, comp) => Math.max(max, comp.units.length), 0)
+    : filters.size
+  const layout = bronzeLayout(pageWidth / (16 * uiScale), maxUnits, { tabletDown })
+
   return (
-    <section className={styles.page} aria-label={t('bronze.label')}>
+    <section ref={setPageElement} className={styles.page} data-sidebar={layout.sidebar} aria-label={t('bronze.label')}>
       <BronzeFilters
         filters={{ ...filters, requiredIds }}
         setFilter={setFilter}
@@ -131,7 +147,7 @@ export default function BronzeComps() {
           <p className={statsStyles.message} role="status">{t('bronze.empty')}</p>
         )}
         {result?.truncated && <p className={statsStyles.message} role="status">{t('bronze.truncated')}</p>}
-        <BronzeResults result={result} isSearching={isSearching} size={filters.size} rankBy={filters.rankBy} rowProps={rowProps} />
+        <BronzeResults result={result} isSearching={isSearching} size={filters.size} rankBy={filters.rankBy} rowProps={rowProps} unitLayout={layout.unitLayout} />
       </div>
     </section>
   )

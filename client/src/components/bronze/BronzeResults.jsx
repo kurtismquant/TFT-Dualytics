@@ -23,8 +23,8 @@ const SIDE_WIDGET_MIN_REM = 110
 // Results: trait-count groups (collapsible, paged), the highly-played star
 // (starred comps lead their trait count) and the recommended-units widget.
 // rankBy 'played' orders each trait count by play count instead, and each row
-// shows its count.
-export default function BronzeResults({ result, isSearching, size, rankBy, rowProps }) {
+// shows its count. `unitLayout` (from bronzeLayout) sets every row's units.
+export default function BronzeResults({ result, isSearching, size, rankBy, rowProps, unitLayout }) {
   const { t } = useTranslation()
   const uiScale = useUiScale()
   const widgetOutside = useMediaQuery(`(min-width: ${Math.round(SIDE_WIDGET_MIN_REM * 16 * uiScale)}px)`)
@@ -76,6 +76,8 @@ export default function BronzeResults({ result, isSearching, size, rankBy, rowPr
     return { result, shown: base.shown, collapsed }
   }), [result])
 
+  const groupRowProps = useMemo(() => ({ ...rowProps, unitLayout }), [rowProps, unitLayout])
+
   if (!result?.comps.length) return null
   return (
     <div className={styles.resultsLayout} data-widget={widgetOutside ? 'outside' : 'inline'}>
@@ -94,7 +96,7 @@ export default function BronzeResults({ result, isSearching, size, rankBy, rowPr
           <BronzeGroups
             groups={page.groups}
             onToggle={toggleGroup}
-            rowProps={rowProps}
+            rowProps={groupRowProps}
             highlyPlayed={highlyPlayed}
             playCounts={byPlays && played.data?.ready ? playCounts : null}
           />
