@@ -18,12 +18,13 @@ test('every filter round-trips through the URL', () => {
     traitLadder: true,
     choiceTraitsOff: ['Rapidfire', 'Spellweaver'],
     excludeChoiceUnits: true,
+    excludeLegendary: true,
     hasSpatula: true,
     hasFryingPan: true,
   }
   const search = bronzeFiltersToSearch(filters)
   assert.deepEqual(parseBronzeParams(new URLSearchParams(search.toString())), filters)
-  assert.equal(countActiveFilters(filters), 9)
+  assert.equal(countActiveFilters(filters), 10)
 })
 
 test('bad values fall back; lists are cleaned, deduped (not emblems) and capped', () => {

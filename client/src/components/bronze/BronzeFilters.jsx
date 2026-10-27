@@ -43,6 +43,7 @@ export default function BronzeFilters({
   const { t } = useTranslation()
   const id = useId()
   const [open, setOpen] = useState(false)
+  const hasChoiceUnits = choiceUnitNames.length > 0 && choiceOptions.length > 0
   const chip = (key, picker, i18nKey, max, extra = {}) => (
     <ChipPicker
       i18nKey={i18nKey}
@@ -107,10 +108,18 @@ export default function BronzeFilters({
           {chip('emblemIds', pickers.emblem, 'emblem', MAX_EMBLEMS, { allowDuplicates: true })}
         </Field>
 
-        {/* Only trait-choice units (Kha'Zix) are set here; no section without them. */}
-        {choiceUnitNames.length > 0 && choiceOptions.length > 0 && (
-          <Section title={t('bronze.sectionUnits')}>
-            <div className={styles.toolToggles}>
+        <Section title={t('bronze.sectionUnits')}>
+          <div className={styles.toolToggles}>
+            <button
+              type="button"
+              className={styles.toolToggle}
+              aria-pressed={filters.excludeLegendary}
+              onClick={() => setFilter('excludeLegendary', !filters.excludeLegendary)}
+            >
+              {t('bronze.excludeLegendary')}
+            </button>
+            {/* Trait-choice units (Kha'Zix) only in sets that have them. */}
+            {hasChoiceUnits && (
               <button
                 type="button"
                 className={styles.toolToggle}
@@ -119,33 +128,33 @@ export default function BronzeFilters({
               >
                 {t('bronze.excludeChoiceUnits', { units: choiceUnitNames.join(' / ') })}
               </button>
-            </div>
-            {!filters.excludeChoiceUnits && (
-              <Field id={`${id}-choice`} label={t('bronze.choiceTraitsLabel', { units: choiceUnitNames.join(' / ') })}>
-                <div className={styles.toolToggles} role="group" aria-labelledby={`${id}-choice`}>
-                  {choiceOptions.map(trait => {
-                    const on = !filters.choiceTraitsOff.includes(trait)
-                    return (
-                      <button
-                        key={trait}
-                        type="button"
-                        className={styles.toolToggle}
-                        aria-pressed={on}
-                        onClick={() => setFilter('choiceTraitsOff', on
-                          ? [...filters.choiceTraitsOff, trait]
-                          : filters.choiceTraitsOff.filter(name => name !== trait))}
-                      >
-                        <img src={traitByName?.get(trait)?.iconUrl} alt="" className={styles.traitToggleIcon} />
-                        <span>{trait}</span>
-                      </button>
-                    )
-                  })}
-                </div>
-                <p className={styles.fieldHint}>{t('bronze.choiceTraitsHint', { units: choiceUnitNames.join(' / ') })}</p>
-              </Field>
             )}
-          </Section>
-        )}
+          </div>
+          {hasChoiceUnits && !filters.excludeChoiceUnits && (
+            <Field id={`${id}-choice`} label={t('bronze.choiceTraitsLabel', { units: choiceUnitNames.join(' / ') })}>
+              <div className={styles.toolToggles} role="group" aria-labelledby={`${id}-choice`}>
+                {choiceOptions.map(trait => {
+                  const on = !filters.choiceTraitsOff.includes(trait)
+                  return (
+                    <button
+                      key={trait}
+                      type="button"
+                      className={styles.toolToggle}
+                      aria-pressed={on}
+                      onClick={() => setFilter('choiceTraitsOff', on
+                        ? [...filters.choiceTraitsOff, trait]
+                        : filters.choiceTraitsOff.filter(name => name !== trait))}
+                    >
+                      <img src={traitByName?.get(trait)?.iconUrl} alt="" className={styles.traitToggleIcon} />
+                      <span>{trait}</span>
+                    </button>
+                  )
+                })}
+              </div>
+              <p className={styles.fieldHint}>{t('bronze.choiceTraitsHint', { units: choiceUnitNames.join(' / ') })}</p>
+            </Field>
+          )}
+        </Section>
 
         <Section title={t('bronze.sectionItems')}>
           <Field id={`${id}-tools`} label={t('bronze.toolsLabel')}>

@@ -11,7 +11,7 @@ import { useChampions } from '../../hooks/useChampions.js'
 import { useItems } from '../../hooks/useItems.js'
 import { useTraits } from '../../hooks/useTraits.js'
 import { toBuilderRoster } from '../../utils/builderRoster.js'
-import { BOARD_MAX_SWAPS, BOARD_WEIGHTS, traitChoiceOptions, TRAIT_CHOICE_UNIT_IDS, traitRanges } from '../../utils/bronzeComps.js'
+import { BOARD_MAX_SWAPS, BOARD_WEIGHTS, LEGENDARY_COST, traitChoiceOptions, TRAIT_CHOICE_UNIT_IDS, traitRanges } from '../../utils/bronzeComps.js'
 import { countActiveFilters } from '../../utils/bronzeParams.js'
 import { makeMap } from '../../utils/statsFormatting.js'
 import statsStyles from '../../pages/StatsPage.module.css'
@@ -40,13 +40,14 @@ export default function BronzeComps() {
   const items = itemsQuery.data
 
   // Same roster as the builder: base Lux dropped, forms count double. The
-  // search roster leaves trait-choice units (Kha'Zix) out when excluded.
+  // search roster leaves trait-choice units (Kha'Zix) and 5-costs out when
+  // excluded.
   const fullRoster = useMemo(() => toBuilderRoster(champions || []), [champions])
   const choiceUnits = useMemo(() => fullRoster.filter(unit => TRAIT_CHOICE_UNIT_IDS.has(unit.id)), [fullRoster])
-  const roster = useMemo(
-    () => (filters.excludeChoiceUnits ? fullRoster.filter(unit => !TRAIT_CHOICE_UNIT_IDS.has(unit.id)) : fullRoster),
-    [fullRoster, filters.excludeChoiceUnits],
-  )
+  const roster = useMemo(() => fullRoster.filter(unit => (
+    !(filters.excludeChoiceUnits && TRAIT_CHOICE_UNIT_IDS.has(unit.id))
+    && !(filters.excludeLegendary && (unit.cost || 0) >= LEGENDARY_COST)
+  )), [fullRoster, filters.excludeChoiceUnits, filters.excludeLegendary])
   // Their evolution traits (Kha'Zix's 4), each switchable in the sidebar.
   const choiceOptions = useMemo(() => [...new Set(choiceUnits.flatMap(unit => traitChoiceOptions(unit.id)))], [choiceUnits])
   const choiceTraits = useMemo(

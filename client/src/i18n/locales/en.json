@@ -674,7 +674,8 @@
     "playLadderHint": "Every active tier counts, bronze to prismatic.",
     "choiceTraitsHint": "{{units}} may take any of the traits that are on; boards needing fewer come first.",
     "swapTitle": "Can swap in",
-    "excludeChoiceUnits": "Exclude {{units}}"
+    "excludeChoiceUnits": "Exclude {{units}}",
+    "excludeLegendary": "Exclude 5-cost units"
   },
   "teamCode": {
     "copy": "Copy team code",

@@ -674,7 +674,8 @@
     "playLadderHint": "Cuenta cualquier nivel activo, de bronce a prismático.",
     "choiceTraitsHint": "{{units}} puede tomar cualquiera de los rasgos activos; primero los tableros que necesitan menos.",
     "swapTitle": "Se puede cambiar por",
-    "excludeChoiceUnits": "Excluir {{units}}"
+    "excludeChoiceUnits": "Excluir {{units}}",
+    "excludeLegendary": "Excluir unidades de 5 de coste"
   },
   "teamCode": {
     "copy": "Copiar código",
