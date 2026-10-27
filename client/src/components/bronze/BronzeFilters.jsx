@@ -52,7 +52,8 @@ export default function BronzeFilters({
       nameFor={picker.nameFor}
       onChange={ids => setFilter(key, ids)}
       max={max}
-      className={styles.sidebarPicker}
+      // Added units sit two to a row (halfChips).
+      className={`${styles.sidebarPicker} ${key === 'requiredIds' ? styles.halfChips : ''}`}
       {...extra}
     />
   )

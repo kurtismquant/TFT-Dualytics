@@ -75,6 +75,30 @@
   flex: none;
 }
 
+/* Units search: the added units take half a row each, two per row, with
+   long names cut short. */
+.halfChips ul {
+  display: grid;
+  flex: 1 1 100%;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.halfChips li {
+  min-width: 0;
+}
+
+.halfChips li > span {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.halfChips li > button {
+  flex: 0 0 auto;
+}
+
 /* One line under a setting explaining the current choice. */
 .fieldHint {
   margin: 0;
