@@ -81,7 +81,13 @@
   line-height: 1.2;
 }
 
-/* Searches in the sidebar: 32px instead of 44px rows. */
+/* Searches in the sidebar. The picker's own `flex: 1 1 22rem` is meant for
+   rows; in this column it became a 22rem-tall gap under each search, so it
+   sizes to its content here. 32px instead of 44px rows. */
+.sidebar .compactPicker {
+  flex: none;
+}
+
 .compactPicker input {
   min-height: 2rem;
   padding: 0 0.625rem;
