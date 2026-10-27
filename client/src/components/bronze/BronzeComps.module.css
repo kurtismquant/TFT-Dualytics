@@ -15,7 +15,7 @@
 /* ── Filter sidebar ──────────────────────────────────── */
 .sidebar {
   min-width: 0;
-  padding: 1rem;
+  padding: 0.75rem;
   border: 1px solid var(--bg-border-muted);
   background: var(--bg-card);
 }
@@ -57,15 +57,38 @@
 .filtersBody {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 0.5rem;
 }
 
 /* One setting: a small label above its control. */
 .field {
   display: flex;
   flex-direction: column;
-  gap: 0.375rem;
+  gap: 0.25rem;
   min-width: 0;
+}
+
+/* Short settings: label on the left, control filling the rest of the line. */
+.fieldInline {
+  display: grid;
+  grid-template-columns: 5.25rem minmax(0, 1fr);
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.fieldInline .fieldLabel {
+  line-height: 1.2;
+}
+
+/* Searches in the sidebar: 32px instead of 44px rows. */
+.compactPicker input {
+  min-height: 2rem;
+  padding: 0 0.625rem;
+}
+
+.compactPicker li {
+  min-height: 2rem;
 }
 
 .fieldLabel {
@@ -79,8 +102,8 @@
 .filterSection {
   display: flex;
   flex-direction: column;
-  gap: 0.875rem;
-  padding-top: 1rem;
+  gap: 0.375rem;
+  padding-top: 0.5rem;
   border-top: 1px solid var(--bg-border-muted);
 }
 
@@ -88,7 +111,7 @@
   margin: 0;
   color: var(--text-primary);
   font-family: var(--font-display);
-  font-size: var(--text-base);
+  font-size: var(--text-sm);
   font-weight: var(--fw-bold);
   letter-spacing: var(--track-wide);
   line-height: var(--leading-none);
@@ -105,7 +128,7 @@
   position: relative;
   flex: 1 1 0;
   min-width: 0;
-  min-height: 2.25rem;
+  min-height: 2rem;
   padding: 0 0.25rem;
   justify-content: center;
   font-size: var(--text-xs);
@@ -133,7 +156,7 @@
   display: inline-flex;
   align-items: center;
   gap: 0.375rem;
-  min-height: 2.25rem;
+  min-height: 2rem;
   padding: 0 0.625rem 0 0.375rem;
   border: 1px solid var(--bg-border-muted);
   background: transparent;
@@ -171,7 +194,7 @@
 
 /* Tuning (testing): a collapsible block at the end of the sidebar. */
 .tuningDetails {
-  padding-top: 1rem;
+  padding-top: 0.5rem;
   border-top: 1px solid var(--bg-border-muted);
 }
 
@@ -193,7 +216,7 @@
 
 .resetFilters {
   align-self: flex-start;
-  min-height: 2.25rem;
+  min-height: 2rem;
   padding: 0 0.875rem;
   border: 1px solid var(--bg-border-muted);
   background: transparent;

@@ -8,7 +8,9 @@ import styles from '../unit-stats/ItemFilterInput.module.css'
 // narrow, click or press Enter to add. With `allowDuplicates` an option can be
 // added more than once. Backspace on an empty input removes the last chip;
 // ArrowDown enters the list. `i18nKey` prefixes the copy (bronze.<key>Label…).
-export default function ChipPicker({ selectedIds, options, renderIcon, nameFor, onChange, max, allowDuplicates = false, i18nKey }) {
+export default function ChipPicker({
+  selectedIds, options, renderIcon, nameFor, onChange, max, allowDuplicates = false, i18nKey, className = '',
+}) {
   const { t } = useTranslation()
   const copy = (suffix, values) => t(`bronze.${i18nKey}${suffix}`, values)
   const baseId = useId()
@@ -90,7 +92,7 @@ export default function ChipPicker({ selectedIds, options, renderIcon, nameFor, 
   }
 
   return (
-    <div className={styles.wrap} onBlur={handleBlur}>
+    <div className={`${styles.wrap} ${className}`} onBlur={handleBlur}>
       <p id={helpId} className="sr-only">{copy('Help', { count: max })}</p>
       <p className="sr-only" role="status" aria-live="polite">{notice}</p>
       <div className={styles.field}>
