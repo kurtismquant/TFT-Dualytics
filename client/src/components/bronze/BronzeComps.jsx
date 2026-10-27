@@ -40,15 +40,13 @@ export default function BronzeComps() {
   const items = itemsQuery.data
 
   // Same roster as the builder: base Lux dropped, forms count double. Then
-  // the cost cap, avoided units, and trait-choice units when set to Off.
+  // avoided units, and trait-choice units when set to Off.
   const fullRoster = useMemo(() => toBuilderRoster(champions || []), [champions])
   const avoid = useMemo(() => new Set(filters.avoidIds), [filters.avoidIds])
   const roster = useMemo(() => fullRoster.filter(unit => (
-    (unit.cost || 0) <= filters.maxCost
-    && !avoid.has(unit.id)
+    !avoid.has(unit.id)
     && !(filters.choiceTraitCount === 0 && TRAIT_CHOICE_UNIT_IDS.has(unit.id))
-  )), [fullRoster, filters.maxCost, avoid, filters.choiceTraitCount])
-  const maxUnitCost = Math.max(1, ...fullRoster.map(unit => unit.cost || 0))
+  )), [fullRoster, avoid, filters.choiceTraitCount])
   const choiceUnits = useMemo(() => fullRoster.filter(unit => TRAIT_CHOICE_UNIT_IDS.has(unit.id)), [fullRoster])
   const choiceMax = Math.max(0, ...choiceUnits.map(unit => traitChoiceCount(unit.id)))
   const ranges = useMemo(() => traitRanges(traits, { includeSilverGold: filters.includeSilverGold }), [traits, filters.includeSilverGold])
@@ -64,23 +62,15 @@ export default function BronzeComps() {
     return {
       unit: { options: unitOptions(roster), renderIcon: unitIcon, nameFor: unitName },
       avoid: { options: unitOptions(fullRoster.filter(unit => !filters.requiredIds.includes(unit.id))), renderIcon: unitIcon, nameFor: unitName },
-      // Traits that can count in the current mode.
-      trait: {
-        options: [...ranges.keys()].sort().map(name => ({ id: name, name })),
-        renderIcon: (name, size) => (
-          <img src={traitByName.get(name)?.iconUrl} alt="" className={styles.traitPickIcon} style={{ width: `${size / 16}rem`, height: `${size / 16}rem` }} />
-        ),
-        nameFor: name => name,
-      },
       emblem: {
         options: emblemOptions,
         renderIcon: (id, size) => <ItemIcon item={itemLookup.get(id)} size={size} />,
         nameFor: id => itemLookup.get(id)?.name || id,
       },
     }
-  }, [roster, fullRoster, filters.requiredIds, unitLookup, ranges, traitByName, emblemOptions, itemLookup])
+  }, [roster, fullRoster, filters.requiredIds, unitLookup, emblemOptions, itemLookup])
 
-  // Required units the roster no longer has (over the cost cap, avoided, ...) drop out.
+  // Required units the roster no longer has (avoided, Kha'Zix off) drop out.
   const requiredIds = useMemo(
     () => filters.requiredIds.filter(id => roster.some(unit => unit.id === id)),
     [filters.requiredIds, roster],
@@ -88,7 +78,7 @@ export default function BronzeComps() {
   const search = useMemo(
     () => (roster.length > 0 && ranges.size > 0
       ? {
-        roster, ranges, size: filters.size, emblemTraits, craftTools, requiredTraits: filters.requiredTraits, limit: MAX_RESULTS,
+        roster, ranges, size: filters.size, emblemTraits, craftTools, limit: MAX_RESULTS,
         choiceTraitCount: filters.choiceTraitCount > 0 ? Math.min(filters.choiceTraitCount, choiceMax || 4) : null,
         // From my units: the picked units are the player's board, not requirements.
         ...(filters.boardMode
@@ -96,7 +86,7 @@ export default function BronzeComps() {
           : { requiredIds }),
       }
       : null),
-    [roster, ranges, filters.size, emblemTraits, craftTools, filters.requiredTraits, filters.choiceTraitCount, choiceMax,
+    [roster, ranges, filters.size, emblemTraits, craftTools, filters.choiceTraitCount, choiceMax,
       filters.boardMode, requiredIds, tuning],
   )
   const { result, error: searchError, isSearching } = useBronzeSearch(search)
@@ -121,7 +111,6 @@ export default function BronzeComps() {
         toolItems={toolItems}
         choiceUnitNames={choiceUnits.map(unit => unit.name)}
         choiceMax={choiceMax}
-        maxUnitCost={maxUnitCost}
         tuning={tuning}
         setTuning={setTuning}
       />

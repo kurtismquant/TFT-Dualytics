@@ -461,30 +461,6 @@ test('my-board mode: maxSwaps caps units bought at the empty slots plus that man
   assert.ok(loose.comps.every(c => c.fromBoard.buy.length <= 3))
 })
 
-// ── Must include traits ────────────────────────────────────────────────────
-test('requiredTraits: every comp has each required trait counted', () => {
-  const { comps } = findBronzeComps({ roster, ranges, size: 2, requiredTraits: ['Coven'], limit: 100 })
-  // Coven needs 3 (3-3): only the two Coven units plus... size 2 cannot reach 3.
-  assert.deepEqual(comps, [])
-  const withEmblem = findBronzeComps({ roster, ranges, size: 2, requiredTraits: ['Coven'], emblemTraits: ['Coven'], limit: 100 })
-  assert.ok(withEmblem.comps.length > 0)
-  for (const comp of withEmblem.comps) assert.ok(comp.countedTraits.some(t => t.name === 'Coven'))
-})
-
-test('requiredTraits: a crafted emblem may supply the required trait', () => {
-  const spatulaCoven = [{ tool: 'spatula', traits: ['Coven'] }]
-  const { comps } = findBronzeComps({ roster: [covenRavager1, covenRavager2, solar, flora], ranges, size: 2, requiredTraits: ['Coven'], craftTools: spatulaCoven, limit: 100 })
-  assert.ok(comps.length > 0)
-  for (const comp of comps) {
-    assert.ok(comp.countedTraits.some(t => t.name === 'Coven'))
-    assert.deepEqual(comp.craftedEmblems, [{ tool: 'spatula', trait: 'Coven' }])
-  }
-})
-
-test('requiredTraits: a trait that cannot count in this mode gives no comps', () => {
-  assert.deepEqual(findBronzeComps({ roster, ranges, size: 3, requiredTraits: ['Solar'] }).comps, [])
-})
-
 test('comps that differ only by Lux form merge into one, listing every form', () => {
   const comp = (units, traitCount = 3, crafted = []) => ({ key: units.map(u => u.id).join('|'), traitCount, units: units.map(champion => ({ champion })), craftedEmblems: crafted })
   const comps = [

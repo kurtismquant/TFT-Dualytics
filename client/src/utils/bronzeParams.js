@@ -4,17 +4,15 @@
 import { BOARD_SIZES, MAX_EMBLEMS } from './bronzeComps.js'
 
 export const MAX_LISTED_IDS = 12
-const ID_PATTERN = /^[A-Za-z0-9_' &.-]{1,64}$/ // unit / item ids and trait names
+const ID_PATTERN = /^[A-Za-z0-9_' &.-]{1,64}$/ // unit / item ids
 
 export const DEFAULT_FILTERS = Object.freeze({
   size: 8,
   requiredIds: [], // units every comp has; the player's board in board mode
   boardMode: false, // "From my units"
   avoidIds: [], // units no comp may use
-  requiredTraits: [], // trait names every comp must have counted
   emblemIds: [], // emblems owned (repeats allowed)
   includeSilverGold: false,
-  maxCost: 5,
   choiceTraitCount: 4, // Kha'Zix evolutions; 0 = leave him out
   hasSpatula: false,
   hasFryingPan: false,
@@ -22,8 +20,8 @@ export const DEFAULT_FILTERS = Object.freeze({
 
 // key in the URL for each filter
 const KEYS = {
-  size: 'n', requiredIds: 'u', boardMode: 'mode', avoidIds: 'avoid', requiredTraits: 'traits',
-  emblemIds: 'e', includeSilverGold: 'tiers', maxCost: 'cost', choiceTraitCount: 'kz',
+  size: 'n', requiredIds: 'u', boardMode: 'mode', avoidIds: 'avoid',
+  emblemIds: 'e', includeSilverGold: 'tiers', choiceTraitCount: 'kz',
   hasSpatula: 'sp', hasFryingPan: 'fp',
 }
 
@@ -45,10 +43,8 @@ export function parseBronzeParams(params) {
     requiredIds: list(get('requiredIds')),
     boardMode: get('boardMode') === 'board',
     avoidIds: list(get('avoidIds')),
-    requiredTraits: list(get('requiredTraits')),
     emblemIds: list(get('emblemIds'), { unique: false, max: MAX_EMBLEMS }),
     includeSilverGold: get('includeSilverGold') === 'sg',
-    maxCost: intIn(get('maxCost'), [1, 2, 3, 4, 5], DEFAULT_FILTERS.maxCost),
     choiceTraitCount: intIn(get('choiceTraitCount'), [0, 1, 2, 3, 4], DEFAULT_FILTERS.choiceTraitCount),
     hasSpatula: get('hasSpatula') === '1',
     hasFryingPan: get('hasFryingPan') === '1',
@@ -63,10 +59,8 @@ export function bronzeFiltersToSearch(filters) {
   if (filters.requiredIds.length) set('requiredIds', filters.requiredIds.join(','))
   if (filters.boardMode) set('boardMode', 'board')
   if (filters.avoidIds.length) set('avoidIds', filters.avoidIds.join(','))
-  if (filters.requiredTraits.length) set('requiredTraits', filters.requiredTraits.join(','))
   if (filters.emblemIds.length) set('emblemIds', filters.emblemIds.join(','))
   if (filters.includeSilverGold) set('includeSilverGold', 'sg')
-  if (filters.maxCost !== DEFAULT_FILTERS.maxCost) set('maxCost', filters.maxCost)
   if (filters.choiceTraitCount !== DEFAULT_FILTERS.choiceTraitCount) set('choiceTraitCount', filters.choiceTraitCount)
   if (filters.hasSpatula) set('hasSpatula', '1')
   if (filters.hasFryingPan) set('hasFryingPan', '1')

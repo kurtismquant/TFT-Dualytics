@@ -34,11 +34,11 @@ function Section({ title, children }) {
 // sections of settings that each use one labelled row and the same joined
 // toggle buttons. On tablets and phones it collapses behind a "Filters"
 // button showing how many filters are on.
-// `pickers`: { unit, avoid, trait, emblem } option sets for ChipPicker;
+// `pickers`: { unit, avoid, emblem } option sets for ChipPicker;
 // `choiceUnitNames` / `choiceMax`: trait-choice units (Kha'Zix) in this set.
 export default function BronzeFilters({
   filters, setFilter, resetFilters, activeCount, pickers, toolItems, choiceUnitNames = [], choiceMax = 0,
-  maxUnitCost = 5, tuning, setTuning,
+  tuning, setTuning,
 }) {
   const { t } = useTranslation()
   const id = useId()
@@ -109,21 +109,11 @@ export default function BronzeFilters({
               options={[{ value: false, label: t('bronze.tierBronze') }, { value: true, label: t('bronze.tierBronzeGold') }]}
             />
           </Field>
-          <Field id={`${id}-traits`} label={t('bronze.traitFieldLabel')}>
-            {chip('requiredTraits', pickers.trait, 'traitPick', MAX_LISTED_IDS)}
-          </Field>
         </Section>
 
-        <Section title={t('bronze.sectionUnits')}>
-          <Field id={`${id}-cost`} label={t('bronze.maxCostLabel')}>
-            <Segmented
-              labelledBy={`${id}-cost`}
-              value={Math.min(filters.maxCost, maxUnitCost)}
-              onChange={value => setFilter('maxCost', value)}
-              options={Array.from({ length: maxUnitCost }, (_, i) => ({ value: i + 1, label: `${i + 1}g` }))}
-            />
-          </Field>
-          {choiceUnitNames.length > 0 && choiceMax > 0 && (
+        {/* Only trait-choice units (Kha'Zix) are set here; no section without them. */}
+        {choiceUnitNames.length > 0 && choiceMax > 0 && (
+          <Section title={t('bronze.sectionUnits')}>
             <Field id={`${id}-choice`} label={t('bronze.choiceTraitsLabel', { units: choiceUnitNames.join(' / ') })}>
               <Segmented
                 labelledBy={`${id}-choice`}
@@ -137,8 +127,8 @@ export default function BronzeFilters({
                 ]}
               />
             </Field>
-          )}
-        </Section>
+          </Section>
+        )}
 
         <Section title={t('bronze.sectionItems')}>
           <Field id={`${id}-tools`} label={t('bronze.toolsLabel')}>

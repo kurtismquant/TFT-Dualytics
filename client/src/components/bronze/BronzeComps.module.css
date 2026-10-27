@@ -170,12 +170,6 @@
   outline-offset: 2px;
 }
 
-.traitPickIcon {
-  flex: 0 0 auto;
-  object-fit: contain;
-  background: var(--icon-tile-bg);
-}
-
 /* Tuning (testing): a collapsible block at the end of the sidebar. */
 .tuningDetails {
   padding-top: 1rem;

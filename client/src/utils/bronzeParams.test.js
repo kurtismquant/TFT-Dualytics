@@ -15,23 +15,20 @@ test('every filter round-trips through the URL', () => {
     requiredIds: ['DA_18_Xayah', 'DA_18_Rakan'],
     boardMode: true,
     avoidIds: ['DA_18_Akali_AD'],
-    requiredTraits: ['Flora Fatalis', 'Coven'],
     emblemIds: ['DA_18_EmblemCoven', 'DA_18_EmblemCoven'],
     includeSilverGold: true,
-    maxCost: 3,
     choiceTraitCount: 0,
     hasSpatula: true,
     hasFryingPan: true,
   }
   const search = bronzeFiltersToSearch(filters)
   assert.deepEqual(parseBronzeParams(new URLSearchParams(search.toString())), filters)
-  assert.equal(countActiveFilters(filters), 11)
+  assert.equal(countActiveFilters(filters), 9)
 })
 
 test('bad values fall back; lists are cleaned, deduped (not emblems) and capped', () => {
-  const parsed = parseBronzeParams(new URLSearchParams('n=99&cost=9&kz=-1&u=A,A,<x>,B&e=E,E&tiers=x&mode=yes'))
+  const parsed = parseBronzeParams(new URLSearchParams('n=99&kz=-1&u=A,A,<x>,B&e=E,E&tiers=x&mode=yes'))
   assert.equal(parsed.size, DEFAULT_FILTERS.size)
-  assert.equal(parsed.maxCost, DEFAULT_FILTERS.maxCost)
   assert.equal(parsed.choiceTraitCount, DEFAULT_FILTERS.choiceTraitCount)
   assert.deepEqual(parsed.requiredIds, ['A', 'B'])
   assert.deepEqual(parsed.emblemIds, ['E', 'E'])
