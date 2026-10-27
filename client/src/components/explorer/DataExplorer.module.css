@@ -548,10 +548,12 @@
   color: var(--text-primary);
 }
 
-/* Long names (and raw ids for unknown entries) wrap instead of widening the table. */
+/* Long names (and raw ids for unknown entries) wrap instead of widening the
+   table. break-word (not anywhere) so the column never narrows below its
+   longest word: with anywhere it collapsed to one letter per line on tablets. */
 .rowName > span:last-child {
   min-width: 0;
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
 }
 
 .rowIcon {
@@ -604,9 +606,8 @@
   min-width: 0;
 }
 
-.compDelta {
+.compGames {
   padding: 0 0.75rem;
-  font-size: var(--text-sm);
   font-variant-numeric: tabular-nums;
   text-align: right;
   white-space: nowrap;
@@ -718,6 +719,18 @@
   .summary {
     grid-template-columns: 1fr;
   }
+
+  /* Tighter cells so all seven columns fit a portrait tablet. */
+  .breakdown th,
+  .breakdown td {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+
+  /* Full column names wrap instead of widening the table. */
+  .breakdown thead th {
+    white-space: normal;
+  }
 }
 
 @media (--bp-md) {
@@ -744,11 +757,6 @@
     padding: 0.375rem;
   }
 
-  /* Full column names wrap on phones instead of widening the table. */
-  .breakdown thead th {
-    white-space: normal;
-  }
-
   /* Icons above the name, so the name gets the column's full width. */
   .rowName {
     flex-direction: column;
@@ -770,7 +778,20 @@
     align-items: stretch;
   }
 
-  .compDelta {
+  .compGames {
     padding: 0 0.75rem 0.625rem;
+  }
+}
+
+/* Small phones: tighter cells and header tracking so the four remaining
+   columns fit without scrolling sideways. */
+@media (--bp-sm) {
+  .breakdown th,
+  .breakdown td {
+    padding: 0.375rem 0.25rem;
+  }
+
+  .breakdown thead th {
+    letter-spacing: var(--track-wide);
   }
 }

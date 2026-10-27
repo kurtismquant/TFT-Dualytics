@@ -23,12 +23,13 @@ function deltaClass(delta) {
   return delta < 0 ? styles.deltaGood : styles.deltaBad
 }
 
-// Sort buttons for lists that aren't tables (the comps view).
-export function SortButtons({ sort, onSort }) {
+// Sort buttons for lists that aren't tables (the comps view); `keys` limits
+// them to the stats that list shows.
+export function SortButtons({ sort, onSort, keys = EXPLORER_SORT_KEYS }) {
   const { t } = useTranslation()
   return (
     <div className={styles.sortToggle} role="group" aria-label={t('explorer.sortLabel')}>
-      {EXPLORER_SORT_KEYS.map(key => (
+      {keys.map(key => (
         <button key={key} type="button" aria-pressed={sort.key === key} onClick={() => onSort(key)}>
           {t(COLUMN_LABEL_KEYS[key])}
           {sort.key === key && <span aria-hidden="true"> {sort.direction === 'asc' ? '▲' : '▼'}</span>}

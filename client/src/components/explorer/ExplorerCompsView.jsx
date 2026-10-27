@@ -5,13 +5,16 @@ import CompUnitList from '../comp-row/CompUnitList.jsx'
 import { SortButtons } from './ExplorerTable.jsx'
 import { useExplorerSort } from '../../hooks/useExplorerSort.js'
 import { resolveUnits } from '../../utils/resolveUnits.js'
-import { formatDelta } from '../../utils/statsFormatting.js'
+import { EXPLORER_SORT_KEYS } from '../../utils/explorerSort.js'
 import { generateCompName, getUniqueTraitIds } from '../../utils/compName.js'
 import { buildUnitPath } from '../../constants/routes.js'
 import { teamCodeForResolvedUnits } from '../../utils/teamPlannerCode.js'
 import compRowStyles from '../CompRow.module.css'
 import compStyles from '../../pages/CompPage.module.css'
 import styles from './DataExplorer.module.css'
+
+// The comp rows don't show a delta, so they don't sort by one.
+const COMP_SORT_KEYS = EXPLORER_SORT_KEYS.filter(key => key !== 'delta')
 
 function ExplorerCompRow({ row, totalGames, champions, items, traits, uniqueTraitIds }) {
   const { t } = useTranslation()
@@ -40,11 +43,8 @@ function ExplorerCompRow({ row, totalGames, champions, items, traits, uniqueTrai
           avgPlacement={row.avgPlacement}
           getUnitHref={id => buildUnitPath(id)}
         />
-        <span
-          className={`${styles.compDelta} ${formatDelta(row.delta) === '0.00' ? '' : row.delta < 0 ? styles.deltaGood : styles.deltaBad}`}
-        >
-          {t('explorer.col.delta')} {formatDelta(row.delta)}
-          <span className={styles.rowGames}>{t('explorer.boardCount', { count: row.count, formatted: row.count.toLocaleString() })}</span>
+        <span className={`${styles.rowGames} ${styles.compGames}`}>
+          {t('explorer.boardCount', { count: row.count, formatted: row.count.toLocaleString() })}
         </span>
       </div>
     </div>
@@ -62,7 +62,7 @@ export default function ExplorerCompsView({ data, champions, items, traits }) {
   return (
     <section className={styles.panel} aria-label={t('explorer.panel.comp')}>
       <header className={styles.panelHeader}>
-        <SortButtons sort={sort} onSort={onSort} />
+        <SortButtons sort={sort} onSort={onSort} keys={COMP_SORT_KEYS} />
       </header>
       {rows.length === 0
         ? <p className={styles.panelEmpty}>{t('explorer.panelEmpty', { count: data.minGames })}</p>
