@@ -54,12 +54,12 @@ test('bronze ranges cover only traits with a bronze tier', () => {
   ])
 })
 
-test('silver and gold option widens ranges up to gold, never unique or prismatic', () => {
-  assert.deepEqual([...traitRanges(traits, { includeSilverGold: true })], [
+test('Trait Ladder counts every active tier, bronze to prismatic, never unique', () => {
+  assert.deepEqual([...traitRanges(traits, { ladder: true })], [
     ['Coven', { lo: 3, hi: OPEN }],
     ['Ravager', { lo: 2, hi: OPEN }],
     ['Flora Fatalis', { lo: 1, hi: OPEN }],
-    ['Blossom', { lo: 2, hi: 6 }],
+    ['Blossom', { lo: 2, hi: OPEN }], // through its prismatic tier (7+)
     ['Fae', { lo: 2, hi: OPEN }],
     ['Solar', { lo: 3, hi: OPEN }],
   ])
@@ -73,7 +73,7 @@ test('without maxUnits (cached assets) ranges end below the next tier', () => {
 test('Rival is gold at 1 and 2 despite its 1-1 bronze row', () => {
   const rival = { name: 'Rival', effects: tiers([1, OPEN, 5], [1, 1, 1], [2, OPEN, 5]) }
   assert.equal(bronzeRanges([rival]).has('Rival'), false)
-  assert.deepEqual(traitRanges([rival], { includeSilverGold: true }).get('Rival'), { lo: 1, hi: OPEN })
+  assert.deepEqual(traitRanges([rival], { ladder: true }).get('Rival'), { lo: 1, hi: OPEN })
   assert.equal(activeTraitStyle(rival, 1), 5)
   assert.equal(activeTraitStyle(rival, 2), 5)
   assert.equal(activeTraitStyle(rival, 0), null)
@@ -164,8 +164,8 @@ test('a trait pushed past its bronze range into silver does not count', () => {
   const { comps } = findBronzeComps({ roster: four, ranges, size: 4 })
   assert.equal(comps[0].traitCount, 0)
   assert.deepEqual(comps[0].otherTraits, [{ name: 'Ravager', count: 4 }, { name: 'Coven', count: 2 }])
-  // ...unless silver and gold count too.
-  const wide = findBronzeComps({ roster: four, ranges: traitRanges(traits, { includeSilverGold: true }), size: 4 })
+  // ...unless every tier counts (Trait Ladder).
+  const wide = findBronzeComps({ roster: four, ranges: traitRanges(traits, { ladder: true }), size: 4 })
   assert.deepEqual(wide.comps[0].countedTraits, [{ name: 'Ravager', count: 4 }])
 })
 

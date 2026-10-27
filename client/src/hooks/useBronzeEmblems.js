@@ -2,12 +2,12 @@ import { useMemo } from 'react'
 import { buildEmblemOptions, CRAFT_COMPONENT_IDS, craftToolsFor, traitRanges } from '../utils/bronzeComps.js'
 import { makeMap } from '../utils/statsFormatting.js'
 
-// Emblem data for the Bronze for Life page: the emblems the user can add (the
-// same with or without the silver/gold option), id -> item lookups, the
+// Emblem data for the Trait Comps page: the emblems the user can add (the
+// same in either playstyle), id -> item lookups, the
 // owned emblems' traits, the Spatula / Frying Pan items (icons) and the
 // search's craftTools for the ones held.
 export function useBronzeEmblems({ items, traits, emblemIds, hasSpatula, hasFryingPan }) {
-  const emblemOptions = useMemo(() => buildEmblemOptions(items, traitRanges(traits, { includeSilverGold: true })), [items, traits])
+  const emblemOptions = useMemo(() => buildEmblemOptions(items, traitRanges(traits, { ladder: true })), [items, traits])
   const itemLookup = useMemo(() => makeMap(items), [items])
   const emblemByTrait = useMemo(
     () => new Map(emblemOptions.map(option => [option.trait, itemLookup.get(option.id)])),

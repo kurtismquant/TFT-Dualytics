@@ -8,7 +8,7 @@
       "traits": "Rasgos",
       "items": "Objetos",
       "explorer": "Explorador de datos",
-      "bronze": "Comps Bronce de por vida"
+      "bronze": "Comps de rasgos"
     },
     "teamBuilder": "Constructor",
     "leaderboard": "Clasificación",
@@ -111,7 +111,7 @@
     "tabItems": "Objetos",
     "tabTraits": "Rasgos",
     "tabExplorer": "Explorador de datos",
-    "tabBronze": "Comps Bronce de por vida",
+    "tabBronze": "Comps de rasgos",
     "colUnit": "Unidad",
     "colItem": "Objeto",
     "colTrait": "Rasgo",
@@ -563,7 +563,7 @@
     "maxStar": "Nivel de estrellas máximo de {{name}}"
   },
   "bronze": {
-    "label": "Comps Bronce de por vida",
+    "label": "Comps de rasgos",
     "sizeLabel": "Tamaño",
     "sizeOption_one": "{{count}} unidad",
     "sizeOption_other": "{{count}} unidades",
@@ -672,20 +672,21 @@
     "avoidRemoved": "{{name}} quitado.",
     "avoidMax": "Puedes añadir hasta {{count}}.",
     "avoidNoMatch": "Nada coincide con \"{{query}}\".",
-    "sectionTraits": "Rasgos",
     "sectionUnits": "Unidades",
     "sectionItems": "Objetos",
     "sectionMode": "Modo",
-    "tiersLabel": "Niveles que cuentan",
-    "tierBronze": "Bronce",
-    "tierBronzeGold": "Bronce – Oro",
     "choiceOff": "No",
     "toolsLabel": "Tengo",
     "modeLabel": "Ordenar comps por",
     "modeBest": "Mejores comps",
     "modeBoard": "Desde mis unidades",
     "resetFilters": "Restablecer filtros",
-    "formOptions": "Formas de Lux que encajan: {{forms}}"
+    "formOptions": "Formas de Lux que encajan: {{forms}}",
+    "playstyleLabel": "Estilo de juego",
+    "playBronze": "Bronce de por vida",
+    "playLadder": "Escalera de rasgos",
+    "playBronzeHint": "Solo cuentan los niveles de bronce.",
+    "playLadderHint": "Cuenta cualquier nivel activo, de bronce a prismático."
   },
   "teamCode": {
     "copy": "Copiar código",

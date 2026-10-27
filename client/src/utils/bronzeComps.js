@@ -1,10 +1,10 @@
-// Pure helpers for the Bronze for Life page: no React, no DOM.
+// Pure helpers for the Trait Comps page: no React, no DOM.
 //
-// A trait "counts" when its unit count sits in a counted tier. By default only
-// the bronze tier (Riot style 1) counts; optionally silver (3) and gold (5) do
-// too. Unique traits (style 4) and prismatic (6) never count. Going past the
-// last counted tier stops a trait counting, so each trait is a count range,
-// e.g. Coven 3-3 (bronze only) or 3-6 (bronze to gold).
+// Two playstyles. Bronze for Life: a trait counts only in its bronze tier
+// (Riot style 1). Trait Ladder: any active tier counts, bronze through
+// prismatic (styles 1, 3 silver, 5 gold, 6 prismatic). Unique traits (style
+// 4) never count. Going past the last counted tier stops a trait counting, so
+// each trait is a count range, e.g. Coven 3-3 (bronze) or 3+ (ladder).
 
 export const BOARD_SIZES = [5, 6, 7, 8, 9, 10, 11, 12]
 export const MAX_EMBLEMS = 10
@@ -14,7 +14,7 @@ export const LEGENDARY_COST = 5
 // current patch fielded exactly its units (server board index).
 export const HIGHLY_PLAYED_MIN_BOARDS = 5
 const BRONZE_STYLES = new Set([1])
-const BRONZE_TO_GOLD_STYLES = new Set([1, 3, 5])
+const LADDER_STYLES = new Set([1, 3, 5, 6])
 // Safety net for the search below; real Set 18 searches (100 comps of 10 units)
 // finish well under it. Hitting it returns the best comps found so far,
 // flagged truncated.
@@ -63,8 +63,8 @@ function traitTiers(trait) {
 // trait name -> { lo, hi } counted range, for traits that have one: from the
 // first counted tier through the counted tiers right after it. Keyed by
 // display name because champion.traits holds display names.
-export function traitRanges(traits, { includeSilverGold = false } = {}) {
-  const styles = includeSilverGold ? BRONZE_TO_GOLD_STYLES : BRONZE_STYLES
+export function traitRanges(traits, { ladder = false } = {}) {
+  const styles = ladder ? LADDER_STYLES : BRONZE_STYLES
   const ranges = new Map()
   for (const trait of traits || []) {
     const tiers = traitTiers(trait)

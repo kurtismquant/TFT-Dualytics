@@ -82,7 +82,16 @@ export default function BronzeFilters({
         <Chevron direction={open ? 'up' : 'down'} size={16} />
       </button>
       <div id={`${id}-body`} className={styles.filtersBody}>
-        <Field id={`${id}-size`} label={t('bronze.sizeLabel')}>
+        <Field id={`${id}-play`} label={t('bronze.playstyleLabel')}>
+          <Segmented
+            labelledBy={`${id}-play`}
+            value={filters.traitLadder}
+            onChange={value => setFilter('traitLadder', value)}
+            options={[{ value: false, label: t('bronze.playBronze') }, { value: true, label: t('bronze.playLadder') }]}
+          />
+          <p className={styles.fieldHint}>{t(filters.traitLadder ? 'bronze.playLadderHint' : 'bronze.playBronzeHint')}</p>
+        </Field>
+                <Field id={`${id}-size`} label={t('bronze.sizeLabel')}>
           <Segmented
             labelledBy={`${id}-size`}
             value={filters.size}
@@ -99,17 +108,6 @@ export default function BronzeFilters({
         <Field id={`${id}-emblems`} label={t('bronze.emblemsLabel')}>
           {chip('emblemIds', pickers.emblem, 'emblem', MAX_EMBLEMS, { allowDuplicates: true })}
         </Field>
-
-        <Section title={t('bronze.sectionTraits')}>
-          <Field id={`${id}-tiers`} label={t('bronze.tiersLabel')}>
-            <Segmented
-              labelledBy={`${id}-tiers`}
-              value={filters.includeSilverGold}
-              onChange={value => setFilter('includeSilverGold', value)}
-              options={[{ value: false, label: t('bronze.tierBronze') }, { value: true, label: t('bronze.tierBronzeGold') }]}
-            />
-          </Field>
-        </Section>
 
         {/* Only trait-choice units (Kha'Zix) are set here; no section without them. */}
         {choiceUnitNames.length > 0 && choiceMax > 0 && (

@@ -24,8 +24,8 @@ const DEFAULT_TUNING = { boardWeights: BOARD_WEIGHTS, maxSwaps: BOARD_MAX_SWAPS 
 
 const unitOptions = units => [...units].sort((a, b) => a.name.localeCompare(b.name)).map(unit => ({ id: unit.id, name: unit.name }))
 
-// Bronze for Life: comps of N units with the most traits in their bronze tier
-// (optionally silver/gold too). Computed in the browser from the static asset
+// Trait Comps: comps of N units with the most counted traits, for two
+// playstyles: Bronze for Life (bronze tiers only) or Trait Ladder (any tier). Computed in the browser from the static asset
 // lists by utils/bronzeComps.js, in a Web Worker. Filters live in the URL.
 export default function BronzeComps() {
   const { t } = useTranslation()
@@ -49,7 +49,7 @@ export default function BronzeComps() {
   )), [fullRoster, avoid, filters.choiceTraitCount])
   const choiceUnits = useMemo(() => fullRoster.filter(unit => TRAIT_CHOICE_UNIT_IDS.has(unit.id)), [fullRoster])
   const choiceMax = Math.max(0, ...choiceUnits.map(unit => traitChoiceCount(unit.id)))
-  const ranges = useMemo(() => traitRanges(traits, { includeSilverGold: filters.includeSilverGold }), [traits, filters.includeSilverGold])
+  const ranges = useMemo(() => traitRanges(traits, { ladder: filters.traitLadder }), [traits, filters.traitLadder])
   const { emblemOptions, itemLookup, emblemByTrait, toolItems, craftTools, emblemTraits } = useBronzeEmblems({
     items, traits, emblemIds: filters.emblemIds, hasSpatula: filters.hasSpatula, hasFryingPan: filters.hasFryingPan,
   })

@@ -1,4 +1,4 @@
-// Bronze for Life filters <-> URL search params, so a search can be bookmarked
+// Trait Comps filters <-> URL search params, so a search can be bookmarked
 // or shared (like the Data Explorer). Defaults are left out of the URL; bad
 // values fall back to them. Pure: no React, no DOM.
 import { BOARD_SIZES, MAX_EMBLEMS } from './bronzeComps.js'
@@ -12,7 +12,7 @@ export const DEFAULT_FILTERS = Object.freeze({
   boardMode: false, // "From my units"
   avoidIds: [], // units no comp may use
   emblemIds: [], // emblems owned (repeats allowed)
-  includeSilverGold: false,
+  traitLadder: false, // playstyle: Bronze for Life (false) or Trait Ladder
   choiceTraitCount: 4, // Kha'Zix evolutions; 0 = leave him out
   hasSpatula: false,
   hasFryingPan: false,
@@ -21,7 +21,7 @@ export const DEFAULT_FILTERS = Object.freeze({
 // key in the URL for each filter
 const KEYS = {
   size: 'n', requiredIds: 'u', boardMode: 'mode', avoidIds: 'avoid',
-  emblemIds: 'e', includeSilverGold: 'tiers', choiceTraitCount: 'kz',
+  emblemIds: 'e', traitLadder: 'play', choiceTraitCount: 'kz',
   hasSpatula: 'sp', hasFryingPan: 'fp',
 }
 
@@ -44,7 +44,7 @@ export function parseBronzeParams(params) {
     boardMode: get('boardMode') === 'board',
     avoidIds: list(get('avoidIds')),
     emblemIds: list(get('emblemIds'), { unique: false, max: MAX_EMBLEMS }),
-    includeSilverGold: get('includeSilverGold') === 'sg',
+    traitLadder: get('traitLadder') === 'ladder',
     choiceTraitCount: intIn(get('choiceTraitCount'), [0, 1, 2, 3, 4], DEFAULT_FILTERS.choiceTraitCount),
     hasSpatula: get('hasSpatula') === '1',
     hasFryingPan: get('hasFryingPan') === '1',
@@ -60,7 +60,7 @@ export function bronzeFiltersToSearch(filters) {
   if (filters.boardMode) set('boardMode', 'board')
   if (filters.avoidIds.length) set('avoidIds', filters.avoidIds.join(','))
   if (filters.emblemIds.length) set('emblemIds', filters.emblemIds.join(','))
-  if (filters.includeSilverGold) set('includeSilverGold', 'sg')
+  if (filters.traitLadder) set('traitLadder', 'ladder')
   if (filters.choiceTraitCount !== DEFAULT_FILTERS.choiceTraitCount) set('choiceTraitCount', filters.choiceTraitCount)
   if (filters.hasSpatula) set('hasSpatula', '1')
   if (filters.hasFryingPan) set('hasFryingPan', '1')

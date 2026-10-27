@@ -8,7 +8,7 @@
       "traits": "Traits",
       "items": "Items",
       "explorer": "Data Explorer",
-      "bronze": "Bronze for Life Comps"
+      "bronze": "Trait Comps"
     },
     "teamBuilder": "Team Builder",
     "leaderboard": "Leaderboard",
@@ -111,7 +111,7 @@
     "tabItems": "Item Stats",
     "tabTraits": "Trait Stats",
     "tabExplorer": "Data Explorer",
-    "tabBronze": "Bronze for Life Comps",
+    "tabBronze": "Trait Comps",
     "colUnit": "Unit",
     "colItem": "Item",
     "colTrait": "Trait",
@@ -563,7 +563,7 @@
     "maxStar": "{{name}} maximum star level"
   },
   "bronze": {
-    "label": "Bronze for Life comps",
+    "label": "Trait comps",
     "sizeLabel": "Board size",
     "sizeOption_one": "{{count}} unit",
     "sizeOption_other": "{{count}} units",
@@ -672,20 +672,21 @@
     "avoidRemoved": "{{name}} removed.",
     "avoidMax": "You can add up to {{count}}.",
     "avoidNoMatch": "No unit matches \"{{query}}\".",
-    "sectionTraits": "Traits",
     "sectionUnits": "Units",
     "sectionItems": "Items",
     "sectionMode": "Mode",
-    "tiersLabel": "Tiers that count",
-    "tierBronze": "Bronze",
-    "tierBronzeGold": "Bronze – Gold",
     "choiceOff": "Off",
     "toolsLabel": "I have",
     "modeLabel": "Rank comps by",
     "modeBest": "Best comps",
     "modeBoard": "From my units",
     "resetFilters": "Reset filters",
-    "formOptions": "Lux forms that fit: {{forms}}"
+    "formOptions": "Lux forms that fit: {{forms}}",
+    "playstyleLabel": "Playstyle",
+    "playBronze": "Bronze for Life",
+    "playLadder": "Trait Ladder",
+    "playBronzeHint": "Only bronze tiers count.",
+    "playLadderHint": "Every active tier counts, bronze to prismatic."
   },
   "teamCode": {
     "copy": "Copy team code",

@@ -16,7 +16,7 @@ test('every filter round-trips through the URL', () => {
     boardMode: true,
     avoidIds: ['DA_18_Akali_AD'],
     emblemIds: ['DA_18_EmblemCoven', 'DA_18_EmblemCoven'],
-    includeSilverGold: true,
+    traitLadder: true,
     choiceTraitCount: 0,
     hasSpatula: true,
     hasFryingPan: true,
@@ -27,12 +27,12 @@ test('every filter round-trips through the URL', () => {
 })
 
 test('bad values fall back; lists are cleaned, deduped (not emblems) and capped', () => {
-  const parsed = parseBronzeParams(new URLSearchParams('n=99&kz=-1&u=A,A,<x>,B&e=E,E&tiers=x&mode=yes'))
+  const parsed = parseBronzeParams(new URLSearchParams('n=99&kz=-1&u=A,A,<x>,B&e=E,E&play=x&mode=yes'))
   assert.equal(parsed.size, DEFAULT_FILTERS.size)
   assert.equal(parsed.choiceTraitCount, DEFAULT_FILTERS.choiceTraitCount)
   assert.deepEqual(parsed.requiredIds, ['A', 'B'])
   assert.deepEqual(parsed.emblemIds, ['E', 'E'])
-  assert.equal(parsed.includeSilverGold, false)
+  assert.equal(parsed.traitLadder, false)
   assert.equal(parsed.boardMode, false)
   const many = Array.from({ length: 30 }, (_, i) => `U${i}`).join(',')
   assert.equal(parseBronzeParams(new URLSearchParams(`avoid=${many}`)).avoidIds.length, 12)
