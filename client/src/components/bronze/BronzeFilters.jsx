@@ -12,10 +12,9 @@ import styles from './BronzeComps.module.css'
 // Most units a player's current board can hold ("From my units").
 const MAX_BOARD_UNITS = 12
 
-// A setting: label above its control, or beside it (`inline`) for short ones.
-function Field({ id, label, inline = false, children }) {
+function Field({ id, label, children }) {
   return (
-    <div className={inline ? styles.fieldInline : styles.field}>
+    <div className={styles.field}>
       <span id={id} className={styles.fieldLabel}>{label}</span>
       {children}
     </div>
@@ -53,7 +52,7 @@ export default function BronzeFilters({
       nameFor={picker.nameFor}
       onChange={ids => setFilter(key, ids)}
       max={max}
-      className={styles.compactPicker}
+      className={styles.sidebarPicker}
       {...extra}
     />
   )
@@ -91,13 +90,18 @@ export default function BronzeFilters({
             options={BOARD_SIZES.map(n => ({ value: n, label: n, ariaLabel: t('bronze.sizeOption', { count: n }) }))}
           />
         </Field>
-        {/* The searches carry their own placeholder and accessible name. */}
-        {chip('requiredIds', pickers.unit, filters.boardMode ? 'owned' : 'unit', filters.boardMode ? MAX_BOARD_UNITS : filters.size)}
-        {chip('avoidIds', pickers.avoid, 'avoid', MAX_LISTED_IDS)}
-        {chip('emblemIds', pickers.emblem, 'emblem', MAX_EMBLEMS, { allowDuplicates: true })}
+        <Field id={`${id}-units`} label={t(filters.boardMode ? 'bronze.ownedActive' : 'bronze.unitFilterLabel')}>
+          {chip('requiredIds', pickers.unit, filters.boardMode ? 'owned' : 'unit', filters.boardMode ? MAX_BOARD_UNITS : filters.size)}
+        </Field>
+        <Field id={`${id}-avoid`} label={t('bronze.avoidFieldLabel')}>
+          {chip('avoidIds', pickers.avoid, 'avoid', MAX_LISTED_IDS)}
+        </Field>
+        <Field id={`${id}-emblems`} label={t('bronze.emblemsLabel')}>
+          {chip('emblemIds', pickers.emblem, 'emblem', MAX_EMBLEMS, { allowDuplicates: true })}
+        </Field>
 
         <Section title={t('bronze.sectionTraits')}>
-          <Field id={`${id}-tiers`} label={t('bronze.tiersLabel')} inline>
+          <Field id={`${id}-tiers`} label={t('bronze.tiersLabel')}>
             <Segmented
               labelledBy={`${id}-tiers`}
               value={filters.includeSilverGold}
@@ -105,11 +109,13 @@ export default function BronzeFilters({
               options={[{ value: false, label: t('bronze.tierBronze') }, { value: true, label: t('bronze.tierBronzeGold') }]}
             />
           </Field>
-          {chip('requiredTraits', pickers.trait, 'traitPick', MAX_LISTED_IDS)}
+          <Field id={`${id}-traits`} label={t('bronze.traitFieldLabel')}>
+            {chip('requiredTraits', pickers.trait, 'traitPick', MAX_LISTED_IDS)}
+          </Field>
         </Section>
 
         <Section title={t('bronze.sectionUnits')}>
-          <Field id={`${id}-cost`} label={t('bronze.maxCostLabel')} inline>
+          <Field id={`${id}-cost`} label={t('bronze.maxCostLabel')}>
             <Segmented
               labelledBy={`${id}-cost`}
               value={Math.min(filters.maxCost, maxUnitCost)}
@@ -118,7 +124,7 @@ export default function BronzeFilters({
             />
           </Field>
           {choiceUnitNames.length > 0 && choiceMax > 0 && (
-            <Field id={`${id}-choice`} label={t('bronze.choiceTraitsLabel', { units: choiceUnitNames.join(' / ') })} inline>
+            <Field id={`${id}-choice`} label={t('bronze.choiceTraitsLabel', { units: choiceUnitNames.join(' / ') })}>
               <Segmented
                 labelledBy={`${id}-choice`}
                 value={Math.min(filters.choiceTraitCount, choiceMax)}
@@ -135,7 +141,7 @@ export default function BronzeFilters({
         </Section>
 
         <Section title={t('bronze.sectionItems')}>
-          <Field id={`${id}-tools`} label={t('bronze.toolsLabel')} inline>
+          <Field id={`${id}-tools`} label={t('bronze.toolsLabel')}>
             <div className={styles.toolToggles} role="group" aria-labelledby={`${id}-tools`}>
               {toggle('hasSpatula', toolItems.spatula, t('bronze.hasSpatula'))}
               {toggle('hasFryingPan', toolItems.pan, t('bronze.hasFryingPan'))}
@@ -144,7 +150,7 @@ export default function BronzeFilters({
         </Section>
 
         <Section title={t('bronze.sectionMode')}>
-          <Field id={`${id}-mode`} label={t('bronze.modeLabel')} inline>
+          <Field id={`${id}-mode`} label={t('bronze.modeLabel')}>
             <Segmented
               labelledBy={`${id}-mode`}
               value={filters.boardMode}
