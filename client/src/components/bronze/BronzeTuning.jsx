@@ -36,8 +36,7 @@ export default function BronzeTuning({ filters, setFilter }) {
     setFilter('maxSwaps', BOARD_MAX_SWAPS)
   }
   return (
-    <fieldset className={`${styles.optionGroup} ${filters.boardMode ? '' : styles.tuningIdle}`}>
-      <legend className={styles.optionLegend}>{t('bronze.tuningTitle')}</legend>
+    <div className={`${styles.tuningBody} ${filters.boardMode ? '' : styles.tuningIdle}`}>
       {!filters.boardMode && <p className={styles.tuningHint}>{t('bronze.tuningHint')}</p>}
       <Slider label={t('bronze.tuningTrait')} value={weights.trait} min={0} max={5} step={0.25} onChange={v => setWeight('trait', v)} />
       <Slider label={t('bronze.tuningShared')} value={weights.sharedTrait} min={0} max={5} step={0.25} onChange={v => setWeight('sharedTrait', v)} />
@@ -62,6 +61,6 @@ export default function BronzeTuning({ filters, setFilter }) {
         format={v => (v === 6 ? t('bronze.tuningNoCap') : v)}
       />
       <button type="button" className={styles.tuningReset} onClick={reset}>{t('bronze.tuningReset')}</button>
-    </fieldset>
+    </div>
   )
 }

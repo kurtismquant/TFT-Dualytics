@@ -46,6 +46,19 @@ export default function RecommendedUnits({ comps, emblemByTrait, toolItems = {} 
           </li>
         ))}
       </ul>
+      {canExpand && (
+        <button
+          type="button"
+          className={styles.recommendedToggle}
+          onClick={() => setExpanded(open => !open)}
+          aria-expanded={expanded}
+          aria-controls="bronze-recommended-list"
+          aria-label={t(expanded ? 'bronze.recommendedFewer' : 'bronze.recommendedMore')}
+          title={t(expanded ? 'bronze.recommendedFewer' : 'bronze.recommendedMore')}
+        >
+          <Chevron direction={expanded ? 'up' : 'down'} size={20} />
+        </button>
+      )}
       {bestCrafts.length > 0 && (
         <div className={styles.bestCraft}>
           <h4 className={styles.bestCraftHeading}>{t('bronze.bestCraftTitle')}</h4>
@@ -69,19 +82,6 @@ export default function RecommendedUnits({ comps, emblemByTrait, toolItems = {} 
             })}
           </ul>
         </div>
-      )}
-      {canExpand && (
-        <button
-          type="button"
-          className={styles.recommendedToggle}
-          onClick={() => setExpanded(open => !open)}
-          aria-expanded={expanded}
-          aria-controls="bronze-recommended-list"
-          aria-label={t(expanded ? 'bronze.recommendedFewer' : 'bronze.recommendedMore')}
-          title={t(expanded ? 'bronze.recommendedFewer' : 'bronze.recommendedMore')}
-        >
-          <Chevron direction={expanded ? 'up' : 'down'} />
-        </button>
       )}
     </aside>
   )

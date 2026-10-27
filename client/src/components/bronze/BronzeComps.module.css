@@ -1,57 +1,141 @@
-/* Bronze for Life: controls + ranked comp list. */
+/* Bronze for Life: filter sidebar + ranked comp list. */
+/* Filter sidebar on the left, results on the right (wide page shell). */
 .page {
+  display: grid;
+  grid-template-columns: 18.5rem minmax(0, 1fr);
+  align-items: start;
+  gap: 1.75rem;
   font-family: var(--font-body);
 }
 
-/* ── Controls ────────────────────────────────────────── */
-.controls {
+.resultsColumn {
+  min-width: 0;
+}
+
+/* ── Filter sidebar ──────────────────────────────────── */
+.sidebar {
+  min-width: 0;
+  padding: 1rem;
+  border: 1px solid var(--bg-border-muted);
+  background: var(--bg-card);
+}
+
+/* The "Filters (n)" toggle only shows when the sidebar collapses (tablet). */
+.filtersToggle {
+  display: none;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  min-height: 2.75rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  font-size: var(--text-base);
+  font-weight: var(--fw-bold);
+  letter-spacing: var(--track-wide);
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.filtersToggle svg {
+  margin-left: auto;
+}
+
+.filtersToggle:focus-visible {
+  outline: 2px solid var(--accent-gold);
+  outline-offset: 2px;
+}
+
+.filtersCount {
+  color: var(--accent-gold);
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+}
+
+.filtersBody {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
-  padding: 1rem 0 1.25rem;
-  border-top: 1px solid var(--bg-border-muted);
-  border-bottom: 1px solid var(--bg-border-muted);
+  gap: 1rem;
 }
 
-.controlRow {
+/* One setting: a small label above its control. */
+.field {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.5rem 1rem;
+  flex-direction: column;
+  gap: 0.375rem;
+  min-width: 0;
 }
 
-.controlLabel {
-  min-width: 5.5rem;
-  color: var(--text-muted);
+.fieldLabel {
+  color: var(--text-secondary);
   font-size: var(--text-2xs);
+  font-weight: var(--fw-bold);
   letter-spacing: var(--track-wider);
   text-transform: uppercase;
 }
 
-.sizeGroup {
+.filterSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--bg-border-muted);
+}
+
+.filterSectionTitle {
+  margin: 0;
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  font-size: var(--text-base);
+  font-weight: var(--fw-bold);
+  letter-spacing: var(--track-wide);
+  line-height: var(--leading-none);
+  text-transform: uppercase;
+}
+
+/* Joined toggle buttons (Segmented): shared borders, equal widths. */
+.segmentedBar {
+  display: flex;
+  width: 100%;
+}
+
+.segment {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 2.25rem;
+  padding: 0 0.25rem;
+  justify-content: center;
+  font-size: var(--text-xs);
+  white-space: nowrap;
+}
+
+.segment + .segment {
+  margin-left: -1px;
+}
+
+/* Hovered / selected segment draws its full border over its neighbours'. */
+.segment:hover,
+.segment[aria-pressed='true'] {
+  z-index: 1;
+}
+
+/* Spatula / Frying Pan: pressed-state chips with the item icon. */
+.toolToggles {
   display: flex;
   flex-wrap: wrap;
   gap: 0.375rem;
 }
 
-.sizeButton {
-  min-width: 2.75rem;
-  justify-content: center;
-}
-
-.clearButton {
-  flex: 0 0 auto;
-}
-
-/* "Show more options ⌄": borderless, centred under the emblem search. */
-.moreToggle {
+.toolToggle {
   display: inline-flex;
-  align-self: center;
   align-items: center;
   gap: 0.375rem;
   min-height: 2.25rem;
-  padding: 0 0.5rem;
-  border: 0;
+  padding: 0 0.625rem 0 0.375rem;
+  border: 1px solid var(--bg-border-muted);
   background: transparent;
   color: var(--text-secondary);
   font-family: var(--font-body);
@@ -59,101 +143,76 @@
   letter-spacing: var(--track-wide);
   text-transform: uppercase;
   cursor: pointer;
-  transition: color var(--t-fast);
+  transition: color var(--t-fast), border-color var(--t-fast), background var(--t-fast);
 }
 
-.moreToggle:hover {
+.toolToggle:hover {
+  border-color: var(--bg-border-bright);
   color: var(--text-primary);
 }
 
-.moreToggle:focus-visible {
+.toolToggle[aria-pressed='true'] {
+  border-color: var(--accent-gold);
+  background: var(--bg-hover);
+  color: var(--text-primary);
+  box-shadow: inset 0 -2px 0 var(--accent-gold);
+}
+
+.toolToggle:focus-visible {
   outline: 2px solid var(--accent-gold);
   outline-offset: 2px;
 }
 
-/* The expanded options: checkbox / dropdown groups side by side. */
-.optionsPanel {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem 2.5rem;
-  padding: 0.25rem 0 0;
+.traitPickIcon {
+  flex: 0 0 auto;
+  object-fit: contain;
+  background: var(--icon-tile-bg);
 }
 
-.optionGroup {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.125rem;
-  min-width: 0;
-  margin: 0;
-  padding: 0;
-  border: 0;
+/* Tuning (testing): a collapsible block at the end of the sidebar. */
+.tuningDetails {
+  padding-top: 1rem;
+  border-top: 1px solid var(--bg-border-muted);
 }
 
-.optionLegend {
-  margin-bottom: 0.25rem;
-  padding: 0;
-  color: var(--text-muted);
+.tuningDetails summary {
+  color: var(--text-secondary);
   font-size: var(--text-2xs);
+  font-weight: var(--fw-bold);
   letter-spacing: var(--track-wider);
   text-transform: uppercase;
-}
-
-.checkbox {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  min-height: 2.75rem;
-  color: var(--text-secondary);
-  font-size: var(--text-xs);
-  letter-spacing: var(--track-wide);
-  text-transform: uppercase;
   cursor: pointer;
 }
 
-.checkbox input {
-  width: 1.125rem;
-  height: 1.125rem;
-  margin: 0;
-  accent-color: var(--accent-gold);
-  cursor: pointer;
-}
-
-/* "Kha'Zix traits [4 traits v]": label beside the evolutions dropdown. */
-/* A setting under a checkbox (Kha'Zix traits 1-4), indented to the
-   checkbox's label so it reads as part of it. */
-.subOption {
+.tuningBody {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.375rem 0.625rem;
+  flex-direction: column;
+  gap: 0.125rem;
+  margin-top: 0.625rem;
+}
+
+.resetFilters {
+  align-self: flex-start;
   min-height: 2.25rem;
-  padding-left: 1.625rem;
+  padding: 0 0.875rem;
+  border: 1px solid var(--bg-border-muted);
+  background: transparent;
   color: var(--text-secondary);
+  font-family: var(--font-body);
   font-size: var(--text-xs);
   letter-spacing: var(--track-wide);
   text-transform: uppercase;
+  cursor: pointer;
 }
 
-/* Compact segment buttons: the board-size picker's style, checkbox-sized. */
-.segmented {
-  display: inline-flex;
-  gap: 0.25rem;
+.resetFilters:hover:not(:disabled) {
+  border-color: var(--bg-border-bright);
+  color: var(--text-primary);
 }
 
-.segmentButton {
-  min-width: 2rem;
-  min-height: 2rem;
-  padding: 0 0.5rem;
-  justify-content: center;
-  font-size: var(--text-xs);
-}
-
-/* Spatula / Frying Pan checkbox labels carry the item's icon. */
-.toolLabel {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.375rem;
+.resetFilters:disabled {
+  opacity: 0.45;
+  cursor: default;
 }
 
 /* An emblem to craft: dashed gold frame, the tool's icon in the corner. */
@@ -190,14 +249,10 @@
   text-transform: uppercase;
 }
 
-.checkbox:hover {
-  color: var(--text-primary);
-}
-
 /* ── Results ─────────────────────────────────────────── */
 /* Results and the recommended-units widget. By default the widget is a strip
    above the list; on windows wide enough (data-widget="outside", decided in
-   BronzeComps.jsx) it sits outside the page's content box, in the left
+   BronzeResults.jsx) it sits outside the page's content box, in the right
    margin, and stays in view while the list scrolls. */
 .resultsLayout {
   display: grid;
@@ -213,20 +268,20 @@
 
 .recommended {
   order: -1; /* the strip goes above the list */
-  padding: 0.75rem;
+  padding: 0.75rem 0.75rem 0.375rem;
   border: 1px solid var(--bg-border-muted);
   background: var(--bg-card);
 }
 
-/* A zero-width first column holds the widget; a negative margin of its own
-   width plus the gap pulls it into the margin beside the content box. */
+/* A zero-width last column holds the widget; it overflows into the margin
+   to the right of the content box, a gap away from the results. */
 .resultsLayout[data-widget='outside'] {
-  grid-template-columns: 0 minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr) 0;
   column-gap: 0;
 }
 
 .resultsLayout[data-widget='outside'] .resultsMain {
-  grid-column: 2;
+  grid-column: 1;
   grid-row: 1;
 }
 
@@ -242,10 +297,10 @@
   position: sticky;
   top: 50%;
   transform: translateY(-50%);
-  grid-column: 1;
+  grid-column: 2;
   grid-row: 1;
   width: 9.5rem;
-  margin-left: -10.75rem;
+  margin-left: 1.25rem;
 }
 
 .recommendedHeading {
@@ -269,14 +324,15 @@
   list-style: none;
 }
 
-/* Borderless arrow under the list, centered: reveals up to 10 units. */
+/* Borderless arrow right under the units list, centred, with little space
+   around it: reveals up to 10 units. */
 .recommendedToggle {
   display: flex;
   align-items: center;
   justify-content: center;
   width: 100%;
-  min-height: 2rem;
-  margin-top: 0.375rem;
+  min-height: 1.5rem;
+  margin-top: 0.25rem;
   padding: 0;
   border: 0;
   background: transparent;
@@ -502,7 +558,7 @@
 /* Tuning sliders (testing aid). */
 .slider {
   display: grid;
-  grid-template-columns: 7.5rem minmax(5rem, 9rem) 2.75rem;
+  grid-template-columns: minmax(0, 1fr) 6rem 2.25rem;
   align-items: center;
   gap: 0.5rem;
   min-height: 1.75rem;
@@ -656,6 +712,24 @@
 }
 
 @media (--bp-lg) {
+  /* Sidebar above the results, collapsed behind its "Filters" toggle. */
+  .page {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1rem;
+  }
+
+  .filtersToggle {
+    display: flex;
+  }
+
+  .sidebar[data-open='false'] .filtersBody {
+    display: none;
+  }
+
+  .sidebar[data-open='true'] .filtersBody {
+    margin-top: 0.75rem;
+  }
+
   /* Units and the copy icon share the first line; traits go under them. */
   .row {
     grid-template-columns: minmax(0, 1fr) auto;
@@ -674,36 +748,6 @@
 }
 
 @media (--bp-md) {
-  .controlLabel {
-    min-width: 0;
-    width: 100%;
-  }
-
-  /* Phones: the sizes join into one segmented bar (shared borders, no
-     gaps) so all eight fit across the screen. */
-  .sizeButton {
-    position: relative;
-    flex: 1 1 0;
-    min-width: 0;
-    padding: 0;
-  }
-
-  .sizeButton + .sizeButton {
-    margin-left: -1px;
-  }
-
-  /* Hovered / selected segment draws its full border over its neighbours'. */
-  .sizeButton:hover,
-  .sizeButton[aria-pressed='true'] {
-    z-index: 1;
-  }
-
-  .sizeGroup {
-    width: 100%;
-    flex-wrap: nowrap;
-    gap: 0;
-  }
-
   .groupHeading {
     font-size: var(--text-lg);
   }

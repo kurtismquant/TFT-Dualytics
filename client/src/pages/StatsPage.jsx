@@ -100,8 +100,9 @@ export default function StatsPage() {
   const patch = data?.patch || selectedPatch
   const matchCount = (data?.matchCount || 0).toLocaleString()
 
+  // Bronze for Life's filter sidebar needs the wide shell to keep 10 units on a line.
   return (
-    <PageShell>
+    <PageShell wide={activeTab === 'bronze'}>
       <div className={styles.header}>
         <div>
           <p className={styles.eyebrow}>{t('stats.eyebrow')}</p>

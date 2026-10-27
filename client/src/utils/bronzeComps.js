@@ -233,7 +233,7 @@ const compareBoardComps = (a, b) => a.score - b.score || a.traitCount - b.traitC
 // buy and sell; requiredIds are ignored then.
 export function findBronzeComps({
   roster, ranges, size, emblemTraits = [], requiredIds = [], craftTools = [], ownedIds = [], choiceTraitCount = null,
-  boardWeights = {}, maxSwaps = null, limit = 20, nodeCap = NODE_CAP,
+  boardWeights = {}, maxSwaps = null, requiredTraits = [], limit = 20, nodeCap = NODE_CAP,
 }) {
   const owned = new Set(ownedIds)
   const boardMode = owned.size > 0
@@ -261,6 +261,10 @@ export function findBronzeComps({
   const missing = requiredIds.filter(id => !units.some(unit => unit.id === id))
   const open = size - fixed.length
   if (missing.length > 0 || open < requiredGroups.length) return { comps: [], truncated: false, tooManyRequired: open < requiredGroups.length }
+  // Traits every comp must have counted (the page's "Must include traits"). A
+  // trait that can't count in this mode (e.g. no bronze tier) means no comps.
+  const mustTraits = [...new Set(requiredTraits)].map(trait => traitIndex.get(trait))
+  if (mustTraits.some(index => index == null)) return { comps: [], truncated: false, tooManyRequired: false }
 
   let cost = 0
   for (const unit of fixed) {
@@ -349,23 +353,29 @@ export function findBronzeComps({
     for (const t of ownedTraits) if (counts[t] >= lo[t] && counts[t] <= hi[t]) total++
     return total
   }
+  const meetsRequired = () => mustTraits.every(t => counts[t] >= lo[t] && counts[t] <= hi[t])
   // Best score with each tool crafting one emblem (or none), and that crafting
-  // as [{ tool, t }]: most counted traits, then most of the player's traits
-  // kept (my-board mode). Only traits a +1 could lift into range are tried; a
-  // crafting is kept only when it strictly beats crafting less.
+  // as [{ tool, t }]: first one that has every required trait (`valid`), then
+  // most counted traits, then most of the player's traits kept (my-board
+  // mode). Only traits a +1 could lift into range are tried; a crafting is
+  // kept only when it strictly beats crafting less.
   const scoreWithTools = () => {
     const base = score()
     const baseShared = sharedCount()
-    if (tools.length === 0) return { traitCount: base, shared: baseShared, crafted: NO_CRAFT }
+    const baseValid = meetsRequired()
+    if (tools.length === 0) return { valid: baseValid, traitCount: base, shared: baseShared, crafted: NO_CRAFT }
+    let bestValid = baseValid
     let best = base
     let bestShared = baseShared
     let bestCrafted = NO_CRAFT
     const chosen = []
     const tryTool = k => {
       if (k === tools.length) {
+        const valid = meetsRequired()
         const total = score()
         const shared = sharedCount()
-        if (total > best || (total === best && shared > bestShared)) {
+        if ((valid && !bestValid) || (valid === bestValid && (total > best || (total === best && shared > bestShared)))) {
+          bestValid = valid
           best = total
           bestShared = shared
           bestCrafted = chosen.slice()
@@ -383,7 +393,7 @@ export function findBronzeComps({
       }
     }
     tryTool(0)
-    return { traitCount: best, shared: bestShared, crafted: bestCrafted }
+    return { valid: bestValid, traitCount: best, shared: bestShared, crafted: bestCrafted }
   }
   // Deficits are small (a trait needs at most a few more units), so they are
   // tallied by size instead of sorted; this runs at every search node.
@@ -453,9 +463,9 @@ export function findBronzeComps({
   })
   const leaf = () => {
     if (requiredGroups.some(group => !groupsUsed.get(group))) return
-    const { traitCount, shared, crafted } = scoreWithTools()
+    const { valid, traitCount, shared, crafted } = scoreWithTools()
     if (bonusPick === -1) {
-      keep(candidate(traitCount, shared, 0, cost, penalty, crafted), picks.slice())
+      if (valid) keep(candidate(traitCount, shared, 0, cost, penalty, crafted), picks.slice())
       return
     }
     // The 4th evolution only counts when it beats every 3-trait choice. When it
@@ -473,7 +483,7 @@ export function findBronzeComps({
       if (cls.group !== group || cls.bonus) return
       withVector(cls.vector, 1)
       const choice = scoreWithTools()
-      if (choice.traitCount > bestChoice) {
+      if (choice.valid && choice.traitCount > bestChoice) {
         bestChoice = choice.traitCount
         bestIndex = index
         bestChoiceCrafted = choice.crafted
@@ -482,7 +492,7 @@ export function findBronzeComps({
       withVector(cls.vector, -1)
     })
     withVector(classes[bonusPick].vector, 1)
-    if (traitCount > bestChoice) {
+    if (valid && traitCount > bestChoice) {
       keep(candidate(traitCount, shared, 1, cost, penalty, crafted), picks.slice())
     } else if (bestIndex !== -1) {
       const choicePicks = picks.slice()
@@ -500,6 +510,12 @@ export function findBronzeComps({
     if (i === classes.length) return
     if (requiredGroups.some(group => !groupsUsed.get(group) && groupLast.get(group) < i)) return
     if (bought + Math.max(0, remaining - ownedLeft[i]) > maxBuys) return
+    // A required trait already past its range, or that the remaining picks
+    // and tools can no longer reach, rules the branch out.
+    for (const t of mustTraits) {
+      if (counts[t] > hi[t]) return
+      if (counts[t] < lo[t] && supply[i][t] + toolSupply[t] < lo[t] - counts[t]) return
+    }
     if (kept.length === limit && boardMode) {
       // Best case: every reachable trait (as many of them the player's as are
       // not already past their range), at the least penalty still possible.
