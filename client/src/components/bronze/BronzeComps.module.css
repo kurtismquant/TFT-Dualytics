@@ -168,7 +168,7 @@
 }
 
 .toolToggle[aria-pressed='true'] {
-  border-color: var(--accent-gold);
+  border-color: var(--text-primary);
   background: var(--bg-hover);
   color: var(--text-primary);
   box-shadow: inset 0 -2px 0 var(--accent-gold);

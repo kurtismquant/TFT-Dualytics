@@ -13,6 +13,7 @@ export const DEFAULT_FILTERS = Object.freeze({
   emblemIds: [], // emblems owned (repeats allowed)
   traitLadder: false, // playstyle: Bronze for Life (false) or Trait Ladder
   choiceTraitsOff: [], // Kha'Zix evolution traits switched off (all on by default)
+  excludeChoiceUnits: false, // leave Kha'Zix out entirely
   hasSpatula: false,
   hasFryingPan: false,
 })
@@ -20,7 +21,7 @@ export const DEFAULT_FILTERS = Object.freeze({
 // key in the URL for each filter
 const KEYS = {
   size: 'n', requiredIds: 'u', boardMode: 'mode',
-  emblemIds: 'e', traitLadder: 'play', choiceTraitsOff: 'kzoff',
+  emblemIds: 'e', traitLadder: 'play', choiceTraitsOff: 'kzoff', excludeChoiceUnits: 'nokz',
   hasSpatula: 'sp', hasFryingPan: 'fp',
 }
 
@@ -44,6 +45,7 @@ export function parseBronzeParams(params) {
     emblemIds: list(get('emblemIds'), { unique: false, max: MAX_EMBLEMS }),
     traitLadder: get('traitLadder') === 'ladder',
     choiceTraitsOff: list(get('choiceTraitsOff')),
+    excludeChoiceUnits: get('excludeChoiceUnits') === '1',
     hasSpatula: get('hasSpatula') === '1',
     hasFryingPan: get('hasFryingPan') === '1',
   }
@@ -59,6 +61,7 @@ export function bronzeFiltersToSearch(filters) {
   if (filters.emblemIds.length) set('emblemIds', filters.emblemIds.join(','))
   if (filters.traitLadder) set('traitLadder', 'ladder')
   if (filters.choiceTraitsOff.length) set('choiceTraitsOff', filters.choiceTraitsOff.join(','))
+  if (filters.excludeChoiceUnits) set('excludeChoiceUnits', '1')
   if (filters.hasSpatula) set('hasSpatula', '1')
   if (filters.hasFryingPan) set('hasFryingPan', '1')
   return params

@@ -39,9 +39,14 @@ export default function BronzeComps() {
   const traits = traitsQuery.data
   const items = itemsQuery.data
 
-  // Same roster as the builder: base Lux dropped, forms count double.
-  const roster = useMemo(() => toBuilderRoster(champions || []), [champions])
-  const choiceUnits = useMemo(() => roster.filter(unit => TRAIT_CHOICE_UNIT_IDS.has(unit.id)), [roster])
+  // Same roster as the builder: base Lux dropped, forms count double. The
+  // search roster leaves trait-choice units (Kha'Zix) out when excluded.
+  const fullRoster = useMemo(() => toBuilderRoster(champions || []), [champions])
+  const choiceUnits = useMemo(() => fullRoster.filter(unit => TRAIT_CHOICE_UNIT_IDS.has(unit.id)), [fullRoster])
+  const roster = useMemo(
+    () => (filters.excludeChoiceUnits ? fullRoster.filter(unit => !TRAIT_CHOICE_UNIT_IDS.has(unit.id)) : fullRoster),
+    [fullRoster, filters.excludeChoiceUnits],
+  )
   // Their evolution traits (Kha'Zix's 4), each switchable in the sidebar.
   const choiceOptions = useMemo(() => [...new Set(choiceUnits.flatMap(unit => traitChoiceOptions(unit.id)))], [choiceUnits])
   const choiceTraits = useMemo(
@@ -52,7 +57,7 @@ export default function BronzeComps() {
   const { emblemOptions, itemLookup, emblemByTrait, toolItems, craftTools, emblemTraits } = useBronzeEmblems({
     items, traits, emblemIds: filters.emblemIds, hasSpatula: filters.hasSpatula, hasFryingPan: filters.hasFryingPan,
   })
-  const unitLookup = useMemo(() => makeMap(roster), [roster])
+  const unitLookup = useMemo(() => makeMap(fullRoster), [fullRoster])
   const traitByName = useMemo(() => new Map((traits || []).map(trait => [trait.name, trait])), [traits])
 
   const pickers = useMemo(() => {

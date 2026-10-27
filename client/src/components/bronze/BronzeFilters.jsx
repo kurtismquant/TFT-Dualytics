@@ -109,28 +109,40 @@ export default function BronzeFilters({
         {/* Only trait-choice units (Kha'Zix) are set here; no section without them. */}
         {choiceUnitNames.length > 0 && choiceOptions.length > 0 && (
           <Section title={t('bronze.sectionUnits')}>
-            <Field id={`${id}-choice`} label={t('bronze.choiceTraitsLabel', { units: choiceUnitNames.join(' / ') })}>
-              <div className={styles.toolToggles} role="group" aria-labelledby={`${id}-choice`}>
-                {choiceOptions.map(trait => {
-                  const on = !filters.choiceTraitsOff.includes(trait)
-                  return (
-                    <button
-                      key={trait}
-                      type="button"
-                      className={styles.toolToggle}
-                      aria-pressed={on}
-                      onClick={() => setFilter('choiceTraitsOff', on
-                        ? [...filters.choiceTraitsOff, trait]
-                        : filters.choiceTraitsOff.filter(name => name !== trait))}
-                    >
-                      <img src={traitByName?.get(trait)?.iconUrl} alt="" className={styles.traitToggleIcon} />
-                      <span>{trait}</span>
-                    </button>
-                  )
-                })}
-              </div>
-              <p className={styles.fieldHint}>{t('bronze.choiceTraitsHint', { units: choiceUnitNames.join(' / ') })}</p>
-            </Field>
+            <div className={styles.toolToggles}>
+              <button
+                type="button"
+                className={styles.toolToggle}
+                aria-pressed={filters.excludeChoiceUnits}
+                onClick={() => setFilter('excludeChoiceUnits', !filters.excludeChoiceUnits)}
+              >
+                {t('bronze.excludeChoiceUnits', { units: choiceUnitNames.join(' / ') })}
+              </button>
+            </div>
+            {!filters.excludeChoiceUnits && (
+              <Field id={`${id}-choice`} label={t('bronze.choiceTraitsLabel', { units: choiceUnitNames.join(' / ') })}>
+                <div className={styles.toolToggles} role="group" aria-labelledby={`${id}-choice`}>
+                  {choiceOptions.map(trait => {
+                    const on = !filters.choiceTraitsOff.includes(trait)
+                    return (
+                      <button
+                        key={trait}
+                        type="button"
+                        className={styles.toolToggle}
+                        aria-pressed={on}
+                        onClick={() => setFilter('choiceTraitsOff', on
+                          ? [...filters.choiceTraitsOff, trait]
+                          : filters.choiceTraitsOff.filter(name => name !== trait))}
+                      >
+                        <img src={traitByName?.get(trait)?.iconUrl} alt="" className={styles.traitToggleIcon} />
+                        <span>{trait}</span>
+                      </button>
+                    )
+                  })}
+                </div>
+                <p className={styles.fieldHint}>{t('bronze.choiceTraitsHint', { units: choiceUnitNames.join(' / ') })}</p>
+              </Field>
+            )}
           </Section>
         )}
 

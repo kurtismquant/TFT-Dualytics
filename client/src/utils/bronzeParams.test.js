@@ -17,12 +17,13 @@ test('every filter round-trips through the URL', () => {
     emblemIds: ['DA_18_EmblemCoven', 'DA_18_EmblemCoven'],
     traitLadder: true,
     choiceTraitsOff: ['Rapidfire', 'Spellweaver'],
+    excludeChoiceUnits: true,
     hasSpatula: true,
     hasFryingPan: true,
   }
   const search = bronzeFiltersToSearch(filters)
   assert.deepEqual(parseBronzeParams(new URLSearchParams(search.toString())), filters)
-  assert.equal(countActiveFilters(filters), 8)
+  assert.equal(countActiveFilters(filters), 9)
 })
 
 test('bad values fall back; lists are cleaned, deduped (not emblems) and capped', () => {
