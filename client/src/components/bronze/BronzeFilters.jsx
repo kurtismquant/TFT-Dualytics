@@ -6,6 +6,7 @@ import Segmented from './Segmented.jsx'
 import BronzeTuning from './BronzeTuning.jsx'
 import ItemIcon from '../ItemIcon.jsx'
 import { BOARD_SIZES, MAX_EMBLEMS } from '../../utils/bronzeComps.js'
+import { RANK_BY } from '../../utils/bronzeParams.js'
 import styles from './BronzeComps.module.css'
 
 // Most units a player's current board can hold ("From my units").
@@ -43,6 +44,7 @@ export default function BronzeFilters({
   const { t } = useTranslation()
   const id = useId()
   const [open, setOpen] = useState(false)
+  const boardMode = filters.rankBy === 'board'
   const hasChoiceUnits = choiceUnitNames.length > 0 && choiceOptions.length > 0
   const chip = (key, picker, i18nKey, max, extra = {}) => (
     <ChipPicker
@@ -101,8 +103,8 @@ export default function BronzeFilters({
             options={BOARD_SIZES.map(n => ({ value: n, label: n, ariaLabel: t('bronze.sizeOption', { count: n }) }))}
           />
         </Field>
-        <Field id={`${id}-units`} label={t(filters.boardMode ? 'bronze.ownedActive' : 'bronze.unitFilterLabel')}>
-          {chip('requiredIds', pickers.unit, filters.boardMode ? 'owned' : 'unit', filters.boardMode ? MAX_BOARD_UNITS : filters.size)}
+        <Field id={`${id}-units`} label={t(boardMode ? 'bronze.ownedActive' : 'bronze.unitFilterLabel')}>
+          {chip('requiredIds', pickers.unit, boardMode ? 'owned' : 'unit', boardMode ? MAX_BOARD_UNITS : filters.size)}
         </Field>
         <Field id={`${id}-emblems`} label={t('bronze.emblemsLabel')}>
           {chip('emblemIds', pickers.emblem, 'emblem', MAX_EMBLEMS, { allowDuplicates: true })}
@@ -169,17 +171,18 @@ export default function BronzeFilters({
           <Field id={`${id}-mode`} label={t('bronze.modeLabel')}>
             <Segmented
               labelledBy={`${id}-mode`}
-              value={filters.boardMode}
-              onChange={value => setFilter('boardMode', value)}
-              options={[{ value: false, label: t('bronze.modeBest') }, { value: true, label: t('bronze.modeBoard') }]}
+              value={filters.rankBy}
+              onChange={value => setFilter('rankBy', value)}
+              options={RANK_BY.map(value => ({ value, label: t(`bronze.rank_${value}`) }))}
             />
+            {filters.rankBy === 'played' && <p className={styles.fieldHint}>{t('bronze.rankPlayedHint')}</p>}
           </Field>
         </Section>
 
         <details className={styles.tuningDetails}>
           <summary>{t('bronze.tuningTitle')}</summary>
           <BronzeTuning
-            filters={{ ...tuning, boardMode: filters.boardMode }}
+            filters={{ ...tuning, boardMode }}
             setFilter={(key, value) => setTuning(current => ({ ...current, [key]: value }))}
           />
         </details>

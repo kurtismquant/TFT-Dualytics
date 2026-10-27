@@ -538,6 +538,16 @@
   cursor: help;
 }
 
+/* Most played: the comp's play count on its own line under the units. */
+.playCount {
+  flex: 1 0 100%;
+  margin: 0;
+  color: var(--text-muted);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--track-wide);
+  text-transform: uppercase;
+}
+
 /* Units get the free width so up to 10 (plus emblems) fit on one line on
    desktop; traits wrap in their own column; the copy icon sits at the end.
    The left gutter holds the highly-played star. */

@@ -22,7 +22,9 @@ const SIDE_WIDGET_MIN_REM = 110
 
 // Results: trait-count groups (collapsible, paged), the highly-played star
 // (starred comps lead their trait count) and the recommended-units widget.
-export default function BronzeResults({ result, isSearching, size, rowProps }) {
+// rankBy 'played' orders each trait count by play count instead, and each row
+// shows its count.
+export default function BronzeResults({ result, isSearching, size, rankBy, rowProps }) {
   const { t } = useTranslation()
   const uiScale = useUiScale()
   const widgetOutside = useMediaQuery(`(min-width: ${Math.round(SIDE_WIDGET_MIN_REM * 16 * uiScale)}px)`)
@@ -30,26 +32,36 @@ export default function BronzeResults({ result, isSearching, size, rowProps }) {
   // Pages shown and collapsed trait counts, reset whenever a new result arrives.
   const [paging, setPaging] = useState({ result: null, shown: PAGE_SIZE, collapsed: NONE_COLLAPSED })
   const current = paging.result === result ? paging : { shown: PAGE_SIZE, collapsed: NONE_COLLAPSED }
-  // comp key -> { count, avgPlacement } for comps played often enough to star.
+  // comp key -> { count, avgPlacement } this patch; empty until the server's
+  // board index answers. Comps played often enough get the star.
   const played = usePlayedBoards(result?.comps)
-  const highlyPlayed = useMemo(() => {
-    const map = new Map()
+  const playCounts = useMemo(() => {
     const rows = played.data?.results || []
-    result?.comps.forEach((comp, i) => {
-      if ((rows[i]?.count || 0) >= HIGHLY_PLAYED_MIN_BOARDS) map.set(comp.key, rows[i])
-    })
-    return map
+    return new Map((result?.comps || []).map((comp, i) => [comp.key, rows[i]]).filter(([, row]) => row))
   }, [played.data, result])
+  const highlyPlayed = useMemo(
+    () => new Map([...playCounts].filter(([, row]) => row.count >= HIGHLY_PLAYED_MIN_BOARDS)),
+    [playCounts],
+  )
+  const byPlays = rankBy === 'played'
+  const playsUnavailable = byPlays && (played.isError || played.data?.ready === false)
   // Comps differing only by Lux form become one row listing the forms.
   const merged = useMemo(() => mergeFormVariants(result?.comps || []), [result])
-  // Starred comps lead their trait count, ahead of the cost order (before
-  // paging, so a starred comp deep in the list still shows near the top).
-  const ordered = useMemo(() => merged
-    .map((comp, index) => ({ comp, index }))
-    .sort((a, b) => b.comp.traitCount - a.comp.traitCount
-      || Number(highlyPlayed.has(b.comp.key)) - Number(highlyPlayed.has(a.comp.key))
-      || a.index - b.index)
-    .map(entry => entry.comp), [merged, highlyPlayed])
+  // Starred comps lead their trait count, ahead of the cost order; or, by
+  // plays, the most boards first, a better average place breaking ties (before
+  // paging, so a comp deep in the list still shows near the top).
+  const ordered = useMemo(() => {
+    const plays = comp => playCounts.get(comp.key)?.count || 0
+    const avg = comp => playCounts.get(comp.key)?.avgPlacement ?? Infinity
+    return merged
+      .map((comp, index) => ({ comp, index }))
+      .sort((a, b) => b.comp.traitCount - a.comp.traitCount
+        || (byPlays
+          ? plays(b.comp) - plays(a.comp) || avg(a.comp) - avg(b.comp)
+          : Number(highlyPlayed.has(b.comp.key)) - Number(highlyPlayed.has(a.comp.key)))
+        || a.index - b.index)
+      .map(entry => entry.comp)
+  }, [merged, playCounts, highlyPlayed, byPlays])
   const page = useMemo(() => pageGroups(ordered, current.shown, current.collapsed), [ordered, current.shown, current.collapsed])
   const showMore = useCallback(() => setPaging(prev => {
     const base = prev.result === result ? prev : { shown: PAGE_SIZE, collapsed: NONE_COLLAPSED }
@@ -78,7 +90,14 @@ export default function BronzeResults({ result, isSearching, size, rowProps }) {
             <span className={styles.legendStar} aria-hidden="true">★</span>
             {t('bronze.legendHighlyPlayed', { count: HIGHLY_PLAYED_MIN_BOARDS })}
           </p>
-          <BronzeGroups groups={page.groups} onToggle={toggleGroup} rowProps={rowProps} highlyPlayed={highlyPlayed} />
+          {playsUnavailable && <p className={styles.legend}>{t('bronze.playsUnavailable')}</p>}
+          <BronzeGroups
+            groups={page.groups}
+            onToggle={toggleGroup}
+            rowProps={rowProps}
+            highlyPlayed={highlyPlayed}
+            playCounts={byPlays && played.data?.ready ? playCounts : null}
+          />
         </div>
         {page.shownCount < page.visibleTotal && <LoadMore onMore={showMore} shown={page.shownCount} />}
       </div>

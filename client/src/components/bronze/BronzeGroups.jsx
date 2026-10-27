@@ -7,8 +7,9 @@ import styles from './BronzeComps.module.css'
 // The result list, one section per trait count (from pageGroups). Each heading
 // is a toggle: collapsing hides that count's comps so the next tier moves up.
 // `rowProps` are passed to every BronzeCompRow; `highlyPlayed` maps comp key
-// to its play count for the star.
-export default function BronzeGroups({ groups, onToggle, rowProps, highlyPlayed }) {
+// to its play count for the star; `playCounts` (every comp's, or null) shows
+// the count on each row.
+export default function BronzeGroups({ groups, onToggle, rowProps, highlyPlayed, playCounts }) {
   const { t } = useTranslation()
   const baseId = useId()
   return groups.map(group => {
@@ -31,7 +32,13 @@ export default function BronzeGroups({ groups, onToggle, rowProps, highlyPlayed 
         {!group.collapsed && (
           <ol id={listId} className={styles.groupList}>
             {group.comps.map(comp => (
-              <BronzeCompRow key={comp.key} comp={comp} {...rowProps} played={highlyPlayed.get(comp.key)} />
+              <BronzeCompRow
+                key={comp.key}
+                comp={comp}
+                {...rowProps}
+                played={highlyPlayed.get(comp.key)}
+                plays={playCounts ? playCounts.get(comp.key) || { count: 0 } : null}
+              />
             ))}
           </ol>
         )}

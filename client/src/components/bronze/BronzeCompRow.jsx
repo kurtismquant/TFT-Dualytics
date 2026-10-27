@@ -3,6 +3,7 @@ import ItemIcon from '../ItemIcon.jsx'
 import UnitIcon from '../UnitIcon.jsx'
 import CopyTeamCodeButton from '../shared/CopyTeamCodeButton.jsx'
 import SwapBadge from './SwapBadge.jsx'
+import { PlayCount, PlayedStar } from './PlayedMarks.jsx'
 import { HoverableTraitChip, HoverableUnit } from '../shared/HoverableBoardPieces.jsx'
 import { buildUnitPath } from '../../constants/routes.js'
 import { CURRENT_SET } from '../../constants/game.js'
@@ -96,9 +97,10 @@ function FormOptions({ forms, traitByName }) {
 // use; the traits (counted, then other active ones, then ones a unit or emblem
 // short in grey as have/need); then a button copying the Team Planner code.
 // The trait count is the heading of the group the row sits in.
-// `played` ({ count, avgPlacement }) marks a highly played comp with a gold star.
+// `played` ({ count, avgPlacement }) marks a highly played comp with a gold
+// star; `plays` (the same, any count) adds a line with it under the units.
 export default function BronzeCompRow({
-  comp, traitByName, traits, champions, championsById, emblemByTrait, toolItems = {}, boardWeights, played,
+  comp, traitByName, traits, champions, championsById, emblemByTrait, toolItems = {}, boardWeights, played, plays,
 }) {
   const { t } = useTranslation()
   const teamCode = encodeTeamPlannerCode(comp.units.map(unit => unit.champion), championsById, CURRENT_SET)
@@ -122,15 +124,9 @@ export default function BronzeCompRow({
     .map(({ tool, trait }) => ({ tool, item: emblemByTrait.get(trait) }))
     .filter(entry => entry.item)
 
-  const playedLabel = played && t('bronze.highlyPlayedTitle', { count: played.count, avg: played.avgPlacement?.toFixed(2) })
   return (
     <li className={styles.row}>
-      {played && (
-        <span className={styles.playedStar} title={playedLabel}>
-          <span aria-hidden="true">★</span>
-          <span className="sr-only">{playedLabel}</span>
-        </span>
-      )}
+      {played && <PlayedStar played={played} />}
       <div className={styles.board}>
         <ul className={styles.units} aria-label={t('bronze.unitsLabel')}>
           {comp.units.map(({ champion, alternatives, required, owned }) => {
@@ -151,6 +147,7 @@ export default function BronzeCompRow({
           })}
         </ul>
         {comp.fromBoard && boardWeights && <FromBoard comp={comp} weights={boardWeights} />}
+        {plays && <PlayCount plays={plays} />}
         {(crafted.length > 0 || emblems.length > 0) && (
           <ul className={styles.emblems} aria-label={t('bronze.emblemsUsed')}>
             {crafted.map(({ tool, item }) => {

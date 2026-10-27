@@ -4,12 +4,15 @@
 import { BOARD_SIZES, MAX_EMBLEMS } from './bronzeComps.js'
 
 const MAX_LISTED_IDS = 12
+// How comps are ranked: best (most traits, then cost), most played within each
+// trait count, or from the player's own units.
+export const RANK_BY = ['best', 'played', 'board']
 const ID_PATTERN = /^[A-Za-z0-9_' &.-]{1,64}$/ // unit / item ids
 
 export const DEFAULT_FILTERS = Object.freeze({
   size: 8,
-  requiredIds: [], // units every comp has; the player's board in board mode
-  boardMode: false, // "From my units"
+  requiredIds: [], // units every comp has; the player's board when rankBy is 'board'
+  rankBy: 'best', // one of RANK_BY; 'board' = "From my units"
   emblemIds: [], // emblems owned (repeats allowed)
   traitLadder: false, // playstyle: Bronze for Life (false) or Trait Ladder
   choiceTraitsOff: [], // Kha'Zix evolution traits switched off (all on by default)
@@ -21,7 +24,7 @@ export const DEFAULT_FILTERS = Object.freeze({
 
 // key in the URL for each filter
 const KEYS = {
-  size: 'n', requiredIds: 'u', boardMode: 'mode',
+  size: 'n', requiredIds: 'u', rankBy: 'mode',
   emblemIds: 'e', traitLadder: 'play', choiceTraitsOff: 'kzoff', excludeChoiceUnits: 'nokz',
   excludeLegendary: 'no5', hasSpatula: 'sp', hasFryingPan: 'fp',
 }
@@ -42,7 +45,7 @@ export function parseBronzeParams(params) {
   return {
     size: intIn(get('size'), BOARD_SIZES, DEFAULT_FILTERS.size),
     requiredIds: list(get('requiredIds')),
-    boardMode: get('boardMode') === 'board',
+    rankBy: RANK_BY.includes(get('rankBy')) ? get('rankBy') : DEFAULT_FILTERS.rankBy,
     emblemIds: list(get('emblemIds'), { unique: false, max: MAX_EMBLEMS }),
     traitLadder: get('traitLadder') === 'ladder',
     choiceTraitsOff: list(get('choiceTraitsOff')),
@@ -59,7 +62,7 @@ export function bronzeFiltersToSearch(filters) {
   const set = (key, value) => params.set(KEYS[key], value)
   if (filters.size !== DEFAULT_FILTERS.size) set('size', filters.size)
   if (filters.requiredIds.length) set('requiredIds', filters.requiredIds.join(','))
-  if (filters.boardMode) set('boardMode', 'board')
+  if (filters.rankBy !== DEFAULT_FILTERS.rankBy) set('rankBy', filters.rankBy)
   if (filters.emblemIds.length) set('emblemIds', filters.emblemIds.join(','))
   if (filters.traitLadder) set('traitLadder', 'ladder')
   if (filters.choiceTraitsOff.length) set('choiceTraitsOff', filters.choiceTraitsOff.join(','))

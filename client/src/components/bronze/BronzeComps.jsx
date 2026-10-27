@@ -31,6 +31,7 @@ export default function BronzeComps() {
   const { t } = useTranslation()
   const { filters, setFilter, resetFilters } = useBronzeFilters()
   const [tuning, setTuning] = useState(DEFAULT_TUNING)
+  const boardMode = filters.rankBy === 'board'
 
   const champs = useChampions()
   const traitsQuery = useTraits()
@@ -86,13 +87,13 @@ export default function BronzeComps() {
         // Any set of the switched-on evolution traits; fewer ranked first.
         choiceTraits,
         // From my units: the picked units are the player's board, not requirements.
-        ...(filters.boardMode
+        ...(boardMode
           ? { ownedIds: requiredIds, maxSwaps: tuning.maxSwaps, boardWeights: tuning.boardWeights }
           : { requiredIds }),
       }
       : null),
     [roster, ranges, filters.size, emblemTraits, craftTools, choiceTraits,
-      filters.boardMode, requiredIds, tuning],
+      boardMode, requiredIds, tuning],
   )
   const { result, error: searchError, isSearching } = useBronzeSearch(search)
   const championsById = useMemo(() => makeMap(champions), [champions])
@@ -103,7 +104,7 @@ export default function BronzeComps() {
 
   const isLoading = champs.isLoading || traitsQuery.isLoading || itemsQuery.isLoading
   const isError = champs.isError || traitsQuery.isError || itemsQuery.isError || Boolean(searchError)
-  const tooManyRequired = !filters.boardMode && (requiredIds.length > filters.size || result?.tooManyRequired)
+  const tooManyRequired = !boardMode && (requiredIds.length > filters.size || result?.tooManyRequired)
 
   return (
     <section className={styles.page} aria-label={t('bronze.label')}>
@@ -130,7 +131,7 @@ export default function BronzeComps() {
           <p className={statsStyles.message} role="status">{t('bronze.empty')}</p>
         )}
         {result?.truncated && <p className={statsStyles.message} role="status">{t('bronze.truncated')}</p>}
-        <BronzeResults result={result} isSearching={isSearching} size={filters.size} rowProps={rowProps} />
+        <BronzeResults result={result} isSearching={isSearching} size={filters.size} rankBy={filters.rankBy} rowProps={rowProps} />
       </div>
     </section>
   )

@@ -13,7 +13,7 @@ test('every filter round-trips through the URL', () => {
   const filters = {
     size: 11,
     requiredIds: ['DA_18_Xayah', 'DA_18_Rakan'],
-    boardMode: true,
+    rankBy: 'board',
     emblemIds: ['DA_18_EmblemCoven', 'DA_18_EmblemCoven'],
     traitLadder: true,
     choiceTraitsOff: ['Rapidfire', 'Spellweaver'],
@@ -25,6 +25,7 @@ test('every filter round-trips through the URL', () => {
   const search = bronzeFiltersToSearch(filters)
   assert.deepEqual(parseBronzeParams(new URLSearchParams(search.toString())), filters)
   assert.equal(countActiveFilters(filters), 10)
+  assert.equal(parseBronzeParams(new URLSearchParams('mode=played')).rankBy, 'played')
 })
 
 test('bad values fall back; lists are cleaned, deduped (not emblems) and capped', () => {
@@ -33,7 +34,7 @@ test('bad values fall back; lists are cleaned, deduped (not emblems) and capped'
   assert.deepEqual(parsed.requiredIds, ['A', 'B'])
   assert.deepEqual(parsed.emblemIds, ['E', 'E'])
   assert.equal(parsed.traitLadder, false)
-  assert.equal(parsed.boardMode, false)
+  assert.equal(parsed.rankBy, 'best')
   const many = Array.from({ length: 30 }, (_, i) => `U${i}`).join(',')
   assert.equal(parseBronzeParams(new URLSearchParams(`u=${many}`)).requiredIds.length, 12)
 })
