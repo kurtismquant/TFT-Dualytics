@@ -6,7 +6,6 @@ import Segmented from './Segmented.jsx'
 import BronzeTuning from './BronzeTuning.jsx'
 import ItemIcon from '../ItemIcon.jsx'
 import { BOARD_SIZES, MAX_EMBLEMS } from '../../utils/bronzeComps.js'
-import { MAX_LISTED_IDS } from '../../utils/bronzeParams.js'
 import styles from './BronzeComps.module.css'
 
 // Most units a player's current board can hold ("From my units").
@@ -34,7 +33,7 @@ function Section({ title, children }) {
 // sections of settings that each use one labelled row and the same joined
 // toggle buttons. On tablets and phones it collapses behind a "Filters"
 // button showing how many filters are on.
-// `pickers`: { unit, avoid, emblem } option sets for ChipPicker;
+// `pickers`: { unit, emblem } option sets for ChipPicker;
 // `choiceUnitNames` / `choiceMax`: trait-choice units (Kha'Zix) in this set.
 export default function BronzeFilters({
   filters, setFilter, resetFilters, activeCount, pickers, toolItems, choiceUnitNames = [], choiceMax = 0,
@@ -101,9 +100,6 @@ export default function BronzeFilters({
         </Field>
         <Field id={`${id}-units`} label={t(filters.boardMode ? 'bronze.ownedActive' : 'bronze.unitFilterLabel')}>
           {chip('requiredIds', pickers.unit, filters.boardMode ? 'owned' : 'unit', filters.boardMode ? MAX_BOARD_UNITS : filters.size)}
-        </Field>
-        <Field id={`${id}-avoid`} label={t('bronze.avoidFieldLabel')}>
-          {chip('avoidIds', pickers.avoid, 'avoid', MAX_LISTED_IDS)}
         </Field>
         <Field id={`${id}-emblems`} label={t('bronze.emblemsLabel')}>
           {chip('emblemIds', pickers.emblem, 'emblem', MAX_EMBLEMS, { allowDuplicates: true })}

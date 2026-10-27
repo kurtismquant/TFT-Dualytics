@@ -3,14 +3,13 @@
 // values fall back to them. Pure: no React, no DOM.
 import { BOARD_SIZES, MAX_EMBLEMS } from './bronzeComps.js'
 
-export const MAX_LISTED_IDS = 12
+const MAX_LISTED_IDS = 12
 const ID_PATTERN = /^[A-Za-z0-9_' &.-]{1,64}$/ // unit / item ids
 
 export const DEFAULT_FILTERS = Object.freeze({
   size: 8,
   requiredIds: [], // units every comp has; the player's board in board mode
   boardMode: false, // "From my units"
-  avoidIds: [], // units no comp may use
   emblemIds: [], // emblems owned (repeats allowed)
   traitLadder: false, // playstyle: Bronze for Life (false) or Trait Ladder
   choiceTraitCount: 0, // Kha'Zix evolutions 1-4; 0 = any (fewer ranked first)
@@ -20,7 +19,7 @@ export const DEFAULT_FILTERS = Object.freeze({
 
 // key in the URL for each filter
 const KEYS = {
-  size: 'n', requiredIds: 'u', boardMode: 'mode', avoidIds: 'avoid',
+  size: 'n', requiredIds: 'u', boardMode: 'mode',
   emblemIds: 'e', traitLadder: 'play', choiceTraitCount: 'kz',
   hasSpatula: 'sp', hasFryingPan: 'fp',
 }
@@ -42,7 +41,6 @@ export function parseBronzeParams(params) {
     size: intIn(get('size'), BOARD_SIZES, DEFAULT_FILTERS.size),
     requiredIds: list(get('requiredIds')),
     boardMode: get('boardMode') === 'board',
-    avoidIds: list(get('avoidIds')),
     emblemIds: list(get('emblemIds'), { unique: false, max: MAX_EMBLEMS }),
     traitLadder: get('traitLadder') === 'ladder',
     choiceTraitCount: intIn(get('choiceTraitCount'), [0, 1, 2, 3, 4], DEFAULT_FILTERS.choiceTraitCount),
@@ -58,7 +56,6 @@ export function bronzeFiltersToSearch(filters) {
   if (filters.size !== DEFAULT_FILTERS.size) set('size', filters.size)
   if (filters.requiredIds.length) set('requiredIds', filters.requiredIds.join(','))
   if (filters.boardMode) set('boardMode', 'board')
-  if (filters.avoidIds.length) set('avoidIds', filters.avoidIds.join(','))
   if (filters.emblemIds.length) set('emblemIds', filters.emblemIds.join(','))
   if (filters.traitLadder) set('traitLadder', 'ladder')
   if (filters.choiceTraitCount !== DEFAULT_FILTERS.choiceTraitCount) set('choiceTraitCount', filters.choiceTraitCount)

@@ -14,7 +14,6 @@ test('every filter round-trips through the URL', () => {
     size: 11,
     requiredIds: ['DA_18_Xayah', 'DA_18_Rakan'],
     boardMode: true,
-    avoidIds: ['DA_18_Akali_AD'],
     emblemIds: ['DA_18_EmblemCoven', 'DA_18_EmblemCoven'],
     traitLadder: true,
     choiceTraitCount: 2, // 0 (Any) is the default
@@ -23,7 +22,7 @@ test('every filter round-trips through the URL', () => {
   }
   const search = bronzeFiltersToSearch(filters)
   assert.deepEqual(parseBronzeParams(new URLSearchParams(search.toString())), filters)
-  assert.equal(countActiveFilters(filters), 9)
+  assert.equal(countActiveFilters(filters), 8)
 })
 
 test('bad values fall back; lists are cleaned, deduped (not emblems) and capped', () => {
@@ -35,5 +34,5 @@ test('bad values fall back; lists are cleaned, deduped (not emblems) and capped'
   assert.equal(parsed.traitLadder, false)
   assert.equal(parsed.boardMode, false)
   const many = Array.from({ length: 30 }, (_, i) => `U${i}`).join(',')
-  assert.equal(parseBronzeParams(new URLSearchParams(`avoid=${many}`)).avoidIds.length, 12)
+  assert.equal(parseBronzeParams(new URLSearchParams(`u=${many}`)).requiredIds.length, 12)
 })

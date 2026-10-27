@@ -39,20 +39,15 @@ export default function BronzeComps() {
   const traits = traitsQuery.data
   const items = itemsQuery.data
 
-  // Same roster as the builder: base Lux dropped, forms count double. Then
-  // avoided units drop out.
-  const fullRoster = useMemo(() => toBuilderRoster(champions || []), [champions])
-  const avoid = useMemo(() => new Set(filters.avoidIds), [filters.avoidIds])
-  const roster = useMemo(() => fullRoster.filter(unit => (
-    !avoid.has(unit.id)
-  )), [fullRoster, avoid])
-  const choiceUnits = useMemo(() => fullRoster.filter(unit => TRAIT_CHOICE_UNIT_IDS.has(unit.id)), [fullRoster])
+  // Same roster as the builder: base Lux dropped, forms count double.
+  const roster = useMemo(() => toBuilderRoster(champions || []), [champions])
+  const choiceUnits = useMemo(() => roster.filter(unit => TRAIT_CHOICE_UNIT_IDS.has(unit.id)), [roster])
   const choiceMax = Math.max(0, ...choiceUnits.map(unit => traitChoiceCount(unit.id)))
   const ranges = useMemo(() => traitRanges(traits, { ladder: filters.traitLadder }), [traits, filters.traitLadder])
   const { emblemOptions, itemLookup, emblemByTrait, toolItems, craftTools, emblemTraits } = useBronzeEmblems({
     items, traits, emblemIds: filters.emblemIds, hasSpatula: filters.hasSpatula, hasFryingPan: filters.hasFryingPan,
   })
-  const unitLookup = useMemo(() => makeMap(fullRoster), [fullRoster])
+  const unitLookup = useMemo(() => makeMap(roster), [roster])
   const traitByName = useMemo(() => new Map((traits || []).map(trait => [trait.name, trait])), [traits])
 
   const pickers = useMemo(() => {
@@ -60,16 +55,15 @@ export default function BronzeComps() {
     const unitName = id => unitLookup.get(id)?.name || id
     return {
       unit: { options: unitOptions(roster), renderIcon: unitIcon, nameFor: unitName },
-      avoid: { options: unitOptions(fullRoster.filter(unit => !filters.requiredIds.includes(unit.id))), renderIcon: unitIcon, nameFor: unitName },
       emblem: {
         options: emblemOptions,
         renderIcon: (id, size) => <ItemIcon item={itemLookup.get(id)} size={size} />,
         nameFor: id => itemLookup.get(id)?.name || id,
       },
     }
-  }, [roster, fullRoster, filters.requiredIds, unitLookup, emblemOptions, itemLookup])
+  }, [roster, unitLookup, emblemOptions, itemLookup])
 
-  // Required units the roster no longer has (avoided) drop out.
+  // Unit ids the roster doesn't have (e.g. from an old link) drop out.
   const requiredIds = useMemo(
     () => filters.requiredIds.filter(id => roster.some(unit => unit.id === id)),
     [filters.requiredIds, roster],
