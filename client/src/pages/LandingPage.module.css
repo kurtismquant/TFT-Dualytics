@@ -19,6 +19,9 @@
   justify-content: center;
   align-items: center;
   padding: 4rem 0 3rem;
+  /* A hidden (opacity 0) dango still takes up layout space past the window
+     edge; clip it so it can't cause a horizontal page scroll. */
+  overflow-x: clip;
 }
 
 .signOuter {
@@ -437,6 +440,8 @@
 .destArrow {
   color: var(--text-muted);
   margin-left: 0.5rem;
+  /* Keep "->" together when a long title wraps. */
+  white-space: nowrap;
 }
 
 .destBody {
@@ -525,6 +530,31 @@
   }
 }
 
+/* Tablet: the 45rem sign is wider than the window here. Shrink it (fluid, so
+   the wordmark always fits) and the dangos with it, so they stay on-screen down
+   to the mobile breakpoint instead of being hidden by HeroSign's clip check. */
+@media (--bp-lg) {
+  .sign {
+    width: min(36rem, 70vw);
+    height: 11rem;
+  }
+
+  .signWordmark {
+    font-size: min(5rem, 12vw);
+  }
+
+  .dangoTR,
+  .dangoBL {
+    scale: 0.7;
+  }
+
+  /* Two cards per row leaves ~18rem per title; one size down keeps
+     "LEADERBOARD ->" and "TEAM BUILDER ->" on one line. */
+  .destTitle {
+    font-size: var(--text-2xl);
+  }
+}
+
 @media (--bp-md) {
   .main {
     padding-bottom: 2rem;
@@ -552,6 +582,11 @@
   .destGrid {
     grid-template-columns: 1fr;
     padding: 0 1rem;
+  }
+
+  /* One card per row has room for the full-size title again. */
+  .destTitle {
+    font-size: var(--text-3xl);
   }
 
   .heroWrap {
@@ -582,8 +617,11 @@
     padding: 0 1rem;
   }
 
+  /* The short line is just over a phone's width at full size; scale it with
+     the window (capped at the normal size) so it stays on one line. */
   .taglineBody {
-    font-size: var(--text-base);
+    font-size: min(var(--text-base), 4.1vw);
+    letter-spacing: var(--track-wide);
     line-height: 1.45;
   }
 

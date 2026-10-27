@@ -445,6 +445,7 @@
     "label": "Favoritos",
     "empty": "Sin favoritos aún — haz clic en editar para añadir",
     "editAriaLabel": "Editar favoritos",
+    "edit": "Editar",
     "modalTitle": "Editar Favoritos",
     "close": "Cerrar",
     "placeholder": "Buscar jugador#Tag",

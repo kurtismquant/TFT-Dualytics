@@ -445,6 +445,7 @@
     "label": "Bookmarks",
     "empty": "No bookmarks yet — click edit to add",
     "editAriaLabel": "Edit bookmarks",
+    "edit": "Edit",
     "modalTitle": "Edit Bookmarks",
     "close": "Close",
     "placeholder": "Search Player#Tag",

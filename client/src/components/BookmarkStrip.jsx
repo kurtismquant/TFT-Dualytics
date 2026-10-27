@@ -53,8 +53,9 @@ export default function BookmarkStrip({ activeRegion = 'na' }) {
                 type="button"
                 className={styles.chip}
                 onClick={() => handleChipClick(b)}
+                title={`${b.gameName}#${b.tagLine}`}
               >
-                {b.gameName}#{b.tagLine}
+                <span className={styles.chipName}>{b.gameName}#{b.tagLine}</span>
                 <span className={styles.chipRegion}>{b.region.toUpperCase()}</span>
               </button>
             ))}
@@ -68,6 +69,8 @@ export default function BookmarkStrip({ activeRegion = 'na' }) {
           onClick={() => setModalOpen(true)}
         >
           <EditIcon />
+          {/* Icon-only on desktop; spelled out on mobile (see .editText). */}
+          <span className={styles.editText}>{t('bookmarks.edit')}</span>
         </button>
       </div>
 
