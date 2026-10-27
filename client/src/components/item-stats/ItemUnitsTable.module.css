@@ -11,3 +11,29 @@
 .deltaBad {
   color: var(--accent-red);
 }
+
+/* Mobile: the Stats page's widths (44% name + 28% per metric) assume three
+   columns; this table keeps four (Unit, Avg, vs Unit Avg, Games), so they
+   summed to 128% and squeezed every column. These sum to 100%, with tighter
+   cell padding and headers allowed to wrap. `table.itemTable` outranks the
+   Stats page's `.table th` / `.table td` rules. */
+@media (--bp-md) {
+  .itemTable .colName {
+    width: 40%;
+  }
+
+  .itemTable .colMetric {
+    width: 20%;
+  }
+
+  table.itemTable th,
+  table.itemTable td {
+    padding-left: 0.375rem;
+    padding-right: 0.375rem;
+  }
+
+  table.itemTable thead th {
+    white-space: normal;
+    line-height: 1.2;
+  }
+}
