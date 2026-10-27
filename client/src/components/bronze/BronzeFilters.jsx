@@ -139,7 +139,7 @@ export default function BronzeFilters({
                     <button
                       key={trait}
                       type="button"
-                      className={styles.toolToggle}
+                      className={`${styles.toolToggle} ${styles.traitToggle}`}
                       aria-pressed={on}
                       onClick={() => setFilter('choiceTraitsOff', on
                         ? [...filters.choiceTraitsOff, trait]
