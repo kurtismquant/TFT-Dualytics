@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next'
 import ItemIcon from '../ItemIcon.jsx'
 import UnitIcon from '../UnitIcon.jsx'
 import CopyTeamCodeButton from '../shared/CopyTeamCodeButton.jsx'
+import SwapBadge from './SwapBadge.jsx'
 import { HoverableTraitChip, HoverableUnit } from '../shared/HoverableBoardPieces.jsx'
 import { buildUnitPath } from '../../constants/routes.js'
 import { CURRENT_SET } from '../../constants/game.js'
@@ -9,9 +10,6 @@ import { activeTraitStyle } from '../../utils/bronzeComps.js'
 import { CHIP_STYLE_BY_EFFECT_STYLE } from '../../utils/traitTier.js'
 import { encodeTeamPlannerCode, TEAM_PLANNER_SLOTS } from '../../utils/teamPlannerCode.js'
 import styles from './BronzeComps.module.css'
-
-// Swap-in icons shown on a unit before the rest collapse into "+N".
-const MAX_SWAP_ICONS = 2
 
 // Kha'Zix's chosen evolutions as small trait icons under his portrait.
 function ChosenTraits({ chosen, traitByName, bonus }) {
@@ -136,7 +134,6 @@ export default function BronzeCompRow({
       <div className={styles.board}>
         <ul className={styles.units} aria-label={t('bronze.unitsLabel')}>
           {comp.units.map(({ champion, alternatives, required, owned }) => {
-            const swapIns = alternatives.map(alt => alt.name).join(', ')
             // Merged Lux forms: named as the base unit, with the forms that fit.
             const forms = comp.formOptions?.find(option => option.formOf === champion.formOf)?.forms
             const merged = forms?.length > 1
@@ -148,26 +145,7 @@ export default function BronzeCompRow({
                 {champion.chosenTraits?.length > 0 && (
                   <ChosenTraits chosen={champion.chosenTraits} traitByName={traitByName} bonus={comp.bonusEvolution} />
                 )}
-                {alternatives.length > 0 && (
-                  // Units that could take this one's place: their icons (two at
-                  // most, then "+N"), cost-coloured like the unit icons.
-                  <span className={styles.altBadge} title={t('bronze.swapIn', { units: swapIns })}>
-                    {alternatives.slice(0, MAX_SWAP_ICONS).map(alt => (
-                      <img
-                        key={alt.id}
-                        src={alt.iconUrl}
-                        alt=""
-                        aria-hidden="true"
-                        className={styles.altIcon}
-                        style={{ borderColor: `var(--cost-${alt.cost}, var(--bg-border-bright))` }}
-                      />
-                    ))}
-                    {alternatives.length > MAX_SWAP_ICONS && (
-                      <span className={styles.altMore} aria-hidden="true">+{alternatives.length - MAX_SWAP_ICONS}</span>
-                    )}
-                    <span className="sr-only">{t('bronze.swapIn', { units: swapIns })}</span>
-                  </span>
-                )}
+                {alternatives.length > 0 && <SwapBadge alternatives={alternatives} />}
               </li>
             )
           })}
