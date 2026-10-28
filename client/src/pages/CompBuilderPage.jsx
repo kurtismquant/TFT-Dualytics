@@ -17,7 +17,7 @@ import ItemPicker from '../components/ItemPicker.jsx'
 import TraitList from '../components/TraitList.jsx'
 import FilterBar from '../components/FilterBar.jsx'
 import { PageShell } from '../components/layout/PageShell.jsx'
-import { useIsMobile, useIsTabletDown } from '../hooks/useMediaQuery.js'
+import { useIsMobile, useIsTabletDown, useMediaQuery } from '../hooks/useMediaQuery.js'
 import { listedRoster, toBuilderRoster, withFormBases } from '../utils/builderRoster.js'
 import { TRAIT_CHOICE_UNITS } from '../utils/bronzeComps.js'
 import { makeMap } from '../utils/statsFormatting.js'
@@ -85,6 +85,8 @@ export default function CompBuilderPage() {
   // Tablets show the inspector as a bottom sheet over the page, so the page
   // only moves aside for it on desktop.
   const isTabletDown = useIsTabletDown()
+  // Primary input can't hover (phones, tablets without a mouse).
+  const touchOnly = useMediaQuery('(hover: none)')
   // Live hex size reported by the board, so the drag overlay matches it.
   const [boardHexSize, setBoardHexSize] = useState(BOARD_UNIT_SIZE)
   // Hovered trait (its units light up) and roster unit (its traits preview).
@@ -179,12 +181,16 @@ export default function CompBuilderPage() {
   }
 
   // What the hovered roster unit would add to the traits (nothing if it's on
-  // the board already: a unit counts once).
+  // the board already: a unit counts once). Off on tablets and phones, where
+  // the trait list sits above the board: preview rows pushed the board and
+  // roster down under the pointer, which then hovered another unit. Off on
+  // touch screens of any size too: a tap fires hover with the click that
+  // places the unit, so the preview only flashes, then sticks.
   const traitPreview = useMemo(() => {
-    const champion = rosterById.get(hoveredRosterId)
+    const champion = isTabletDown || touchOnly ? null : rosterById.get(hoveredRosterId)
     if (!champion || Object.values(board).some(cell => cell?.championId === champion.id)) return null
     return Object.fromEntries((champion.traits || []).map(trait => [trait, champion.traitWeights?.[trait] ?? 1]))
-  }, [hoveredRosterId, rosterById, board])
+  }, [isTabletDown, touchOnly, hoveredRosterId, rosterById, board])
 
   const [search, setSearch] = useState('')
   const [champSort, setChampSort] = useState('cost')
