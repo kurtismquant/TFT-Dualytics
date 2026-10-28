@@ -34,8 +34,8 @@ const FilterBar = forwardRef(function FilterBar({
 
   return (
     <div className={styles.bar} data-mode={mode}>
-      {/* Mobile-only Units/Items switch (hidden on desktop via CSS). Picks which
-          roster panel + which filter group is shown on small screens. */}
+      {/* Tablet / mobile Units/Items switch (hidden on desktop via CSS). Picks
+          which roster panel + which filter group is shown on smaller screens. */}
       <div className={styles.modeToggle} role="group" aria-label={t('filterBar.modeLabel')}>
         <Button variant="tab" pressed={mode === 'units'} onClick={() => onModeChange?.('units')}>
           {t('filterBar.modeUnits')}

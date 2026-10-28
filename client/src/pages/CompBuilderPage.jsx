@@ -17,7 +17,7 @@ import ItemPicker from '../components/ItemPicker.jsx'
 import TraitList from '../components/TraitList.jsx'
 import FilterBar from '../components/FilterBar.jsx'
 import { PageShell } from '../components/layout/PageShell.jsx'
-import { useIsMobile } from '../hooks/useMediaQuery.js'
+import { useIsMobile, useIsTabletDown } from '../hooks/useMediaQuery.js'
 import { listedRoster, toBuilderRoster, withFormBases } from '../utils/builderRoster.js'
 import { TRAIT_CHOICE_UNITS } from '../utils/bronzeComps.js'
 import { makeMap } from '../utils/statsFormatting.js'
@@ -60,7 +60,7 @@ export default function CompBuilderPage() {
     [allChampions],
   )
   const { data: items } = useItems()
-  const { board, activeTraits, setRoster, setItems, moveUnit, removeUnit, addItem, removeItem, clearBoard } = useBoardStore()
+  const { board, activeTraits, setRoster, setItems, moveUnit, removeUnit, addItem, removeItem } = useBoardStore()
   useEffect(() => { if (champions) setRoster(champions) }, [champions, setRoster])
   useEffect(() => { if (items) setItems(items) }, [items, setItems])
   useSharedBoardLink(Boolean(champions))
@@ -82,6 +82,9 @@ export default function CompBuilderPage() {
   const searchInputRef = useRef(null)
   usePageGuards(searchInputRef)
   const isMobile = useIsMobile()
+  // Tablets show the inspector as a bottom sheet over the page, so the page
+  // only moves aside for it on desktop.
+  const isTabletDown = useIsTabletDown()
   // Live hex size reported by the board, so the drag overlay matches it.
   const [boardHexSize, setBoardHexSize] = useState(BOARD_UNIT_SIZE)
   // Hovered trait (its units light up) and roster unit (its traits preview).
@@ -186,11 +189,11 @@ export default function CompBuilderPage() {
   const [search, setSearch] = useState('')
   const [champSort, setChampSort] = useState('cost')
   const [itemCategory, setItemCategory] = useState('craftable')
-  // Mobile roster panel: 'units' (default) or 'items'. Ignored on desktop (both show).
+  // Tablet / mobile roster panel: 'units' (default) or 'items'. Ignored on desktop (both show).
   const [mode, setMode] = useState('units')
 
   return (
-    <PageShell wide className={inspected ? styles.shellWithInspector : undefined}>
+    <PageShell wide className={inspected && !isTabletDown ? styles.shellWithInspector : undefined}>
       <BuilderToolbar
         board={board}
         champions={champions}
@@ -220,12 +223,6 @@ export default function CompBuilderPage() {
                 draggingCellId={dragged?.source === 'board' ? dragged.cellId : null}
                 highlightTrait={hoveredTrait}
                 inspectedCellId={inspected ? inspectedCellId : null}
-                /* Mobile-only: clear sits inside the board, top-right corner. */
-                overlay={isMobile ? (
-                  <button className={styles.clearBtnMobile} onClick={clearBoard}>
-                    {t('builder.clearBoard')}
-                  </button>
-                ) : null}
               />
             </div>
           </div>
@@ -243,7 +240,7 @@ export default function CompBuilderPage() {
               onModeChange={setMode}
             />
 
-            {/* data-mode drives which panel shows on mobile; both show on desktop. */}
+            {/* data-mode drives which panel shows on tablets and phones; both show on desktop. */}
             <div className={styles.bottomGrid} data-mode={mode}>
               <div className={styles.unitsPanel}>
                 {champions ? (

@@ -193,3 +193,37 @@
   padding-top: 0.75rem;
   border-top: 1px solid var(--bg-border-muted);
 }
+
+/* Tablets: a sheet along the window's bottom edge over the full-width page
+   (beside the panel the page would be squeezed to ~380px). The unit's card
+   fills the left column, the 3★ toggle, item combos and stats link the right,
+   which keeps the sheet short enough to leave the board in view. */
+@media (--bp-lg) {
+  .panel {
+    top: auto;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: auto;
+    max-height: min(55vh, 30rem);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-content: start;
+    column-gap: 1.5rem;
+    padding: 1rem 2rem calc(1rem + env(safe-area-inset-bottom));
+    border-width: 1px 0 0;
+    box-shadow: 0 -0.75rem 2rem rgb(0 0 0 / 0.5);
+  }
+
+  .card {
+    grid-row: 1 / span 3;
+  }
+
+  .panel > :not(.card) {
+    grid-column: 2;
+  }
+
+  .panel > .starToggle {
+    margin-top: 0;
+  }
+}

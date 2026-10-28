@@ -60,7 +60,6 @@ export default function TFTBoard({
   highlightTrait = null,
   // The unit the inspector shows has no hover card (its panel is open).
   inspectedCellId = null,
-  overlay = null,
 }) {
   const wrapperRef = useRef(null);
   const scale = useUiScale();
@@ -120,7 +119,6 @@ export default function TFTBoard({
       className={styles.boardWrapper}
       style={{ height: boardHeight + 60 * scale }}
     >
-      {overlay}
       <div className={styles.board} style={{ width: boardWidth, height: boardHeight }}>
         {Array.from({ length: ROWS }, (_, row) =>
           Array.from({ length: COLS }, (_, col) => {

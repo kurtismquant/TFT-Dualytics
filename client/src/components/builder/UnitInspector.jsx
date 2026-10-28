@@ -7,10 +7,11 @@ import UnitTopCombos from './UnitTopCombos.jsx'
 import UnitTraitChoice from './UnitTraitChoice.jsx'
 import styles from './UnitInspector.module.css'
 
-// Team Builder side panel for the clicked board unit (desktop only): the hover
-// card's content, a picker for traits chosen in game (Lux, Kha'Zix), its 3★
-// toggle and its most-played item combos. Fixed to the window's right edge;
-// CompBuilderPage moves the page aside while it is open.
+// Team Builder side panel for the clicked board unit (not on phones): the
+// hover card's content, a picker for traits chosen in game (Lux, Kha'Zix), its
+// 3★ toggle and its most-played item combos. Fixed to the window's right edge,
+// with CompBuilderPage moving the page aside while it is open; on tablets a
+// sheet along the bottom edge instead.
 export default function UnitInspector({ cellId, cell, champion, roster, allItems, onClose }) {
   const { t } = useTranslation()
   const toggleStars = useBoardStore(s => s.toggleStars)
@@ -36,9 +37,11 @@ export default function UnitInspector({ cellId, cell, champion, roster, allItems
 
   return (
     <aside className={styles.panel} aria-label={champion.name} data-no-edge-glow>
-      <UnitCardBody champion={champion} headerAction={closeButton}>
-        <UnitTraitChoice cellId={cellId} cell={cell} champion={champion} roster={roster} />
-      </UnitCardBody>
+      <div className={styles.card}>
+        <UnitCardBody champion={champion} headerAction={closeButton}>
+          <UnitTraitChoice cellId={cellId} cell={cell} champion={champion} roster={roster} />
+        </UnitCardBody>
+      </div>
 
       <button
         type="button"
