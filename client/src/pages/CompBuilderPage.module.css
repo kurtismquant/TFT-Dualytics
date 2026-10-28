@@ -99,6 +99,9 @@
      search field still selects its own text. */
   -webkit-user-select: none;
   user-select: none;
+  /* Long-press opens a unit / item sheet on touch — suppress iOS's "Save
+     Image" callout over the portraits. */
+  -webkit-touch-callout: none;
 }
 
 /* ── Top row: traits left of board ──────────────────────── */

@@ -147,25 +147,34 @@
 }
 
 /* ── Responsive ──────────────────────────────────────── */
-@media (max-width: 1100px) {
+/* Below ~1280px nine columns get too narrow for labels like "Avg Team Cost":
+   an even 3×3 grid, each row's first stat flush left like the top row's, and a
+   full-width line between rows. */
+@media (--bp-xl) {
   .statsGrid {
-    grid-template-columns: repeat(5, 1fr);
-    row-gap: 1rem;
+    grid-template-columns: repeat(3, 1fr);
+    padding-bottom: 0;
   }
 
-  .statItem:nth-child(5) {
+  .statItem {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
+
+  .statItem:nth-child(3n + 1) {
+    padding-left: 0;
+  }
+
+  .statItem:nth-child(3n) {
     border-right: none;
   }
 
-  .statItem:nth-child(n + 6) {
-    border-top: 1px solid var(--bg-border);
-    padding-top: 1rem;
+  .statItem:nth-child(-n + 3) {
+    padding-top: 0;
   }
-}
 
-@media (max-width: 860px) {
-  .chartsRow {
-    grid-template-columns: 1fr;
+  .statItem:nth-child(n + 4) {
+    border-top: 1px solid var(--bg-border);
   }
 }
 
